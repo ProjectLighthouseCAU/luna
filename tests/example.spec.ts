@@ -1,14 +1,9 @@
 import { shallowMount } from '@vue/test-utils'
-import HelloWorld from '@/components/HelloWorld.vue'
+import DummyComp from '@/components/DummyLazy.vue'
 
-describe('HelloWorld.vue', () => {
-  it('renders props.msg when passed', () => {
-    const msg = 'new message'
-    const wrapper = shallowMount(HelloWorld, {
-      props: { msg }
-    })
-    console.log(wrapper.html())
-
-    expect(wrapper.html()).toMatch(msg)
+describe('Some random component', () => {
+  it('can be rendered', () => {
+    const wrapper = shallowMount(DummyComp)
+    expect(wrapper.html()).not.toBeFalsy()
   })
 })

@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-app-bar>
+    <v-app-bar class="overflow-x-auto">
       <template #prepend>
         <v-spacer />
         <v-app-bar-nav-icon
@@ -19,7 +19,6 @@
       <v-spacer />
       <v-app-bar-nav-icon
         icon="mdi-theme-light-dark"
-        class="mdi-spin"
         @click="darkModeButtonClick"
       />
     </v-app-bar>

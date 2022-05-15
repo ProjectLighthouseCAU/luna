@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from '@vue/runtime-core'
 import { Store, useStore } from 'vuex'
-import { State } from './store'
+import { State, Theme } from './store'
 import { Ref } from 'vue'
 import TopBar from '@/views/TopBar.vue'
 import NavList from '@/views/NavList.vue'
@@ -31,9 +31,11 @@ import NavList from '@/views/NavList.vue'
 const store : Store<State> = useStore()
 
 onBeforeMount(() => {
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    store.commit('setTheme', 'dark')
+  let theme: Theme = localStorage.getItem('theme')
+  if (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    theme = 'dark'
   }
+  store.commit('setTheme', theme)
 })
 
 const drawer = ref(null) as Ref<boolean | null>
@@ -48,6 +50,7 @@ function toggleDrawer() {
 
 function toggleTheme() {
   store.commit('toggleTheme')
+  localStorage.setItem('theme', store.state.theme)
 }
 </script>
 
