@@ -1,21 +1,58 @@
 <template>
-  <v-app>
-    <v-main>
-      <router-view/>
+  <v-app :theme="theme">
+    <v-navigation-drawer
+      v-model="drawer"
+    >
+      <nav-list />
+    </v-navigation-drawer>
+    <top-bar
+      @nav-button-click="toggleDrawer"
+      @dark-mode-button-click="toggleTheme"
+    />
+    <v-main class="main">
+      <v-container
+        fluid
+        class="py-0"
+      >
+        <router-view />
+      </v-container>
     </v-main>
   </v-app>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { computed, onBeforeMount, ref } from '@vue/runtime-core'
+import { Store, useStore } from 'vuex'
+import { State } from './store'
+import { Ref } from 'vue'
+import TopBar from '@/views/TopBar.vue'
+import NavList from '@/views/NavList.vue'
 
-export default defineComponent({
-  name: 'App',
+const store : Store<State> = useStore()
 
-  data () {
-    return {
-      //
-    }
+onBeforeMount(() => {
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    store.commit('setTheme', 'dark')
   }
 })
+
+const drawer = ref(null) as Ref<boolean | null>
+
+const theme = computed(() => {
+  return store.state.theme
+})
+
+function toggleDrawer() {
+  drawer.value = !drawer.value
+}
+
+function toggleTheme() {
+  store.commit('toggleTheme')
+}
 </script>
+
+<style lang="scss">
+.v-application {
+  font-family: 'Fira Sans', 'sans-serif';
+}
+</style>
