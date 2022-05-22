@@ -49,14 +49,14 @@ const nItems = ref(12)
 
 const nCols = computed(() => {
   switch (nItems.value) {
-  case 4:
-    return 3
-  case 12:
-  case 24:
-    return 2
-  case 48:
-  case 96:
-    return 1
+    case 4:
+      return 3
+    case 12:
+    case 24:
+      return 2
+    case 48:
+    case 96:
+      return 1
   }
 })
 </script>
