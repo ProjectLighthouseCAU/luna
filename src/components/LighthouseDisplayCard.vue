@@ -25,6 +25,13 @@
         />
       </v-responsive>
     </v-card-content>
+    <v-dialog
+      v-model="showDialog"
+      class="align-self-center"
+      @click="showDialog = false"
+    >
+      <lighthouse-display-big :user="user" />
+    </v-dialog>
   </v-card>
 </template>
 
@@ -32,6 +39,10 @@
 import { defineProps, defineEmits, ref, onMounted, onBeforeUnmount } from '@vue/runtime-core'
 import { encode, decode } from '@msgpack/msgpack'
 import { useRouter } from 'vue-router'
+import LighthouseDisplayBig from '@/components/LighthouseDisplayBig.vue'
+import mobile from '@/composables/mobile.vue'
+
+const { isMobile } = mobile()
 
 const hardcoded = {
   wsUrl: 'wss://lighthouse.uni-kiel.de/websocket',
@@ -54,6 +65,7 @@ const payload = ref(new Uint8Array())
 const ws = ref<WebSocket>(null)
 const lastMessage = ref('never')
 const canvas = ref<HTMLCanvasElement>(null)
+const showDialog = ref(false)
 
 const emit = defineEmits(['update'])
 
@@ -64,7 +76,11 @@ function updateStatus(text: string) {
 }
 
 function showSingle() {
-  router.push(`/display/${props.user}`)
+  if (isMobile.value) {
+    router.push(`/display/${props.user}`)
+  } else {
+    showDialog.value = !showDialog.value
+  }
 }
 
 onMounted(async() => {
