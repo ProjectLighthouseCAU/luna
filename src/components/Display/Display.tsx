@@ -1,5 +1,11 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export function Display() {
-  return <div>Display coming soon...</div>;
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+  }, []);
+
+  return <canvas ref={canvasRef} />;
 }
