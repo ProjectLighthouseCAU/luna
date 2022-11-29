@@ -9,10 +9,24 @@ const Container = styled.div`
   height: 100vh;
 `;
 
+const Sized = styled.div<{ width: number; height: number }>`
+  width: ${props => props.width}px;
+  height: ${props => props.height}px;
+  background-color: red;
+`;
+
 export function App() {
+  const width = 300;
+  const height = 300;
   return (
     <Container>
-      <Display />
+      <Sized width={width} height={height}>
+        <Display
+          maxWidth={width}
+          maxHeight={height}
+          display={new Uint8Array()}
+        />
+      </Sized>
     </Container>
   );
 }
