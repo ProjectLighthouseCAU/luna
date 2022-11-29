@@ -9,7 +9,12 @@ export interface DisplayProps {
   aspectRatio?: number;
 }
 
-export function Display(props: DisplayProps) {
+export function Display({
+  display,
+  maxWidth,
+  maxHeight,
+  aspectRatio = DEFAULT_ASPECT_RATIO,
+}: DisplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -17,13 +22,12 @@ export function Display(props: DisplayProps) {
     const ctx = canvas.getContext('2d')!;
 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }, [props.maxWidth, props.maxHeight]);
+  }, [maxWidth, maxHeight]);
 
-  const aspectRatio = props.aspectRatio ?? DEFAULT_ASPECT_RATIO;
   const [width, height] =
-    props.maxHeight <= props.maxWidth
-      ? [aspectRatio * props.maxHeight, props.maxHeight]
-      : [props.maxWidth, props.maxWidth / aspectRatio];
+    maxHeight <= maxWidth
+      ? [aspectRatio * maxHeight, maxHeight]
+      : [maxWidth, maxWidth / aspectRatio];
 
   return <canvas ref={canvasRef} width={width} height={height} />;
 }
