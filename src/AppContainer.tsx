@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Display } from './components/Display';
 import { WindowDimensionsContext } from './contexts/WindowDimensionsContext';
+import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 
 const Wrapper = styled.div`
   display: flex;
@@ -18,7 +19,7 @@ export function AppContainer() {
       <Display
         maxWidth={dimensions.width}
         maxHeight={dimensions.height}
-        display={new Uint8Array()}
+        frame={new Uint8Array(LIGHTHOUSE_FRAME_BYTES)}
       />
     </Wrapper>
   );

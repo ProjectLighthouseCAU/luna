@@ -1,8 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { LIGHTHOUSE_COLS, LIGHTHOUSE_ROWS } from 'nighthouse/browser';
+import {
+  LIGHTHOUSE_COLOR_CHANNELS,
+  LIGHTHOUSE_COLS,
+  LIGHTHOUSE_ROWS,
+} from 'nighthouse/browser';
 
 export interface DisplayProps {
-  display: Uint8Array;
+  frame: Uint8Array;
   maxWidth: number;
   maxHeight: number;
   rows?: number;
@@ -13,7 +17,7 @@ export interface DisplayProps {
 }
 
 export function Display({
-  display,
+  frame,
   maxWidth,
   maxHeight,
   rows = LIGHTHOUSE_ROWS,
@@ -54,7 +58,9 @@ export function Display({
       // Draw windows
       for (let i = 0; i < rows; i++) {
         const y = i * (1 + spacersPerRow) * windowHeight;
-        ctx.fillStyle = 'yellow';
+        const k = (i * LIGHTHOUSE_ROWS + j) * LIGHTHOUSE_COLOR_CHANNELS;
+        const rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
+        ctx.fillStyle = `rgb(${rgb.join(',')})`;
         ctx.fillRect(x, y, windowWidth, windowHeight);
       }
 
@@ -62,7 +68,15 @@ export function Display({
       ctx.fillStyle = 'gray';
       ctx.fillRect(x, 0, gutterWidth, height);
     }
-  }, [width, height, rows, columns, relativeBezelWidth, relativeGutterWidth]);
+  }, [
+    width,
+    height,
+    frame,
+    rows,
+    columns,
+    relativeBezelWidth,
+    relativeGutterWidth,
+  ]);
 
   return <canvas ref={canvasRef} width={width} height={height} />;
 }
