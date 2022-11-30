@@ -10,7 +10,7 @@
     "@types/node": "^16.18.3",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
-    "nighthouse": "github:fwcd/nighthouse#9b90f7b7ccf4783eb82f5cb76c135a38a3b2c752",
+    "nighthouse": "github:fwcd/nighthouse#89e6394340024d8ee019b7c6697e5e7a46ce05d4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",

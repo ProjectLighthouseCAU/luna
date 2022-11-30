@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { LIGHTHOUSE_WIDTH, LIGHTHOUSE_HEIGHT } from 'nighthouse/browser';
+import { LIGHTHOUSE_COLS, LIGHTHOUSE_ROWS } from 'nighthouse/browser';
 
 export interface DisplayProps {
   display: Uint8Array;
@@ -16,8 +16,8 @@ export function Display({
   display,
   maxWidth,
   maxHeight,
-  rows = LIGHTHOUSE_HEIGHT,
-  columns = LIGHTHOUSE_WIDTH,
+  rows = LIGHTHOUSE_ROWS,
+  columns = LIGHTHOUSE_COLS,
   aspectRatio = 0.8634,
   relativeBezelWidth = 0.0183,
   relativeGutterWidth = 0.0064,
