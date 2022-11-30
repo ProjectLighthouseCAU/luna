@@ -43,7 +43,9 @@ export function Display({
 
     const bezelWidth = relativeBezelWidth * width;
     const gutterWidth = relativeGutterWidth * width;
-    const windowWidth = (width - 2 * bezelWidth) / columns - gutterWidth;
+    const gutterCount = columns + 1;
+    const windowWidth =
+      (width - 2 * bezelWidth - gutterCount * gutterWidth) / columns;
     const spacersPerRow = 1;
     const windowHeight = height / ((1 + spacersPerRow) * rows);
 
@@ -52,10 +54,17 @@ export function Display({
     ctx.fillRect(0, 0, bezelWidth, height);
     ctx.fillRect(width - bezelWidth, 0, bezelWidth, height);
 
-    for (let j = 0; j < columns; j++) {
+    // Draw gutters
+    ctx.fillStyle = 'gray';
+    for (let j = 0; j < gutterCount; j++) {
       const x = bezelWidth + j * (windowWidth + gutterWidth);
+      ctx.fillRect(x, 0, gutterWidth, height);
+    }
 
-      // Draw windows
+    // Draw windows
+    for (let j = 0; j < columns; j++) {
+      const x = bezelWidth + j * windowWidth + (j + 1) * gutterWidth;
+
       for (let i = 0; i < rows; i++) {
         const y = i * (1 + spacersPerRow) * windowHeight;
         const k = (i * LIGHTHOUSE_ROWS + j) * LIGHTHOUSE_COLOR_CHANNELS;
@@ -63,10 +72,6 @@ export function Display({
         ctx.fillStyle = `rgb(${rgb.join(',')})`;
         ctx.fillRect(x, y, windowWidth, windowHeight);
       }
-
-      // Draw gutter
-      ctx.fillStyle = 'gray';
-      ctx.fillRect(x, 0, gutterWidth, height);
     }
   }, [
     width,
