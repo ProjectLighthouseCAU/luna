@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@stitches/react';
-import { HomeScreen } from '@luna/screens/Home';
+import { LoginScreen } from '@luna/screens/Login';
 
 const Wrapper = styled('div', {
   display: 'flex',
@@ -12,7 +12,7 @@ const Wrapper = styled('div', {
 export function AppContainer() {
   return (
     <Wrapper>
-      <HomeScreen />
+      <LoginScreen />
     </Wrapper>
   );
 }
