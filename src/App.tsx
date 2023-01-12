@@ -1,7 +1,7 @@
+import { AppContainer } from '@luna/AppContainer';
+import { WindowDimensionsContextProvider } from '@luna/contexts/WindowDimensions';
 import { NextUIProvider } from '@nextui-org/react';
 import React from 'react';
-import { AppContainer } from './AppContainer';
-import { WindowDimensionsContextProvider } from './contexts/WindowDimensions';
 
 export function App() {
   return (

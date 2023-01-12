@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@stitches/react';
-import { HomeScreen } from './screens/Home';
+import { HomeScreen } from '@luna/screens/Home';
 
 const Wrapper = styled('div', {
   display: 'flex',
