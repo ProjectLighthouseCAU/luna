@@ -24,8 +24,8 @@ export function LoginScreen() {
               direction="column"
               css={{ padding: 0, gap: '10px' }}
             >
-              <Input clearable labelLeft="Username" />
-              <Input clearable labelLeft="Password" />
+              <Input labelLeft="Username" />
+              <Input labelLeft="Password" type="password" />
             </Container>
           </Card.Body>
           <Card.Footer>
