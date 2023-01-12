@@ -10,6 +10,14 @@ const lightTheme = createTheme({
 
 const darkTheme = createTheme({
   type: 'dark',
+  theme: {
+    colors: {
+      primaryBorder: '#FF0000',
+      backgroundContrast: '#151515', // e.g. card backgrounds
+      accents0: '#252525', // e.g. input backgrounds
+      selection: '#3C009C',
+    },
+  },
 });
 
 export function App() {
