@@ -1,11 +1,14 @@
+import { NextUIProvider } from '@nextui-org/react';
 import React from 'react';
 import { AppContainer } from './AppContainer';
 import { WindowDimensionsContextProvider } from './contexts/WindowDimensionsContext';
 
 export function App() {
   return (
-    <WindowDimensionsContextProvider>
-      <AppContainer />
-    </WindowDimensionsContextProvider>
+    <NextUIProvider>
+      <WindowDimensionsContextProvider>
+        <AppContainer />
+      </WindowDimensionsContextProvider>
+    </NextUIProvider>
   );
 }
