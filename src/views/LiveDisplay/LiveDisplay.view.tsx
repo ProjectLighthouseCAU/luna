@@ -1,17 +1,19 @@
 import { Display } from '@luna/components/Display';
-import { WindowDimensionsContext } from '@luna/contexts/WindowDimensions';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
-import React, { useContext } from 'react';
+import React from 'react';
 
-export function LiveDisplay() {
-  const dimensions = useContext(WindowDimensionsContext);
+export interface LiveDisplayProps {
+  maxWidth: number;
+  maxHeight: number;
+}
 
+export function LiveDisplay({ maxWidth, maxHeight }: LiveDisplayProps) {
   // TODO: Display live lighthouse display
 
   return (
     <Display
-      maxWidth={dimensions.width}
-      maxHeight={dimensions.height}
+      maxWidth={maxWidth}
+      maxHeight={maxHeight}
       frame={new Uint8Array(LIGHTHOUSE_FRAME_BYTES)}
     />
   );

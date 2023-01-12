@@ -4,8 +4,8 @@ import { LoginScreen } from '@luna/screens/Login';
 
 const Wrapper = styled('div', {
   display: 'flex',
-  alignItems: 'stretch',
-  justifyContent: 'center',
+  width: '100%',
+  height: '100%',
 });
 
 export function AppContainer() {
