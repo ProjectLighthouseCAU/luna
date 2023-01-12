@@ -1,15 +1,15 @@
 import React, { useContext } from 'react';
-import styled from 'styled-components';
 import { Display } from './components/Display';
 import { WindowDimensionsContext } from './contexts/WindowDimensionsContext';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
+import { styled } from '@stitches/react';
 
-const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-`;
+const Wrapper = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100vh',
+});
 
 export function AppContainer() {
   const dimensions = useContext(WindowDimensionsContext);
