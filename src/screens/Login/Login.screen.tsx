@@ -1,4 +1,5 @@
 import { WindowDimensionsContext } from '@luna/contexts/WindowDimensions';
+import { Breakpoint, useBreakpoint } from '@luna/hooks/Breakpoint';
 import { LiveDisplay } from '@luna/views/LiveDisplay';
 import {
   Button,
@@ -13,8 +14,24 @@ import React, { useContext } from 'react';
 
 export function LoginScreen() {
   const { width } = useContext(WindowDimensionsContext);
-  const isXs = width <= 650;
-  const isSm = width <= 960;
+  const breakpoint = useBreakpoint();
+
+  let displayWidth: number;
+  switch (breakpoint) {
+    case Breakpoint.Xs:
+      displayWidth = width;
+      break;
+    case Breakpoint.Sm:
+    case Breakpoint.Md:
+      displayWidth = width * 0.8;
+      break;
+    case Breakpoint.Lg:
+      displayWidth = width / 2;
+      break;
+    default:
+      displayWidth = Breakpoint.Xl / 2;
+      break;
+  }
 
   return (
     <Grid.Container gap={4} justify="center" alignItems="center">
@@ -46,7 +63,7 @@ export function LoginScreen() {
         </Grid.Container>
       </Grid>
       <Grid>
-        <LiveDisplay width={isXs ? width : isSm ? width * 0.75 : width / 2} />
+        <LiveDisplay width={displayWidth} />
       </Grid>
     </Grid.Container>
   );

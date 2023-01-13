@@ -2,23 +2,23 @@ import { WindowDimensionsContext } from '@luna/contexts/WindowDimensions';
 import { useContext } from 'react';
 
 export enum Breakpoint {
-  Xs,
-  Sm,
-  Md,
-  Lg,
-  Xl,
+  Xs = 0,
+  Sm = 650,
+  Md = 960,
+  Lg = 1280,
+  Xl = 1400,
 }
 
 export function useBreakpoint(): Breakpoint {
   const { width } = useContext(WindowDimensionsContext);
 
-  if (width <= 650) {
+  if (width < Breakpoint.Sm) {
     return Breakpoint.Xs;
-  } else if (width <= 960) {
+  } else if (width < Breakpoint.Md) {
     return Breakpoint.Sm;
-  } else if (width <= 1280) {
+  } else if (width < Breakpoint.Lg) {
     return Breakpoint.Md;
-  } else if (width <= 1400) {
+  } else if (width < Breakpoint.Xl) {
     return Breakpoint.Lg;
   } else {
     return Breakpoint.Xl;
