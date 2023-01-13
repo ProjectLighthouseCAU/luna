@@ -19,8 +19,6 @@ export function LoginScreen() {
   let displayWidth: number;
   switch (breakpoint) {
     case Breakpoint.Xs:
-      displayWidth = width;
-      break;
     case Breakpoint.Sm:
     case Breakpoint.Md:
       displayWidth = width * 0.8;
