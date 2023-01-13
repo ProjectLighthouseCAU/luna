@@ -55,7 +55,14 @@ export function LoginScreen() {
               </Card.Body>
               <Card.Footer>
                 <Row justify="flex-end">
-                  <Button>Sign in</Button>
+                  <Button
+                    onPress={() => {
+                      // TODO: Authenticate
+                      window.location.href = '/home';
+                    }}
+                  >
+                    Sign in
+                  </Button>
                 </Row>
               </Card.Footer>
             </Card>
