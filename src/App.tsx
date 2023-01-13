@@ -3,6 +3,7 @@ import { WindowDimensionsContextProvider } from '@luna/contexts/WindowDimensions
 import { createTheme, NextUIProvider } from '@nextui-org/react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 
 const lightTheme = createTheme({
   type: 'light',
@@ -29,7 +30,9 @@ export function App() {
     >
       <NextUIProvider>
         <WindowDimensionsContextProvider>
-          <AppContainer />
+          <BrowserRouter>
+            <AppContainer />
+          </BrowserRouter>
         </WindowDimensionsContextProvider>
       </NextUIProvider>
     </NextThemesProvider>
