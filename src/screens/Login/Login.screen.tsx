@@ -3,21 +3,22 @@ import { LiveDisplay } from '@luna/views/LiveDisplay';
 import {
   Button,
   Card,
-  Col,
-  Container,
   Grid,
   Input,
   Row,
+  Spacer,
   Text,
 } from '@nextui-org/react';
 import React, { useContext } from 'react';
 
 export function LoginScreen() {
-  const { width, height } = useContext(WindowDimensionsContext);
+  const { width } = useContext(WindowDimensionsContext);
+  const isXs = width <= 650;
+  const isSm = width <= 960;
 
   return (
     <Grid.Container gap={4} justify="center" alignItems="center">
-      <Grid sm={6}>
+      <Grid>
         <Grid.Container justify="center" alignItems="center">
           <Grid>
             <Text h1>Project Lighthouse</Text>
@@ -27,18 +28,13 @@ export function LoginScreen() {
               </Card.Header>
               <Card.Divider />
               <Card.Body>
-                <Grid.Container gap={1}>
-                  <Grid xs={12}>
-                    <Input labelLeft="Username" css={{ width: '100%' }} />
-                  </Grid>
-                  <Grid xs={12}>
-                    <Input
-                      labelLeft="Password"
-                      type="password"
-                      css={{ width: '100%' }}
-                    />
-                  </Grid>
-                </Grid.Container>
+                <Input labelLeft="Username" css={{ width: '100%' }} />
+                <Spacer y={0.5} />
+                <Input
+                  labelLeft="Password"
+                  type="password"
+                  css={{ width: '100%' }}
+                />
               </Card.Body>
               <Card.Footer>
                 <Row justify="flex-end">
@@ -49,10 +45,8 @@ export function LoginScreen() {
           </Grid>
         </Grid.Container>
       </Grid>
-      <Grid sm={6}>
-        <Grid.Container justify="center" alignItems="center">
-          <LiveDisplay maxWidth={width} maxHeight={0.8 * height} />
-        </Grid.Container>
+      <Grid>
+        <LiveDisplay width={isXs ? width : isSm ? width * 0.75 : width / 2} />
       </Grid>
     </Grid.Container>
   );

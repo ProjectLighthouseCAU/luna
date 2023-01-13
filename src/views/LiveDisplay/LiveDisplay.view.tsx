@@ -3,18 +3,13 @@ import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import React from 'react';
 
 export interface LiveDisplayProps {
-  maxWidth: number;
-  maxHeight: number;
+  width?: number;
 }
 
-export function LiveDisplay({ maxWidth, maxHeight }: LiveDisplayProps) {
+export function LiveDisplay({ width }: LiveDisplayProps) {
   // TODO: Display live lighthouse display
 
   return (
-    <Display
-      maxWidth={maxWidth}
-      maxHeight={maxHeight}
-      frame={new Uint8Array(LIGHTHOUSE_FRAME_BYTES)}
-    />
+    <Display width={width} frame={new Uint8Array(LIGHTHOUSE_FRAME_BYTES)} />
   );
 }

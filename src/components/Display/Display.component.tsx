@@ -7,8 +7,7 @@ import {
 
 export interface DisplayProps {
   frame: Uint8Array;
-  maxWidth: number;
-  maxHeight: number;
+  width?: number;
   rows?: number;
   columns?: number;
   aspectRatio?: number;
@@ -18,8 +17,7 @@ export interface DisplayProps {
 
 export function Display({
   frame,
-  maxWidth,
-  maxHeight,
+  width: customWidth,
   rows = LIGHTHOUSE_ROWS,
   columns = LIGHTHOUSE_COLS,
   aspectRatio = 0.8634,
@@ -28,18 +26,18 @@ export function Display({
 }: DisplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Set up layout
-  const [width, height] =
-    maxHeight <= maxWidth
-      ? [aspectRatio * maxHeight, maxHeight]
-      : [maxWidth, maxWidth / aspectRatio];
-
   // Set up rendering
   useEffect(() => {
     console.log('Drawing display');
 
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
+
+    canvas.width = customWidth ?? canvas.width;
+    canvas.height = canvas.width / aspectRatio;
+
+    const width = canvas.width;
+    const height = canvas.height;
 
     const bezelWidth = relativeBezelWidth * width;
     const gutterWidth = relativeGutterWidth * width;
@@ -74,8 +72,8 @@ export function Display({
       }
     }
   }, [
-    width,
-    height,
+    customWidth,
+    aspectRatio,
     frame,
     rows,
     columns,
@@ -83,5 +81,5 @@ export function Display({
     relativeGutterWidth,
   ]);
 
-  return <canvas ref={canvasRef} width={width} height={height} />;
+  return <canvas ref={canvasRef} />;
 }
