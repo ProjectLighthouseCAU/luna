@@ -6,6 +6,7 @@ import { HomeScreen } from '@luna/screens/Home';
 import { NotFoundScreen } from '@luna/screens/NotFound';
 
 export function AppContainer() {
+  // TODO: Protect routes
   return (
     <Container>
       <Routes>
