@@ -4,25 +4,26 @@ import React from 'react';
 export function LoginCard() {
   return (
     <Card css={{ maxWidth: '400px' }}>
-      <Card.Header>Sign in to view and manage your displays</Card.Header>
-      <Card.Divider />
-      <Card.Body>
-        <Input labelLeft="Username" css={{ width: '100%' }} />
-        <Spacer y={0.5} />
-        <Input labelLeft="Password" type="password" css={{ width: '100%' }} />
-      </Card.Body>
-      <Card.Footer>
-        <Row justify="flex-end">
-          <Button
-            onPress={() => {
-              // TODO: Authenticate
-              window.location.href = '/home';
-            }}
-          >
-            Sign in
-          </Button>
-        </Row>
-      </Card.Footer>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          // TODO: Authenticate
+          window.location.href = '/home';
+        }}
+      >
+        <Card.Header>Sign in to view and manage your displays</Card.Header>
+        <Card.Divider />
+        <Card.Body>
+          <Input labelLeft="Username" css={{ width: '100%' }} />
+          <Spacer y={0.5} />
+          <Input labelLeft="Password" type="password" css={{ width: '100%' }} />
+        </Card.Body>
+        <Card.Footer>
+          <Row justify="flex-end">
+            <Button type="submit">Sign in</Button>
+          </Row>
+        </Card.Footer>
+      </form>
     </Card>
   );
 }
