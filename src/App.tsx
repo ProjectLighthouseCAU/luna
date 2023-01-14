@@ -2,13 +2,8 @@ import { AppContainer } from '@luna/AppContainer';
 import { AuthContextProvider } from '@luna/contexts/Auth';
 import { WindowDimensionsContextProvider } from '@luna/contexts/WindowDimensions';
 import { createTheme, NextUIProvider } from '@nextui-org/react';
-import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-
-const lightTheme = createTheme({
-  type: 'light',
-});
 
 const darkTheme = createTheme({
   type: 'dark',
@@ -24,20 +19,14 @@ const darkTheme = createTheme({
 
 export function App() {
   return (
-    <NextThemesProvider
-      defaultTheme="system"
-      attribute="class"
-      value={{ light: lightTheme.className, dark: darkTheme.className }}
-    >
-      <NextUIProvider>
-        <WindowDimensionsContextProvider>
-          <AuthContextProvider>
-            <BrowserRouter>
-              <AppContainer />
-            </BrowserRouter>
-          </AuthContextProvider>
-        </WindowDimensionsContextProvider>
-      </NextUIProvider>
-    </NextThemesProvider>
+    <NextUIProvider theme={darkTheme}>
+      <WindowDimensionsContextProvider>
+        <AuthContextProvider>
+          <BrowserRouter>
+            <AppContainer />
+          </BrowserRouter>
+        </AuthContextProvider>
+      </WindowDimensionsContextProvider>
+    </NextUIProvider>
   );
 }
