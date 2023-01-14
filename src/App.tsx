@@ -1,4 +1,5 @@
 import { AppContainer } from '@luna/AppContainer';
+import { AuthContextProvider } from '@luna/contexts/Auth';
 import { WindowDimensionsContextProvider } from '@luna/contexts/WindowDimensions';
 import { createTheme, NextUIProvider } from '@nextui-org/react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
@@ -30,9 +31,11 @@ export function App() {
     >
       <NextUIProvider>
         <WindowDimensionsContextProvider>
-          <BrowserRouter>
-            <AppContainer />
-          </BrowserRouter>
+          <AuthContextProvider>
+            <BrowserRouter>
+              <AppContainer />
+            </BrowserRouter>
+          </AuthContextProvider>
         </WindowDimensionsContextProvider>
       </NextUIProvider>
     </NextThemesProvider>
