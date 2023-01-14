@@ -1,7 +1,23 @@
-import { Display } from '@luna/components/Display';
-import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
+import { Grid } from '@nextui-org/react';
+import React from 'react';
+import { Outlet, Link } from 'react-router-dom';
 
 export function HomeScreen() {
-  // TODO
-  return <Display frame={new Uint8Array(LIGHTHOUSE_FRAME_BYTES)} />;
+  return (
+    <Grid.Container gap={4}>
+      <Grid>
+        <ul>
+          <li>
+            <Link to="admin">Admin</Link>
+          </li>
+          <li>
+            <Link to="displays">Displays</Link>
+          </li>
+        </ul>
+      </Grid>
+      <Grid>
+        <Outlet />
+      </Grid>
+    </Grid.Container>
+  );
 }
