@@ -1,14 +1,20 @@
+import { AuthContext } from '@luna/contexts/Auth';
 import { Button, Card, Input, Row, Spacer } from '@nextui-org/react';
-import React from 'react';
+import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export function LoginCard() {
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
+
   return (
     <Card css={{ maxWidth: '400px' }}>
       <form
         onSubmit={e => {
           e.preventDefault();
           // TODO: Authenticate
-          window.location.href = '/home';
+          auth.setToken('blub');
+          navigate('/displays');
         }}
       >
         <Card.Header>Sign in to view and manage your displays</Card.Header>
