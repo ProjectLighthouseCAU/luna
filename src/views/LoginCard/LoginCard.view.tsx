@@ -20,9 +20,18 @@ export function LoginCard() {
         <Card.Header>Sign in to view and manage your displays</Card.Header>
         <Card.Divider />
         <Card.Body>
-          <Input labelLeft="Username" css={{ width: '100%' }} />
+          <Input
+            labelLeft="Username"
+            aria-label="Username"
+            css={{ width: '100%' }}
+          />
           <Spacer y={0.5} />
-          <Input labelLeft="Password" type="password" css={{ width: '100%' }} />
+          <Input
+            labelLeft="Password"
+            aria-label="Password"
+            type="password"
+            css={{ width: '100%' }}
+          />
         </Card.Body>
         <Card.Footer>
           <Row justify="flex-end">
