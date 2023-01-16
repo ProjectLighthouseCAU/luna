@@ -1,3 +1,4 @@
+import { RouteLinks } from '@luna/components/RouteLinks';
 import { AuthContext } from '@luna/contexts/Auth';
 import { Divider } from '@nextui-org/react';
 import React, { useContext } from 'react';
@@ -8,14 +9,7 @@ export function Sidebar() {
 
   return (
     <>
-      <ul>
-        <li>
-          <Link to="admin">Admin</Link>
-        </li>
-        <li>
-          <Link to="displays">Displays</Link>
-        </li>
-      </ul>
+      <RouteLinks />
       <Divider />
       <ul>
         <li>
