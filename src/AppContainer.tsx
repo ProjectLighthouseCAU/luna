@@ -4,9 +4,8 @@ import { Container } from '@nextui-org/react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { HomeScreen } from '@luna/screens/Home';
 import { NotFoundScreen } from '@luna/screens/NotFound';
-import { Displays } from '@luna/views/Displays';
-import { Admin } from '@luna/views/Admin';
 import { AuthContext } from '@luna/contexts/Auth';
+import { ROUTE_TREE } from '@luna/routes';
 
 export function AppContainer() {
   const auth = useContext(AuthContext);
@@ -21,8 +20,9 @@ export function AppContainer() {
           }
         >
           <Route index element={<Navigate replace to="displays" />} />
-          <Route path="admin" element={<Admin />} />
-          <Route path="displays" element={<Displays />} />
+          {ROUTE_TREE.children.map(node => (
+            <Route path={node.path} element={node.element?.()} />
+          ))}
         </Route>
         <Route path="/login" element={<LoginScreen />} />
         <Route path="*" element={<NotFoundScreen />} />

@@ -7,7 +7,7 @@ export function RouteLinks() {
     <ul>
       {ROUTE_TREE.children.map(node => (
         <li>
-          <Link to={node.name}>{node.displayName}</Link>
+          <Link to={node.path}>{node.displayName}</Link>
         </li>
       ))}
     </ul>
