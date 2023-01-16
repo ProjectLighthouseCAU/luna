@@ -9,6 +9,8 @@ export interface RouteNode {
   children: RouteNode[];
 }
 
+// TODO: Add dynamicChildren to resolve RouteNode[] for the sidebar dynamically
+
 /** The app's internal routes as displayed in the sidebar. */
 export const ROUTE_TREE: RouteNode = {
   path: '',

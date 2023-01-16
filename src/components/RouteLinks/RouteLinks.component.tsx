@@ -1,14 +1,21 @@
-import { ROUTE_TREE } from '@luna/routes';
+import { RouteNode } from '@luna/routes';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export function RouteLinks() {
+interface RouteLinksParams {
+  node: RouteNode;
+}
+
+export function RouteLinks({ node }: RouteLinksParams) {
   return (
     <ul>
-      {ROUTE_TREE.children.map(node => (
-        <li>
-          <Link to={node.path}>{node.displayName}</Link>
-        </li>
+      {node.children.map(child => (
+        <>
+          <li>
+            <Link to={child.path}>{child.displayName}</Link>
+          </li>
+          {node.children.length > 0 ? <RouteLinks node={child} /> : null}
+        </>
       ))}
     </ul>
   );
