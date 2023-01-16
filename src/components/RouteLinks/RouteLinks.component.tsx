@@ -10,12 +10,13 @@ export function RouteLinks({ node }: RouteLinksParams) {
   return (
     <ul>
       {node.children.map(child => (
-        <>
-          <li>
-            <Link to={child.path}>{child.displayName}</Link>
-          </li>
+        <li key={child.path}>
+          <Link to={child.path}>
+            {child.icon?.()}
+            {child.displayName}
+          </Link>
           {node.children.length > 0 ? <RouteLinks node={child} /> : null}
-        </>
+        </li>
       ))}
     </ul>
   );

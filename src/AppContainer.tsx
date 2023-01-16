@@ -21,7 +21,11 @@ export function AppContainer() {
         >
           <Route index element={<Navigate replace to="displays" />} />
           {ROUTE_TREE.children.map(node => (
-            <Route path={node.path} element={node.element?.()} />
+            <Route
+              key={node.path}
+              path={node.path}
+              element={node.element?.()}
+            />
           ))}
         </Route>
         <Route path="/login" element={<LoginScreen />} />

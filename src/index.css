@@ -18,6 +18,12 @@ code {
     monospace;
 }
 
+a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 a.signout {
   color: red;
 }
