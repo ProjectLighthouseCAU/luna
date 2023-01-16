@@ -28,8 +28,6 @@ export function Display({
 
   // Set up rendering
   useEffect(() => {
-    console.log('Drawing display');
-
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
 
