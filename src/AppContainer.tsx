@@ -5,7 +5,15 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { HomeScreen } from '@luna/screens/Home';
 import { NotFoundScreen } from '@luna/screens/NotFound';
 import { AuthContext } from '@luna/contexts/Auth';
-import { ROUTE_TREE } from '@luna/routes';
+import { RouteNode, ROUTE_TREE } from '@luna/routes';
+
+function routerRoute(node: RouteNode) {
+  return (
+    <Route key={node.path} path={node.path} element={node.element?.()}>
+      {node.children.map(routerRoute)}
+    </Route>
+  );
+}
 
 export function AppContainer() {
   const auth = useContext(AuthContext);
@@ -20,13 +28,7 @@ export function AppContainer() {
           }
         >
           <Route index element={<Navigate replace to="displays" />} />
-          {ROUTE_TREE.children.map(node => (
-            <Route
-              key={node.path}
-              path={node.path}
-              element={node.element?.()}
-            />
-          ))}
+          {ROUTE_TREE.children.map(routerRoute)}
         </Route>
         <Route path="/login" element={<LoginScreen />} />
         <Route path="*" element={<NotFoundScreen />} />
