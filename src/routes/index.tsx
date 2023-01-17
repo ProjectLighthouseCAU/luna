@@ -8,10 +8,10 @@ import { Outlet } from 'react-router-dom';
 export interface RouteNode {
   path?: string;
   displayName?: string;
-  index?: true;
+  index?: RouteNode;
   element?: () => ReactNode;
   icon?: () => ReactNode;
-  children: RouteNode[];
+  children?: RouteNode[];
 }
 
 // TODO: Add 'resolve' function to resolve RouteNode[] for the sidebar dynamically
@@ -26,12 +26,10 @@ export const ROUTE_TREE: RouteNode = {
       displayName: 'Admin',
       element: () => <Outlet />,
       icon: () => <IconTower />,
+      index: {
+        element: () => <Admin />,
+      },
       children: [
-        {
-          index: true,
-          element: () => <Admin />,
-          children: [],
-        },
         {
           path: 'monitor',
           displayName: 'Monitor',
