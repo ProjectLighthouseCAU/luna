@@ -1,4 +1,5 @@
-import { lookupRouteNode, RouteNode, ROUTE_TREE } from '@luna/routes';
+import { ROUTE_TREE } from '@luna/routes';
+import { RouteNode, lookupRouteNode } from '@luna/types/RouteNode';
 import { useLocation } from 'react-router-dom';
 
 export function useRouteNode(): RouteNode | undefined {

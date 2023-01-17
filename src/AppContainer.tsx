@@ -5,7 +5,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { HomeScreen } from '@luna/screens/Home';
 import { NotFoundScreen } from '@luna/screens/NotFound';
 import { AuthContext } from '@luna/contexts/Auth';
-import { RouteNode, ROUTE_TREE } from '@luna/routes';
+import { ROUTE_TREE } from '@luna/routes';
+import { RouteNode } from '@luna/types/RouteNode';
 
 function routerRoute({
   node,

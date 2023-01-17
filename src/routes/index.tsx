@@ -1,20 +1,9 @@
-import { ReactNode } from 'react';
 import { Displays } from '@luna/views/Displays';
 import { Admin } from '@luna/views/Admin';
 import { IconActivity, IconBuildingLighthouse, IconTower } from '@tabler/icons';
 import { UnderConstruction } from '@luna/components/UnderConstruction';
 import { Outlet } from 'react-router-dom';
-
-export interface RouteNode {
-  path?: string;
-  displayName?: string;
-  index?: RouteNode;
-  element?: () => ReactNode;
-  icon?: () => ReactNode;
-  children?: RouteNode[];
-}
-
-// TODO: Add 'resolve' function to resolve RouteNode[] for the sidebar dynamically
+import { RouteNode } from '@luna/types/RouteNode';
 
 /** The app's internal routes as displayed in the sidebar. */
 export const ROUTE_TREE: RouteNode = {
@@ -48,19 +37,3 @@ export const ROUTE_TREE: RouteNode = {
     },
   ],
 };
-
-export function lookupRouteNode(
-  node: RouteNode,
-  path: string[]
-): RouteNode | undefined {
-  if (path.length > 0) {
-    if (node.path === path[0]) {
-      return lookupRouteNode(node, path.slice(1));
-    } else {
-      const child = node.children?.find(child => child.path === path[0]);
-      return child ? lookupRouteNode(child, path.slice(1)) : undefined;
-    }
-  } else {
-    return node;
-  }
-}
