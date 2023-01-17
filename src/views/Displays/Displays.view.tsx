@@ -7,10 +7,10 @@ export function Displays() {
   return (
     <Grid.Container>
       <Grid>
-        <Grid.Container>
+        <Grid.Container gap={1}>
           {[...new Array(10)].map(() => (
             <Grid xs={6} sm={4} md={2}>
-              <DisplayCard />
+              <DisplayCard username="Test" />
             </Grid>
           ))}
         </Grid.Container>
