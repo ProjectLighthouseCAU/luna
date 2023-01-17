@@ -1,4 +1,4 @@
-import { RouteLinks } from '@luna/components/RouteLinks';
+import { RouteLink } from '@luna/components/RouteLink';
 import { AuthContext } from '@luna/contexts/Auth';
 import { ROUTE_TREE } from '@luna/routes';
 import { Divider } from '@nextui-org/react';
@@ -10,7 +10,7 @@ export function Sidebar() {
 
   return (
     <>
-      <RouteLinks node={ROUTE_TREE} />
+      <RouteLink node={ROUTE_TREE} childrenOnly />
       <Divider />
       <ul>
         <li>
