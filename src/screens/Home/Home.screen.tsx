@@ -3,30 +3,37 @@ import { useRouteNode } from '@luna/hooks/RouteNode';
 import { Sidebar } from '@luna/views/Sidebar/Sidebar.view';
 import { Button, Container, Grid, Row, Text } from '@nextui-org/react';
 import { IconMenu2 } from '@tabler/icons';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
 export function HomeScreen() {
   const routeNode = useRouteNode();
   const breakpoint = useBreakpoint();
-  const compact = breakpoint <= Breakpoint.Sm;
+  const isCompact = breakpoint <= Breakpoint.Sm;
+  const route = useRouteNode();
+  const [isExpanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    setExpanded(false);
+  }, [route]);
 
   return (
     <Grid.Container gap={4}>
-      {!compact ? (
+      {!isCompact ? (
         <Grid>
           <Sidebar />
         </Grid>
       ) : null}
       <Grid>
         <Grid.Container alignItems="baseline">
-          {compact ? (
-            <Button light auto>
+          {isCompact ? (
+            <Button light auto onClick={() => setExpanded(!isExpanded)}>
               <IconMenu2 />
             </Button>
           ) : null}
           <Text h2>{routeNode?.displayName}</Text>
         </Grid.Container>
+        {isCompact && isExpanded ? <Sidebar /> : null}
         <Outlet />
       </Grid>
     </Grid.Container>
