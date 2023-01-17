@@ -7,12 +7,32 @@ import { NotFoundScreen } from '@luna/screens/NotFound';
 import { AuthContext } from '@luna/contexts/Auth';
 import { RouteNode, ROUTE_TREE } from '@luna/routes';
 
-function routerRoute(node: RouteNode) {
-  return (
-    <Route key={node.path} path={node.path} element={node.element?.()}>
-      {node.children.map(routerRoute)}
-    </Route>
-  );
+function routerRoute({
+  node,
+  keyPrefix = [],
+}: {
+  node: RouteNode;
+  keyPrefix?: string[];
+}) {
+  if (node.index) {
+    return (
+      <Route
+        index
+        key={[...keyPrefix, '_index'].join('/')}
+        path={node.path}
+        element={node.element?.()}
+      />
+    );
+  } else {
+    console.assert(node.path, 'Non-index routes cannot omit their path!');
+    return (
+      <Route key={node.path} path={node.path} element={node.element?.()}>
+        {node.children.map(node =>
+          routerRoute({ node, keyPrefix: [...keyPrefix, node.path!] })
+        )}
+      </Route>
+    );
+  }
 }
 
 export function AppContainer() {
@@ -28,7 +48,7 @@ export function AppContainer() {
           }
         >
           <Route index element={<Navigate replace to="displays" />} />
-          {ROUTE_TREE.children.map(routerRoute)}
+          {ROUTE_TREE.children.map(node => routerRoute({ node }))}
         </Route>
         <Route path="/login" element={<LoginScreen />} />
         <Route path="*" element={<NotFoundScreen />} />

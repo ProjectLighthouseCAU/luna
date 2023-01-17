@@ -17,7 +17,7 @@ export function RouteLink({
 }: RouteLinkParams) {
   return (
     <>
-      {!childrenOnly ? (
+      {!childrenOnly && !node.index ? (
         <Link to={[...linkPrefix, node.path].join('/')}>
           {node.icon?.()}
           {node.displayName}
@@ -27,11 +27,14 @@ export function RouteLink({
       (expandedPath.length > 0 && expandedPath[0] === node.path) ? (
         <ul>
           {node.children.map(child => (
-            <li key={child.path}>
+            <li key={child.index ? '_index' : child.path}>
               {node.children.length > 0 ? (
                 <RouteLink
                   node={child}
-                  linkPrefix={[...linkPrefix, node.path]}
+                  linkPrefix={[
+                    ...linkPrefix,
+                    ...(node.path ? [node.path] : []),
+                  ]}
                   expandedPath={expandedPath?.slice(1)}
                 />
               ) : null}
