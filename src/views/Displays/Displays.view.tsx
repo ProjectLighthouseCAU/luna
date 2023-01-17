@@ -1,4 +1,3 @@
-import { UnderConstruction } from '@luna/components/UnderConstruction';
 import { Pagination } from '@nextui-org/react';
 import React from 'react';
 
