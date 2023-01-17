@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import {
   LIGHTHOUSE_COLOR_CHANNELS,
   LIGHTHOUSE_COLS,
@@ -27,11 +27,12 @@ export function Display({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Set up rendering
-  useEffect(() => {
+  useLayoutEffect(() => {
     const canvas = canvasRef.current!;
+    const boundingWidth = canvasRef.current?.getBoundingClientRect().width;
     const ctx = canvas.getContext('2d')!;
 
-    canvas.width = customWidth ?? canvas.width;
+    canvas.width = customWidth ?? boundingWidth ?? canvas.width;
     canvas.height = canvas.width / aspectRatio;
 
     const width = canvas.width;
