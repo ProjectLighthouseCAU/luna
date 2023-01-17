@@ -8,9 +8,9 @@ export function Displays() {
     <Grid.Container>
       <Grid>
         <Grid.Container gap={1}>
-          {[...new Array(10)].map(() => (
-            <Grid xs={6} sm={4} md={2}>
-              <DisplayCard username="Test" />
+          {[...new Array(10)].map((_, i) => (
+            <Grid key={`${i}`} xs={6} sm={4} md={2}>
+              <DisplayCard username={`Test ${i}`} />
             </Grid>
           ))}
         </Grid.Container>
