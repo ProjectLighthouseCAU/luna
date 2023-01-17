@@ -48,3 +48,19 @@ export const ROUTE_TREE: RouteNode = {
     },
   ],
 };
+
+export function lookupRouteNode(
+  node: RouteNode,
+  path: string[]
+): RouteNode | undefined {
+  if (path.length > 0) {
+    if (node.path === path[0]) {
+      return lookupRouteNode(node, path.slice(1));
+    } else {
+      const child = node.children?.find(child => child.path === path[0]);
+      return child ? lookupRouteNode(child, path.slice(1)) : undefined;
+    }
+  } else {
+    return node;
+  }
+}
