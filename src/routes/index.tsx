@@ -1,6 +1,11 @@
 import { Displays } from '@luna/views/Displays';
 import { Admin } from '@luna/views/Admin';
-import { IconActivity, IconBuildingLighthouse, IconTower } from '@tabler/icons';
+import {
+  IconActivity,
+  IconBuildingLighthouse,
+  IconSettings,
+  IconTower,
+} from '@tabler/icons';
 import { UnderConstruction } from '@luna/components/UnderConstruction';
 import { Outlet } from 'react-router-dom';
 import { RouteNode } from '@luna/types/RouteNode';
@@ -25,6 +30,11 @@ export const ROUTE_TREE: RouteNode = {
           icon: () => <IconActivity />,
           element: () => <UnderConstruction />,
           children: [],
+        },
+        {
+          path: 'settings',
+          displayName: 'Settings',
+          icon: () => <IconSettings />,
         },
       ],
     },
