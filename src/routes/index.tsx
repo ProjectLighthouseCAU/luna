@@ -5,7 +5,7 @@ import {
   IconBuildingLighthouse,
   IconSettings,
   IconTower,
-} from '@tabler/icons';
+} from '@tabler/icons-react';
 import { UnderConstruction } from '@luna/components/UnderConstruction';
 import { Outlet } from 'react-router-dom';
 import { RouteNode } from '@luna/types/RouteNode';
