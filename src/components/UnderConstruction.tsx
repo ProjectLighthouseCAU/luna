@@ -1,6 +1,5 @@
-import { Text } from '@nextui-org/react';
 import React from 'react';
 
 export function UnderConstruction() {
-  return <Text>Under construction...</Text>;
+  return <div>Under construction...</div>;
 }

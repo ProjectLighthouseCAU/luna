@@ -2,7 +2,7 @@ import { WindowDimensionsContext } from '@luna/contexts/WindowDimensionsContext'
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { LiveDisplay } from '@luna/components/LiveDisplay';
 import { LoginCard } from '@luna/screens/login/LoginCard';
-import { Grid, Text } from '@nextui-org/react';
+import { Grid } from '@nextui-org/react';
 import { useContext } from 'react';
 
 export function LoginScreen() {
@@ -29,7 +29,7 @@ export function LoginScreen() {
       <Grid>
         <Grid.Container justify="center" alignItems="center">
           <Grid>
-            <Text h1>Project Lighthouse</Text>
+            <h1>Project Lighthouse</h1>
             <LoginCard />
           </Grid>
         </Grid.Container>

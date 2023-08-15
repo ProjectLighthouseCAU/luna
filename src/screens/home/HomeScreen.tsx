@@ -33,7 +33,7 @@ export function HomeScreen() {
                   <IconMenu2 />
                 </Button>
               ) : null}
-              <Text h2>{routeNode?.displayName}</Text>
+              <h2>{routeNode?.displayName}</h2>
             </Row>
             {isCompact && isExpanded ? <Sidebar /> : null}
             <Outlet />
