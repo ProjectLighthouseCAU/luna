@@ -1,4 +1,4 @@
-import { WindowDimensionsContext } from '@luna/contexts/WindowDimensions';
+import { WindowDimensionsContext } from '@luna/contexts/WindowDimensionsContext';
 import { useContext } from 'react';
 
 export enum Breakpoint {

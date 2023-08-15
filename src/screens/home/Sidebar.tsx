@@ -1,5 +1,5 @@
 import { RouteLink } from '@luna/components/RouteLink';
-import { AuthContext } from '@luna/contexts/Auth';
+import { AuthContext } from '@luna/contexts/AuthContext';
 import { ROUTE_TREE } from '@luna/routes';
 import { Divider, Grid } from '@nextui-org/react';
 import React, { useContext } from 'react';

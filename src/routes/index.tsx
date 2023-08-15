@@ -1,5 +1,5 @@
-import { Displays } from '@luna/views/Displays';
-import { Admin } from '@luna/views/Admin';
+import { Displays } from '@luna/screens/home/Displays';
+import { Admin } from '@luna/screens/home/Admin';
 import {
   IconActivity,
   IconBuildingLighthouse,

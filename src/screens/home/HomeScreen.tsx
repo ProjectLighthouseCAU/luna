@@ -1,6 +1,6 @@
-import { Breakpoint, useBreakpoint } from '@luna/hooks/Breakpoint';
-import { useRouteNode } from '@luna/hooks/RouteNode';
-import { Sidebar } from '@luna/views/Sidebar/Sidebar.view';
+import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
+import { useRouteNode } from '@luna/hooks/useRouteNode';
+import { Sidebar } from '@luna/screens/home/Sidebar';
 import { Button, Grid, Row, Text } from '@nextui-org/react';
 import { IconMenu2 } from '@tabler/icons';
 import React, { useEffect, useState } from 'react';

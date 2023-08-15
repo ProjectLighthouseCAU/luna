@@ -1,7 +1,7 @@
-import { WindowDimensionsContext } from '@luna/contexts/WindowDimensions';
-import { Breakpoint, useBreakpoint } from '@luna/hooks/Breakpoint';
-import { LiveDisplay } from '@luna/views/LiveDisplay';
-import { LoginCard } from '@luna/views/LoginCard';
+import { WindowDimensionsContext } from '@luna/contexts/WindowDimensionsContext';
+import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
+import { LiveDisplay } from '@luna/components/LiveDisplay';
+import { LoginCard } from '@luna/screens/login/LoginCard';
 import { Grid, Text } from '@nextui-org/react';
 import { useContext } from 'react';
 

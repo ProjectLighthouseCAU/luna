@@ -1,4 +1,4 @@
-import { DisplayCard } from '@luna/views/DisplayCard';
+import { DisplayCard } from '@luna/screens/home/DisplayCard';
 import { Grid, Pagination } from '@nextui-org/react';
 import React from 'react';
 

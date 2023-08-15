@@ -1,4 +1,4 @@
-import { AuthContext } from '@luna/contexts/Auth';
+import { AuthContext } from '@luna/contexts/AuthContext';
 import { Button, Card, Input, Row, Spacer } from '@nextui-org/react';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';

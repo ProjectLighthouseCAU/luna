@@ -1,6 +1,6 @@
 import { AppContainer } from '@luna/AppContainer';
-import { AuthContextProvider } from '@luna/contexts/Auth';
-import { WindowDimensionsContextProvider } from '@luna/contexts/WindowDimensions';
+import { AuthContextProvider } from '@luna/contexts/AuthContext';
+import { WindowDimensionsContextProvider } from '@luna/contexts/WindowDimensionsContext';
 import { createTheme, NextUIProvider } from '@nextui-org/react';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
