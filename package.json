@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@nextui-org/react": "^1.0.0-beta.11-dbg1",
+    "@nextui-org/react": "^2.0.19",
     "@stitches/react": "^1.2.8",
     "@tabler/icons-react": "^2.30.0",
     "@testing-library/jest-dom": "^6.0.0",
