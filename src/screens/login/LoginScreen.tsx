@@ -27,7 +27,7 @@ export function LoginScreen() {
     // TODO: Centered grid layout
     <div>
       <div>
-        <h1>Project Lighthouse</h1>
+        <h1 className="text-3xl font-bold">Project Lighthouse</h1>
         <LoginCard />
       </div>
       <LiveDisplay width={displayWidth} />
