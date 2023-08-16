@@ -7,7 +7,6 @@ import {
   CardHeader,
   Divider,
   Input,
-  Row,
   Spacer,
 } from '@nextui-org/react';
 import React, { useContext } from 'react';
@@ -44,9 +43,10 @@ export function LoginCard() {
           />
         </CardBody>
         <CardFooter>
-          <Row justify="flex-end">
+          {/* TODO: Right-aligned layout */}
+          <div>
             <Button type="submit">Sign in</Button>
-          </Row>
+          </div>
         </CardFooter>
       </form>
     </Card>
