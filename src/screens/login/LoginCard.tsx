@@ -1,5 +1,15 @@
 import { AuthContext } from '@luna/contexts/AuthContext';
-import { Button, Card, Input, Row, Spacer } from '@nextui-org/react';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+  Input,
+  Row,
+  Spacer,
+} from '@nextui-org/react';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +18,7 @@ export function LoginCard() {
   const navigate = useNavigate();
 
   return (
-    <Card css={{ maxWidth: '400px' }}>
+    <Card style={{ maxWidth: '400px' }}>
       <form
         onSubmit={e => {
           e.preventDefault();
@@ -17,27 +27,27 @@ export function LoginCard() {
           navigate('/displays');
         }}
       >
-        <Card.Header>Sign in to view and manage your displays</Card.Header>
-        <Card.Divider />
-        <Card.Body>
+        <CardHeader>Sign in to view and manage your displays</CardHeader>
+        <Divider />
+        <CardBody>
           <Input
-            labelLeft="Username"
+            label="Username"
             aria-label="Username"
-            css={{ width: '100%' }}
+            style={{ width: '100%' }}
           />
           <Spacer y={0.5} />
           <Input
-            labelLeft="Password"
+            label="Password"
             aria-label="Password"
             type="password"
-            css={{ width: '100%' }}
+            style={{ width: '100%' }}
           />
-        </Card.Body>
-        <Card.Footer>
+        </CardBody>
+        <CardFooter>
           <Row justify="flex-end">
             <Button type="submit">Sign in</Button>
           </Row>
-        </Card.Footer>
+        </CardFooter>
       </form>
     </Card>
   );
