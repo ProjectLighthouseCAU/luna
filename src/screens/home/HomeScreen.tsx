@@ -1,3 +1,4 @@
+import { Logo } from '@luna/components/Logo';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useRouteNode } from '@luna/hooks/useRouteNode';
 import { Sidebar } from '@luna/screens/home/Sidebar';
@@ -19,7 +20,12 @@ export function HomeScreen() {
 
   return (
     <div className="flex flex-row p-6 space-x-6">
-      {!isCompact ? <Sidebar /> : null}
+      {!isCompact ? (
+        <div className="flex flex-col space-y-6 items-center">
+          <Logo className="w-24" />
+          <Sidebar className="w-full" />
+        </div>
+      ) : null}
       <div className="space-y-4">
         <div className="flex flex-row space-x-4">
           {isCompact ? (
