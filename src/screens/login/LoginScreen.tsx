@@ -26,6 +26,10 @@ export function LoginScreen() {
       } items-center ${isHorizontal ? 'space-x-6' : 'space-y-6'}`}
     >
       <div className="flex flex-col space-y-4 items-center">
+        <img
+          src={`${process.env.PUBLIC_URL}/logo-dark.svg`}
+          alt="The Project Lighthouse logo"
+        />
         <h1 className="text-3xl font-bold">Project Lighthouse</h1>
         <LoginCard />
       </div>
