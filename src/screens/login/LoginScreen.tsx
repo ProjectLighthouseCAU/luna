@@ -25,12 +25,15 @@ export function LoginScreen() {
         isHorizontal ? 'flex-row justify-center' : 'flex-col mt-4'
       } items-center ${isHorizontal ? 'space-x-6' : 'space-y-6'}`}
     >
-      <div className="flex flex-col space-y-4 items-center">
-        <img
-          src={`${process.env.PUBLIC_URL}/logo-dark.svg`}
-          alt="The Project Lighthouse logo"
-        />
-        <h1 className="text-3xl font-bold">Project Lighthouse</h1>
+      <div className="flex flex-col space-y-8 items-center">
+        {isHorizontal ? (
+          <img
+            src={`${process.env.PUBLIC_URL}/logo-dark.svg`}
+            alt="The Project Lighthouse logo"
+            className="w-48"
+          />
+        ) : null}
+        <h1 className="text-4xl font-bold">Project Lighthouse</h1>
         <LoginCard />
       </div>
       <LiveDisplay width={displayWidth} />

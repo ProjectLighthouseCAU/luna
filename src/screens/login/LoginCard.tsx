@@ -3,11 +3,9 @@ import {
   Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   Divider,
   Input,
-  Spacer,
 } from '@nextui-org/react';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +15,7 @@ export function LoginCard() {
   const navigate = useNavigate();
 
   return (
-    <Card style={{ maxWidth: '400px' }}>
+    <Card className="w-full">
       <form
         onSubmit={e => {
           e.preventDefault();
@@ -28,26 +26,18 @@ export function LoginCard() {
       >
         <CardHeader>Sign in to view and manage your displays</CardHeader>
         <Divider />
-        <CardBody>
-          <Input
-            label="Username"
-            aria-label="Username"
-            style={{ width: '100%' }}
-          />
-          <Spacer y={0.5} />
-          <Input
-            label="Password"
-            aria-label="Password"
-            type="password"
-            style={{ width: '100%' }}
-          />
-        </CardBody>
-        <CardFooter>
-          {/* TODO: Right-aligned layout */}
-          <div>
-            <Button type="submit">Sign in</Button>
+        <CardBody className="w-full space-y-6">
+          <div className="space-y-2">
+            <Input size="sm" label="Username" aria-label="Username" />
+            <Input
+              size="sm"
+              label="Password"
+              aria-label="Password"
+              type="password"
+            />
           </div>
-        </CardFooter>
+          <Button type="submit">Sign in</Button>
+        </CardBody>
       </form>
     </Card>
   );
