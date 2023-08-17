@@ -18,17 +18,16 @@ export function HomeScreen() {
   }, [route]);
 
   return (
-    // TODO: Grid layout
-    <div>
+    <div className="flex flex-row p-6 space-x-6">
       {!isCompact ? <Sidebar /> : null}
-      <div>
-        <div>
+      <div className="space-y-4">
+        <div className="flex flex-row space-x-4">
           {isCompact ? (
             <Button onPress={() => setExpanded(!isExpanded)}>
               <IconMenu2 />
             </Button>
           ) : null}
-          <h2>{routeNode?.displayName}</h2>
+          <h2 className="text-3xl">{routeNode?.displayName}</h2>
         </div>
         {isCompact && isExpanded ? <Sidebar /> : null}
         <Outlet />

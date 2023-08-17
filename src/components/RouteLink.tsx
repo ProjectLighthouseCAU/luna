@@ -6,6 +6,7 @@ interface RouteLinkParams {
   childrenOnly?: boolean;
   linkPrefix?: string[];
   expandedPath?: string[];
+  className?: string;
 }
 
 export function RouteLink({
@@ -13,9 +14,10 @@ export function RouteLink({
   childrenOnly = false,
   linkPrefix = [],
   expandedPath,
+  className,
 }: RouteLinkParams) {
   return (
-    <>
+    <div className={className}>
       {!childrenOnly ? (
         <Link to={[...linkPrefix, node.path].join('/')}>
           {node.icon?.()}
@@ -31,11 +33,12 @@ export function RouteLink({
                 node={child}
                 linkPrefix={[...linkPrefix, ...(node.path ? [node.path] : [])]}
                 expandedPath={expandedPath?.slice(1)}
+                className={`space-y-3 ${childrenOnly ? '' : 'ml-4'}`}
               />
             </li>
           ))}
         </ul>
       ) : null}
-    </>
+    </div>
   );
 }

@@ -9,8 +9,7 @@ export function Sidebar() {
   const auth = useContext(AuthContext);
 
   return (
-    // TODO: Grid layout
-    <div>
+    <div className="flex flex-col space-y-4">
       <RouteLink node={ROUTE_TREE} childrenOnly />
       <Divider />
       <ul>
