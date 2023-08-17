@@ -3,28 +3,28 @@ import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { LiveDisplay } from '@luna/components/LiveDisplay';
 import { LoginCard } from '@luna/screens/login/LoginCard';
 import { useContext } from 'react';
+import { DISPLAY_ASPECT_RATIO } from '@luna/components/Display';
 
 export function LoginScreen() {
-  const { width } = useContext(WindowDimensionsContext);
+  const { width, height } = useContext(WindowDimensionsContext);
   const breakpoint = useBreakpoint();
 
-  let displayWidth: number;
-  switch (breakpoint) {
-    case Breakpoint.Xs:
-    case Breakpoint.Sm:
-    case Breakpoint.Md:
-      displayWidth = width * 0.8;
-      break;
-    case Breakpoint.Lg:
-      displayWidth = width / 2;
-      break;
-    default:
-      displayWidth = Breakpoint.Xl / 2;
-      break;
-  }
+  const factor: number = 0.9;
+  const maxWidth = Breakpoint.Md;
+  const maxHeight = maxWidth / DISPLAY_ASPECT_RATIO;
+
+  const isHorizontal = breakpoint >= Breakpoint.Lg && height > 600;
+  const displayWidth: number =
+    isHorizontal && height < maxHeight
+      ? height * DISPLAY_ASPECT_RATIO * factor
+      : Math.min(width, maxWidth) * factor;
 
   return (
-    <div className="h-full flex justify-center items-center space-x-4">
+    <div
+      className={`h-full flex ${
+        isHorizontal ? 'flex-row justify-center' : 'flex-col mt-4'
+      } items-center ${isHorizontal ? 'space-x-6' : 'space-y-6'}`}
+    >
       <div className="flex flex-col space-y-4 items-center">
         <h1 className="text-3xl font-bold">Project Lighthouse</h1>
         <LoginCard />

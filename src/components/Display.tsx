@@ -5,6 +5,8 @@ import {
   LIGHTHOUSE_ROWS,
 } from 'nighthouse/browser';
 
+export const DISPLAY_ASPECT_RATIO = 0.8634;
+
 export interface DisplayProps {
   frame: Uint8Array;
   width?: number;
@@ -20,7 +22,7 @@ export function Display({
   width: customWidth,
   rows = LIGHTHOUSE_ROWS,
   columns = LIGHTHOUSE_COLS,
-  aspectRatio = 0.8634,
+  aspectRatio = DISPLAY_ASPECT_RATIO,
   relativeBezelWidth = 0.0183,
   relativeGutterWidth = 0.0064,
 }: DisplayProps) {
