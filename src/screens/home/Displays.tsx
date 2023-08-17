@@ -1,21 +1,18 @@
 import { DisplayCard } from '@luna/screens/home/DisplayCard';
-import { Grid, Pagination } from '@nextui-org/react';
+import { Pagination } from '@nextui-org/react';
 import React from 'react';
 
 export function Displays() {
-  // TODO
   return (
-    <Grid.Container>
-      <Grid>
-        <Grid.Container gap={1}>
-          {[...new Array(10)].map((_, i) => (
-            <Grid key={`${i}`} xs={6} sm={4} md={2}>
-              <DisplayCard username={`Test ${i}`} />
-            </Grid>
-          ))}
-        </Grid.Container>
-        <Pagination total={20} initialPage={1} />
-      </Grid>
-    </Grid.Container>
+    <div className="flex flex-col space-y-4">
+      <div className="flex flex-wrap">
+        {[...new Array(10)].map((_, i) => (
+          <div key={`${i}`}>
+            <DisplayCard username={`Test ${i}`} />
+          </div>
+        ))}
+      </div>
+      <Pagination total={20} initialPage={1} />
+    </div>
   );
 }

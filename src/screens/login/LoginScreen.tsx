@@ -2,41 +2,41 @@ import { WindowDimensionsContext } from '@luna/contexts/WindowDimensionsContext'
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { LiveDisplay } from '@luna/components/LiveDisplay';
 import { LoginCard } from '@luna/screens/login/LoginCard';
-import { Grid, Text } from '@nextui-org/react';
 import { useContext } from 'react';
+import { DISPLAY_ASPECT_RATIO } from '@luna/components/Display';
 
 export function LoginScreen() {
-  const { width } = useContext(WindowDimensionsContext);
+  const { width, height } = useContext(WindowDimensionsContext);
   const breakpoint = useBreakpoint();
 
-  let displayWidth: number;
-  switch (breakpoint) {
-    case Breakpoint.Xs:
-    case Breakpoint.Sm:
-    case Breakpoint.Md:
-      displayWidth = width * 0.8;
-      break;
-    case Breakpoint.Lg:
-      displayWidth = width / 2;
-      break;
-    default:
-      displayWidth = Breakpoint.Xl / 2;
-      break;
-  }
+  const factor: number = 0.9;
+  const maxWidth = Breakpoint.Md;
+  const maxHeight = maxWidth / DISPLAY_ASPECT_RATIO;
+
+  const isHorizontal = breakpoint >= Breakpoint.Lg && height > 600;
+  const displayWidth: number =
+    isHorizontal && height < maxHeight
+      ? height * DISPLAY_ASPECT_RATIO * factor
+      : Math.min(width, maxWidth) * factor;
 
   return (
-    <Grid.Container gap={4} justify="center" alignItems="center">
-      <Grid>
-        <Grid.Container justify="center" alignItems="center">
-          <Grid>
-            <Text h1>Project Lighthouse</Text>
-            <LoginCard />
-          </Grid>
-        </Grid.Container>
-      </Grid>
-      <Grid>
-        <LiveDisplay width={displayWidth} />
-      </Grid>
-    </Grid.Container>
+    <div
+      className={`h-full flex ${
+        isHorizontal ? 'flex-row justify-center' : 'flex-col mt-4'
+      } items-center ${isHorizontal ? 'space-x-6' : 'space-y-6'}`}
+    >
+      <div className="flex flex-col space-y-8 items-center">
+        {isHorizontal ? (
+          <img
+            src={`${process.env.PUBLIC_URL}/logo-dark.svg`}
+            alt="The Project Lighthouse logo"
+            className="w-48"
+          />
+        ) : null}
+        <h1 className="text-4xl font-bold">Project Lighthouse</h1>
+        <LoginCard />
+      </div>
+      <LiveDisplay width={displayWidth} />
+    </div>
   );
 }

@@ -2,11 +2,13 @@ import { WindowDimensionsContext } from '@luna/contexts/WindowDimensionsContext'
 import { useContext } from 'react';
 
 export enum Breakpoint {
+  // Source: https://tailwindcss.com/docs/responsive-design
   Xs = 0,
-  Sm = 650,
-  Md = 960,
-  Lg = 1280,
-  Xl = 1400,
+  Sm = 640,
+  Md = 758,
+  Lg = 1024,
+  Xl = 1280,
+  TwoXl = 1536,
 }
 
 export function useBreakpoint(): Breakpoint {

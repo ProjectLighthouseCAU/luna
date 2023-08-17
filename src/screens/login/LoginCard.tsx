@@ -1,5 +1,12 @@
 import { AuthContext } from '@luna/contexts/AuthContext';
-import { Button, Card, Input, Row, Spacer } from '@nextui-org/react';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Input,
+} from '@nextui-org/react';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +15,7 @@ export function LoginCard() {
   const navigate = useNavigate();
 
   return (
-    <Card css={{ maxWidth: '400px' }}>
+    <Card className="w-full">
       <form
         onSubmit={e => {
           e.preventDefault();
@@ -17,27 +24,20 @@ export function LoginCard() {
           navigate('/displays');
         }}
       >
-        <Card.Header>Sign in to view and manage your displays</Card.Header>
-        <Card.Divider />
-        <Card.Body>
-          <Input
-            labelLeft="Username"
-            aria-label="Username"
-            css={{ width: '100%' }}
-          />
-          <Spacer y={0.5} />
-          <Input
-            labelLeft="Password"
-            aria-label="Password"
-            type="password"
-            css={{ width: '100%' }}
-          />
-        </Card.Body>
-        <Card.Footer>
-          <Row justify="flex-end">
-            <Button type="submit">Sign in</Button>
-          </Row>
-        </Card.Footer>
+        <CardHeader>Sign in to view and manage your displays</CardHeader>
+        <Divider />
+        <CardBody className="w-full space-y-6">
+          <div className="space-y-2">
+            <Input size="sm" label="Username" aria-label="Username" />
+            <Input
+              size="sm"
+              label="Password"
+              aria-label="Password"
+              type="password"
+            />
+          </div>
+          <Button type="submit">Sign in</Button>
+        </CardBody>
       </form>
     </Card>
   );

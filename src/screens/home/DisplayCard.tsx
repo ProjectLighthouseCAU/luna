@@ -1,5 +1,5 @@
 import { Display } from '@luna/components/Display';
-import { Card } from '@nextui-org/react';
+import { Card, CardFooter } from '@nextui-org/react';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import React from 'react';
 
@@ -13,7 +13,7 @@ export function DisplayCard({ username }: DisplayCardProps) {
   return (
     <Card>
       <Display frame={frame} />
-      <Card.Footer>{username}</Card.Footer>
+      <CardFooter>{username}</CardFooter>
     </Card>
   );
 }

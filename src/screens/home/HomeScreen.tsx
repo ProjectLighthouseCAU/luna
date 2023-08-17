@@ -1,7 +1,7 @@
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useRouteNode } from '@luna/hooks/useRouteNode';
 import { Sidebar } from '@luna/screens/home/Sidebar';
-import { Button, Grid, Row, Text } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import { IconMenu2 } from '@tabler/icons-react';
 import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -18,28 +18,20 @@ export function HomeScreen() {
   }, [route]);
 
   return (
-    <Grid.Container gap={4}>
-      {!isCompact ? (
-        <Grid sm={2}>
-          <Sidebar />
-        </Grid>
-      ) : null}
-      <Grid sm={10}>
-        <Grid.Container>
-          <Grid>
-            <Row align="baseline">
-              {isCompact ? (
-                <Button light auto onPress={() => setExpanded(!isExpanded)}>
-                  <IconMenu2 />
-                </Button>
-              ) : null}
-              <Text h2>{routeNode?.displayName}</Text>
-            </Row>
-            {isCompact && isExpanded ? <Sidebar /> : null}
-            <Outlet />
-          </Grid>
-        </Grid.Container>
-      </Grid>
-    </Grid.Container>
+    <div className="flex flex-row p-6 space-x-6">
+      {!isCompact ? <Sidebar /> : null}
+      <div className="space-y-4">
+        <div className="flex flex-row space-x-4">
+          {isCompact ? (
+            <Button onPress={() => setExpanded(!isExpanded)}>
+              <IconMenu2 />
+            </Button>
+          ) : null}
+          <h2 className="text-3xl">{routeNode?.displayName}</h2>
+        </div>
+        {isCompact && isExpanded ? <Sidebar /> : null}
+        <Outlet />
+      </div>
+    </div>
   );
 }
