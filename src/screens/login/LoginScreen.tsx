@@ -24,9 +24,8 @@ export function LoginScreen() {
   }
 
   return (
-    // TODO: Centered grid layout
-    <div>
-      <div>
+    <div className="h-full flex justify-center items-center space-x-4">
+      <div className="flex flex-col space-y-4 items-center">
         <h1 className="text-3xl font-bold">Project Lighthouse</h1>
         <LoginCard />
       </div>

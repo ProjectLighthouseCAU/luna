@@ -34,16 +34,20 @@ export function AppContainer() {
   const auth = useContext(AuthContext);
 
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={auth.token ? <HomeScreen /> : <Navigate replace to="login" />}
-      >
-        <Route index element={<Navigate replace to="displays" />} />
-        {ROUTE_TREE.children?.map(node => routerRoute({ node }))}
-      </Route>
-      <Route path="/login" element={<LoginScreen />} />
-      <Route path="*" element={<NotFoundScreen />} />
-    </Routes>
+    <div className="h-screen">
+      <Routes>
+        <Route
+          path="/"
+          element={
+            auth.token ? <HomeScreen /> : <Navigate replace to="login" />
+          }
+        >
+          <Route index element={<Navigate replace to="displays" />} />
+          {ROUTE_TREE.children?.map(node => routerRoute({ node }))}
+        </Route>
+        <Route path="/login" element={<LoginScreen />} />
+        <Route path="*" element={<NotFoundScreen />} />
+      </Routes>
+    </div>
   );
 }
