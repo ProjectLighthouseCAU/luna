@@ -4,6 +4,7 @@ import { LiveDisplay } from '@luna/components/LiveDisplay';
 import { LoginCard } from '@luna/screens/login/LoginCard';
 import { useContext } from 'react';
 import { DISPLAY_ASPECT_RATIO } from '@luna/components/Display';
+import { Logo } from '@luna/components/Logo';
 
 export function LoginScreen() {
   const { width, height } = useContext(WindowDimensionsContext);
@@ -26,13 +27,7 @@ export function LoginScreen() {
       } items-center ${isHorizontal ? 'space-x-6' : 'space-y-6'}`}
     >
       <div className="flex flex-col space-y-8 items-center">
-        {isHorizontal ? (
-          <img
-            src={`${process.env.PUBLIC_URL}/logo-dark.svg`}
-            alt="The Project Lighthouse logo"
-            className="w-48"
-          />
-        ) : null}
+        {isHorizontal ? <Logo /> : null}
         <h1 className="text-4xl font-bold">Project Lighthouse</h1>
         <LoginCard />
       </div>
