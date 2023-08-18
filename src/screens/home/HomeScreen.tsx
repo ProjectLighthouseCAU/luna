@@ -18,7 +18,9 @@ export function HomeScreen() {
   }, [route]);
 
   return (
-    <div className="flex flex-row p-6 space-x-6">
+    <div
+      className={`flex ${isCompact ? 'flex-col' : 'flex-row space-x-6'} p-6`}
+    >
       {!isCompact ? <Sidebar /> : null}
       <div className="space-y-4">
         <div className="flex flex-row space-x-4">
