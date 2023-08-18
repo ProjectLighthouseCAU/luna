@@ -23,7 +23,7 @@ export function HomeScreen() {
       <div className="space-y-4">
         <div className="flex flex-row space-x-4">
           {isCompact ? (
-            <Button onPress={() => setExpanded(!isExpanded)}>
+            <Button isIconOnly onPress={() => setExpanded(!isExpanded)}>
               <IconMenu2 />
             </Button>
           ) : null}
