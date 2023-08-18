@@ -27,10 +27,6 @@ a {
   gap: 10px;
 }
 
-a.signout {
-  color: red;
-}
-
 a:hover {
   opacity: 0.9;
 }

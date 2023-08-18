@@ -20,7 +20,7 @@ export function Sidebar() {
               auth.setToken();
             }}
             to="/login"
-            className="signout"
+            className="text-danger"
           >
             Sign out
           </Link>
