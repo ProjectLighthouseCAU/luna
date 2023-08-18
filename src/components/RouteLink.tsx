@@ -22,7 +22,7 @@ export function RouteLink({
         <NavLink
           to={[...linkPrefix, node.path].join('/')}
           className={({ isActive }) =>
-            `${isActive ? 'bg-gray-800' : ''} px-2 py-1.5 rounded`
+            `${isActive ? 'bg-primary text-white' : ''} px-2 py-1.5 rounded`
           }
         >
           {node.icon?.()}
