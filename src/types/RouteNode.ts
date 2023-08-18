@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 export interface RouteNode {
-  path?: string;
+  path: string;
   displayName?: string;
   index?: RouteNode;
   element?: () => ReactNode;
@@ -19,7 +19,13 @@ export function lookupRouteNode(
     if (node.path === path[0]) {
       return lookupRouteNode(node, path.slice(1));
     } else {
-      const child = node.children?.find(child => child.path === path[0]);
+      const child = node.children?.find(
+        child =>
+          // TODO: Use a regex for matching this?
+          child.path === path[0] ||
+          child.path.startsWith(':') ||
+          child.path.startsWith('*')
+      );
       return child ? lookupRouteNode(child, path.slice(1)) : undefined;
     }
   } else {
