@@ -1,5 +1,5 @@
 import { RouteNode } from '@luna/types/RouteNode';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 interface RouteLinkParams {
   node: RouteNode;
@@ -19,10 +19,15 @@ export function RouteLink({
   return (
     <div className={className}>
       {!childrenOnly ? (
-        <Link to={[...linkPrefix, node.path].join('/')}>
+        <NavLink
+          to={[...linkPrefix, node.path].join('/')}
+          className={({ isActive }) =>
+            `${isActive ? 'bg-gray-800' : ''} px-2 py-1.5 rounded`
+          }
+        >
           {node.icon?.()}
           {node.displayName}
-        </Link>
+        </NavLink>
       ) : null}
       {expandedPath === undefined ||
       (expandedPath.length > 0 && expandedPath[0] === node.path) ? (
@@ -33,7 +38,7 @@ export function RouteLink({
                 node={child}
                 linkPrefix={[...linkPrefix, ...(node.path ? [node.path] : [])]}
                 expandedPath={expandedPath?.slice(1)}
-                className={`space-y-3 ${childrenOnly ? '' : 'ml-4'}`}
+                className={`space-y-1.5 ${childrenOnly ? '' : 'ml-4'}`}
               />
             </li>
           ))}
