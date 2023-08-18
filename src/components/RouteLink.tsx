@@ -21,6 +21,7 @@ export function RouteLink({
       {!childrenOnly ? (
         <NavLink
           to={[...linkPrefix, node.path].join('/')}
+          end
           className={({ isActive }) =>
             `${isActive ? 'bg-primary text-white' : ''} px-2 py-1.5 rounded`
           }
