@@ -20,9 +20,7 @@ export const ROUTE_TREE: RouteNode = {
       displayName: 'Admin',
       element: () => <Outlet />,
       icon: () => <IconTower />,
-      index: {
-        element: () => <Admin />,
-      },
+      index: () => <Admin />,
       children: [
         {
           path: 'monitor',

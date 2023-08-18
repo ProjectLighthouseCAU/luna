@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 export interface RouteNode {
   path: string;
   displayName?: string;
-  index?: RouteNode;
+  index?: () => ReactNode;
   element?: () => ReactNode;
   icon?: () => ReactNode;
   children?: RouteNode[];

@@ -23,7 +23,7 @@ function routerRoute({
       path={node.path}
       element={node.element?.()}
     >
-      {node.index ? <Route index element={node.index.element?.()} /> : null}
+      {node.index ? <Route index element={node.index()} /> : null}
       {node.children?.map(node =>
         routerRoute({ node, keyPrefix: childKeyPrefix })
       )}
