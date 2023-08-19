@@ -1,6 +1,5 @@
 import { ModelContext } from '@luna/contexts/ModelContext';
 import { DisplayCard } from '@luna/screens/home/DisplayCard';
-import { Pagination } from '@nextui-org/react';
 import React, { useContext } from 'react';
 
 export function Displays() {
@@ -17,7 +16,6 @@ export function Displays() {
             </div>
           ))}
       </div>
-      <Pagination total={20} initialPage={1} />
     </div>
   );
 }
