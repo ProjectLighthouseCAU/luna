@@ -26,12 +26,15 @@ export const router = createBrowserRouter([
         children: [
           {
             path: 'admin',
-            element: (
-              <HomeTitled title="Admin">
-                <Admin />
-              </HomeTitled>
-            ),
             children: [
+              {
+                index: true,
+                element: (
+                  <HomeTitled title="Admin">
+                    <Admin />
+                  </HomeTitled>
+                ),
+              },
               {
                 path: 'monitor',
                 element: (
