@@ -1,47 +1,50 @@
-import { Displays } from '@luna/screens/home/Displays';
-import { Admin } from '@luna/screens/home/Admin';
-import {
-  IconActivity,
-  IconBuildingLighthouse,
-  IconSettings,
-  IconTower,
-} from '@tabler/icons-react';
+import { AppContainer } from '@luna/AppContainer';
 import { UnderConstruction } from '@luna/components/UnderConstruction';
-import { Outlet } from 'react-router-dom';
-import { RouteNode } from '@luna/utils/RouteNode';
+import { Admin } from '@luna/screens/home/Admin';
+import { Displays } from '@luna/screens/home/Displays';
+import { HomeScreen } from '@luna/screens/home/HomeScreen';
+import { LoginScreen } from '@luna/screens/login/LoginScreen';
+import { RootScreen } from '@luna/screens/root/RootScreen';
+import { createBrowserRouter } from 'react-router-dom';
 
-/** The app's internal routes as displayed in the sidebar. */
-export const ROUTE_TREE: RouteNode = {
-  path: '',
-  displayName: 'Root',
-  children: [
-    {
-      path: 'admin',
-      displayName: 'Admin',
-      element: () => <Outlet />,
-      icon: () => <IconTower />,
-      index: () => <Admin />,
-      children: [
-        {
-          path: 'monitor',
-          displayName: 'Monitor',
-          icon: () => <IconActivity />,
-          element: () => <UnderConstruction />,
-          children: [],
-        },
-        {
-          path: 'settings',
-          displayName: 'Settings',
-          icon: () => <IconSettings />,
-        },
-      ],
-    },
-    {
-      path: 'displays',
-      displayName: 'Displays',
-      element: () => <Displays />,
-      icon: () => <IconBuildingLighthouse />,
-      children: [],
-    },
-  ],
-};
+export const router = createBrowserRouter([
+  {
+    element: <AppContainer />,
+    children: [
+      {
+        path: '/',
+        element: <RootScreen />,
+      },
+      {
+        path: '/login',
+        element: <LoginScreen />,
+      },
+      {
+        path: '/home',
+        element: <HomeScreen />,
+        children: [
+          {
+            path: 'admin',
+            element: <Admin />,
+            children: [
+              {
+                path: 'monitor',
+                element: <UnderConstruction />,
+                children: [],
+              },
+              {
+                path: 'settings',
+                element: <UnderConstruction />,
+              },
+            ],
+          },
+          {
+            path: 'displays',
+            element: <Displays />,
+            children: [],
+          },
+        ],
+      },
+    ],
+  },
+]);
