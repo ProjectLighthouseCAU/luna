@@ -21,13 +21,13 @@ export const WindowDimensionsContext = createContext<WindowDimensions>(
   getWindowDimensions()
 );
 
-interface WindowDimensionsContextProps {
+interface WindowDimensionsContextProviderProps {
   children: ReactNode;
 }
 
 export function WindowDimensionsContextProvider({
   children,
-}: WindowDimensionsContextProps) {
+}: WindowDimensionsContextProviderProps) {
   const [dimensions, setDimensions] = useState(getWindowDimensions());
 
   useLayoutEffect(() => {

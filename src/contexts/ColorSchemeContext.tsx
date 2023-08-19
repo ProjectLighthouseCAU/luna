@@ -8,13 +8,13 @@ export const ColorSchemeContext = createContext<ColorScheme>({
   isDark: false,
 });
 
-interface ColorSchemeContextProps {
+interface ColorSchemeContextProviderProps {
   children: ReactNode;
 }
 
 export function ColorSchemeContextProvider({
   children,
-}: ColorSchemeContextProps) {
+}: ColorSchemeContextProviderProps) {
   const [colorScheme, setColorScheme] = useState<ColorScheme>({
     isDark: false,
   });

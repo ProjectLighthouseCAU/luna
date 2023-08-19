@@ -9,11 +9,11 @@ export const AuthContext = createContext<Auth>({
   setToken: () => {},
 });
 
-interface AuthContextProps {
+interface AuthContextProviderProps {
   children: ReactNode;
 }
 
-export function AuthContextProvider({ children }: AuthContextProps) {
+export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [token, setToken] = useState<string>();
 
   return (
