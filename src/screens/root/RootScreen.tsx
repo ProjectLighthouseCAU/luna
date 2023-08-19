@@ -1,8 +1,9 @@
 import { AuthContext } from '@luna/contexts/AuthContext';
+import { HomeScreen } from '@luna/screens/home/HomeScreen';
+import { LoginScreen } from '@luna/screens/login/LoginScreen';
 import { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
 
 export function RootScreen() {
   const auth = useContext(AuthContext);
-  return <Navigate to={auth.token ? '/home' : '/login'} />;
+  return auth.token ? <HomeScreen /> : <LoginScreen />;
 }

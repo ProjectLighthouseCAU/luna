@@ -21,7 +21,7 @@ export function LoginCard() {
           e.preventDefault();
           // TODO: Authenticate
           auth.setToken('blub');
-          navigate('/home/displays');
+          navigate('/displays');
         }}
       >
         <CardHeader>Sign in to view and manage your displays</CardHeader>

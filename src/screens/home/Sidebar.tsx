@@ -15,22 +15,22 @@ export function Sidebar() {
 
   return (
     <div className="flex flex-col space-y-2">
-      <RouteLink icon={<IconTower />} name="Admin" path="/home/admin">
+      <RouteLink icon={<IconTower />} name="Admin" path="/admin">
         <RouteLink
           icon={<IconHeartRateMonitor />}
           name="Monitor"
-          path="/home/admin/monitor"
+          path="/admin/monitor"
         />
         <RouteLink
           icon={<IconSettings />}
           name="Settings"
-          path="/home/admin/settings"
+          path="/admin/settings"
         />
       </RouteLink>
       <RouteLink
         icon={<IconBuildingLighthouse />}
         name="Displays"
-        path="/home/displays"
+        path="/displays"
       />
       <Divider />
       <ul>
@@ -40,7 +40,7 @@ export function Sidebar() {
               // TODO: Actually sign out
               auth.setToken();
             }}
-            to="/login"
+            to="/"
             className="text-danger"
           >
             Sign out
