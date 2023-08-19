@@ -1,50 +1,34 @@
-import { RouteNode } from '@luna/utils/RouteNode';
+import { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 
 interface RouteLinkParams {
-  node: RouteNode;
-  childrenOnly?: boolean;
-  linkPrefix?: string[];
-  expandedPath?: string[];
+  icon: ReactNode;
+  name: string;
+  path: string;
   className?: string;
+  children?: ReactNode;
 }
 
 export function RouteLink({
-  node,
-  childrenOnly = false,
-  linkPrefix = [],
-  expandedPath,
+  icon,
+  name,
+  path,
   className,
+  children,
 }: RouteLinkParams) {
   return (
-    <div className={className}>
-      {!childrenOnly ? (
-        <NavLink
-          to={[...linkPrefix, node.path].join('/')}
-          end
-          className={({ isActive }) =>
-            `${isActive ? 'bg-primary text-white' : ''} px-2 py-1.5 rounded`
-          }
-        >
-          {node.icon?.()}
-          {node.displayName}
-        </NavLink>
-      ) : null}
-      {expandedPath === undefined ||
-      (expandedPath.length > 0 && expandedPath[0] === node.path) ? (
-        <ul>
-          {node.children?.map(child => (
-            <li key={child.path}>
-              <RouteLink
-                node={child}
-                linkPrefix={[...linkPrefix, ...(node.path ? [node.path] : [])]}
-                expandedPath={expandedPath?.slice(1)}
-                className={`space-y-1.5 ${childrenOnly ? '' : 'ml-4'}`}
-              />
-            </li>
-          ))}
-        </ul>
-      ) : null}
+    <div className={`flex flex-col space-y-1 ${className}`}>
+      <NavLink
+        to={path}
+        end
+        className={({ isActive }) =>
+          `${isActive ? 'bg-primary text-white' : ''} px-2 py-1.5 rounded`
+        }
+      >
+        {icon}
+        {name}
+      </NavLink>
+      <div className="ml-4">{children}</div>
     </div>
   );
 }

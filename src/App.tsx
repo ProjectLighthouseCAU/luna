@@ -1,10 +1,10 @@
-import { AppContainer } from '@luna/AppContainer';
 import { AuthContextProvider } from '@luna/contexts/AuthContext';
 import { ColorSchemeContextProvider } from '@luna/contexts/ColorSchemeContext';
 import { ModelContextProvider } from '@luna/contexts/ModelContext';
 import { WindowDimensionsContextProvider } from '@luna/contexts/WindowDimensionsContext';
+import { router } from '@luna/routes';
 import { NextUIProvider } from '@nextui-org/react';
-import { BrowserRouter } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 
 export function App() {
   return (
@@ -13,9 +13,7 @@ export function App() {
         <WindowDimensionsContextProvider>
           <AuthContextProvider>
             <ModelContextProvider>
-              <BrowserRouter>
-                <AppContainer />
-              </BrowserRouter>
+              <RouterProvider router={router} />
             </ModelContextProvider>
           </AuthContextProvider>
         </WindowDimensionsContextProvider>
