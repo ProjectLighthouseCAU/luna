@@ -3,7 +3,7 @@ import { UnderConstruction } from '@luna/components/UnderConstruction';
 import { Admin } from '@luna/screens/home/Admin';
 import { Displays } from '@luna/screens/home/Displays';
 import { HomeScreen } from '@luna/screens/home/HomeScreen';
-import { Titled } from '@luna/screens/home/Titled';
+import { HomeTitled } from '@luna/screens/home/HomeTitled';
 import { LoginScreen } from '@luna/screens/login/LoginScreen';
 import { RootScreen } from '@luna/screens/root/RootScreen';
 import { createBrowserRouter } from 'react-router-dom';
@@ -27,26 +27,26 @@ export const router = createBrowserRouter([
           {
             path: 'admin',
             element: (
-              <Titled title="Admin">
+              <HomeTitled title="Admin">
                 <Admin />
-              </Titled>
+              </HomeTitled>
             ),
             children: [
               {
                 path: 'monitor',
                 element: (
-                  <Titled title="Monitor">
+                  <HomeTitled title="Monitor">
                     <UnderConstruction />
-                  </Titled>
+                  </HomeTitled>
                 ),
                 children: [],
               },
               {
                 path: 'settings',
                 element: (
-                  <Titled title="Settings">
+                  <HomeTitled title="Settings">
                     <UnderConstruction />
-                  </Titled>
+                  </HomeTitled>
                 ),
               },
             ],
@@ -54,9 +54,9 @@ export const router = createBrowserRouter([
           {
             path: 'displays',
             element: (
-              <Titled title="Displays">
+              <HomeTitled title="Displays">
                 <Displays />
-              </Titled>
+              </HomeTitled>
             ),
             children: [],
           },
