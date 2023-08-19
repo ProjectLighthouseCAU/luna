@@ -5,7 +5,7 @@ import { HomeScreen } from '@luna/screens/home/HomeScreen';
 import { NotFoundScreen } from '@luna/screens/notfound/NotFoundScreen';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { ROUTE_TREE } from '@luna/routes';
-import { RouteNode } from '@luna/types/RouteNode';
+import { RouteNode } from '@luna/utils/RouteNode';
 import { ColorSchemeContext } from '@luna/contexts/ColorSchemeContext';
 
 function routerRoute({

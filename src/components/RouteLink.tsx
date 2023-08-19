@@ -1,4 +1,4 @@
-import { RouteNode } from '@luna/types/RouteNode';
+import { RouteNode } from '@luna/utils/RouteNode';
 import { NavLink } from 'react-router-dom';
 
 interface RouteLinkParams {

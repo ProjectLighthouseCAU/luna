@@ -8,7 +8,7 @@ import {
 } from '@tabler/icons-react';
 import { UnderConstruction } from '@luna/components/UnderConstruction';
 import { Outlet } from 'react-router-dom';
-import { RouteNode } from '@luna/types/RouteNode';
+import { RouteNode } from '@luna/utils/RouteNode';
 
 /** The app's internal routes as displayed in the sidebar. */
 export const ROUTE_TREE: RouteNode = {
