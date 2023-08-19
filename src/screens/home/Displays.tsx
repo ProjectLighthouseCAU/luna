@@ -1,16 +1,21 @@
+import { ModelContext } from '@luna/contexts/ModelContext';
 import { DisplayCard } from '@luna/screens/home/DisplayCard';
 import { Pagination } from '@nextui-org/react';
-import React from 'react';
+import React, { useContext } from 'react';
 
 export function Displays() {
+  const { userModels } = useContext(ModelContext);
+
   return (
     <div className="flex flex-col space-y-4">
       <div className="flex flex-wrap">
-        {[...new Array(10)].map((_, i) => (
-          <div key={`${i}`}>
-            <DisplayCard username={`Test ${i}`} />
-          </div>
-        ))}
+        {[...userModels.entries()]
+          .sort(([u1], [u2]) => u1.localeCompare(u2))
+          .map(([username, userModel], i) => (
+            <div key={`${i}`}>
+              <DisplayCard username={username} frame={userModel.frame} />
+            </div>
+          ))}
       </div>
       <Pagination total={20} initialPage={1} />
     </div>

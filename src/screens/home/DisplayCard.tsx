@@ -1,15 +1,13 @@
 import { Display } from '@luna/components/Display';
 import { Card, CardFooter } from '@nextui-org/react';
-import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import React from 'react';
 
 interface DisplayCardProps {
   username: string;
+  frame: Uint8Array;
 }
 
-export function DisplayCard({ username }: DisplayCardProps) {
-  const frame = new Uint8Array(LIGHTHOUSE_FRAME_BYTES);
-
+export function DisplayCard({ username, frame }: DisplayCardProps) {
   return (
     <Card>
       <Display frame={frame} />
