@@ -1,4 +1,4 @@
-import { LIGHTHOUSE_FRAME_BYTES, Lighthouse } from 'nighthouse/browser';
+import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import { ReactNode, createContext, useEffect, useState } from 'react';
 
 export interface UserModel {
@@ -19,7 +19,6 @@ interface ModelContextProviderProps {
 
 export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const [userModels, setUserModels] = useState(new Map<string, UserModel>());
-  const [client, setClient] = useState<Lighthouse>();
 
   // TODO: Use actual data
   useEffect(() => {
