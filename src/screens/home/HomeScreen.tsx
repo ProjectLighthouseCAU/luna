@@ -21,7 +21,7 @@ export function HomeScreen() {
       className={`flex ${isCompact ? 'flex-col' : 'flex-row space-x-6'} p-6`}
     >
       {!isCompact ? <Sidebar /> : null}
-      <div className="space-y-4">
+      <div className={`space-y-4 ${isCompact ? '' : 'grow'}`}>
         <div className="flex flex-row space-x-4">
           {isCompact ? (
             <Button isIconOnly onPress={() => setExpanded(!isExpanded)}>
