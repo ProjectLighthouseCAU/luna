@@ -8,11 +8,7 @@ export const adminRoute: RouteObject = {
   children: [
     {
       index: true,
-      element: (
-        <HomeContent title="Admin">
-          <AdminView />
-        </HomeContent>
-      ),
+      element: <AdminView />,
     },
     {
       path: 'monitor',

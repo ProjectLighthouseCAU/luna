@@ -1,6 +1,11 @@
+import { HomeContent } from '@luna/screens/home/HomeContent';
 import React from 'react';
 
 export function AdminView() {
   // TODO
-  return <div>Admin</div>;
+  return (
+    <HomeContent title="Admin">
+      <div>Admin</div>
+    </HomeContent>
+  );
 }
