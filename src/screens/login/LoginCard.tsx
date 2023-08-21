@@ -7,33 +7,44 @@ import {
   Divider,
   Input,
 } from '@nextui-org/react';
-import React, { useContext } from 'react';
+import React, { FormEvent, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function LoginCard() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const logIn = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      auth.client.logIn(username, password);
+      navigate('/displays');
+    },
+    [auth.client, navigate, username, password]
+  );
+
   return (
     <Card className="w-full">
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          // TODO: Authenticate
-          auth.setToken('blub');
-          navigate('/displays');
-        }}
-      >
+      <form onSubmit={logIn}>
         <CardHeader>Sign in to view and manage your displays</CardHeader>
         <Divider />
         <CardBody className="w-full space-y-6">
           <div className="space-y-2">
-            <Input size="sm" label="Username" aria-label="Username" />
+            <Input
+              size="sm"
+              label="Username"
+              aria-label="Username"
+              onValueChange={setUsername}
+            />
             <Input
               size="sm"
               label="Password"
               aria-label="Password"
               type="password"
+              onValueChange={setPassword}
             />
           </div>
           <Button type="submit">Sign in</Button>

@@ -36,10 +36,7 @@ export function Sidebar() {
       <ul>
         <li>
           <Link
-            onClick={() => {
-              // TODO: Actually sign out
-              auth.client.login('test', 'test');
-            }}
+            onClick={() => auth.client.logOut()}
             to="/"
             className="text-danger"
           >

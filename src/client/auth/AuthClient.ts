@@ -3,7 +3,10 @@
  */
 export interface AuthClient {
   /** Authenticates with the given credentials. */
-  login(username: string, password: string): void;
+  logIn(username: string, password: string): void;
+
+  /** Deauthenticates. */
+  logOut(): void;
 
   /** Fetches a list of public usernames. */
   getPublicUsers(): string[];

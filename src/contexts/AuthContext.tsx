@@ -6,13 +6,14 @@ import React, { createContext, ReactNode, useState } from 'react';
 
 export interface Auth {
   /** The username of the authenticated user. */
-  readonly username?: string;
+  readonly username: string | null;
 
   /** The client used to perform requests. */
   readonly client: AuthClient;
 }
 
 export const AuthContext = createContext<Auth>({
+  username: null,
   client: new NullAuthClient(),
 });
 
@@ -21,13 +22,18 @@ interface AuthContextProviderProps {
 }
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
-  const [username, setUsername] = useState<string>();
+  const [username, setUsername] = useState<string | null>(null);
   const clientRef = useInitRef(() => new LegacyAuthClient());
 
   const wrapperClient: AuthClient = {
-    login(username, password) {
+    logIn(username, password) {
       setUsername(username);
-      clientRef.current.login(username, password);
+      clientRef.current.logIn(username, password);
+    },
+
+    logOut() {
+      clientRef.current.logOut();
+      setUsername(null);
     },
 
     getPublicUsers() {
