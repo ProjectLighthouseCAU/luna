@@ -2,7 +2,7 @@ import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { Sidebar } from '@luna/screens/home/Sidebar';
 import { Button } from '@nextui-org/react';
 import { IconMenu2 } from '@tabler/icons-react';
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 export function HomeScreen() {
@@ -16,6 +16,8 @@ export function HomeScreen() {
     setExpanded(false);
   }, [location]);
 
+  const toggleExpanded = useCallback(() => setExpanded(e => !e), []);
+
   return (
     <div
       className={`flex ${isCompact ? 'flex-col' : 'flex-row space-x-6'} p-6`}
@@ -24,7 +26,7 @@ export function HomeScreen() {
       <div className={`space-y-4 ${isCompact ? '' : 'grow'}`}>
         <div className="flex flex-row space-x-4">
           {isCompact ? (
-            <Button isIconOnly onPress={() => setExpanded(!isExpanded)}>
+            <Button isIconOnly onPress={toggleExpanded}>
               <IconMenu2 />
             </Button>
           ) : null}
