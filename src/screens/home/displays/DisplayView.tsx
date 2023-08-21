@@ -1,7 +1,9 @@
 import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
 import { ModelContext } from '@luna/contexts/ModelContext';
+import { useEventListener } from '@luna/hooks/useEventListener';
 import { HomeContent } from '@luna/screens/home/HomeContent';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { throttle } from '@luna/utils/schedule';
+import { useContext, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 export function DisplayView() {
@@ -12,22 +14,21 @@ export function DisplayView() {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const userModel = userModels.get(username);
 
-  useEffect(() => {
-    const wrapper = wrapperRef.current!;
-    if (wrapper) {
-      const listener = () => {
-        setMaxSize({
-          width: wrapper.clientWidth,
-          height: wrapper.clientHeight,
-        });
-      };
-      listener();
-      window.addEventListener('resize', listener);
-      return () => window.removeEventListener('resize', listener);
-    } else {
-      return () => {};
-    }
-  }, []);
+  const onResize = useMemo(
+    () =>
+      throttle(() => {
+        const wrapper = wrapperRef.current;
+        if (wrapper) {
+          setMaxSize({
+            width: wrapper.clientWidth,
+            height: wrapper.clientHeight,
+          });
+        }
+      }, 100),
+    []
+  );
+
+  useEventListener(window, 'resize', onResize, { fireImmediately: true });
 
   const width = Math.min(maxSize.width, maxSize.height * DISPLAY_ASPECT_RATIO);
 

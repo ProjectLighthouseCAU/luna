@@ -1,9 +1,5 @@
-import React, {
-  createContext,
-  ReactNode,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import { useLayoutEventListener } from '@luna/hooks/useLayoutEventListener';
+import React, { createContext, ReactNode, useCallback, useState } from 'react';
 
 export interface WindowDimensions {
   readonly width: number;
@@ -28,15 +24,13 @@ interface WindowDimensionsContextProviderProps {
 export function WindowDimensionsContextProvider({
   children,
 }: WindowDimensionsContextProviderProps) {
-  const [dimensions, setDimensions] = useState(getWindowDimensions());
+  const [dimensions, setDimensions] = useState(getWindowDimensions);
 
-  useLayoutEffect(() => {
-    const updateDimensions = () => {
-      setDimensions(getWindowDimensions());
-    };
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
+  const updateDimensions = useCallback(() => {
+    setDimensions(getWindowDimensions());
   }, []);
+
+  useLayoutEventListener(window, 'resize', updateDimensions);
 
   return (
     <WindowDimensionsContext.Provider value={dimensions}>
