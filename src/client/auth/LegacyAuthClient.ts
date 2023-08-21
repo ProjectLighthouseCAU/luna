@@ -1,15 +1,15 @@
 import { AuthClient } from '@luna/client/auth/AuthClient';
 
 export class LegacyAuthClient implements AuthClient {
-  logIn(username: string, password: string): boolean {
+  async logIn(username: string, password: string): Promise<boolean> {
     return false;
   }
 
-  logOut(): boolean {
+  async logOut(): Promise<boolean> {
     return false;
   }
 
-  getPublicUsers(): string[] {
+  async getPublicUsers(): Promise<string[]> {
     return [];
   }
 }

@@ -1,15 +1,15 @@
 import { AuthClient } from '@luna/client/auth/AuthClient';
 
 export class MockAuthClient implements AuthClient {
-  logIn(username: string, password: string): boolean {
+  async logIn(username: string, password: string): Promise<boolean> {
     return true;
   }
 
-  logOut(): boolean {
+  async logOut(): Promise<boolean> {
     return true;
   }
 
-  getPublicUsers(): string[] {
+  async getPublicUsers(): Promise<string[]> {
     return ['Alice', 'Bob', 'Charles'];
   }
 }

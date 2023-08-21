@@ -23,19 +23,19 @@ interface AuthContextProviderProps {
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [username, setUsername] = useState<string | null>(null);
-  const clientRef = useInitRef(() => new MockAuthClient());
+  const clientRef = useInitRef<AuthClient>(() => new MockAuthClient());
 
   const wrapperClient: AuthClient = {
-    logIn(username, password) {
-      if (clientRef.current.logIn(username, password)) {
+    async logIn(username, password) {
+      if (await clientRef.current.logIn(username, password)) {
         setUsername(username);
         return true;
       }
       return false;
     },
 
-    logOut() {
-      if (clientRef.current.logOut()) {
+    async logOut() {
+      if (await clientRef.current.logOut()) {
         setUsername(null);
         return true;
       }

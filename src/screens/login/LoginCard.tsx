@@ -19,9 +19,9 @@ export function LoginCard() {
   const [errored, setErrored] = useState(false);
 
   const logIn = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
+    async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (auth.client.logIn(username, password)) {
+      if (await auth.client.logIn(username, password)) {
         navigate('/displays');
       } else {
         setErrored(true);

@@ -3,11 +3,11 @@
  */
 export interface AuthClient {
   /** Authenticates with the given credentials. Returns whether this succeeded. */
-  logIn(username: string, password: string): boolean;
+  logIn(username: string, password: string): Promise<boolean>;
 
   /** Deauthenticates. Returns whether this succeeded. */
-  logOut(): boolean;
+  logOut(): Promise<boolean>;
 
   /** Fetches a list of public usernames. */
-  getPublicUsers(): string[];
+  getPublicUsers(): Promise<string[]>;
 }
