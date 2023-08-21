@@ -5,5 +5,5 @@ import { useContext } from 'react';
 
 export function RootScreen() {
   const auth = useContext(AuthContext);
-  return auth.token ? <HomeScreen /> : <LoginScreen />;
+  return auth.username ? <HomeScreen /> : <LoginScreen />;
 }

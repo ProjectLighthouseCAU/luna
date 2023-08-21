@@ -38,7 +38,7 @@ export function Sidebar() {
           <Link
             onClick={() => {
               // TODO: Actually sign out
-              auth.setToken();
+              auth.client.login('test', 'test');
             }}
             to="/"
             className="text-danger"
