@@ -1,4 +1,4 @@
-import { Display } from '@luna/components/Display';
+import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
 import { ModelContext } from '@luna/contexts/ModelContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -8,19 +8,20 @@ export function DisplayView() {
   const { username } = useParams() as { username: string };
   const { userModels } = useContext(ModelContext);
 
-  const [width, setWidth] = useState(0);
+  const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const userModel = userModels.get(username);
-
-  // TODO: Polish the width logic (perhaps use height instead?) and add an event listener
 
   useEffect(() => {
     const wrapper = wrapperRef.current!;
     if (wrapper) {
-      setWidth(wrapper.clientWidth);
       const listener = () => {
-        setWidth(wrapper.clientWidth);
+        setMaxSize({
+          width: wrapper.clientWidth,
+          height: wrapper.clientHeight,
+        });
       };
+      listener();
       window.addEventListener('resize', listener);
       return () => window.removeEventListener('resize', listener);
     } else {
@@ -28,10 +29,12 @@ export function DisplayView() {
     }
   }, []);
 
+  const width = Math.min(maxSize.width, maxSize.height * DISPLAY_ASPECT_RATIO);
+
   return (
     <HomeContent title={`${username}'s Display`}>
       {userModel ? (
-        <div ref={wrapperRef} className="w-full">
+        <div ref={wrapperRef} className="h-full">
           <div className="absolute">
             <Display frame={userModel.frame} width={width} />
           </div>

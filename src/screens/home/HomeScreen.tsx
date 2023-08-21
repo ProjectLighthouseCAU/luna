@@ -20,10 +20,12 @@ export function HomeScreen() {
 
   return (
     <div
-      className={`flex ${isCompact ? 'flex-col' : 'flex-row space-x-6'} p-6`}
+      className={`h-screen flex ${
+        isCompact ? 'flex-col' : 'flex-row space-x-6'
+      } p-6`}
     >
       {!isCompact ? <Sidebar /> : null}
-      <div className={`space-y-4 ${isCompact ? '' : 'grow'}`}>
+      <div className="flex flex-col space-y-4 grow">
         <div className="flex flex-row space-x-4">
           {isCompact ? (
             <Button isIconOnly onPress={toggleExpanded}>
@@ -33,7 +35,9 @@ export function HomeScreen() {
           <h2 className="text-3xl">{title}</h2>
         </div>
         {isCompact && isExpanded ? <Sidebar /> : null}
-        <Outlet context={setTitle} />
+        <div className="grow">
+          <Outlet context={setTitle} />
+        </div>
       </div>
     </div>
   );
