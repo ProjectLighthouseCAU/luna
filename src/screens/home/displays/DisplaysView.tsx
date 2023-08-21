@@ -3,7 +3,7 @@ import { DisplayCard } from '@luna/components/DisplayCard';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
-export function Displays() {
+export function DisplaysView() {
   const { userModels } = useContext(ModelContext);
 
   return (

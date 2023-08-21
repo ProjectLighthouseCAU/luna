@@ -1,5 +1,5 @@
 import { UnderConstruction } from '@luna/components/UnderConstruction';
-import { Admin } from '@luna/screens/home/admin/Admin';
+import { AdminView } from '@luna/screens/home/admin/AdminView';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { RouteObject } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ export const adminRoute: RouteObject = {
       index: true,
       element: (
         <HomeContent title="Admin">
-          <Admin />
+          <AdminView />
         </HomeContent>
       ),
     },
