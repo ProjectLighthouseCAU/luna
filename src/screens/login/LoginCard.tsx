@@ -16,12 +16,15 @@ export function LoginCard() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errored, setErrored] = useState(false);
 
   const logIn = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (auth.client.logIn(username, password)) {
         navigate('/displays');
+      } else {
+        setErrored(true);
       }
     },
     [auth.client, navigate, username, password]
@@ -38,14 +41,23 @@ export function LoginCard() {
               size="sm"
               label="Username"
               aria-label="Username"
-              onValueChange={setUsername}
+              onValueChange={username => {
+                setUsername(username);
+                setErrored(false);
+              }}
+              validationState={errored ? 'invalid' : 'valid'}
             />
             <Input
               size="sm"
               label="Password"
               aria-label="Password"
               type="password"
-              onValueChange={setPassword}
+              onValueChange={password => {
+                setPassword(password);
+                setErrored(false);
+              }}
+              validationState={errored ? 'invalid' : 'valid'}
+              errorMessage={errored ? 'Could not sign in' : null}
             />
           </div>
           <Button type="submit">Sign in</Button>
