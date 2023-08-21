@@ -2,7 +2,10 @@ import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
 import { ModelContext } from '@luna/contexts/ModelContext';
 import { useEventListener } from '@luna/hooks/useEventListener';
 import { HomeContent } from '@luna/screens/home/HomeContent';
+import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { throttle } from '@luna/utils/schedule';
+import { Card, CardBody, CardHeader } from '@nextui-org/react';
+import { IconLink } from '@tabler/icons-react';
 import { useContext, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -35,10 +38,13 @@ export function DisplayView() {
   return (
     <HomeContent title={`${username}'s Display`}>
       {userModel ? (
-        <div ref={wrapperRef} className="flex flex-row justify-center h-full">
-          <div className="absolute">
-            <Display frame={userModel.frame} width={width} />
+        <div className="flex flex-row h-full">
+          <div ref={wrapperRef} className="grow flex flex-row justify-center">
+            <div className="absolute">
+              <Display frame={userModel.frame} width={width} />
+            </div>
           </div>
+          <DisplayInspector />
         </div>
       ) : (
         // TODO: Improve error message, perhaps add a link back to /displays?
