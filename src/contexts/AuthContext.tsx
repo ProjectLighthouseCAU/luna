@@ -27,13 +27,19 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   const wrapperClient: AuthClient = {
     logIn(username, password) {
-      setUsername(username);
-      clientRef.current.logIn(username, password);
+      if (clientRef.current.logIn(username, password)) {
+        setUsername(username);
+        return true;
+      }
+      return false;
     },
 
     logOut() {
-      clientRef.current.logOut();
-      setUsername(null);
+      if (clientRef.current.logOut()) {
+        setUsername(null);
+        return true;
+      }
+      return false;
     },
 
     getPublicUsers() {

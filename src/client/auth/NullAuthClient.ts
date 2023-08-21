@@ -1,12 +1,12 @@
 import { AuthClient } from '@luna/client/auth/AuthClient';
 
 export class NullAuthClient implements AuthClient {
-  logIn(username: string, password: string): void {
-    // Do nothing
+  logIn(username: string, password: string): boolean {
+    return false;
   }
 
-  logOut(): void {
-    // Do nothing
+  logOut(): boolean {
+    return false;
   }
 
   getPublicUsers(): string[] {

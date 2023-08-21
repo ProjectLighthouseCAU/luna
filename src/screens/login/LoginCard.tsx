@@ -20,8 +20,9 @@ export function LoginCard() {
   const logIn = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      auth.client.logIn(username, password);
-      navigate('/displays');
+      if (auth.client.logIn(username, password)) {
+        navigate('/displays');
+      }
     },
     [auth.client, navigate, username, password]
   );
