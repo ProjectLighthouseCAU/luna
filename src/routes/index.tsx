@@ -2,7 +2,7 @@ import { AppContainer } from '@luna/AppContainer';
 import { UnderConstruction } from '@luna/components/UnderConstruction';
 import { Admin } from '@luna/screens/home/Admin';
 import { Displays } from '@luna/screens/home/Displays';
-import { HomeTitled } from '@luna/screens/home/HomeTitled';
+import { HomeContent } from '@luna/screens/home/HomeContent';
 import { RootScreen } from '@luna/screens/root/RootScreen';
 import { createBrowserRouter } from 'react-router-dom';
 
@@ -20,26 +20,26 @@ export const router = createBrowserRouter([
               {
                 index: true,
                 element: (
-                  <HomeTitled title="Admin">
+                  <HomeContent title="Admin">
                     <Admin />
-                  </HomeTitled>
+                  </HomeContent>
                 ),
               },
               {
                 path: 'monitor',
                 element: (
-                  <HomeTitled title="Monitor">
+                  <HomeContent title="Monitor">
                     <UnderConstruction />
-                  </HomeTitled>
+                  </HomeContent>
                 ),
                 children: [],
               },
               {
                 path: 'settings',
                 element: (
-                  <HomeTitled title="Settings">
+                  <HomeContent title="Settings">
                     <UnderConstruction />
-                  </HomeTitled>
+                  </HomeContent>
                 ),
               },
             ],
@@ -47,11 +47,10 @@ export const router = createBrowserRouter([
           {
             path: 'displays',
             element: (
-              <HomeTitled title="Displays">
+              <HomeContent title="Displays">
                 <Displays />
-              </HomeTitled>
+              </HomeContent>
             ),
-            children: [],
           },
         ],
       },
