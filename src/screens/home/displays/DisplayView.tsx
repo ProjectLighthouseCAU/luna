@@ -35,7 +35,7 @@ export function DisplayView() {
   return (
     <HomeContent title={`${username}'s Display`}>
       {userModel ? (
-        <div ref={wrapperRef} className="h-full">
+        <div ref={wrapperRef} className="flex flex-row justify-center h-full">
           <div className="absolute">
             <Display frame={userModel.frame} width={width} />
           </div>
