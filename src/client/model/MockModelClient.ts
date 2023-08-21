@@ -1,5 +1,6 @@
 import { ModelClient } from '@luna/client/model/ModelClient';
 import { UserModel } from '@luna/model/UserModel';
+import { sleep } from '@luna/utils/async';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 
 export class MockModelClient implements ModelClient {
@@ -10,6 +11,7 @@ export class MockModelClient implements ModelClient {
           Math.floor(Math.random() * 255)
         ),
       };
+      await sleep(500);
     }
   }
 }

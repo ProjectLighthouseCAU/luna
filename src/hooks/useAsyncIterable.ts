@@ -11,7 +11,7 @@ export function useAsyncIterable<T>(
     (async () => {
       for await (const value of iterable()) {
         consumer(value);
-        if (!isCancelled) {
+        if (isCancelled) {
           break;
         }
       }
