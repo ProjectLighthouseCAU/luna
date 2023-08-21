@@ -24,7 +24,7 @@ export function DisplayView() {
             height: wrapper.clientHeight,
           });
         }
-      }, 100),
+      }, 50),
     []
   );
 
