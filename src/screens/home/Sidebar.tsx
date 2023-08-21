@@ -31,7 +31,15 @@ export function Sidebar() {
         icon={<IconBuildingLighthouse />}
         name="Displays"
         path="/displays"
-      />
+      >
+        {auth.username ? (
+          <RouteLink
+            icon={<IconBuildingLighthouse />}
+            name={`${auth.username} (me)`}
+            path={`/displays/${auth.username}`}
+          />
+        ) : null}
+      </RouteLink>
       <Divider />
       <ul>
         <li>

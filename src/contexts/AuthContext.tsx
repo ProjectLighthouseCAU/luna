@@ -25,6 +25,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [username, setUsername] = useState<string | null>(null);
   const clientRef = useInitRef<AuthClient>(() => new MockAuthClient());
 
+  // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
+
   const wrapperClient: AuthClient = {
     async logIn(username, password) {
       if (await clientRef.current.logIn(username, password)) {
