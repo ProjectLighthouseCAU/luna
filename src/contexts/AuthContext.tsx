@@ -1,5 +1,5 @@
 import { AuthClient } from '@luna/client/auth/AuthClient';
-import { LegacyAuthClient } from '@luna/client/auth/LegacyAuthClient';
+import { MockAuthClient } from '@luna/client/auth/MockAuthClient';
 import { NullAuthClient } from '@luna/client/auth/NullAuthClient';
 import { useInitRef } from '@luna/hooks/useInitRef';
 import React, { createContext, ReactNode, useState } from 'react';
@@ -23,7 +23,7 @@ interface AuthContextProviderProps {
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [username, setUsername] = useState<string | null>(null);
-  const clientRef = useInitRef(() => new LegacyAuthClient());
+  const clientRef = useInitRef(() => new MockAuthClient());
 
   const wrapperClient: AuthClient = {
     logIn(username, password) {
