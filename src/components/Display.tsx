@@ -34,8 +34,13 @@ export function Display({
     const boundingWidth = canvasRef.current?.getBoundingClientRect().width;
     const ctx = canvas.getContext('2d')!;
 
-    canvas.width = customWidth ?? boundingWidth ?? canvas.width;
+    const newWidth = customWidth ?? boundingWidth;
+    const newScaledWidth = newWidth ? newWidth * window.devicePixelRatio : null;
+
+    canvas.width = newScaledWidth ?? canvas.width;
     canvas.height = canvas.width / aspectRatio;
+
+    canvas.style.width = `${newWidth}px`;
 
     const width = canvas.width;
     const height = canvas.height;
