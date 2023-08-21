@@ -1,6 +1,7 @@
 import { ModelContext } from '@luna/contexts/ModelContext';
 import { DisplayCard } from '@luna/components/DisplayCard';
 import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 
 export function Displays() {
   const { userModels } = useContext(ModelContext);
@@ -12,7 +13,9 @@ export function Displays() {
           .sort(([u1], [u2]) => u1.localeCompare(u2))
           .map(([username, userModel], i) => (
             <div key={`${i}`}>
-              <DisplayCard username={username} frame={userModel.frame} />
+              <Link to={username}>
+                <DisplayCard username={username} frame={userModel.frame} />
+              </Link>
             </div>
           ))}
       </div>
