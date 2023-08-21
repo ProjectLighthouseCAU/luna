@@ -24,7 +24,11 @@ export function HomeScreen() {
         isCompact ? 'flex-col' : 'flex-row space-x-6'
       } p-6`}
     >
-      {!isCompact ? <Sidebar /> : null}
+      {!isCompact ? (
+        <div className="w-48">
+          <Sidebar />
+        </div>
+      ) : null}
       <div className="flex flex-col space-y-4 grow">
         <div className="flex flex-row space-x-4">
           {isCompact ? (
