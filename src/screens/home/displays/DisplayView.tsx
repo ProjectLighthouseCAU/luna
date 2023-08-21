@@ -32,7 +32,9 @@ export function DisplayView() {
     <HomeContent title={`${username}'s Display`}>
       {userModel ? (
         <div ref={wrapperRef} className="w-full">
-          <Display frame={userModel.frame} width={width} />
+          <div className="absolute">
+            <Display frame={userModel.frame} width={width} />
+          </div>
         </div>
       ) : (
         // TODO: Improve error message, perhaps add a link back to /displays?
