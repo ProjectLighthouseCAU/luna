@@ -1,5 +1,5 @@
 import { ModelContext } from '@luna/contexts/ModelContext';
-import { DisplayCard } from '@luna/screens/home/DisplayCard';
+import { DisplayCard } from '@luna/screens/home/displays/DisplayCard';
 import React, { useContext } from 'react';
 
 export function Displays() {

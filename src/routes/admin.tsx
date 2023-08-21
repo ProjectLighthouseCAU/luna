@@ -1,5 +1,5 @@
 import { UnderConstruction } from '@luna/components/UnderConstruction';
-import { Admin } from '@luna/screens/home/Admin';
+import { Admin } from '@luna/screens/home/admin/Admin';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { RouteObject } from 'react-router-dom';
 

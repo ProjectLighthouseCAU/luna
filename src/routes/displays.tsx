@@ -1,4 +1,4 @@
-import { Displays } from '@luna/screens/home/Displays';
+import { Displays } from '@luna/screens/home/displays/Displays';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { RouteObject } from 'react-router-dom';
 
