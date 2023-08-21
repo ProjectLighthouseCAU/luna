@@ -15,6 +15,7 @@ export interface DisplayProps {
   aspectRatio?: number;
   relativeBezelWidth?: number;
   relativeGutterWidth?: number;
+  className?: string;
 }
 
 export function Display({
@@ -25,6 +26,7 @@ export function Display({
   aspectRatio = DISPLAY_ASPECT_RATIO,
   relativeBezelWidth = 0.0183,
   relativeGutterWidth = 0.0064,
+  className,
 }: DisplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -87,5 +89,5 @@ export function Display({
     relativeGutterWidth,
   ]);
 
-  return <canvas ref={canvasRef} />;
+  return <canvas ref={canvasRef} className={className} />;
 }
