@@ -1,8 +1,9 @@
-import { ModelContext } from '@luna/contexts/ModelContext';
 import { DisplayCard } from '@luna/components/DisplayCard';
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { ModelContext } from '@luna/contexts/ModelContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
+import { useContext } from 'react';
+import { InView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 
 export function DisplaysView() {
   const { userModels } = useContext(ModelContext);
@@ -15,7 +16,17 @@ export function DisplaysView() {
             .sort(([u1], [u2]) => u1.localeCompare(u2))
             .map(([username, userModel], i) => (
               <Link to={username} key={`${i}`}>
-                <DisplayCard username={username} frame={userModel.frame} />
+                <InView>
+                  {({ inView, ref }) => (
+                    <div ref={ref}>
+                      <DisplayCard
+                        username={username}
+                        frame={userModel.frame}
+                        isSkeleton={!inView}
+                      />
+                    </div>
+                  )}
+                </InView>
               </Link>
             ))}
         </div>
