@@ -5,10 +5,14 @@ import { Lighthouse, connect } from 'nighthouse/browser';
 export class NighthouseModelClient implements ModelClient {
   private client?: Lighthouse;
 
+  constructor(
+    private readonly url: string = 'wss://lighthouse.uni-kiel.de/websocket'
+  ) {}
+
   async logIn(username: string, token: string): Promise<boolean> {
     this.client = connect({
       // TODO: Make this URL customizable
-      url: 'wss://lighthouse.uni-kiel.de/websocket',
+      url: this.url,
       auth: { USER: username, TOKEN: token },
     });
     await this.client.ready();
