@@ -14,11 +14,9 @@ export function DisplaysView() {
           {[...userModels.entries()]
             .sort(([u1], [u2]) => u1.localeCompare(u2))
             .map(([username, userModel], i) => (
-              <div key={`${i}`}>
-                <Link to={username}>
-                  <DisplayCard username={username} frame={userModel.frame} />
-                </Link>
-              </div>
+              <Link to={username} key={`${i}`}>
+                <DisplayCard username={username} frame={userModel.frame} />
+              </Link>
             ))}
         </div>
       </div>
