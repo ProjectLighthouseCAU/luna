@@ -1,6 +1,7 @@
 import { RouteLink } from '@luna/components/RouteLink';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { ModelContext } from '@luna/contexts/ModelContext';
+import { truncate } from '@luna/utils/string';
 import { Divider, Input, ScrollShadow } from '@nextui-org/react';
 import {
   IconBuildingLighthouse,
@@ -62,7 +63,7 @@ export function Sidebar() {
             .map(username => (
               <RouteLink
                 icon={<IconBuildingLighthouse />}
-                name={username}
+                name={truncate(username, 14)}
                 path={`/displays/${username}`}
               />
             ))}
