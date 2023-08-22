@@ -1,5 +1,6 @@
 import { RouteLink } from '@luna/components/RouteLink';
 import { AuthContext } from '@luna/contexts/AuthContext';
+import { ModelContext } from '@luna/contexts/ModelContext';
 import { Divider } from '@nextui-org/react';
 import {
   IconBuildingLighthouse,
@@ -12,6 +13,7 @@ import { Link } from 'react-router-dom';
 
 export function Sidebar() {
   const auth = useContext(AuthContext);
+  const model = useContext(ModelContext);
 
   return (
     <div className="flex flex-col space-y-2">
@@ -39,6 +41,16 @@ export function Sidebar() {
             path={`/displays/${auth.username}`}
           />
         ) : null}
+        {[...model.userModels.keys()]
+          .sort()
+          .filter(username => username !== auth.username)
+          .map(username => (
+            <RouteLink
+              icon={<IconBuildingLighthouse />}
+              name={username}
+              path={`/displays/${username}`}
+            />
+          ))}
       </RouteLink>
       <Divider />
       <ul>
