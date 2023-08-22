@@ -20,40 +20,40 @@ export function Sidebar() {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
-    <div className="flex flex-col space-y-2">
-      <RouteLink icon={<IconTower />} name="Admin" path="/admin">
-        <RouteLink
-          icon={<IconHeartRateMonitor />}
-          name="Monitor"
-          path="/admin/monitor"
-        />
-        <RouteLink
-          icon={<IconSettings />}
-          name="Settings"
-          path="/admin/settings"
-        />
-      </RouteLink>
-      <RouteLink
-        icon={<IconBuildingLighthouse />}
-        name="Displays"
-        path="/displays"
-      >
-        {auth.username ? (
+    // TODO: This layout is still too long in compact-mode
+    <div className="flex flex-col space-y-2 h-full">
+      <Input
+        startContent={<IconSearch />}
+        placeholder="Search displays..."
+        value={searchQuery}
+        onValueChange={setSearchQuery}
+      />
+      <ScrollShadow className="grow">
+        <RouteLink icon={<IconTower />} name="Admin" path="/admin">
           <RouteLink
-            icon={<IconBuildingLighthouse />}
-            name={`${auth.username} (me)`}
-            path={`/displays/${auth.username}`}
+            icon={<IconHeartRateMonitor />}
+            name="Monitor"
+            path="/admin/monitor"
           />
-        ) : null}
-        {/* TODO: Figure out a good height */}
-        {/* TODO: Deal with x-overflow */}
-        <Input
-          startContent={<IconSearch />}
-          placeholder="Search displays..."
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-        />
-        <ScrollShadow className="h-64">
+          <RouteLink
+            icon={<IconSettings />}
+            name="Settings"
+            path="/admin/settings"
+          />
+        </RouteLink>
+        <RouteLink
+          icon={<IconBuildingLighthouse />}
+          name="Displays"
+          path="/displays"
+        >
+          {auth.username ? (
+            <RouteLink
+              icon={<IconBuildingLighthouse />}
+              name={`${auth.username} (me)`}
+              path={`/displays/${auth.username}`}
+            />
+          ) : null}
+
           {[...model.userModels.keys()]
             .sort()
             .filter(
@@ -67,8 +67,8 @@ export function Sidebar() {
                 path={`/displays/${username}`}
               />
             ))}
-        </ScrollShadow>
-      </RouteLink>
+        </RouteLink>
+      </ScrollShadow>
       <Divider />
       <ul>
         <li>
