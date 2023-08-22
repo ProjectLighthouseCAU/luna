@@ -22,7 +22,8 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cors-proxy": "lcp --proxyUrl https://lighthouse.uni-kiel.de --proxyPartial / --credentials --origin http://localhost:3000"
   },
   "eslintConfig": {
     "extends": [
@@ -51,6 +52,7 @@
     "@types/react-dom": "^18.2.7",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
+    "local-cors-proxy": "^1.1.0",
     "prettier": "^3.0.2"
   }
 }

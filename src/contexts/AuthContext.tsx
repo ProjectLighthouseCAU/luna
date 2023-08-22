@@ -26,8 +26,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [username, setUsername] = useState<string | null>(null);
   const tokenRef = useRef<Token | null>(null);
   // TODO: This currently requires using a local CORS proxy on port 8010
-  // since the legacy backend does not allow CORS origins.
-  // (e.g. `npm i -g local-cors-proxy && lcp --proxyUrl https://lighthouse.uni-kiel.de --proxyPartial / --credentials --origin http://localhost:3000`)
+  // since the legacy backend does not allow CORS origins. To run it,
+  // use `npm run cors-proxy`.
   const clientRef = useInitRef<AuthClient>(
     () => new LegacyAuthClient('http://localhost:8010')
   );
