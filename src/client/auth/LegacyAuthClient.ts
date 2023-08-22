@@ -25,14 +25,14 @@ export class LegacyAuthClient implements AuthClient {
       body,
     });
 
-    if (response.status !== 303) {
-      console.warn(
-        `Legacy backend responded with ${response.status} to login request`
-      );
-      return false;
-    }
+    // TODO: The backend sends an `HttpOnly` cookie which
+    // we can't really control from client-side JS. This means
+    // once the user has authenticated successfully once
+    // any login response seems to go through, even if e.g.
+    // username and password are empty. In that case, the cookie
+    // has to be deleted manually through the browser dev tools.
 
-    return true;
+    return response.ok && response.redirected;
   }
 
   async logOut(): Promise<boolean> {

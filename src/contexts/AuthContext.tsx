@@ -1,5 +1,5 @@
 import { AuthClient } from '@luna/client/auth/AuthClient';
-import { MockAuthClient } from '@luna/client/auth/MockAuthClient';
+import { LegacyAuthClient } from '@luna/client/auth/LegacyAuthClient';
 import { NullAuthClient } from '@luna/client/auth/NullAuthClient';
 import { Token } from '@luna/client/auth/Token';
 import { useInitRef } from '@luna/hooks/useInitRef';
@@ -25,7 +25,12 @@ interface AuthContextProviderProps {
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [username, setUsername] = useState<string | null>(null);
   const tokenRef = useRef<Token | null>(null);
-  const clientRef = useInitRef<AuthClient>(() => new MockAuthClient());
+  // TODO: This currently requires using a local CORS proxy on port 8010
+  // since the legacy backend does not allow CORS origins.
+  // (e.g. `npm i -g local-cors-proxy && lcp --proxyUrl https://lighthouse.uni-kiel.de --proxyPartial / --credentials --origin http://localhost:3000`)
+  const clientRef = useInitRef<AuthClient>(
+    () => new LegacyAuthClient('http://localhost:8010')
+  );
 
   // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
 
