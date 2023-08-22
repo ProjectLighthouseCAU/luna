@@ -1,5 +1,6 @@
 import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
 import { ModelContext } from '@luna/contexts/ModelContext';
+import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
@@ -33,14 +34,23 @@ export function DisplayView() {
 
   useEventListener(window, 'resize', onResize, { fireImmediately: true });
 
-  const width = Math.min(maxSize.width, maxSize.height * DISPLAY_ASPECT_RATIO);
+  const breakpoint = useBreakpoint();
+  const isCompact = breakpoint <= Breakpoint.Sm;
+
+  const width =
+    maxSize.width <= maxSize.height * DISPLAY_ASPECT_RATIO || isCompact
+      ? maxSize.width
+      : maxSize.height * DISPLAY_ASPECT_RATIO;
 
   return (
     <HomeContent title={`${username}'s Display`}>
       {userModel ? (
-        <div className="flex flex-row h-full">
-          <div ref={wrapperRef} className="grow flex flex-row justify-center">
-            <div className="absolute">
+        <div className="flex flex-col space-y-4 md:flex-row h-full">
+          <div
+            ref={wrapperRef}
+            className="grow flex flex-row justify-center h-full"
+          >
+            <div className={isCompact ? '' : 'absolute'}>
               <Display frame={userModel.frame} width={width} />
             </div>
           </div>
