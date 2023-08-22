@@ -16,15 +16,19 @@ export function LoginCard() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [errored, setErrored] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const logIn = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (await auth.client.logIn(username, password)) {
-        navigate('/displays');
+      if (username) {
+        if (await auth.client.logIn(username, password)) {
+          navigate('/displays');
+        } else {
+          setErrorMessage('Could not log in');
+        }
       } else {
-        setErrored(true);
+        setErrorMessage('Please enter a username');
       }
     },
     [auth.client, navigate, username, password]
@@ -43,9 +47,9 @@ export function LoginCard() {
               aria-label="Username"
               onValueChange={username => {
                 setUsername(username);
-                setErrored(false);
+                setErrorMessage(null);
               }}
-              validationState={errored ? 'invalid' : 'valid'}
+              validationState={errorMessage ? 'invalid' : 'valid'}
             />
             <Input
               size="sm"
@@ -54,10 +58,10 @@ export function LoginCard() {
               type="password"
               onValueChange={password => {
                 setPassword(password);
-                setErrored(false);
+                setErrorMessage(null);
               }}
-              validationState={errored ? 'invalid' : 'valid'}
-              errorMessage={errored ? 'Could not sign in' : null}
+              validationState={errorMessage ? 'invalid' : 'valid'}
+              errorMessage={errorMessage}
             />
           </div>
           <Button type="submit">Sign in</Button>
