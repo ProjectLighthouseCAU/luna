@@ -1,19 +1,22 @@
 import { RouteLink } from '@luna/components/RouteLink';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { ModelContext } from '@luna/contexts/ModelContext';
-import { Divider, ScrollShadow } from '@nextui-org/react';
+import { Divider, Input, ScrollShadow } from '@nextui-org/react';
 import {
   IconBuildingLighthouse,
   IconHeartRateMonitor,
+  IconSearch,
   IconSettings,
   IconTower,
 } from '@tabler/icons-react';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export function Sidebar() {
   const auth = useContext(AuthContext);
   const model = useContext(ModelContext);
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <div className="flex flex-col space-y-2">
@@ -43,10 +46,19 @@ export function Sidebar() {
         ) : null}
         {/* TODO: Figure out a good height */}
         {/* TODO: Deal with x-overflow */}
-        <ScrollShadow className="max-h-64">
+        <Input
+          startContent={<IconSearch />}
+          placeholder="Search displays..."
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+        />
+        <ScrollShadow className="h-64">
           {[...model.userModels.keys()]
             .sort()
-            .filter(username => username !== auth.username)
+            .filter(
+              username =>
+                username !== auth.username && username.includes(searchQuery)
+            )
             .map(username => (
               <RouteLink
                 icon={<IconBuildingLighthouse />}
