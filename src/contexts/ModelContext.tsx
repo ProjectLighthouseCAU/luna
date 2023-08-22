@@ -44,7 +44,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       if (auth.username !== null) {
         const token = await auth.client.getToken();
         if (token) {
-          await clientRef.current.logIn(token.token);
+          await clientRef.current.logIn(auth.username, token.token);
           setLoggedIn(true);
           return;
         }

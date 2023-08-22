@@ -1,0 +1,29 @@
+import { ModelClient } from '@luna/client/model/ModelClient';
+import { UserModel } from '@luna/client/model/UserModel';
+import { Lighthouse, connect } from 'nighthouse/browser';
+
+export class NighthouseModelClient implements ModelClient {
+  private client?: Lighthouse;
+
+  async logIn(username: string, token: string): Promise<boolean> {
+    this.client = connect({
+      // TODO: Make this URL customizable
+      url: 'wss://lighthouse.uni-kiel.de/websocket',
+      auth: { USER: username, TOKEN: token },
+    });
+    await this.client.ready();
+    return true;
+  }
+
+  async *streamModel(user: string): AsyncIterable<UserModel> {
+    if (this.client) {
+      for await (const message of this.client.streamModel(user)) {
+        // TODO: Handle events too, perhaps by yielding a sum type of frames and events
+        const payload = message.PAYL;
+        if (payload instanceof Uint8Array) {
+          yield { frame: payload };
+        }
+      }
+    }
+  }
+}

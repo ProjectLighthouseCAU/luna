@@ -4,7 +4,7 @@ import { sleep } from '@luna/utils/async';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 
 export class MockModelClient implements ModelClient {
-  async logIn(token: string): Promise<boolean> {
+  async logIn(username: string, token: string): Promise<boolean> {
     return true;
   }
 
