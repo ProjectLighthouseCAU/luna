@@ -1,7 +1,7 @@
 import { RouteLink } from '@luna/components/RouteLink';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { ModelContext } from '@luna/contexts/ModelContext';
-import { Divider } from '@nextui-org/react';
+import { Divider, ScrollShadow } from '@nextui-org/react';
 import {
   IconBuildingLighthouse,
   IconHeartRateMonitor,
@@ -41,16 +41,20 @@ export function Sidebar() {
             path={`/displays/${auth.username}`}
           />
         ) : null}
-        {[...model.userModels.keys()]
-          .sort()
-          .filter(username => username !== auth.username)
-          .map(username => (
-            <RouteLink
-              icon={<IconBuildingLighthouse />}
-              name={username}
-              path={`/displays/${username}`}
-            />
-          ))}
+        {/* TODO: Figure out a good height */}
+        {/* TODO: Deal with x-overflow */}
+        <ScrollShadow className="max-h-64">
+          {[...model.userModels.keys()]
+            .sort()
+            .filter(username => username !== auth.username)
+            .map(username => (
+              <RouteLink
+                icon={<IconBuildingLighthouse />}
+                name={username}
+                path={`/displays/${username}`}
+              />
+            ))}
+        </ScrollShadow>
       </RouteLink>
       <Divider />
       <ul>
