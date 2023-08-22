@@ -4,7 +4,7 @@ import { NullModelClient } from '@luna/client/model/NullModelClient';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { useInitRef } from '@luna/hooks/useInitRef';
-import { UserModel } from '@luna/model/UserModel';
+import { UserModel } from '@luna/client/model/UserModel';
 import { mapAsyncIterable, mergeAsyncIterables } from '@luna/utils/async';
 import {
   ReactNode,

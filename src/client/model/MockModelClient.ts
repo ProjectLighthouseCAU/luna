@@ -1,5 +1,5 @@
 import { ModelClient } from '@luna/client/model/ModelClient';
-import { UserModel } from '@luna/model/UserModel';
+import { UserModel } from '@luna/client/model/UserModel';
 import { sleep } from '@luna/utils/async';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 
