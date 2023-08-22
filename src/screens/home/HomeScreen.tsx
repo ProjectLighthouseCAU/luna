@@ -25,7 +25,7 @@ export function HomeScreen() {
       } p-6`}
     >
       {!isCompact ? (
-        <div className="w-48">
+        <div className="grow-0 shrink-0 basis-48">
           <Sidebar />
         </div>
       ) : null}
