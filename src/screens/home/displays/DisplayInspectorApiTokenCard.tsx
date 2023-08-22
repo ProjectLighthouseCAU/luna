@@ -3,12 +3,12 @@ import { AuthContext } from '@luna/contexts/AuthContext';
 import { DisplayInspectorCard } from '@luna/screens/home/displays/DisplayInspectorCard';
 import {
   Button,
-  Code,
   Modal,
   ModalBody,
   ModalContent,
   ModalHeader,
   Skeleton,
+  Snippet,
   Tooltip,
   useDisclosure,
 } from '@nextui-org/react';
@@ -53,11 +53,7 @@ export function DisplayInspectorApiTokenCard() {
                           {`Your token is valid through ${token.expiresAt.toLocaleDateString()}.`}
                         </p>
                       ) : null}
-                      <Code>{token.token}</Code>
-                      <Button onPress={copyToClipboard}>
-                        <IconClipboard />
-                        Copy Token
-                      </Button>
+                      <Snippet symbol="">{token.token}</Snippet>
                     </>
                   ) : (
                     <Skeleton className="h-24 rounded" />
