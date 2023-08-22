@@ -14,8 +14,8 @@ export function DisplaysView() {
         <div className="flex flex-wrap">
           {[...userModels.entries()]
             .sort(([u1], [u2]) => u1.localeCompare(u2))
-            .map(([username, userModel], i) => (
-              <Link to={username} key={`${i}`}>
+            .map(([username, userModel]) => (
+              <Link to={username} key={username}>
                 <InView>
                   {({ inView, ref }) => (
                     <div ref={ref}>
