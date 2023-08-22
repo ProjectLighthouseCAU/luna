@@ -73,7 +73,7 @@ export function Display({
 
       for (let i = 0; i < rows; i++) {
         const y = i * (1 + spacersPerRow) * windowHeight;
-        const k = (i * LIGHTHOUSE_ROWS + j) * LIGHTHOUSE_COLOR_CHANNELS;
+        const k = (i * LIGHTHOUSE_COLS + j) * LIGHTHOUSE_COLOR_CHANNELS;
         const rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
         ctx.fillStyle = `rgb(${rgb.join(',')})`;
         ctx.fillRect(x, y, windowWidth, windowHeight);
