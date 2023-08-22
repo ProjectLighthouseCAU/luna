@@ -14,6 +14,7 @@ import {
   useState,
 } from 'react';
 import { NighthouseModelClient } from '@luna/client/model/NighthouseModelClient';
+import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 
 export interface Model {
   /** The user models by username. */
@@ -57,6 +58,10 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     async function* () {
       if (!isLoggedIn) return;
       const users = await auth.client.getPublicUsers();
+      // Make sure that every user has at least a black frame
+      for (const user of users) {
+        yield { user, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
+      }
       const streams = users.map(user =>
         mapAsyncIterable(clientRef.current.streamModel(user), userModel => ({
           user,
