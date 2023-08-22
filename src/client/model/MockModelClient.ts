@@ -4,6 +4,10 @@ import { sleep } from '@luna/utils/async';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 
 export class MockModelClient implements ModelClient {
+  async logIn(token: string): Promise<boolean> {
+    return true;
+  }
+
   async *streamModel(user: string): AsyncIterable<UserModel> {
     while (true) {
       yield {

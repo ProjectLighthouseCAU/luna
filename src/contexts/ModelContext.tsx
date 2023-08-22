@@ -11,6 +11,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from 'react';
 
@@ -34,11 +35,27 @@ interface ModelContextProviderProps {
 export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const auth = useContext(AuthContext);
 
+  const [isLoggedIn, setLoggedIn] = useState(false);
   const [userModels, setUserModels] = useState(new Map<string, UserModel>());
   const clientRef = useInitRef<ModelClient>(() => new MockModelClient());
 
+  useEffect(() => {
+    (async () => {
+      if (auth.username !== null) {
+        const token = await auth.client.getToken();
+        if (token) {
+          await clientRef.current.logIn(token.token);
+          setLoggedIn(true);
+          return;
+        }
+      }
+      setLoggedIn(false);
+    })();
+  }, [auth.client, auth.username, clientRef]);
+
   const getUserStreams = useCallback(
     async function* () {
+      if (!isLoggedIn) return;
       const users = await auth.client.getPublicUsers();
       const streams = users.map(user =>
         mapAsyncIterable(clientRef.current.streamModel(user), userModel => ({
@@ -48,7 +65,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       );
       yield* mergeAsyncIterables(streams);
     },
-    [auth.client, clientRef]
+    [isLoggedIn, auth.client, clientRef]
   );
 
   // NOTE: It is important that we use `useCallback` for the consumption callback
