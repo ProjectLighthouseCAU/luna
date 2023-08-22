@@ -1,4 +1,3 @@
-import { MockModelClient } from '@luna/client/model/MockModelClient';
 import { ModelClient } from '@luna/client/model/ModelClient';
 import { NullModelClient } from '@luna/client/model/NullModelClient';
 import { AuthContext } from '@luna/contexts/AuthContext';
@@ -14,6 +13,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { NighthouseModelClient } from '@luna/client/model/NighthouseModelClient';
 
 export interface Model {
   /** The user models by username. */
@@ -37,7 +37,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
 
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [userModels, setUserModels] = useState(new Map<string, UserModel>());
-  const clientRef = useInitRef<ModelClient>(() => new MockModelClient());
+  const clientRef = useInitRef<ModelClient>(() => new NighthouseModelClient());
 
   useEffect(() => {
     (async () => {

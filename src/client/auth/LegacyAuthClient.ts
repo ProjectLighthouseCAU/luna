@@ -46,6 +46,28 @@ export class LegacyAuthClient implements AuthClient {
   }
 
   async getToken(): Promise<Token | null> {
-    return null;
+    if (this.username === undefined) {
+      return null;
+    }
+
+    // TODO: We could probably use the redirected login response already
+
+    const response = await fetch(`${this.url}/user/${this.username}`, {
+      mode: 'cors',
+      credentials: 'include',
+    });
+
+    const body = await response.text();
+    const result = /"TOKEN":"(API-TOK[^"]+)"/g.exec(body);
+
+    // TODO: Parse expiry
+
+    if (result === null) {
+      return null;
+    }
+
+    return {
+      token: result[1],
+    };
   }
 }
