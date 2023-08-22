@@ -41,8 +41,24 @@ export class LegacyAuthClient implements AuthClient {
   }
 
   async getPublicUsers(): Promise<string[]> {
-    // TODO: Fetch all public users
-    return this.username !== undefined ? [this.username] : [];
+    if (this.username === undefined) {
+      return [];
+    }
+
+    const response = await fetch(`${this.url}/users`, {
+      mode: 'cors',
+      credentials: 'include',
+    });
+
+    const body = await response.text();
+    const result = /var users = (\[[^\]]+\])/g.exec(body);
+
+    if (result === null) {
+      return [];
+    }
+
+    const users = JSON.parse(result[1]);
+    return users;
   }
 
   async getToken(): Promise<Token | null> {
