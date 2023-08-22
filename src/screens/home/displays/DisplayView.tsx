@@ -52,6 +52,7 @@ export function DisplayView() {
               <Display frame={userModel.frame} width={width} />
             </div>
           </div>
+          {/* TODO: Only display inspector (or options etc.) for current user themselves and admins? */}
           <DisplayInspector />
         </div>
       ) : (
