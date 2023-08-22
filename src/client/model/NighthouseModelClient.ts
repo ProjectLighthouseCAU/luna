@@ -10,12 +10,15 @@ export class NighthouseModelClient implements ModelClient {
   ) {}
 
   async logIn(username: string, token: string): Promise<boolean> {
-    this.client = connect({
-      // TODO: Make this URL customizable
-      url: this.url,
-      auth: { USER: username, TOKEN: token },
-    });
-    await this.client.ready();
+    // TODO: Check if username/token mismatches
+    if (this.client === undefined) {
+      this.client = connect({
+        // TODO: Make this URL customizable
+        url: this.url,
+        auth: { USER: username, TOKEN: token },
+      });
+      await this.client.ready();
+    }
     return true;
   }
 
