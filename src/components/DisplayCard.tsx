@@ -1,5 +1,5 @@
 import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
-import { Card, CardFooter, Skeleton } from '@nextui-org/react';
+import { Card, CardFooter } from '@nextui-org/react';
 import React from 'react';
 
 interface DisplayCardProps {
@@ -15,7 +15,7 @@ export function DisplayCard({ username, frame, isSkeleton }: DisplayCardProps) {
   return (
     <Card>
       {isSkeleton ? (
-        <Skeleton style={{ width: displayWidth, height: displayHeight }} />
+        <div style={{ width: displayWidth, height: displayHeight }} />
       ) : (
         <Display frame={frame} width={displayWidth} />
       )}
