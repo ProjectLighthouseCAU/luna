@@ -1,3 +1,5 @@
+import { Token } from '@luna/client/auth/Token';
+import { AuthContext } from '@luna/contexts/AuthContext';
 import { DisplayInspectorCard } from '@luna/screens/home/displays/DisplayInspectorCard';
 import {
   Button,
@@ -6,15 +8,29 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
+  Skeleton,
   Tooltip,
   useDisclosure,
 } from '@nextui-org/react';
 import { IconClipboard, IconLink } from '@tabler/icons-react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 export function DisplayInspectorApiTokenCard() {
+  const [token, setToken] = useState<Token | null>(null);
+  const auth = useContext(AuthContext);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  // TODO: Use actual API token
+  useEffect(() => {
+    (async () => {
+      setToken(await auth.client.getToken());
+    })();
+  }, [auth.client]);
+
+  const copyToClipboard = useCallback(() => {
+    if (token) {
+      navigator.clipboard.writeText(token.token);
+    }
+  }, [token]);
 
   return (
     <DisplayInspectorCard icon={<IconLink />} title="API Token">
@@ -30,19 +46,29 @@ export function DisplayInspectorApiTokenCard() {
               <>
                 <ModalHeader>API Token</ModalHeader>
                 <ModalBody className="p-4">
-                  <p>Your token is valid through DD.MM.2023.</p>
-                  <Code>API-Tok-ABC</Code>
-                  <Button>
-                    <IconClipboard />
-                    Copy Token
-                  </Button>
+                  {token ? (
+                    <>
+                      {token.expiresAt ? (
+                        <p>
+                          {`Your token is valid through ${token.expiresAt.toLocaleDateString()}.`}
+                        </p>
+                      ) : null}
+                      <Code>{token.token}</Code>
+                      <Button onPress={copyToClipboard}>
+                        <IconClipboard />
+                        Copy Token
+                      </Button>
+                    </>
+                  ) : (
+                    <Skeleton className="h-24 rounded" />
+                  )}
                 </ModalBody>
               </>
             )}
           </ModalContent>
         </Modal>
         <Tooltip content="Copy the token">
-          <Button isIconOnly size="md">
+          <Button isIconOnly size="md" onPress={copyToClipboard}>
             <IconClipboard />
           </Button>
         </Tooltip>

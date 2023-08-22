@@ -1,8 +1,9 @@
 import { AuthClient } from '@luna/client/auth/AuthClient';
 import { MockAuthClient } from '@luna/client/auth/MockAuthClient';
 import { NullAuthClient } from '@luna/client/auth/NullAuthClient';
+import { Token } from '@luna/client/auth/Token';
 import { useInitRef } from '@luna/hooks/useInitRef';
-import React, { createContext, ReactNode, useState } from 'react';
+import React, { createContext, ReactNode, useRef, useState } from 'react';
 
 export interface Auth {
   /** The username of the authenticated user. */
@@ -23,6 +24,7 @@ interface AuthContextProviderProps {
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [username, setUsername] = useState<string | null>(null);
+  const tokenRef = useRef<Token | null>(null);
   const clientRef = useInitRef<AuthClient>(() => new MockAuthClient());
 
   // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
@@ -44,8 +46,15 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       return false;
     },
 
-    getPublicUsers() {
-      return clientRef.current.getPublicUsers();
+    async getPublicUsers() {
+      return await clientRef.current.getPublicUsers();
+    },
+
+    async getToken() {
+      if (tokenRef.current === null) {
+        tokenRef.current = await clientRef.current.getToken();
+      }
+      return tokenRef.current;
     },
   };
 

@@ -1,3 +1,5 @@
+import { Token } from '@luna/client/auth/Token';
+
 /**
  * A facility that talks to an authentication backend.
  */
@@ -10,4 +12,7 @@ export interface AuthClient {
 
   /** Fetches a list of public usernames. */
   getPublicUsers(): Promise<string[]>;
+
+  /** Fetches the API token for the authenticated user. */
+  getToken(): Promise<Token | null>;
 }
