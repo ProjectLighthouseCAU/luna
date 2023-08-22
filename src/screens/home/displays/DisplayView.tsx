@@ -5,8 +5,6 @@ import { useEventListener } from '@luna/hooks/useEventListener';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { throttle } from '@luna/utils/schedule';
-import { Card, CardBody, CardHeader } from '@nextui-org/react';
-import { IconLink } from '@tabler/icons-react';
 import { useContext, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
