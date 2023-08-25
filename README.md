@@ -45,3 +45,23 @@ If you use VSCode, you may wish to install the [ESLint extension](https://market
 ```
 
 to your user or workspace settings (under `.vscode/settings.json`).
+
+## Debugging
+
+To debug LUNA with VSCode and Firefox, install the [Firefox debugger extension](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug) and add the following configuration to your `.vscode/launch.json`:
+
+```json
+{
+  "type": "firefox",
+  "request": "attach",
+  "name": "Attach Firefox",
+  "webRoot": "${workspaceFolder}/src",
+  "url": "http://localhost:3000"
+}
+```
+
+Now go to `about:config` in Firefox and set `devtools.debugger.remote-enabled` and `devtools.chrome.enabled` to true.
+
+> For a more extensive description of these flags, see [the extension's README](https://github.com/firefox-devtools/vscode-firefox-debug#attach).
+
+Finally, launch Firefox with the `-start-debugger-server` argument, make sure that the dev server is running (if not, launch it with `npm start`) and start the debug session.
