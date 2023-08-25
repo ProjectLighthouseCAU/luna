@@ -64,6 +64,7 @@ export function Sidebar() {
             )
             .map(username => (
               <RouteLink
+                key={username}
                 icon={<IconBuildingLighthouse />}
                 name={truncate(username, 14)}
                 path={`/displays/${username}`}
