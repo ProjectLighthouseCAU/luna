@@ -4,11 +4,14 @@ import { NullAuthClient } from '@luna/client/auth/NullAuthClient';
 import { Token } from '@luna/client/auth/Token';
 import { User } from '@luna/client/auth/User';
 import { useInitRef } from '@luna/hooks/useInitRef';
-import React, { createContext, ReactNode, useRef, useState } from 'react';
+import React, { createContext, ReactNode, useState } from 'react';
 
 export interface Auth {
   /** The authenticated user. */
   readonly user: User | null;
+
+  /** The current token. */
+  readonly token: Token | null;
 
   /** The client used to perform requests. */
   readonly client: AuthClient;
@@ -16,6 +19,7 @@ export interface Auth {
 
 export const AuthContext = createContext<Auth>({
   user: null,
+  token: null,
   client: new NullAuthClient(),
 });
 
@@ -25,7 +29,7 @@ interface AuthContextProviderProps {
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const tokenRef = useRef<Token | null>(null);
+  const [token, setToken] = useState<Token | null>(null);
   // TODO: This currently requires using a local CORS proxy on port 8010
   // since the legacy backend does not allow CORS origins. To run it,
   // use `npm run cors-proxy`.
@@ -38,7 +42,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const wrapperClient: AuthClient = {
     async logIn(username, password) {
       if (await clientRef.current.logIn(username, password)) {
-        setUser(await clientRef.current.getUser());
+        setUser(await this.getUser());
+        setToken(await this.getToken());
         return true;
       }
       return false;
@@ -61,15 +66,12 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     },
 
     async getToken() {
-      if (tokenRef.current === null) {
-        tokenRef.current = await clientRef.current.getToken();
-      }
-      return tokenRef.current;
+      return await clientRef.current.getToken();
     },
   };
 
   return (
-    <AuthContext.Provider value={{ user, client: wrapperClient }}>
+    <AuthContext.Provider value={{ user, token, client: wrapperClient }}>
       {children}
     </AuthContext.Provider>
   );

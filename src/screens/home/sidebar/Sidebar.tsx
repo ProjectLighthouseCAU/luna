@@ -1,4 +1,3 @@
-import { Token } from '@luna/client/auth/Token';
 import { RouteLink } from '@luna/components/RouteLink';
 import { UserSnippet } from '@luna/components/UserSnippet';
 import { AuthContext } from '@luna/contexts/AuthContext';
@@ -12,7 +11,7 @@ import {
   IconSettings,
   IconTower,
 } from '@tabler/icons-react';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export function Sidebar() {
@@ -20,13 +19,6 @@ export function Sidebar() {
   const model = useContext(ModelContext);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [token, setToken] = useState<Token | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      setToken(await auth.client.getToken());
-    })();
-  }, [auth.client]);
 
   return (
     // TODO: This layout is still too long in compact-mode
@@ -80,7 +72,7 @@ export function Sidebar() {
         </RouteLink>
       </ScrollShadow>
       <Divider />
-      {auth.user ? <UserSnippet user={auth.user} token={token} /> : null}
+      {auth.user ? <UserSnippet user={auth.user} token={auth.token} /> : null}
       <Link onClick={() => auth.client.logOut()} to="/" className="text-danger">
         Sign out
       </Link>
