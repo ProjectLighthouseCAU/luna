@@ -1,17 +1,8 @@
 import { Token } from '@luna/client/auth/Token';
-import { AuthContext } from '@luna/contexts/AuthContext';
+import { ApiTokenModal } from '@luna/components/ApiTokenModal';
 import { TitledCard } from '@luna/components/TitledCard';
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  Skeleton,
-  Snippet,
-  Tooltip,
-  useDisclosure,
-} from '@nextui-org/react';
+import { AuthContext } from '@luna/contexts/AuthContext';
+import { Button, Tooltip, useDisclosure } from '@nextui-org/react';
 import { IconClipboard, IconLink } from '@tabler/icons-react';
 import { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -40,29 +31,11 @@ export function DisplayInspectorApiTokenCard() {
             Reveal
           </Button>
         </Tooltip>
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-          <ModalContent>
-            {onClose => (
-              <>
-                <ModalHeader>API Token</ModalHeader>
-                <ModalBody className="p-4">
-                  {token ? (
-                    <>
-                      {token.expiresAt ? (
-                        <p>
-                          {`Your token is valid through ${token.expiresAt.toLocaleDateString()}.`}
-                        </p>
-                      ) : null}
-                      <Snippet symbol="">{token.token}</Snippet>
-                    </>
-                  ) : (
-                    <Skeleton className="h-24 rounded" />
-                  )}
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
+        <ApiTokenModal
+          token={token}
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+        />
         <Tooltip content="Copy the token">
           <Button isIconOnly size="md" onPress={copyToClipboard}>
             <IconClipboard />
