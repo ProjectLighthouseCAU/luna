@@ -11,7 +11,7 @@ export function DisplayInspectorApiTokenCard() {
 
   const copyToClipboard = useCallback(() => {
     if (token) {
-      navigator.clipboard.writeText(token.token);
+      navigator.clipboard.writeText(token.value);
     }
   }, [token]);
 

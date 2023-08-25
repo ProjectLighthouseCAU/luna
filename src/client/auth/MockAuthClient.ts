@@ -23,7 +23,7 @@ export class MockAuthClient implements AuthClient {
 
   async getToken(): Promise<Token> {
     return {
-      token: 'API-TOK-Mock',
+      value: 'API-TOK-Mock',
       expiresAt: new Date(new Date().getTime() + 30 * 86_400_000),
     };
   }

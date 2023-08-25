@@ -93,7 +93,7 @@ export class LegacyAuthClient implements AuthClient {
     }
 
     return {
-      token: result[1],
+      value: result[1],
     };
   }
 }

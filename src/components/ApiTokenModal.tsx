@@ -33,7 +33,7 @@ export function ApiTokenModal({
                       {`Your token is valid through ${token.expiresAt.toLocaleDateString()}.`}
                     </p>
                   ) : null}
-                  <Snippet symbol="">{token.token}</Snippet>
+                  <Snippet symbol="">{token.value}</Snippet>
                 </>
               ) : (
                 <Skeleton className="h-24 rounded" />

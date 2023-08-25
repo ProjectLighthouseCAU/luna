@@ -43,7 +43,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   useEffect(() => {
     (async () => {
       if (auth.user && auth.token) {
-        await clientRef.current.logIn(auth.user.username, auth.token.token);
+        await clientRef.current.logIn(auth.user.username, auth.token.value);
         setLoggedIn(true);
       } else {
         setLoggedIn(false);
