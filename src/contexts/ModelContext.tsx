@@ -15,6 +15,7 @@ import {
 } from 'react';
 import { NighthouseModelClient } from '@luna/client/model/NighthouseModelClient';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
+import { Map } from 'immutable';
 
 export interface Model {
   /** The user models by username. */
@@ -25,7 +26,7 @@ export interface Model {
 }
 
 export const ModelContext = createContext<Model>({
-  userModels: new Map(),
+  userModels: Map(),
   client: new NullModelClient(),
 });
 
@@ -37,7 +38,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const auth = useContext(AuthContext);
 
   const [isLoggedIn, setLoggedIn] = useState(false);
-  const [userModels, setUserModels] = useState(new Map<string, UserModel>());
+  const [userModels, setUserModels] = useState(Map<string, UserModel>());
   const clientRef = useInitRef<ModelClient>(() => new NighthouseModelClient());
 
   useEffect(() => {
@@ -82,11 +83,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const consumeUserStreams = useCallback(
     async ({ username, ...userModel }: { username: string } & UserModel) => {
       console.log(`Got frame from ${username}`);
-      setUserModels(userModels => {
-        const newUserModels = new Map(userModels);
-        newUserModels.set(username, userModel);
-        return newUserModels;
-      });
+      setUserModels(userModels => userModels.set(username, userModel));
     },
     []
   );
