@@ -5,16 +5,13 @@ import { User } from '@luna/client/auth/User';
 // FIXME: Implement this client
 
 export class LegacyAuthClient implements AuthClient {
-  // TODO: Make this customizable
-  private username: string | null = null;
+  private user: User | null = null;
 
   constructor(
     private readonly url: string = 'https://lighthouse.uni-kiel.de'
   ) {}
 
   async logIn(username: string, password: string): Promise<boolean> {
-    this.username = username;
-
     const body = new URLSearchParams();
     body.append('username', username);
     body.append('password', password);
@@ -37,12 +34,12 @@ export class LegacyAuthClient implements AuthClient {
   }
 
   async logOut(): Promise<boolean> {
-    this.username = null;
+    this.user = null;
     return true;
   }
 
   async getPublicUsers(): Promise<User[]> {
-    if (this.username === undefined) {
+    if (!this.user) {
       return [];
     }
 
@@ -59,26 +56,21 @@ export class LegacyAuthClient implements AuthClient {
     }
 
     const usernames: string[] = JSON.parse(result[1]);
-
     return usernames.map(username => ({ username }));
   }
 
   async getUser(): Promise<User | null> {
-    return this.username
-      ? {
-          username: this.username,
-        }
-      : null;
+    return this.user;
   }
 
   async getToken(): Promise<Token | null> {
-    if (this.username === undefined) {
+    if (!this.user) {
       return null;
     }
 
     // TODO: We could probably use the redirected login response already
 
-    const response = await fetch(`${this.url}/user/${this.username}`, {
+    const response = await fetch(`${this.url}/user/${this.user}`, {
       mode: 'cors',
       credentials: 'include',
     });
