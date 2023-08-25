@@ -60,7 +60,7 @@ export function Sidebar() {
             .filter(
               username =>
                 username !== auth.user?.username &&
-                username.includes(searchQuery)
+                username.toLowerCase().includes(searchQuery.toLowerCase())
             )
             .map(username => (
               <RouteLink
