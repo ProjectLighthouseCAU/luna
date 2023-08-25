@@ -1,27 +1,18 @@
 import { Token } from '@luna/client/auth/Token';
-import { ApiTokenModal } from '@luna/components/ApiTokenModal';
 import { RouteLink } from '@luna/components/RouteLink';
+import { UserSnippet } from '@luna/components/UserSnippet';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { ModelContext } from '@luna/contexts/ModelContext';
 import { truncate } from '@luna/utils/string';
-import {
-  Button,
-  Divider,
-  Input,
-  ScrollShadow,
-  Tooltip,
-  User,
-  useDisclosure,
-} from '@nextui-org/react';
+import { Divider, Input, ScrollShadow } from '@nextui-org/react';
 import {
   IconBuildingLighthouse,
   IconHeartRateMonitor,
-  IconKey,
   IconSearch,
   IconSettings,
   IconTower,
 } from '@tabler/icons-react';
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export function Sidebar() {
@@ -30,7 +21,6 @@ export function Sidebar() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [token, setToken] = useState<Token | null>(null);
-  const apiModalDisclosure = useDisclosure();
 
   useEffect(() => {
     (async () => {
@@ -89,19 +79,7 @@ export function Sidebar() {
         </RouteLink>
       </ScrollShadow>
       <Divider />
-      <div className="flex flex-row justify-between">
-        <User name={auth.username} />
-        <Tooltip content="Show the API token">
-          <Button isIconOnly onPress={apiModalDisclosure.onOpen}>
-            <IconKey />
-          </Button>
-        </Tooltip>
-        <ApiTokenModal
-          token={token}
-          isOpen={apiModalDisclosure.isOpen}
-          onOpenChange={apiModalDisclosure.onOpenChange}
-        />
-      </div>
+      <UserSnippet username={auth.username} token={token} />
       <Link onClick={() => auth.client.logOut()} to="/" className="text-danger">
         Sign out
       </Link>
