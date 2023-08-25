@@ -26,7 +26,7 @@ export function HomeScreen() {
     >
       {!isCompact ? (
         <div className="grow-0 shrink-0 basis-48">
-          <Sidebar />
+          <Sidebar isCompact={isCompact} />
         </div>
       ) : null}
       <div className="flex flex-col space-y-4 grow">
@@ -38,7 +38,7 @@ export function HomeScreen() {
           ) : null}
           <h2 className="text-3xl">{title}</h2>
         </div>
-        {isCompact && isExpanded ? <Sidebar /> : null}
+        {isCompact && isExpanded ? <Sidebar isCompact={isCompact} /> : null}
         {/* TODO: It would be nice if we could use fixed/sticky elements to use the native window scroll rather than an overflow scroll.*/}
         <div className={`grow ${isCompact ? '' : 'overflow-y-scroll'}`}>
           <Outlet context={setTitle} />

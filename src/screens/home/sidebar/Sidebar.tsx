@@ -14,7 +14,11 @@ import {
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-export function Sidebar() {
+export interface SidebarProps {
+  isCompact: boolean;
+}
+
+export function Sidebar({ isCompact }: SidebarProps) {
   const auth = useContext(AuthContext);
   const model = useContext(ModelContext);
 
@@ -54,22 +58,23 @@ export function Sidebar() {
               path={`/displays/${auth.user.username}`}
             />
           ) : null}
-
-          {[...model.userModels.keys()]
-            .sort()
-            .filter(
-              username =>
-                username !== auth.user?.username &&
-                username.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-            .map(username => (
-              <RouteLink
-                key={username}
-                icon={<IconBuildingLighthouse />}
-                name={truncate(username, 14)}
-                path={`/displays/${username}`}
-              />
-            ))}
+          {!isCompact || searchQuery
+            ? [...model.userModels.keys()]
+                .sort()
+                .filter(
+                  username =>
+                    username !== auth.user?.username &&
+                    username.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .map(username => (
+                  <RouteLink
+                    key={username}
+                    icon={<IconBuildingLighthouse />}
+                    name={truncate(username, 14)}
+                    path={`/displays/${username}`}
+                  />
+                ))
+            : null}
         </RouteLink>
       </ScrollShadow>
       <Divider />
