@@ -3,8 +3,6 @@ import { Role } from '@luna/client/auth/Role';
 import { Token } from '@luna/client/auth/Token';
 import { User } from '@luna/client/auth/User';
 
-// FIXME: Implement this client
-
 export class LegacyAuthClient implements AuthClient {
   private user: User | null = null;
 
