@@ -114,14 +114,13 @@ export class LegacyAuthClient implements AuthClient {
       return null;
     }
 
-    const expiryResult = /Gültig bis:\s*(\d+)\.(\d+)\.(\d+)\s+(\d+:\d+)/g.exec(
-      body
-    );
-    const expiresAt = expiryResult
-      ? new Date(
-          `${expiryResult[3]}-${expiryResult[2]}-${expiryResult[1]}T${expiryResult[4]}:00`
-        )
-      : undefined;
+    const expiryResult =
+      /Gültig bis:\s*(\d+)\.(\d+)\.(\d+)\s+(\d+):(\d+)/g.exec(body);
+    let expiresAt: Date | undefined;
+    if (expiryResult) {
+      const [day, month, year, hour, minute] = expiryResult.slice(1);
+      expiresAt = new Date(`${year}-${month}-${day}T${hour}:${minute}:00`);
+    }
 
     return {
       value: result[1],
