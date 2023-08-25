@@ -55,6 +55,10 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       return await clientRef.current.getPublicUsers();
     },
 
+    async getUser() {
+      return await clientRef.current.getUser();
+    },
+
     async getToken() {
       if (tokenRef.current === null) {
         tokenRef.current = await clientRef.current.getToken();

@@ -1,5 +1,6 @@
 import { AuthClient } from '@luna/client/auth/AuthClient';
 import { Token } from '@luna/client/auth/Token';
+import { User } from '@luna/client/auth/User';
 
 export class MockAuthClient implements AuthClient {
   async logIn(username: string, password: string): Promise<boolean> {
@@ -10,8 +11,14 @@ export class MockAuthClient implements AuthClient {
     return true;
   }
 
-  async getPublicUsers(): Promise<string[]> {
-    return ['Alice', 'Bob', 'Charles'];
+  async getPublicUsers(): Promise<User[]> {
+    return ['Alice', 'Bob', 'Charles'].map(username => ({ username }));
+  }
+
+  async getUser(): Promise<User | null> {
+    return {
+      username: 'Alice',
+    };
   }
 
   async getToken(): Promise<Token> {

@@ -1,11 +1,12 @@
 import { AuthClient } from '@luna/client/auth/AuthClient';
 import { Token } from '@luna/client/auth/Token';
+import { User } from '@luna/client/auth/User';
 
 // FIXME: Implement this client
 
 export class LegacyAuthClient implements AuthClient {
   // TODO: Make this customizable
-  private username?: string;
+  private username: string | null = null;
 
   constructor(
     private readonly url: string = 'https://lighthouse.uni-kiel.de'
@@ -36,11 +37,11 @@ export class LegacyAuthClient implements AuthClient {
   }
 
   async logOut(): Promise<boolean> {
-    this.username = undefined;
+    this.username = null;
     return true;
   }
 
-  async getPublicUsers(): Promise<string[]> {
+  async getPublicUsers(): Promise<User[]> {
     if (this.username === undefined) {
       return [];
     }
@@ -57,8 +58,17 @@ export class LegacyAuthClient implements AuthClient {
       return [];
     }
 
-    const users = JSON.parse(result[1]);
-    return users;
+    const usernames: string[] = JSON.parse(result[1]);
+
+    return usernames.map(username => ({ username }));
+  }
+
+  async getUser(): Promise<User | null> {
+    return this.username
+      ? {
+          username: this.username,
+        }
+      : null;
   }
 
   async getToken(): Promise<Token | null> {

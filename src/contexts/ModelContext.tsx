@@ -59,14 +59,17 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       if (!isLoggedIn) return;
       const users = await auth.client.getPublicUsers();
       // Make sure that every user has at least a black frame
-      for (const user of users) {
-        yield { user, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
+      for (const { username } of users) {
+        yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
       }
-      const streams = users.map(user =>
-        mapAsyncIterable(clientRef.current.streamModel(user), userModel => ({
-          user,
-          ...userModel,
-        }))
+      const streams = users.map(({ username }) =>
+        mapAsyncIterable(
+          clientRef.current.streamModel(username),
+          userModel => ({
+            username,
+            ...userModel,
+          })
+        )
       );
       yield* mergeAsyncIterables(streams);
     },
@@ -80,11 +83,11 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   // that freezes the application.
 
   const consumeUserStreams = useCallback(
-    async ({ user, ...userModel }: { user: string } & UserModel) => {
-      console.log(`Got frame from ${user}`);
+    async ({ username, ...userModel }: { username: string } & UserModel) => {
+      console.log(`Got frame from ${username}`);
       setUserModels(userModels => {
         const newUserModels = new Map(userModels);
-        newUserModels.set(user, userModel);
+        newUserModels.set(username, userModel);
         return newUserModels;
       });
     },
