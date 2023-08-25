@@ -1,16 +1,27 @@
+import { Token } from '@luna/client/auth/Token';
+import { ApiTokenModal } from '@luna/components/ApiTokenModal';
 import { RouteLink } from '@luna/components/RouteLink';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { ModelContext } from '@luna/contexts/ModelContext';
 import { truncate } from '@luna/utils/string';
-import { Divider, Input, ScrollShadow } from '@nextui-org/react';
+import {
+  Button,
+  Divider,
+  Input,
+  ScrollShadow,
+  Tooltip,
+  User,
+  useDisclosure,
+} from '@nextui-org/react';
 import {
   IconBuildingLighthouse,
   IconHeartRateMonitor,
+  IconKey,
   IconSearch,
   IconSettings,
   IconTower,
 } from '@tabler/icons-react';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export function Sidebar() {
@@ -18,6 +29,14 @@ export function Sidebar() {
   const model = useContext(ModelContext);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [token, setToken] = useState<Token | null>(null);
+  const apiModalDisclosure = useDisclosure();
+
+  useEffect(() => {
+    (async () => {
+      setToken(await auth.client.getToken());
+    })();
+  }, [auth.client]);
 
   return (
     // TODO: This layout is still too long in compact-mode
@@ -70,17 +89,22 @@ export function Sidebar() {
         </RouteLink>
       </ScrollShadow>
       <Divider />
-      <ul>
-        <li>
-          <Link
-            onClick={() => auth.client.logOut()}
-            to="/"
-            className="text-danger"
-          >
-            Sign out
-          </Link>
-        </li>
-      </ul>
+      <div className="flex flex-row justify-between">
+        <User name={auth.username} />
+        <Tooltip content="Show the API token">
+          <Button isIconOnly onPress={apiModalDisclosure.onOpen}>
+            <IconKey />
+          </Button>
+        </Tooltip>
+        <ApiTokenModal
+          token={token}
+          isOpen={apiModalDisclosure.isOpen}
+          onOpenChange={apiModalDisclosure.onOpenChange}
+        />
+      </div>
+      <Link onClick={() => auth.client.logOut()} to="/" className="text-danger">
+        Sign out
+      </Link>
     </div>
   );
 }
