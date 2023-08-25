@@ -1,6 +1,6 @@
 import { Token } from '@luna/client/auth/Token';
 import { AuthContext } from '@luna/contexts/AuthContext';
-import { DisplayInspectorCard } from '@luna/screens/home/displays/DisplayInspectorCard';
+import { TitledCard } from '@luna/components/TitledCard';
 import {
   Button,
   Modal,
@@ -33,7 +33,7 @@ export function DisplayInspectorApiTokenCard() {
   }, [token]);
 
   return (
-    <DisplayInspectorCard icon={<IconLink />} title="API Token">
+    <TitledCard icon={<IconLink />} title="API Token">
       <div className="flex flex-row items-center space-x-1">
         <Tooltip content="Show the token">
           <Button size="md" onPress={onOpen}>
@@ -69,6 +69,6 @@ export function DisplayInspectorApiTokenCard() {
           </Button>
         </Tooltip>
       </div>
-    </DisplayInspectorCard>
+    </TitledCard>
   );
 }

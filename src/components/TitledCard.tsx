@@ -1,17 +1,13 @@
 import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import { ReactNode } from 'react';
 
-export interface DisplayInspectorCardProps {
+export interface TitledCardProps {
   icon: ReactNode;
   title: string;
   children?: ReactNode;
 }
 
-export function DisplayInspectorCard({
-  title,
-  icon,
-  children,
-}: DisplayInspectorCardProps) {
+export function TitledCard({ title, icon, children }: TitledCardProps) {
   return (
     <Card>
       <CardHeader>
