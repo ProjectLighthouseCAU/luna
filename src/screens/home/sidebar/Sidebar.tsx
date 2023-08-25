@@ -55,11 +55,11 @@ export function Sidebar() {
           name="Displays"
           path="/displays"
         >
-          {auth.username ? (
+          {auth.user ? (
             <RouteLink
               icon={<IconBuildingLighthouse />}
-              name={`${auth.username} (me)`}
-              path={`/displays/${auth.username}`}
+              name={`${auth.user.username} (me)`}
+              path={`/displays/${auth.user.username}`}
             />
           ) : null}
 
@@ -67,7 +67,8 @@ export function Sidebar() {
             .sort()
             .filter(
               username =>
-                username !== auth.username && username.includes(searchQuery)
+                username !== auth.user?.username &&
+                username.includes(searchQuery)
             )
             .map(username => (
               <RouteLink
@@ -79,7 +80,7 @@ export function Sidebar() {
         </RouteLink>
       </ScrollShadow>
       <Divider />
-      <UserSnippet username={auth.username} token={token} />
+      {auth.user ? <UserSnippet user={auth.user} token={token} /> : null}
       <Link onClick={() => auth.client.logOut()} to="/" className="text-danger">
         Sign out
       </Link>

@@ -2,19 +2,20 @@ import { AuthClient } from '@luna/client/auth/AuthClient';
 import { LegacyAuthClient } from '@luna/client/auth/LegacyAuthClient';
 import { NullAuthClient } from '@luna/client/auth/NullAuthClient';
 import { Token } from '@luna/client/auth/Token';
+import { User } from '@luna/client/auth/User';
 import { useInitRef } from '@luna/hooks/useInitRef';
 import React, { createContext, ReactNode, useRef, useState } from 'react';
 
 export interface Auth {
-  /** The username of the authenticated user. */
-  readonly username: string | null;
+  /** The authenticated user. */
+  readonly user: User | null;
 
   /** The client used to perform requests. */
   readonly client: AuthClient;
 }
 
 export const AuthContext = createContext<Auth>({
-  username: null,
+  user: null,
   client: new NullAuthClient(),
 });
 
@@ -23,7 +24,7 @@ interface AuthContextProviderProps {
 }
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
-  const [username, setUsername] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const tokenRef = useRef<Token | null>(null);
   // TODO: This currently requires using a local CORS proxy on port 8010
   // since the legacy backend does not allow CORS origins. To run it,
@@ -37,7 +38,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const wrapperClient: AuthClient = {
     async logIn(username, password) {
       if (await clientRef.current.logIn(username, password)) {
-        setUsername(username);
+        setUser(await clientRef.current.getUser());
         return true;
       }
       return false;
@@ -45,7 +46,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
     async logOut() {
       if (await clientRef.current.logOut()) {
-        setUsername(null);
+        setUser(null);
         return true;
       }
       return false;
@@ -68,7 +69,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   };
 
   return (
-    <AuthContext.Provider value={{ username, client: wrapperClient }}>
+    <AuthContext.Provider value={{ user, client: wrapperClient }}>
       {children}
     </AuthContext.Provider>
   );

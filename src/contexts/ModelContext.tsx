@@ -42,17 +42,17 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
 
   useEffect(() => {
     (async () => {
-      if (auth.username !== null) {
+      if (auth.user !== null) {
         const token = await auth.client.getToken();
         if (token) {
-          await clientRef.current.logIn(auth.username, token.token);
+          await clientRef.current.logIn(auth.user.username, token.token);
           setLoggedIn(true);
           return;
         }
       }
       setLoggedIn(false);
     })();
-  }, [auth.client, auth.username, clientRef]);
+  }, [auth.client, auth.user, clientRef]);
 
   const getUserStreams = useCallback(
     async function* () {
