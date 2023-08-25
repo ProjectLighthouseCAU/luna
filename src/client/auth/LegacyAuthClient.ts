@@ -1,4 +1,5 @@
 import { AuthClient } from '@luna/client/auth/AuthClient';
+import { Role } from '@luna/client/auth/Role';
 import { Token } from '@luna/client/auth/Token';
 import { User } from '@luna/client/auth/User';
 
@@ -30,7 +31,38 @@ export class LegacyAuthClient implements AuthClient {
     // username and password are empty. In that case, the cookie
     // has to be deleted manually through the browser dev tools.
 
-    return response.ok && response.redirected;
+    if (!response.ok || !response.redirected) {
+      return false;
+    }
+
+    const responseBody = await response.text();
+    const userInfo = /Hallo(?:.*>([^<]+)<\/span><\/a>)?\s*(\S+)/g.exec(
+      responseBody
+    );
+
+    if (userInfo === null) {
+      return false;
+    }
+
+    const parsedRole: string | undefined = userInfo[1];
+    const parsedUsername = userInfo[2];
+    let role: Role;
+
+    switch (parsedRole) {
+      case 'admin':
+        role = Role.Admin;
+        break;
+      default:
+        role = Role.User;
+        break;
+    }
+
+    this.user = {
+      username: parsedUsername,
+      role,
+    };
+
+    return true;
   }
 
   async logOut(): Promise<boolean> {
