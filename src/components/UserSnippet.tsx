@@ -1,6 +1,7 @@
 import { Token } from '@luna/client/auth/Token';
 import { User } from '@luna/client/auth/User';
 import { ApiTokenModal } from '@luna/components/ApiTokenModal';
+import { RoleSnippet } from '@luna/components/RoleSnippet';
 import {
   Button,
   Tooltip,
@@ -18,7 +19,10 @@ export function UserSnippet({ user, token }: UserSnippetProps) {
   const { onOpen, isOpen, onOpenChange } = useDisclosure();
   return (
     <div className="flex flex-row justify-between gap-1">
-      <UserComponent name={user.username} />
+      <UserComponent
+        name={user.username}
+        description={user.role ? <RoleSnippet role={user.role} /> : null}
+      />
       <Tooltip content="Show the API token">
         <Button isIconOnly onPress={onOpen}>
           <IconKey />
