@@ -1,5 +1,5 @@
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
-import { Sidebar } from '@luna/screens/home/Sidebar';
+import { Sidebar } from '@luna/screens/home/sidebar/Sidebar';
 import { Button } from '@nextui-org/react';
 import { IconMenu2 } from '@tabler/icons-react';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
