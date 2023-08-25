@@ -81,8 +81,8 @@ export class LegacyAuthClient implements AuthClient {
     });
 
     const body = await response.text();
-    const result = /var users = (\[[^\]]+\])/g.exec(body);
 
+    const result = /var users = (\[[^\]]+\])/g.exec(body);
     if (result === null) {
       return [];
     }
@@ -108,16 +108,24 @@ export class LegacyAuthClient implements AuthClient {
     });
 
     const body = await response.text();
+
     const result = /"TOKEN":"(API-TOK[^"]+)"/g.exec(body);
-
-    // TODO: Parse expiry
-
     if (result === null) {
       return null;
     }
 
+    const expiryResult = /Gültig bis:\s*(\d+)\.(\d+)\.(\d+)\s+(\d+:\d+)/g.exec(
+      body
+    );
+    const expiresAt = expiryResult
+      ? new Date(
+          `${expiryResult[3]}-${expiryResult[2]}-${expiryResult[1]}T${expiryResult[4]}:00`
+        )
+      : undefined;
+
     return {
       value: result[1],
+      expiresAt,
     };
   }
 }

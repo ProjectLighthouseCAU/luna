@@ -30,7 +30,7 @@ export function ApiTokenModal({
                 <>
                   {token.expiresAt ? (
                     <p>
-                      {`Your token is valid through ${token.expiresAt.toLocaleDateString()}.`}
+                      {`Your token is valid through ${token.expiresAt.toLocaleString()}.`}
                     </p>
                   ) : null}
                   <Snippet symbol="">{token.value}</Snippet>
