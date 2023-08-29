@@ -61,6 +61,10 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       return await clientRef.current.getPublicUsers();
     },
 
+    async getAllUsers() {
+      return await clientRef.current.getAllUsers();
+    },
+
     async getUser() {
       return await clientRef.current.getUser();
     },

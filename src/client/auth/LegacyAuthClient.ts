@@ -89,6 +89,11 @@ export class LegacyAuthClient implements AuthClient {
     return usernames.map(username => ({ username }));
   }
 
+  async getAllUsers(): Promise<User[]> {
+    // TODO
+    return this.getPublicUsers();
+  }
+
   async getUser(): Promise<User | null> {
     return this.user;
   }

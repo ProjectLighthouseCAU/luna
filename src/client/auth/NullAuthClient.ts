@@ -15,6 +15,10 @@ export class NullAuthClient implements AuthClient {
     return [];
   }
 
+  async getAllUsers(): Promise<User[]> {
+    return [];
+  }
+
   async getUser(): Promise<User | null> {
     return null;
   }

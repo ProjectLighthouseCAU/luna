@@ -11,8 +11,11 @@ export interface AuthClient {
   /** Deauthenticates. Returns whether this succeeded. */
   logOut(): Promise<boolean>;
 
-  /** Fetches a list of public usernames. */
+  /** Fetches a list of public users. */
   getPublicUsers(): Promise<User[]>;
+
+  /** Fetches a list of all users. Generally admin-only. */
+  getAllUsers(): Promise<User[]>;
 
   /** Fetches the current user. */
   getUser(): Promise<User | null>;

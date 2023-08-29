@@ -15,6 +15,10 @@ export class MockAuthClient implements AuthClient {
     return ['Alice', 'Bob', 'Charles'].map(username => ({ username }));
   }
 
+  async getAllUsers(): Promise<User[]> {
+    return await this.getPublicUsers();
+  }
+
   async getUser(): Promise<User | null> {
     return {
       username: 'Alice',
