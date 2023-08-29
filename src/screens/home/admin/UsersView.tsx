@@ -2,6 +2,7 @@ import { User } from '@luna/client/auth/User';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import {
+  SortDescriptor,
   Table,
   TableBody,
   TableCell,
@@ -14,6 +15,12 @@ import { useContext, useEffect, useState } from 'react';
 export function UsersView() {
   const auth = useContext(AuthContext);
   const [users, setUsers] = useState<User[]>([]);
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+    column: 'username',
+    direction: 'ascending',
+  });
+
+  // TODO: Actually sort items
 
   useEffect(() => {
     (async () => {
@@ -24,13 +31,19 @@ export function UsersView() {
   return (
     // TODO: Lazy rendering
     <HomeContent title="Users">
-      <Table>
+      <Table
+        removeWrapper
+        // TODO: Add some padding somewhere to make the sticky header look nicer
+        isHeaderSticky
+        sortDescriptor={sortDescriptor}
+        onSortChange={setSortDescriptor}
+      >
         <TableHeader>
-          <TableColumn>Username</TableColumn>
-          <TableColumn>Role</TableColumn>
-          <TableColumn>Course</TableColumn>
-          <TableColumn>Created At</TableColumn>
-          <TableColumn>Last Seen</TableColumn>
+          <TableColumn allowsSorting>Username</TableColumn>
+          <TableColumn allowsSorting>Role</TableColumn>
+          <TableColumn allowsSorting>Course</TableColumn>
+          <TableColumn allowsSorting>Created At</TableColumn>
+          <TableColumn allowsSorting>Last Seen</TableColumn>
         </TableHeader>
         <TableBody>
           {users.map(user => (
