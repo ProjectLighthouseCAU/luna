@@ -8,6 +8,7 @@ import {
   IconHeartRateMonitor,
   IconSettings,
   IconTower,
+  IconUsers,
 } from '@tabler/icons-react';
 import { useContext } from 'react';
 import { InView } from 'react-intersection-observer';
@@ -29,6 +30,7 @@ export function SidebarRoutes({ isCompact }: SidebarRoutesProps) {
           name="Monitor"
           path="/admin/monitor"
         />
+        <RouteLink icon={<IconUsers />} name="Users" path="/admin/users" />
         <RouteLink
           icon={<IconSettings />}
           name="Settings"
