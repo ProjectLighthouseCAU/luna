@@ -19,17 +19,13 @@ export function HomeScreen() {
   const toggleExpanded = useCallback(() => setExpanded(e => !e), []);
 
   return (
-    <div
-      className={`h-screen flex ${
-        isCompact ? 'flex-col' : 'flex-row space-x-6'
-      } p-6`}
-    >
+    <div className={`flex ${isCompact ? 'flex-col' : 'flex-row'}`}>
       {!isCompact ? (
-        <div className="grow-0 shrink-0 basis-48">
+        <div className="grow-0 shrink-0 basis-64 sticky top-0 h-screen p-5">
           <Sidebar isCompact={isCompact} />
         </div>
       ) : null}
-      <div className="flex flex-col space-y-4 grow">
+      <div className="flex flex-col space-y-4 grow p-5">
         <div className="flex flex-row space-x-4">
           {isCompact ? (
             <Button isIconOnly onPress={toggleExpanded}>
