@@ -17,5 +17,9 @@ export function SearchContextProvider({
   query,
   children,
 }: SearchContextProviderProps) {
-  <SearchContext.Provider value={{ query }}>{children}</SearchContext.Provider>;
+  return (
+    <SearchContext.Provider value={{ query }}>
+      {children}
+    </SearchContext.Provider>
+  );
 }
