@@ -4,6 +4,8 @@ import './index.css';
 import { App } from './App';
 import reportWebVitals from './reportWebVitals';
 
+// TODO: Do we need `unstable_createRoot`? Where is that function?
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
