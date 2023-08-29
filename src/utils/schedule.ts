@@ -13,11 +13,31 @@ export function throttle(action: () => void, intervalMs: number): () => void {
       action();
     } else {
       isScheduled = true;
-      setTimeout(() => {
+      window.setTimeout(() => {
         action();
         lastCalled = Date.now();
         isScheduled = false;
       }, intervalMs);
     }
+  };
+}
+
+/**
+ * Debounces an action to the given interval.
+ */
+export function debounce<T extends Array<any>>(
+  action: (...args: T) => void,
+  intervalMs: number
+): (...args: T) => void {
+  let timeoutId: number | null = null;
+
+  return (...args) => {
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+    }
+    timeoutId = window.setTimeout(() => {
+      action(...args);
+      timeoutId = null;
+    }, intervalMs);
   };
 }
