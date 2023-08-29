@@ -68,11 +68,10 @@ export function Sidebar({ isCompact }: SidebarProps) {
                     username.toLowerCase().includes(searchQuery.toLowerCase())
                 )
                 .map(username => (
-                  <InView>
+                  <InView key={username}>
                     {({ inView, ref }) => (
                       <div ref={ref}>
                         <RouteLink
-                          key={username}
                           icon={<IconBuildingLighthouse />}
                           name={truncate(username, 14)}
                           path={`/displays/${username}`}
