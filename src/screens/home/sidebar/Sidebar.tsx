@@ -13,16 +13,12 @@ export interface SidebarProps {
 
 export function Sidebar({ isCompact }: SidebarProps) {
   const auth = useContext(AuthContext);
-  const { query, setQuery } = useContext(SearchContext);
+  const { setQuery } = useContext(SearchContext);
 
   return (
     // TODO: This layout is still too long in compact-mode
     <div className="flex flex-col space-y-2 h-full">
-      <SearchBar
-        placeholder="Search displays..."
-        query={query}
-        setQuery={setQuery}
-      />
+      <SearchBar placeholder="Search displays..." setQuery={setQuery} />
       <ScrollShadow className="grow">
         <SidebarRoutes isCompact={isCompact} />
       </ScrollShadow>
