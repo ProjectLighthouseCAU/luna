@@ -32,6 +32,7 @@ export function UsersView() {
     // TODO: Lazy rendering
     <HomeContent title="Users">
       <Table
+        aria-label="Table of users for administrators"
         removeWrapper
         // TODO: Add some padding somewhere to make the sticky header look nicer
         isHeaderSticky
