@@ -37,15 +37,25 @@ export function RouteLink({
           } px-2 py-1.5 rounded flex flex-row justify-between h-10`
         }
       >
-        <div className="flex flex-row gap-2">
-          {icon}
-          {name}
-        </div>
-        {children ? (
-          <Button isIconOnly onPress={toggleExpanded} variant="light" size="sm">
-            {isExpanded ? <IconChevronDown /> : <IconChevronRight />}
-          </Button>
-        ) : null}
+        {({ isActive }) => (
+          <>
+            <div className="flex flex-row gap-2">
+              {icon}
+              {name}
+            </div>
+            {children ? (
+              <Button
+                isIconOnly
+                onPress={toggleExpanded}
+                variant="light"
+                size="sm"
+                className={isActive ? 'text-white' : ''}
+              >
+                {isExpanded ? <IconChevronDown /> : <IconChevronRight />}
+              </Button>
+            ) : null}
+          </>
+        )}
       </NavLink>
       {isExpanded ? <div className="ml-4">{children}</div> : null}
     </div>
