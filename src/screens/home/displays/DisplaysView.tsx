@@ -1,11 +1,13 @@
 import { DisplayCard } from '@luna/components/DisplayCard';
 import { ModelContext } from '@luna/contexts/ModelContext';
+import { SearchContext } from '@luna/contexts/SearchContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { useContext } from 'react';
 import { InView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
 
 export function DisplaysView() {
+  const { query } = useContext(SearchContext);
   const { userModels } = useContext(ModelContext);
 
   return (
@@ -13,6 +15,9 @@ export function DisplaysView() {
       <div className="flex flex-col space-y-4">
         <div className="flex flex-wrap">
           {[...userModels.entries()]
+            .filter(([username]) =>
+              username.toLowerCase().includes(query.toLowerCase())
+            )
             .sort(([u1], [u2]) => u1.localeCompare(u2))
             .map(([username, userModel]) => (
               <Link to={username} key={username}>

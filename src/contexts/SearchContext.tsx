@@ -1,24 +1,25 @@
-import { ReactNode, createContext } from 'react';
+import { ReactNode, createContext, useState } from 'react';
 
 export interface Search {
   query: string;
+  setQuery: (query: string) => void;
 }
 
 export const SearchContext = createContext<Search>({
   query: '',
+  setQuery: () => {},
 });
 
 interface SearchContextProviderProps {
-  query: string;
   children: ReactNode;
 }
 
 export function SearchContextProvider({
-  query,
   children,
 }: SearchContextProviderProps) {
+  const [query, setQuery] = useState('');
   return (
-    <SearchContext.Provider value={{ query }}>
+    <SearchContext.Provider value={{ query, setQuery }}>
       {children}
     </SearchContext.Provider>
   );

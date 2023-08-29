@@ -49,12 +49,12 @@ export function SidebarRoutes({ isCompact }: SidebarRoutesProps) {
         ) : null}
         {!isCompact || query
           ? [...model.userModels.keys()]
-              .sort()
               .filter(
                 username =>
                   username !== auth.user?.username &&
                   username.toLowerCase().includes(query.toLowerCase())
               )
+              .sort()
               .map(username => (
                 <InView key={username}>
                   {({ inView, ref }) => (

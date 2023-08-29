@@ -1,6 +1,7 @@
 import { AuthContextProvider } from '@luna/contexts/AuthContext';
 import { ColorSchemeContextProvider } from '@luna/contexts/ColorSchemeContext';
 import { ModelContextProvider } from '@luna/contexts/ModelContext';
+import { SearchContextProvider } from '@luna/contexts/SearchContext';
 import { WindowDimensionsContextProvider } from '@luna/contexts/WindowDimensionsContext';
 import { router } from '@luna/routes';
 import { NextUIProvider } from '@nextui-org/react';
@@ -13,7 +14,9 @@ export function App() {
         <WindowDimensionsContextProvider>
           <AuthContextProvider>
             <ModelContextProvider>
-              <RouterProvider router={router} />
+              <SearchContextProvider>
+                <RouterProvider router={router} />
+              </SearchContextProvider>
             </ModelContextProvider>
           </AuthContextProvider>
         </WindowDimensionsContextProvider>
