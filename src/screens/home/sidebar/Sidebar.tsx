@@ -1,9 +1,9 @@
+import { SearchBar } from '@luna/components/SearchBar';
 import { UserSnippet } from '@luna/components/UserSnippet';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { SearchContext } from '@luna/contexts/SearchContext';
 import { SidebarRoutes } from '@luna/screens/home/sidebar/SidebarRoutes';
-import { Divider, Input, ScrollShadow } from '@nextui-org/react';
-import { IconSearch } from '@tabler/icons-react';
+import { Divider, ScrollShadow } from '@nextui-org/react';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -18,11 +18,10 @@ export function Sidebar({ isCompact }: SidebarProps) {
   return (
     // TODO: This layout is still too long in compact-mode
     <div className="flex flex-col space-y-2 h-full">
-      <Input
-        startContent={<IconSearch />}
+      <SearchBar
         placeholder="Search displays..."
-        value={query}
-        onValueChange={setQuery}
+        query={query}
+        setQuery={setQuery}
       />
       <ScrollShadow className="grow">
         <SidebarRoutes isCompact={isCompact} />
