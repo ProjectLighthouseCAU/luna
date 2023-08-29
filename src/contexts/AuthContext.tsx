@@ -34,7 +34,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   // since the legacy backend does not allow CORS origins. To run it,
   // use `npm run cors-proxy`.
   const clientRef = useInitRef<AuthClient>(
-    () => new LegacyAuthClient('http://localhost:8010')
+    () => new LegacyAuthClient(`http://${window.location.hostname}:8010`)
   );
 
   // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
