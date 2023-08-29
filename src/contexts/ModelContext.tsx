@@ -82,7 +82,6 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
 
   const consumeUserStreams = useCallback(
     async ({ username, ...userModel }: { username: string } & UserModel) => {
-      console.log(`Got frame from ${username}`);
       setUserModels(userModels => userModels.set(username, userModel));
     },
     []
