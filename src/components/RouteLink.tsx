@@ -7,7 +7,7 @@ interface RouteLinkParams {
   icon: ReactNode;
   name: string;
   path: string;
-  className?: string;
+  isSkeleton?: boolean;
   children?: ReactNode;
 }
 
@@ -15,7 +15,7 @@ export function RouteLink({
   icon,
   name,
   path,
-  className,
+  isSkeleton = false,
   children,
 }: RouteLinkParams) {
   const [isExpanded, setExpanded] = useState(true);
@@ -24,15 +24,17 @@ export function RouteLink({
     setExpanded(isExpanded => !isExpanded);
   }, []);
 
-  return (
-    <div className={`flex flex-col space-y-1 ${className}`}>
+  return isSkeleton ? (
+    <div className="h-10" />
+  ) : (
+    <div className={`flex flex-col space-y-1h-10`}>
       <NavLink
         to={path}
         end
         className={({ isActive }) =>
           `${
             isActive ? 'bg-primary text-white' : ''
-          } px-2 py-1.5 rounded flex flex-row justify-between`
+          } px-2 py-1.5 rounded flex flex-row justify-between h-10`
         }
       >
         <div className="flex flex-row gap-2">
