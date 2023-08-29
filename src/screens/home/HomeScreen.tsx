@@ -19,7 +19,7 @@ export function HomeScreen() {
   const toggleExpanded = useCallback(() => setExpanded(e => !e), []);
 
   return (
-    <div className={`flex ${isCompact ? 'flex-col' : 'flex-row'}`}>
+    <div className={`flex ${isCompact ? 'flex-col h-full' : 'flex-row'}`}>
       {!isCompact ? (
         <div className="grow-0 shrink-0 basis-64 sticky top-0 h-screen p-5">
           <Sidebar isCompact={isCompact} />
