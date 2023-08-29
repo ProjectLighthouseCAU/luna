@@ -1,20 +1,23 @@
 /**
  * Throttles the given action to the given interval.
  */
-export function throttle(action: () => void, intervalMs: number): () => void {
+export function throttle<T extends Array<any>>(
+  action: (...args: T) => void,
+  intervalMs: number
+): (...args: T) => void {
   let lastCalled = 0;
   let isScheduled = false;
 
-  return () => {
+  return (...args) => {
     if (isScheduled) return;
     const now = Date.now();
     if (now - lastCalled >= intervalMs) {
       lastCalled = now;
-      action();
+      action(...args);
     } else {
       isScheduled = true;
       window.setTimeout(() => {
-        action();
+        action(...args);
         lastCalled = Date.now();
         isScheduled = false;
       }, intervalMs);
