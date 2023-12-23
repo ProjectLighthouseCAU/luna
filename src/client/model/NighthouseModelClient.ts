@@ -34,4 +34,12 @@ export class NighthouseModelClient implements ModelClient {
       }
     }
   }
+
+  async *streamResource(path: string[]): AsyncIterable<unknown> {
+    if (this.client) {
+      for await (const message of this.client.stream('STREAM', path, {})) {
+        yield message.PAYL;
+      }
+    }
+  }
 }
