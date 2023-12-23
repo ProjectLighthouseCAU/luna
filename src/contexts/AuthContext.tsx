@@ -40,6 +40,15 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
 
   const wrapperClient: AuthClient = {
+    async signUp(registrationKey, username, password) {
+      if (await clientRef.current.signUp(registrationKey, username, password)) {
+        setUser(await this.getUser());
+        setToken(await this.getToken());
+        return true;
+      }
+      return false;
+    },
+
     async logIn(username, password) {
       if (await clientRef.current.logIn(username, password)) {
         setUser(await this.getUser());

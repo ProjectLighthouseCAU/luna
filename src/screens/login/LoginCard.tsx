@@ -3,14 +3,19 @@ import {
   Button,
   Card,
   CardBody,
+  CardFooter,
   CardHeader,
   Divider,
   Input,
 } from '@nextui-org/react';
-import React, { FormEvent, useCallback, useContext, useState } from 'react';
+import { FormEvent, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export function LoginCard() {
+export interface LoginCardProps {
+  showSignup: () => void;
+}
+
+export function LoginCard({ showSignup }: LoginCardProps) {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -34,10 +39,14 @@ export function LoginCard() {
     [auth.client, navigate, username, password]
   );
 
+  const signUp = useCallback(async () => {
+    showSignup();
+  }, [showSignup]);
+
   return (
     <Card className="w-full">
       <form onSubmit={logIn}>
-        <CardHeader>Sign in to view and manage your displays</CardHeader>
+        <CardHeader>Login to view and manage your displays</CardHeader>
         <Divider />
         <CardBody className="w-full space-y-6">
           <div className="space-y-2">
@@ -64,9 +73,16 @@ export function LoginCard() {
               errorMessage={errorMessage}
             />
           </div>
-          <Button type="submit">Sign in</Button>
+          <Button type="submit">Login</Button>
         </CardBody>
       </form>
+      <Divider />
+      <CardFooter className="flow-root">
+        <div className="float-left">Don't have an account?</div>
+        <Button className="float-right" onClick={signUp}>
+          Sign up
+        </Button>
+      </CardFooter>
     </Card>
   );
 }

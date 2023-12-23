@@ -3,6 +3,14 @@ import { Token } from '@luna/client/auth/Token';
 import { User } from '@luna/client/auth/User';
 
 export class MockAuthClient implements AuthClient {
+  async signUp(
+    registrationKey: string,
+    username: string,
+    password: string
+  ): Promise<boolean> {
+    return true;
+  }
+
   async logIn(username: string, password: string): Promise<boolean> {
     return true;
   }

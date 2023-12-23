@@ -5,6 +5,13 @@ import { User } from '@luna/client/auth/User';
  * A facility that talks to an authentication backend.
  */
 export interface AuthClient {
+  /** Sign up a new account using a registration key. */
+  signUp(
+    registrationKey: string,
+    username: string,
+    password: string
+  ): Promise<boolean>;
+
   /** Authenticates with the given credentials. Returns whether this succeeded. */
   logIn(username: string, password: string): Promise<boolean>;
 
