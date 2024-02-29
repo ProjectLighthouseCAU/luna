@@ -2,7 +2,8 @@ import { WindowDimensionsContext } from '@luna/contexts/WindowDimensionsContext'
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { LiveDisplay } from '@luna/components/LiveDisplay';
 import { LoginCard } from '@luna/screens/login/LoginCard';
-import { useContext } from 'react';
+import { SignupCard } from '@luna/screens/login/SignupCard';
+import { useContext, useState } from 'react';
 import { DISPLAY_ASPECT_RATIO } from '@luna/components/Display';
 import { Logo } from '@luna/components/Logo';
 
@@ -20,6 +21,8 @@ export function LoginScreen() {
       ? height * DISPLAY_ASPECT_RATIO * factor
       : Math.min(width, maxWidth) * factor;
 
+  const [showSignup, setShowSignup] = useState(false);
+
   return (
     <div
       className={`h-full flex ${
@@ -29,7 +32,11 @@ export function LoginScreen() {
       <div className="flex flex-col space-y-8 items-center">
         {isHorizontal ? <Logo /> : null}
         <h1 className="text-4xl font-bold">Project Lighthouse</h1>
-        <LoginCard />
+        {showSignup ? (
+          <SignupCard showLogin={() => setShowSignup(false)} />
+        ) : (
+          <LoginCard showSignup={() => setShowSignup(true)} />
+        )}
       </div>
       <LiveDisplay width={displayWidth} />
     </div>

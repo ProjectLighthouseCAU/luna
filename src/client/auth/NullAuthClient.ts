@@ -3,6 +3,14 @@ import { Token } from '@luna/client/auth/Token';
 import { User } from '@luna/client/auth/User';
 
 export class NullAuthClient implements AuthClient {
+  async signUp(
+    registrationKey: string,
+    username: string,
+    password: string
+  ): Promise<boolean> {
+    return false;
+  }
+
   async logIn(username: string, password: string): Promise<boolean> {
     return false;
   }

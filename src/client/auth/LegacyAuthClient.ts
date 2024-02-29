@@ -10,6 +10,15 @@ export class LegacyAuthClient implements AuthClient {
     private readonly url: string = 'https://lighthouse.uni-kiel.de'
   ) {}
 
+  async signUp(
+    registrationKey: string,
+    username: string,
+    password: string
+  ): Promise<boolean> {
+    console.error('LegacyAuthClient: signUp not implemented');
+    return false;
+  }
+
   async logIn(username: string, password: string): Promise<boolean> {
     const body = new URLSearchParams();
     body.append('username', username);
