@@ -46,7 +46,7 @@ export function LoginCard({ showSignup }: LoginCardProps) {
   return (
     <Card className="w-full">
       <form onSubmit={logIn}>
-        <CardHeader>Login to view and manage your displays</CardHeader>
+        <CardHeader>Log in to view and manage your displays</CardHeader>
         <Divider />
         <CardBody className="w-full space-y-6">
           <div className="space-y-2">
@@ -73,7 +73,7 @@ export function LoginCard({ showSignup }: LoginCardProps) {
               errorMessage={errorMessage}
             />
           </div>
-          <Button type="submit">Login</Button>
+          <Button type="submit">Log in</Button>
         </CardBody>
       </form>
       <Divider />
