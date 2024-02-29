@@ -79,7 +79,9 @@ export function LoginCard({ showSignup }: LoginCardProps) {
       <Divider />
       <CardFooter className="flex justify-between">
         <div>Don't have an account?</div>
-        <Button onClick={signUp}>Sign up</Button>
+        <Button onClick={signUp} size="sm">
+          Sign up
+        </Button>
       </CardFooter>
     </Card>
   );
