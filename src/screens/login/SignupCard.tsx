@@ -162,11 +162,9 @@ export function SignupCard({ showLogin }: SignupCardProps) {
         </CardBody>
       </form>
       <Divider />
-      <CardFooter className="flow-root">
-        <div className="float-left text-align">Already have an account?</div>
-        <Button className="float-right" onClick={logIn}>
-          Login
-        </Button>
+      <CardFooter className="flex justify-between">
+        <div>Already have an account?</div>
+        <Button onClick={logIn}>Login</Button>
       </CardFooter>
     </Card>
   );
