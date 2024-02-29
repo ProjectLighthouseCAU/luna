@@ -6,6 +6,7 @@ import { SignupCard } from '@luna/screens/login/SignupCard';
 import { useContext, useState } from 'react';
 import { DISPLAY_ASPECT_RATIO } from '@luna/components/Display';
 import { Logo } from '@luna/components/Logo';
+import ReactCardFlip from 'react-card-flip';
 
 export function LoginScreen() {
   const { width, height } = useContext(WindowDimensionsContext);
@@ -32,11 +33,10 @@ export function LoginScreen() {
       <div className="flex flex-col space-y-8 items-center">
         {isHorizontal ? <Logo /> : null}
         <h1 className="text-4xl font-bold">Project Lighthouse</h1>
-        {showSignup ? (
-          <SignupCard showLogin={() => setShowSignup(false)} />
-        ) : (
+        <ReactCardFlip isFlipped={showSignup}>
           <LoginCard showSignup={() => setShowSignup(true)} />
-        )}
+          <SignupCard showLogin={() => setShowSignup(false)} />
+        </ReactCardFlip>
       </div>
       <LiveDisplay width={displayWidth} />
     </div>
