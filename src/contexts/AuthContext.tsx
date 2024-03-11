@@ -4,7 +4,7 @@ import { NullAuthClient } from '@luna/client/auth/NullAuthClient';
 import { Token } from '@luna/client/auth/Token';
 import { User } from '@luna/client/auth/User';
 import { useInitRef } from '@luna/hooks/useInitRef';
-import React, { createContext, ReactNode, useState } from 'react';
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
 
 export interface Auth {
   /** The authenticated user. */
@@ -39,23 +39,27 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
 
-  const wrapperClient: AuthClient = {
+  const wrapperClient = useInitRef<AuthClient>(() => ({
     async signUp(registrationKey, username, password) {
-      if (await clientRef.current.signUp(registrationKey, username, password)) {
-        setUser(await this.getUser());
+      const user = await clientRef.current.signUp(
+        registrationKey,
+        username,
+        password
+      );
+      if (user !== null) {
+        setUser(user);
         setToken(await this.getToken());
-        return true;
       }
-      return false;
+      return user;
     },
 
     async logIn(username, password) {
-      if (await clientRef.current.logIn(username, password)) {
-        setUser(await this.getUser());
+      const user = await clientRef.current.logIn(username, password);
+      if (user !== null) {
+        setUser(user);
         setToken(await this.getToken());
-        return true;
       }
-      return false;
+      return user;
     },
 
     async logOut() {
@@ -74,17 +78,19 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       return await clientRef.current.getAllUsers();
     },
 
-    async getUser() {
-      return await clientRef.current.getUser();
-    },
-
     async getToken() {
       return await clientRef.current.getToken();
     },
-  };
+  }));
+
+  useEffect(() => {
+    wrapperClient.current.logIn();
+  }, [wrapperClient]);
 
   return (
-    <AuthContext.Provider value={{ user, token, client: wrapperClient }}>
+    <AuthContext.Provider
+      value={{ user, token, client: wrapperClient.current }}
+    >
       {children}
     </AuthContext.Provider>
   );

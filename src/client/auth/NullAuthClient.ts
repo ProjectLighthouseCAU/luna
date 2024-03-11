@@ -7,12 +7,12 @@ export class NullAuthClient implements AuthClient {
     registrationKey: string,
     username: string,
     password: string
-  ): Promise<boolean> {
-    return false;
+  ): Promise<User | null> {
+    return null;
   }
 
-  async logIn(username: string, password: string): Promise<boolean> {
-    return false;
+  async logIn(username?: string, password?: string): Promise<User | null> {
+    return null;
   }
 
   async logOut(): Promise<boolean> {
@@ -25,10 +25,6 @@ export class NullAuthClient implements AuthClient {
 
   async getAllUsers(): Promise<User[]> {
     return [];
-  }
-
-  async getUser(): Promise<User | null> {
-    return null;
   }
 
   async getToken(): Promise<Token | null> {

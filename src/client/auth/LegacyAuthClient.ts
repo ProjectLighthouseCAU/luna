@@ -4,7 +4,7 @@ import { Token } from '@luna/client/auth/Token';
 import { User } from '@luna/client/auth/User';
 
 export class LegacyAuthClient implements AuthClient {
-  private user: User | null = null;
+  private lastUser?: User;
 
   constructor(
     private readonly url: string = 'https://lighthouse.uni-kiel.de'
@@ -14,15 +14,19 @@ export class LegacyAuthClient implements AuthClient {
     registrationKey: string,
     username: string,
     password: string
-  ): Promise<boolean> {
+  ): Promise<User | null> {
     console.error('LegacyAuthClient: signUp not implemented');
-    return false;
+    return null;
   }
 
-  async logIn(username: string, password: string): Promise<boolean> {
+  async logIn(username?: string, password?: string): Promise<User | null> {
     const body = new URLSearchParams();
-    body.append('username', username);
-    body.append('password', password);
+    if (username !== undefined) {
+      body.append('username', username);
+    }
+    if (password !== undefined) {
+      body.append('password', password);
+    }
 
     const response = await fetch(`${this.url}/login`, {
       method: 'POST',
@@ -31,15 +35,8 @@ export class LegacyAuthClient implements AuthClient {
       body,
     });
 
-    // TODO: The backend sends an `HttpOnly` cookie which
-    // we can't really control from client-side JS. This means
-    // once the user has authenticated successfully once
-    // any login response seems to go through, even if e.g.
-    // username and password are empty. In that case, the cookie
-    // has to be deleted manually through the browser dev tools.
-
-    if (!response.ok || !response.redirected) {
-      return false;
+    if (!response.ok) {
+      return null;
     }
 
     const responseBody = await response.text();
@@ -48,7 +45,7 @@ export class LegacyAuthClient implements AuthClient {
     );
 
     if (userInfo === null) {
-      return false;
+      return null;
     }
 
     const parsedRole: string | undefined = userInfo[1];
@@ -64,24 +61,24 @@ export class LegacyAuthClient implements AuthClient {
         break;
     }
 
-    this.user = {
+    const user = {
       username: parsedUsername,
       role,
     };
+    this.lastUser = user;
 
-    return true;
+    return user;
   }
 
   async logOut(): Promise<boolean> {
-    this.user = null;
-    return true;
+    const response = await fetch(`${this.url}/logout`, {
+      mode: 'cors',
+      credentials: 'include',
+    });
+    return response.ok;
   }
 
   async getPublicUsers(): Promise<User[]> {
-    if (!this.user) {
-      return [];
-    }
-
     const response = await fetch(`${this.url}/users`, {
       mode: 'cors',
       credentials: 'include',
@@ -103,18 +100,14 @@ export class LegacyAuthClient implements AuthClient {
     return this.getPublicUsers();
   }
 
-  async getUser(): Promise<User | null> {
-    return this.user;
-  }
-
   async getToken(): Promise<Token | null> {
-    if (!this.user) {
+    // TODO: We could probably use the redirected login response already
+
+    if (this.lastUser === undefined) {
       return null;
     }
 
-    // TODO: We could probably use the redirected login response already
-
-    const response = await fetch(`${this.url}/user/${this.user}`, {
+    const response = await fetch(`${this.url}/user/${this.lastUser.username}`, {
       mode: 'cors',
       credentials: 'include',
     });

@@ -7,12 +7,14 @@ export class MockAuthClient implements AuthClient {
     registrationKey: string,
     username: string,
     password: string
-  ): Promise<boolean> {
-    return true;
+  ): Promise<User | null> {
+    return null;
   }
 
-  async logIn(username: string, password: string): Promise<boolean> {
-    return true;
+  async logIn(username?: string, password?: string): Promise<User | null> {
+    return {
+      username: 'Alice',
+    };
   }
 
   async logOut(): Promise<boolean> {
@@ -25,12 +27,6 @@ export class MockAuthClient implements AuthClient {
 
   async getAllUsers(): Promise<User[]> {
     return await this.getPublicUsers();
-  }
-
-  async getUser(): Promise<User | null> {
-    return {
-      username: 'Alice',
-    };
   }
 
   async getToken(): Promise<Token> {

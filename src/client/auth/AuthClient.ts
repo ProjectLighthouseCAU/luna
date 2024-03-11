@@ -8,12 +8,12 @@ export interface AuthClient {
   /** Sign up a new account using a registration key. */
   signUp(
     registrationKey: string,
-    username: string,
-    password: string
-  ): Promise<boolean>;
+    username?: string,
+    password?: string
+  ): Promise<User | null>;
 
   /** Authenticates with the given credentials. Returns whether this succeeded. */
-  logIn(username: string, password: string): Promise<boolean>;
+  logIn(username?: string, password?: string): Promise<User | null>;
 
   /** Deauthenticates. Returns whether this succeeded. */
   logOut(): Promise<boolean>;
@@ -23,9 +23,6 @@ export interface AuthClient {
 
   /** Fetches a list of all users. Generally admin-only. */
   getAllUsers(): Promise<User[]>;
-
-  /** Fetches the current user. */
-  getUser(): Promise<User | null>;
 
   /** Fetches the API token for the authenticated user. */
   getToken(): Promise<Token | null>;
