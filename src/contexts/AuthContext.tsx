@@ -7,6 +7,9 @@ import { useInitRef } from '@luna/hooks/useInitRef';
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 
 export interface Auth {
+  /** Whether auth is still initializing. */
+  readonly isInitializing: boolean;
+
   /** The authenticated user. */
   readonly user: User | null;
 
@@ -18,6 +21,7 @@ export interface Auth {
 }
 
 export const AuthContext = createContext<Auth>({
+  isInitializing: true,
   user: null,
   token: null,
   client: new NullAuthClient(),
@@ -28,6 +32,7 @@ interface AuthContextProviderProps {
 }
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
+  const [isInitializing, setInitializing] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<Token | null>(null);
   // TODO: This currently requires using a local CORS proxy on port 8010
@@ -84,12 +89,17 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }));
 
   useEffect(() => {
-    wrapperClient.current.logIn();
-  }, [wrapperClient]);
+    (async () => {
+      if (isInitializing) {
+        await wrapperClient.current.logIn();
+        setInitializing(false);
+      }
+    })();
+  }, [isInitializing, wrapperClient]);
 
   return (
     <AuthContext.Provider
-      value={{ user, token, client: wrapperClient.current }}
+      value={{ isInitializing, user, token, client: wrapperClient.current }}
     >
       {children}
     </AuthContext.Provider>
