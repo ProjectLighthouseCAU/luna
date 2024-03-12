@@ -13,7 +13,7 @@ export function DisplaysView() {
   return (
     <HomeContent title="Displays">
       <div className="flex flex-col space-y-4">
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4 justify-center">
           {[...userModels.entries()]
             .filter(([username]) =>
               username.toLowerCase().includes(query.toLowerCase())
