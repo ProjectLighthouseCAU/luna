@@ -1,5 +1,6 @@
 import { useDebounce } from '@luna/hooks/useDebounce';
 import { Slider } from '@nextui-org/react';
+import { IconArrowsDiagonal } from '@tabler/icons-react';
 import { useState } from 'react';
 
 export interface DisplaysToolbarProps {
@@ -19,14 +20,15 @@ export function DisplaysToolbar({
   const setZoomDebounced = useDebounce(setZoom, 50);
 
   return (
-    <div className="flex flex-row items-center">
+    <div className="flex flex-row items-center gap-2">
       <Slider
         size="sm"
-        className="w-24"
+        className="w-32"
         aria-label="Zoom"
         minValue={minZoom}
         maxValue={maxZoom}
         value={shownZoom}
+        startContent={<IconArrowsDiagonal color="gray" size={20} />}
         onChange={newZoom => {
           setShownZoom(newZoom as number);
           setZoomDebounced(newZoom as number);
