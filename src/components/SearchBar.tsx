@@ -1,7 +1,7 @@
-import { debounce } from '@luna/utils/schedule';
+import { useDebounce } from '@luna/hooks/useDebounce';
 import { Input } from '@nextui-org/react';
 import { IconSearch } from '@tabler/icons-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 export interface SearchBarProps {
   placeholder?: string;
@@ -11,13 +11,7 @@ export interface SearchBarProps {
 export function SearchBar({ placeholder, setQuery }: SearchBarProps) {
   const [value, setValue] = useState('');
 
-  const setQueryDebounced = useMemo(
-    () =>
-      debounce((query: string) => {
-        setQuery(query);
-      }, 200),
-    [setQuery]
-  );
+  const setQueryDebounced = useDebounce(setQuery, 200);
 
   const onValueChange = useCallback(
     (value: string) => {
