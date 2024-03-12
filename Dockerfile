@@ -1,5 +1,7 @@
-# Use Node.js runtime as builder base image
-FROM node:21 AS builder
+# Use Node.js runtime as builder base image.
+# Since the built app is platform-agnostic, we use the host architecture
+# even if we are cross-building the image.
+FROM --platform=$BUILDPLATFORM node:21 AS builder
 
 WORKDIR /opt/luna
 
