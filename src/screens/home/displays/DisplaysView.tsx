@@ -2,6 +2,7 @@ import { DisplayCard } from '@luna/components/DisplayCard';
 import { ModelContext } from '@luna/contexts/ModelContext';
 import { SearchContext } from '@luna/contexts/SearchContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
+import { DisplaysToolbar } from '@luna/screens/home/displays/DisplaysToolbar';
 import { useContext } from 'react';
 import { InView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
@@ -11,7 +12,7 @@ export function DisplaysView() {
   const { userModels } = useContext(ModelContext);
 
   return (
-    <HomeContent title="Displays">
+    <HomeContent title="Displays" toolbar={<DisplaysToolbar />}>
       <div className="flex flex-col space-y-4">
         <div className="flex flex-wrap gap-4 justify-center">
           {[...userModels.entries()]
