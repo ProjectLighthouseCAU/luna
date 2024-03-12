@@ -3,15 +3,23 @@ import { useOutletContext } from 'react-router-dom';
 
 export interface HomeContentProps {
   title: string;
+  toolbar?: ReactNode;
   children: ReactNode;
 }
 
-export function HomeContent({ title, children }: HomeContentProps) {
-  const setTitle: (title: string) => void = useOutletContext();
+export interface HomeContentContext {
+  setTitle(title: string): void;
+
+  setToolbar(toolbar: ReactNode): void;
+}
+
+export function HomeContent({ title, toolbar, children }: HomeContentProps) {
+  const context = useOutletContext<HomeContentContext>();
 
   useEffect(() => {
-    setTitle(title);
-  }, [title, setTitle]);
+    context.setTitle(title);
+    context.setToolbar(toolbar);
+  }, [title, toolbar, context]);
 
   return <>{children}</>;
 }

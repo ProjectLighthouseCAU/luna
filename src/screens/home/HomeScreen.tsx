@@ -1,8 +1,14 @@
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
+import { HomeContentContext } from '@luna/screens/home/HomeContent';
 import { Sidebar } from '@luna/screens/home/sidebar/Sidebar';
 import { Button } from '@nextui-org/react';
 import { IconMenu2 } from '@tabler/icons-react';
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, {
+  ReactNode,
+  useCallback,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 export function HomeScreen() {
@@ -11,6 +17,9 @@ export function HomeScreen() {
   const isCompact = breakpoint <= Breakpoint.Sm;
   const [isExpanded, setExpanded] = useState(false);
   const [title, setTitle] = useState('');
+  const [toolbar, setToolbar] = useState<ReactNode>();
+
+  const outletContext: HomeContentContext = { setTitle, setToolbar };
 
   useLayoutEffect(() => {
     setExpanded(false);
@@ -26,17 +35,20 @@ export function HomeScreen() {
         </div>
       ) : null}
       <div className="flex flex-col space-y-4 grow p-5">
-        <div className="flex flex-row space-x-4">
+        <div className="flex flex-row items-center space-x-4">
           {isCompact ? (
             <Button isIconOnly onPress={toggleExpanded}>
               <IconMenu2 />
             </Button>
           ) : null}
-          <h2 className="text-3xl">{title}</h2>
+          <div className="grow flex flex-row justify-between">
+            <h2 className="text-3xl">{title}</h2>
+            {toolbar}
+          </div>
         </div>
         {isCompact && isExpanded ? <Sidebar isCompact={isCompact} /> : null}
         <div className="grow">
-          <Outlet context={setTitle} />
+          <Outlet context={outletContext} />
         </div>
       </div>
     </div>
