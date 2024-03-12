@@ -5,11 +5,16 @@ import React from 'react';
 interface DisplayCardProps {
   username: string;
   frame: Uint8Array;
+  displayWidth: number;
   isSkeleton?: boolean;
 }
 
-export function DisplayCard({ username, frame, isSkeleton }: DisplayCardProps) {
-  const displayWidth = 300;
+export function DisplayCard({
+  username,
+  frame,
+  displayWidth,
+  isSkeleton,
+}: DisplayCardProps) {
   const displayHeight = displayWidth / DISPLAY_ASPECT_RATIO;
 
   return (

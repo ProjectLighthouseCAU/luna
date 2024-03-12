@@ -3,7 +3,7 @@ import { ModelContext } from '@luna/contexts/ModelContext';
 import { SearchContext } from '@luna/contexts/SearchContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplaysToolbar } from '@luna/screens/home/displays/DisplaysToolbar';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
 
@@ -11,8 +11,22 @@ export function DisplaysView() {
   const { query } = useContext(SearchContext);
   const { userModels } = useContext(ModelContext);
 
+  const minDisplayWidth = 10;
+  const maxDisplayWidth = 800;
+  const [displayWidth, setDisplayWidth] = useState(300);
+
   return (
-    <HomeContent title="Displays" toolbar={<DisplaysToolbar />}>
+    <HomeContent
+      title="Displays"
+      toolbar={
+        <DisplaysToolbar
+          minZoom={minDisplayWidth}
+          maxZoom={maxDisplayWidth}
+          zoom={displayWidth}
+          setZoom={setDisplayWidth}
+        />
+      }
+    >
       <div className="flex flex-col space-y-4">
         <div className="flex flex-wrap gap-4 justify-center">
           {[...userModels.entries()]
@@ -28,6 +42,7 @@ export function DisplaysView() {
                       <DisplayCard
                         username={username}
                         frame={userModel.frame}
+                        displayWidth={displayWidth}
                         isSkeleton={!inView}
                       />
                     </div>

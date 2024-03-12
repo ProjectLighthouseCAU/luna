@@ -1,3 +1,37 @@
-export function DisplaysToolbar() {
-  return <div>Test</div>;
+import { useDebounce } from '@luna/hooks/useDebounce';
+import { Slider } from '@nextui-org/react';
+import { useState } from 'react';
+
+export interface DisplaysToolbarProps {
+  minZoom: number;
+  maxZoom: number;
+  zoom: number;
+  setZoom: (zoom: number) => void;
+}
+
+export function DisplaysToolbar({
+  minZoom,
+  maxZoom,
+  zoom,
+  setZoom,
+}: DisplaysToolbarProps) {
+  const [shownZoom, setShownZoom] = useState(zoom);
+  const setZoomDebounced = useDebounce(setZoom, 50);
+
+  return (
+    <div className="flex flex-row items-center">
+      <Slider
+        size="sm"
+        className="w-24"
+        aria-label="Zoom"
+        minValue={minZoom}
+        maxValue={maxZoom}
+        value={shownZoom}
+        onChange={newZoom => {
+          setShownZoom(newZoom as number);
+          setZoomDebounced(newZoom as number);
+        }}
+      />
+    </div>
+  );
 }
