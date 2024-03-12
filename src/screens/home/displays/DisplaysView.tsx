@@ -1,9 +1,11 @@
 import { DisplayCard } from '@luna/components/DisplayCard';
+import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { ModelContext } from '@luna/contexts/ModelContext';
 import { SearchContext } from '@luna/contexts/SearchContext';
+import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplaysToolbar } from '@luna/screens/home/displays/DisplaysToolbar';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { InView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
 
@@ -13,7 +15,10 @@ export function DisplaysView() {
 
   const minDisplayWidth = 10;
   const maxDisplayWidth = 800;
-  const [displayWidth, setDisplayWidth] = useState(300);
+  const [displayWidth, setDisplayWidth] = useLocalStorage(
+    LocalStorageKey.DisplaysZoom,
+    () => 300
+  );
 
   return (
     <HomeContent
