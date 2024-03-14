@@ -9,7 +9,7 @@ import { useContext } from 'react';
 
 export function DisplaysView() {
   const { query } = useContext(SearchContext);
-  const { userModels } = useContext(ModelContext);
+  const { users } = useContext(ModelContext);
 
   const minDisplayWidth = 10;
   const maxDisplayWidth = 800;
@@ -32,7 +32,7 @@ export function DisplaysView() {
     >
       <div className="flex flex-col items-center">
         <DisplayGrid
-          userModels={userModels}
+          userModels={users.models}
           searchQuery={query}
           displayWidth={displayWidth}
         />

@@ -25,7 +25,7 @@ export function Sidebar({ isCompact }: SidebarProps) {
           isCompact={isCompact}
           searchQuery={query}
           user={auth.user ?? undefined}
-          allUsernames={[...model.userModels.keys()]}
+          allUsernames={[...model.users.models.keys()]}
         />
       </ScrollShadow>
       <Divider />

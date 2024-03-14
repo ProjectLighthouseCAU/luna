@@ -10,11 +10,11 @@ import { useParams } from 'react-router-dom';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
-  const { userModels } = useContext(ModelContext);
+  const { users } = useContext(ModelContext);
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const userModel = userModels.get(username);
+  const userModel = users.models.get(username);
 
   const onResize = useMemo(
     () =>

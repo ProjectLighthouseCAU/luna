@@ -15,18 +15,29 @@ import {
 } from 'react';
 import { NighthouseModelClient } from '@luna/client/model/NighthouseModelClient';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
-import { Map } from 'immutable';
+import { Map, Set } from 'immutable';
+
+export interface Users {
+  /** The user models by username. */
+  readonly models: Map<string, UserModel>;
+
+  /** The usernames of active users. */
+  readonly active: Set<string>;
+}
 
 export interface Model {
-  /** The user models by username. */
-  readonly userModels: Map<string, UserModel>;
+  /** The user models, active users etc. */
+  readonly users: Users;
 
   /** The client used to perform requests. */
   readonly client: ModelClient;
 }
 
 export const ModelContext = createContext<Model>({
-  userModels: Map(),
+  users: {
+    models: Map(),
+    active: Set(),
+  },
   client: new NullModelClient(),
 });
 
@@ -38,7 +49,10 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const auth = useContext(AuthContext);
 
   const [isLoggedIn, setLoggedIn] = useState(false);
-  const [userModels, setUserModels] = useState(Map<string, UserModel>());
+  const [users, setUsers] = useState<Users>({
+    models: Map(),
+    active: Set(),
+  });
   const clientRef = useInitRef<ModelClient>(() => new NighthouseModelClient());
 
   useEffect(() => {
@@ -82,7 +96,10 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
 
   const consumeUserStreams = useCallback(
     async ({ username, ...userModel }: { username: string } & UserModel) => {
-      setUserModels(userModels => userModels.set(username, userModel));
+      setUsers(({ models, active }) => ({
+        models: models.set(username, userModel),
+        active: models.has(username) ? active.add(username) : active,
+      }));
     },
     []
   );
@@ -90,7 +107,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   useAsyncIterable(getUserStreams, consumeUserStreams);
 
   return (
-    <ModelContext.Provider value={{ userModels, client: clientRef.current }}>
+    <ModelContext.Provider value={{ users, client: clientRef.current }}>
       {children}
     </ModelContext.Provider>
   );
