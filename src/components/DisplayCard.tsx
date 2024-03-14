@@ -20,7 +20,9 @@ export const DisplayCard = memo(
         ) : (
           <Display frame={frame} width={displayWidth} />
         )}
-        <CardFooter>{username}</CardFooter>
+        <CardFooter className="truncate" style={{ width: displayWidth }}>
+          {username}
+        </CardFooter>
       </Card>
     );
   },
