@@ -30,7 +30,7 @@ export function DisplaysView() {
         />
       }
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center">
         <DisplayGrid
           userModels={userModels}
           searchQuery={query}

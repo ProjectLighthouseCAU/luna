@@ -2,9 +2,10 @@ import { UserModel } from '@luna/client/model/UserModel';
 import { DisplayCard } from '@luna/components/DisplayCard';
 import { InView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
+import { Map } from 'immutable';
 
 export interface DisplayGridProps {
-  userModels: Immutable.Map<string, UserModel>;
+  userModels: Map<string, UserModel>;
   searchQuery: string;
   displayWidth: number;
 }
