@@ -1,5 +1,5 @@
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export function useLocalStorage<T>(
   key: LocalStorageKey,
@@ -10,10 +10,11 @@ export function useLocalStorage<T>(
     return raw ? JSON.parse(raw) : defaultValue();
   });
 
+  const json = useMemo(() => JSON.stringify(value), [value]);
+
   useEffect(() => {
-    const raw = JSON.stringify(value);
-    localStorage.setItem(key, raw);
-  }, [key, value]);
+    localStorage.setItem(key, json);
+  }, [key, json]);
 
   return [value, setValue];
 }
