@@ -1,7 +1,5 @@
+import { User } from '@luna/client/auth/User';
 import { RouteLink } from '@luna/components/RouteLink';
-import { AuthContext } from '@luna/contexts/AuthContext';
-import { ModelContext } from '@luna/contexts/ModelContext';
-import { SearchContext } from '@luna/contexts/SearchContext';
 import { truncate } from '@luna/utils/string';
 import {
   IconBuildingLighthouse,
@@ -10,69 +8,73 @@ import {
   IconTower,
   IconUsers,
 } from '@tabler/icons-react';
-import { useContext } from 'react';
+import { memo } from 'react';
 import { InView } from 'react-intersection-observer';
 
 export interface SidebarRoutesProps {
   isCompact: boolean;
+  searchQuery: string;
+  user?: User;
+  allUsernames: string[];
 }
 
-export function SidebarRoutes({ isCompact }: SidebarRoutesProps) {
-  const auth = useContext(AuthContext);
-  const model = useContext(ModelContext);
-  const { query } = useContext(SearchContext);
-
-  return (
-    <>
-      <RouteLink icon={<IconTower />} name="Admin" path="/admin">
-        <RouteLink
-          icon={<IconHeartRateMonitor />}
-          name="Monitor"
-          path="/admin/monitor"
-        />
-        <RouteLink icon={<IconUsers />} name="Users" path="/admin/users" />
-        <RouteLink
-          icon={<IconSettings />}
-          name="Settings"
-          path="/admin/settings"
-        />
-      </RouteLink>
-      <RouteLink
-        icon={<IconBuildingLighthouse />}
-        name="Displays"
-        path="/displays"
-      >
-        {auth.user ? (
+export const SidebarRoutes = memo(
+  ({ isCompact, searchQuery, user, allUsernames }: SidebarRoutesProps) => {
+    return (
+      <>
+        <RouteLink icon={<IconTower />} name="Admin" path="/admin">
           <RouteLink
-            icon={<IconBuildingLighthouse />}
-            name={`${auth.user.username} (me)`}
-            path={`/displays/${auth.user.username}`}
+            icon={<IconHeartRateMonitor />}
+            name="Monitor"
+            path="/admin/monitor"
           />
-        ) : null}
-        {!isCompact || query
-          ? [...model.userModels.keys()]
-              .filter(
-                username =>
-                  username !== auth.user?.username &&
-                  username.toLowerCase().includes(query.toLowerCase())
-              )
-              .sort()
-              .map(username => (
-                <InView key={username}>
-                  {({ inView, ref }) => (
-                    <div ref={ref}>
-                      <RouteLink
-                        icon={<IconBuildingLighthouse />}
-                        name={truncate(username, 14)}
-                        path={`/displays/${username}`}
-                        isSkeleton={!inView}
-                      />
-                    </div>
-                  )}
-                </InView>
-              ))
-          : null}
-      </RouteLink>
-    </>
-  );
-}
+          <RouteLink icon={<IconUsers />} name="Users" path="/admin/users" />
+          <RouteLink
+            icon={<IconSettings />}
+            name="Settings"
+            path="/admin/settings"
+          />
+        </RouteLink>
+        <RouteLink
+          icon={<IconBuildingLighthouse />}
+          name="Displays"
+          path="/displays"
+        >
+          {user ? (
+            <RouteLink
+              icon={<IconBuildingLighthouse />}
+              name={`${user.username} (me)`}
+              path={`/displays/${user.username}`}
+            />
+          ) : null}
+          {!isCompact || searchQuery
+            ? allUsernames
+                .filter(
+                  username =>
+                    username !== user?.username &&
+                    username.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .sort()
+                .map(username => (
+                  <InView key={username}>
+                    {({ inView, ref }) => (
+                      <div ref={ref}>
+                        <RouteLink
+                          icon={<IconBuildingLighthouse />}
+                          name={truncate(username, 14)}
+                          path={`/displays/${username}`}
+                          isSkeleton={!inView}
+                        />
+                      </div>
+                    )}
+                  </InView>
+                ))
+            : null}
+        </RouteLink>
+      </>
+    );
+  },
+  // Believe it or not, this actually works pretty well and makes things more performant
+  (prevProps, newProps) =>
+    JSON.stringify(prevProps) === JSON.stringify(newProps)
+);

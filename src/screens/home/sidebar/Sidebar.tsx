@@ -1,6 +1,7 @@
 import { SearchBar } from '@luna/components/SearchBar';
 import { UserSnippet } from '@luna/components/UserSnippet';
 import { AuthContext } from '@luna/contexts/AuthContext';
+import { ModelContext } from '@luna/contexts/ModelContext';
 import { SearchContext } from '@luna/contexts/SearchContext';
 import { SidebarRoutes } from '@luna/screens/home/sidebar/SidebarRoutes';
 import { Divider, ScrollShadow } from '@nextui-org/react';
@@ -13,13 +14,19 @@ export interface SidebarProps {
 
 export function Sidebar({ isCompact }: SidebarProps) {
   const auth = useContext(AuthContext);
-  const { setQuery } = useContext(SearchContext);
+  const model = useContext(ModelContext);
+  const { query, setQuery } = useContext(SearchContext);
 
   return (
     <div className="flex flex-col space-y-2 h-full">
       <SearchBar placeholder="Search displays..." setQuery={setQuery} />
       <ScrollShadow className="grow">
-        <SidebarRoutes isCompact={isCompact} />
+        <SidebarRoutes
+          isCompact={isCompact}
+          searchQuery={query}
+          user={auth.user ?? undefined}
+          allUsernames={[...model.userModels.keys()]}
+        />
       </ScrollShadow>
       <Divider />
       {auth.user ? <UserSnippet user={auth.user} token={auth.token} /> : null}
