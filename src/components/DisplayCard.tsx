@@ -1,6 +1,6 @@
 import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
 import { Card, CardFooter } from '@nextui-org/react';
-import React from 'react';
+import React, { memo } from 'react';
 
 interface DisplayCardProps {
   username: string;
@@ -9,22 +9,24 @@ interface DisplayCardProps {
   isSkeleton?: boolean;
 }
 
-export function DisplayCard({
-  username,
-  frame,
-  displayWidth,
-  isSkeleton,
-}: DisplayCardProps) {
-  const displayHeight = displayWidth / DISPLAY_ASPECT_RATIO;
+export const DisplayCard = memo(
+  ({ username, frame, displayWidth, isSkeleton }: DisplayCardProps) => {
+    const displayHeight = displayWidth / DISPLAY_ASPECT_RATIO;
 
-  return (
-    <Card>
-      {isSkeleton ? (
-        <div style={{ width: displayWidth, height: displayHeight }} />
-      ) : (
-        <Display frame={frame} width={displayWidth} />
-      )}
-      <CardFooter>{username}</CardFooter>
-    </Card>
-  );
-}
+    return (
+      <Card>
+        {isSkeleton ? (
+          <div style={{ width: displayWidth, height: displayHeight }} />
+        ) : (
+          <Display frame={frame} width={displayWidth} />
+        )}
+        <CardFooter>{username}</CardFooter>
+      </Card>
+    );
+  },
+  (prevProps, newProps) =>
+    prevProps.isSkeleton === newProps.isSkeleton &&
+    prevProps.displayWidth === newProps.displayWidth &&
+    prevProps.username === newProps.username &&
+    prevProps.frame.toString() === newProps.frame.toString()
+);
