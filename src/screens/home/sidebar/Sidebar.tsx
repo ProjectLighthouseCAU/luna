@@ -16,7 +16,6 @@ export function Sidebar({ isCompact }: SidebarProps) {
   const { setQuery } = useContext(SearchContext);
 
   return (
-    // TODO: This layout is still too long in compact-mode
     <div className="flex flex-col space-y-2 h-full">
       <SearchBar placeholder="Search displays..." setQuery={setQuery} />
       <ScrollShadow className="grow">
