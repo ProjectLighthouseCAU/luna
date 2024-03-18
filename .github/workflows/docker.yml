@@ -35,6 +35,6 @@ jobs:
         context: .
         platforms: linux/amd64,linux/arm64/v8
         network: host
-        push: ${{ github.event_name != 'pull_request' }}
+        push: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
