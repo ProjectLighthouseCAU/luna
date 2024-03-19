@@ -1,8 +1,8 @@
-import { UnderConstruction } from '@luna/components/UnderConstruction';
 import { AdminView } from '@luna/screens/home/admin/AdminView';
 import { MonitorView } from '@luna/screens/home/admin/MonitorView';
+import { ResourcesView } from '@luna/screens/home/admin/ResourcesView';
+import { SettingsView } from '@luna/screens/home/admin/SettingsView';
 import { UsersView } from '@luna/screens/home/admin/UsersView';
-import { HomeContent } from '@luna/screens/home/HomeContent';
 import { RouteObject } from 'react-router-dom';
 
 export const adminRoute: RouteObject = {
@@ -11,6 +11,10 @@ export const adminRoute: RouteObject = {
     {
       index: true,
       element: <AdminView />,
+    },
+    {
+      path: 'resources',
+      element: <ResourcesView />,
     },
     {
       path: 'monitor',
@@ -23,11 +27,7 @@ export const adminRoute: RouteObject = {
     },
     {
       path: 'settings',
-      element: (
-        <HomeContent title="Settings">
-          <UnderConstruction />
-        </HomeContent>
-      ),
+      element: <SettingsView />,
     },
   ],
 };

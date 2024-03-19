@@ -4,6 +4,7 @@ import { truncate } from '@luna/utils/string';
 import {
   IconBuildingLighthouse,
   IconHeartRateMonitor,
+  IconList,
   IconSettings,
   IconTower,
   IconUsers,
@@ -23,6 +24,11 @@ export const SidebarRoutes = memo(
     return (
       <>
         <RouteLink icon={<IconTower />} name="Admin" path="/admin">
+          <RouteLink
+            icon={<IconList />}
+            name="Resources"
+            path="/admin/resources"
+          />
           <RouteLink
             icon={<IconHeartRateMonitor />}
             name="Monitor"
