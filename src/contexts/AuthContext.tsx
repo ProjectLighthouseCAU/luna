@@ -1,5 +1,6 @@
 import { AuthClient } from '@luna/client/auth/AuthClient';
 import { LegacyAuthClient } from '@luna/client/auth/LegacyAuthClient';
+import { MockAuthClient } from '@luna/client/auth/MockAuthClient';
 import { NullAuthClient } from '@luna/client/auth/NullAuthClient';
 import { Token } from '@luna/client/auth/Token';
 import { User } from '@luna/client/auth/User';
@@ -35,12 +36,22 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [isInitializing, setInitializing] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<Token | null>(null);
-  // TODO: This currently requires using a local CORS proxy on port 8010
-  // since the legacy backend does not allow CORS origins. To run it,
-  // use `npm run cors-proxy`.
-  const clientRef = useInitRef<AuthClient>(
-    () => new LegacyAuthClient(`http://${window.location.hostname}:8010`)
-  );
+
+  const clientRef = useInitRef<AuthClient>(() => {
+    const authType = process.env.REACT_APP_AUTH_TYPE;
+    switch (authType) {
+      case 'legacy':
+        return new LegacyAuthClient(process.env.REACT_APP_AUTH_SERVER_URL);
+      case 'mock':
+        return new MockAuthClient();
+      case 'null':
+        return new NullAuthClient();
+      default:
+        throw new Error(
+          `Could not instantiate unknown auth type '${authType}'`
+        );
+    }
+  });
 
   // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
 
