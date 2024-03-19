@@ -12,6 +12,9 @@ export interface SidebarProps {
   isCompact: boolean;
 }
 
+// TODO: Factor out a generic sidebar component that we could reuse for the
+// admin resources view
+
 export function Sidebar({ isCompact }: SidebarProps) {
   const auth = useContext(AuthContext);
   const model = useContext(ModelContext);
