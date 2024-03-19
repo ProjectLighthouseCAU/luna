@@ -24,6 +24,17 @@ To start the development server, run
 npm start
 ```
 
+> [!TIP]
+> You can override the several configuration variables by prefixing the command e.g. with
+> ```sh
+> PORT=...                       # The port to run the dev server on
+> REACT_APP_AUTH_TYPE=...        # The authentication type
+> REACT_APP_AUTH_SERVER_URL=...  # The authentication server
+> REACT_APP_MODEL_SERVER_URL=... # The model server (ws:// or wss://)
+> ```
+>
+> If you want to persist the configuration, create a `.env.local` file with your desired configuration. For more details, see [this post](https://create-react-app.dev/docs/adding-custom-environment-variables).
+
 To build the project for deployment, run
 
 ```sh
