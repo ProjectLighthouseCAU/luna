@@ -53,7 +53,10 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     models: Map(),
     active: Set(),
   });
-  const clientRef = useInitRef<ModelClient>(() => new NighthouseModelClient());
+
+  const clientRef = useInitRef<ModelClient>(
+    () => new NighthouseModelClient(process.env.REACT_APP_MODEL_SERVER_URL)
+  );
 
   useEffect(() => {
     (async () => {
