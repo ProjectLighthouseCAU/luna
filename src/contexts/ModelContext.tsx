@@ -13,7 +13,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { NighthouseModelClient } from '@luna/client/model/NighthouseModelClient';
+import { StandardModelClient } from '@luna/client/model/StandardModelClient';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import { Map, Set } from 'immutable';
 
@@ -55,7 +55,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   });
 
   const clientRef = useInitRef<ModelClient>(
-    () => new NighthouseModelClient(process.env.REACT_APP_MODEL_SERVER_URL)
+    () => new StandardModelClient(process.env.REACT_APP_MODEL_SERVER_URL)
   );
 
   useEffect(() => {
