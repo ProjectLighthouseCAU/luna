@@ -41,6 +41,9 @@ To build the project for deployment, run
 npm run build
 ```
 
+> [!IMPORTANT]
+> The environment variables will be baked into the build, so make sure not to include any sensitive data.
+
 ## Editors
 
 If you use VSCode, you may wish to install the [ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint). Additionally, it can be very convenient to automatically format on save. To do so, add
