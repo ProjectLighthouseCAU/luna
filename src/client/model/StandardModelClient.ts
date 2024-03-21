@@ -37,7 +37,7 @@ export class StandardModelClient implements ModelClient {
 
   async *streamResource(path: string[]): AsyncIterable<unknown> {
     if (this.client) {
-      for await (const message of this.client.stream('STREAM', path, {})) {
+      for await (const message of this.client.stream(path, {})) {
         yield message.PAYL;
       }
     }
