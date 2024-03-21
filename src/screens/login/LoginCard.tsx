@@ -27,7 +27,7 @@ export function LoginCard({ showSignup }: LoginCardProps) {
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (username) {
-        if (await auth.client.logIn(username, password)) {
+        if (await auth.service.logIn(username, password)) {
           navigate('/displays');
         } else {
           setErrorMessage('Could not log in');
@@ -36,7 +36,7 @@ export function LoginCard({ showSignup }: LoginCardProps) {
         setErrorMessage('Please enter a username');
       }
     },
-    [auth.client, navigate, username, password]
+    [auth.service, navigate, username, password]
   );
 
   const signUp = useCallback(async () => {

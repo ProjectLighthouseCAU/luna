@@ -1,9 +1,9 @@
-import { AuthClient } from '@luna/client/auth/AuthClient';
-import { LegacyAuthClient } from '@luna/client/auth/LegacyAuthClient';
-import { MockAuthClient } from '@luna/client/auth/MockAuthClient';
-import { NullAuthClient } from '@luna/client/auth/NullAuthClient';
-import { Token } from '@luna/client/auth/Token';
-import { User } from '@luna/client/auth/User';
+import { AuthService } from '@luna/services/auth/AuthService';
+import { LegacyAuthService } from '@luna/services/auth/LegacyAuthService';
+import { MockAuthService } from '@luna/services/auth/MockAuthService';
+import { NullAuthService } from '@luna/services/auth/NullAuthService';
+import { Token } from '@luna/services/auth/Token';
+import { User } from '@luna/services/auth/User';
 import { useInitRef } from '@luna/hooks/useInitRef';
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 
@@ -17,15 +17,15 @@ export interface Auth {
   /** The current token. */
   readonly token: Token | null;
 
-  /** The client used to perform requests. */
-  readonly client: AuthClient;
+  /** The service to perform requests. */
+  readonly service: AuthService;
 }
 
 export const AuthContext = createContext<Auth>({
   isInitializing: true,
   user: null,
   token: null,
-  client: new NullAuthClient(),
+  service: new NullAuthService(),
 });
 
 interface AuthContextProviderProps {
@@ -37,15 +37,15 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<Token | null>(null);
 
-  const clientRef = useInitRef<AuthClient>(() => {
+  const serviceRef = useInitRef<AuthService>(() => {
     const authType = process.env.REACT_APP_AUTH_TYPE;
     switch (authType) {
       case 'legacy':
-        return new LegacyAuthClient(process.env.REACT_APP_AUTH_SERVER_URL);
+        return new LegacyAuthService(process.env.REACT_APP_AUTH_SERVER_URL);
       case 'mock':
-        return new MockAuthClient();
+        return new MockAuthService();
       case 'null':
-        return new NullAuthClient();
+        return new NullAuthService();
       default:
         throw new Error(
           `Could not instantiate unknown auth type '${authType}'`
@@ -55,9 +55,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
 
-  const wrapperClient = useInitRef<AuthClient>(() => ({
+  const wrapperRef = useInitRef<AuthService>(() => ({
     async signUp(registrationKey, username, password) {
-      const user = await clientRef.current.signUp(
+      const user = await serviceRef.current.signUp(
         registrationKey,
         username,
         password
@@ -70,7 +70,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     },
 
     async logIn(username, password) {
-      const user = await clientRef.current.logIn(username, password);
+      const user = await serviceRef.current.logIn(username, password);
       if (user !== null) {
         setUser(user);
         setToken(await this.getToken());
@@ -79,7 +79,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     },
 
     async logOut() {
-      if (await clientRef.current.logOut()) {
+      if (await serviceRef.current.logOut()) {
         setUser(null);
         return true;
       }
@@ -87,30 +87,30 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     },
 
     async getPublicUsers() {
-      return await clientRef.current.getPublicUsers();
+      return await serviceRef.current.getPublicUsers();
     },
 
     async getAllUsers() {
-      return await clientRef.current.getAllUsers();
+      return await serviceRef.current.getAllUsers();
     },
 
     async getToken() {
-      return await clientRef.current.getToken();
+      return await serviceRef.current.getToken();
     },
   }));
 
   useEffect(() => {
     (async () => {
       if (isInitializing) {
-        await wrapperClient.current.logIn();
+        await wrapperRef.current.logIn();
         setInitializing(false);
       }
     })();
-  }, [isInitializing, wrapperClient]);
+  }, [isInitializing, wrapperRef]);
 
   return (
     <AuthContext.Provider
-      value={{ isInitializing, user, token, client: wrapperClient.current }}
+      value={{ isInitializing, user, token, service: wrapperRef.current }}
     >
       {children}
     </AuthContext.Provider>

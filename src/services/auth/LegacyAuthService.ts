@@ -1,9 +1,9 @@
-import { AuthClient } from '@luna/client/auth/AuthClient';
-import { Role } from '@luna/client/auth/Role';
-import { Token } from '@luna/client/auth/Token';
-import { User } from '@luna/client/auth/User';
+import { AuthService } from '@luna/services/auth/AuthService';
+import { Role } from '@luna/services/auth/Role';
+import { Token } from '@luna/services/auth/Token';
+import { User } from '@luna/services/auth/User';
 
-export class LegacyAuthClient implements AuthClient {
+export class LegacyAuthService implements AuthService {
   private lastUser?: User;
 
   constructor(
@@ -15,7 +15,7 @@ export class LegacyAuthClient implements AuthClient {
     username: string,
     password: string
   ): Promise<User | null> {
-    console.error('LegacyAuthClient: signUp not implemented');
+    console.error('LegacyAuthService: signUp not implemented');
     return null;
   }
 

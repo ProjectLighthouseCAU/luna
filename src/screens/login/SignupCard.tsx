@@ -45,13 +45,13 @@ export function SignupCard({ showLogin }: SignupCardProps) {
         setErrorMessage('Passwords do not match');
         return;
       }
-      if (!(await auth.client.signUp(registrationKey, username, password))) {
+      if (!(await auth.service.signUp(registrationKey, username, password))) {
         setErrorMessage('Could not sign up');
       }
       navigate('/displays');
     },
     [
-      auth.client,
+      auth.service,
       navigate,
       registrationKey,
       username,

@@ -1,4 +1,4 @@
-import { User } from '@luna/client/auth/User';
+import { User } from '@luna/services/auth/User';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import {
@@ -24,9 +24,9 @@ export function UsersView() {
 
   useEffect(() => {
     (async () => {
-      setUsers(await auth.client.getAllUsers());
+      setUsers(await auth.service.getAllUsers());
     })();
-  }, [auth.client]);
+  }, [auth.service]);
 
   return (
     // TODO: Lazy rendering

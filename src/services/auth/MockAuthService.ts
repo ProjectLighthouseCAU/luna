@@ -1,8 +1,8 @@
-import { AuthClient } from '@luna/client/auth/AuthClient';
-import { Token } from '@luna/client/auth/Token';
-import { User } from '@luna/client/auth/User';
+import { AuthService } from '@luna/services/auth/AuthService';
+import { Token } from '@luna/services/auth/Token';
+import { User } from '@luna/services/auth/User';
 
-export class MockAuthClient implements AuthClient {
+export class MockAuthService implements AuthService {
   async signUp(
     registrationKey: string,
     username: string,

@@ -1,8 +1,8 @@
-import { ModelClient } from '@luna/client/model/ModelClient';
-import { UserModel } from '@luna/client/model/UserModel';
+import { ModelService } from '@luna/services/model/ModelService';
+import { UserModel } from '@luna/services/model/UserModel';
 import { Lighthouse, connect } from 'nighthouse/browser';
 
-export class StandardModelClient implements ModelClient {
+export class StandardModelService implements ModelService {
   private client?: Lighthouse;
 
   constructor(

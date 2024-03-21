@@ -1,9 +1,9 @@
-import { ModelClient } from '@luna/client/model/ModelClient';
-import { NullModelClient } from '@luna/client/model/NullModelClient';
+import { ModelService } from '@luna/services/model/ModelService';
+import { NullModelService } from '@luna/services/model/NullModelService';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { useInitRef } from '@luna/hooks/useInitRef';
-import { UserModel } from '@luna/client/model/UserModel';
+import { UserModel } from '@luna/services/model/UserModel';
 import { mapAsyncIterable, mergeAsyncIterables } from '@luna/utils/async';
 import {
   ReactNode,
@@ -13,7 +13,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { StandardModelClient } from '@luna/client/model/StandardModelClient';
+import { StandardModelService } from '@luna/services/model/StandardModelService';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import { Map, Set } from 'immutable';
 
@@ -29,8 +29,8 @@ export interface Model {
   /** The user models, active users etc. */
   readonly users: Users;
 
-  /** The client used to perform requests. */
-  readonly client: ModelClient;
+  /** The service to perform requests. */
+  readonly service: ModelService;
 }
 
 export const ModelContext = createContext<Model>({
@@ -38,7 +38,7 @@ export const ModelContext = createContext<Model>({
     models: Map(),
     active: Set(),
   },
-  client: new NullModelClient(),
+  service: new NullModelService(),
 });
 
 interface ModelContextProviderProps {
@@ -54,32 +54,32 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     active: Set(),
   });
 
-  const clientRef = useInitRef<ModelClient>(
-    () => new StandardModelClient(process.env.REACT_APP_MODEL_SERVER_URL)
+  const serviceRef = useInitRef<ModelService>(
+    () => new StandardModelService(process.env.REACT_APP_MODEL_SERVER_URL)
   );
 
   useEffect(() => {
     (async () => {
       if (auth.user && auth.token) {
-        await clientRef.current.logIn(auth.user.username, auth.token.value);
+        await serviceRef.current.logIn(auth.user.username, auth.token.value);
         setLoggedIn(true);
       } else {
         setLoggedIn(false);
       }
     })();
-  }, [auth.client, auth.user, auth.token, clientRef]);
+  }, [auth.service, auth.user, auth.token, serviceRef]);
 
   const getUserStreams = useCallback(
     async function* () {
       if (!isLoggedIn) return;
-      const users = await auth.client.getPublicUsers();
+      const users = await auth.service.getPublicUsers();
       // Make sure that every user has at least a black frame
       for (const { username } of users) {
         yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
       }
       const streams = users.map(({ username }) =>
         mapAsyncIterable(
-          clientRef.current.streamModel(username),
+          serviceRef.current.streamModel(username),
           userModel => ({
             username,
             ...userModel,
@@ -88,7 +88,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       );
       yield* mergeAsyncIterables(streams);
     },
-    [isLoggedIn, auth.client, clientRef]
+    [isLoggedIn, auth.service, serviceRef]
   );
 
   // NOTE: It is important that we use `useCallback` for the consumption callback
@@ -110,7 +110,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   useAsyncIterable(getUserStreams, consumeUserStreams);
 
   return (
-    <ModelContext.Provider value={{ users, client: clientRef.current }}>
+    <ModelContext.Provider value={{ users, service: serviceRef.current }}>
       {children}
     </ModelContext.Provider>
   );
