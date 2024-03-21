@@ -1,8 +1,8 @@
-import { ModelService } from '@luna/services/model/ModelService';
+import { ModelBackend } from '@luna/backends/model/ModelBackend';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { useInitRef } from '@luna/hooks/useInitRef';
-import { UserModel } from '@luna/services/model/UserModel';
+import { UserModel } from '@luna/backends/model/UserModel';
 import { mapAsyncIterable, mergeAsyncIterables } from '@luna/utils/async';
 import {
   ReactNode,
@@ -12,7 +12,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { LighthouseModelService } from '@luna/services/model/LighthouseModelService';
+import { LighthouseModelBackend } from '@luna/backends/model/LighthouseModelBackend';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import { Map, Set } from 'immutable';
 
@@ -49,20 +49,20 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     active: Set(),
   });
 
-  const serviceRef = useInitRef<ModelService>(
-    () => new LighthouseModelService(process.env.REACT_APP_MODEL_SERVER_URL)
+  const backendRef = useInitRef<ModelBackend>(
+    () => new LighthouseModelBackend(process.env.REACT_APP_MODEL_SERVER_URL)
   );
 
   useEffect(() => {
     (async () => {
       if (auth.user && auth.token) {
-        await serviceRef.current.logIn(auth.user.username, auth.token.value);
+        await backendRef.current.logIn(auth.user.username, auth.token.value);
         setLoggedIn(true);
       } else {
         setLoggedIn(false);
       }
     })();
-  }, [auth.user, auth.token, serviceRef]);
+  }, [auth.user, auth.token, backendRef]);
 
   const getUserStreams = useCallback(
     async function* () {
@@ -74,7 +74,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       }
       const streams = users.map(({ username }) =>
         mapAsyncIterable(
-          serviceRef.current.streamModel(username),
+          backendRef.current.streamModel(username),
           userModel => ({
             username,
             ...userModel,
@@ -83,7 +83,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       );
       yield* mergeAsyncIterables(streams);
     },
-    [isLoggedIn, auth, serviceRef]
+    [isLoggedIn, auth, backendRef]
   );
 
   // NOTE: It is important that we use `useCallback` for the consumption callback

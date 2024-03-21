@@ -1,10 +1,10 @@
-import { Token } from '@luna/services/auth/Token';
-import { User } from '@luna/services/auth/User';
+import { Token } from '@luna/backends/auth/Token';
+import { User } from '@luna/backends/auth/User';
 
 /**
  * A facility that talks to an authentication backend.
  */
-export interface AuthService {
+export interface AuthBackend {
   /** Sign up a new account using a registration key. */
   signUp(
     registrationKey: string,

@@ -1,4 +1,4 @@
-import { Role } from '@luna/services/auth/Role';
+import { Role } from '@luna/backends/auth/Role';
 
 export interface User {
   username: string;

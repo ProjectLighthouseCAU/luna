@@ -1,8 +1,8 @@
-import { AuthService } from '@luna/services/auth/AuthService';
-import { Token } from '@luna/services/auth/Token';
-import { User } from '@luna/services/auth/User';
+import { AuthBackend } from '@luna/backends/auth/AuthBackend';
+import { Token } from '@luna/backends/auth/Token';
+import { User } from '@luna/backends/auth/User';
 
-export class MockAuthService implements AuthService {
+export class MockAuthBackend implements AuthBackend {
   async signUp(
     registrationKey: string,
     username: string,

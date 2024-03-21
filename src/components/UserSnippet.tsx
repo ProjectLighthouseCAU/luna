@@ -1,5 +1,5 @@
-import { Token } from '@luna/services/auth/Token';
-import { User } from '@luna/services/auth/User';
+import { Token } from '@luna/backends/auth/Token';
+import { User } from '@luna/backends/auth/User';
 import { ApiTokenModal } from '@luna/components/ApiTokenModal';
 import { RoleSnippet } from '@luna/components/RoleSnippet';
 import {

@@ -1,9 +1,9 @@
-import { AuthService } from '@luna/services/auth/AuthService';
-import { LegacyAuthService } from '@luna/services/auth/LegacyAuthService';
-import { MockAuthService } from '@luna/services/auth/MockAuthService';
-import { NullAuthService } from '@luna/services/auth/NullAuthService';
-import { Token } from '@luna/services/auth/Token';
-import { User } from '@luna/services/auth/User';
+import { AuthBackend } from '@luna/backends/auth/AuthBackend';
+import { LegacyAuthBackend } from '@luna/backends/auth/LegacyAuthBackend';
+import { MockAuthBackend } from '@luna/backends/auth/MockAuthBackend';
+import { NullAuthBackend } from '@luna/backends/auth/NullAuthBackend';
+import { Token } from '@luna/backends/auth/Token';
+import { User } from '@luna/backends/auth/User';
 import { useInitRef } from '@luna/hooks/useInitRef';
 import React, {
   createContext,
@@ -63,15 +63,15 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<Token | null>(null);
 
-  const serviceRef = useInitRef<AuthService>(() => {
+  const backendRef = useInitRef<AuthBackend>(() => {
     const authType = process.env.REACT_APP_AUTH_TYPE;
     switch (authType) {
       case 'legacy':
-        return new LegacyAuthService(process.env.REACT_APP_AUTH_SERVER_URL);
+        return new LegacyAuthBackend(process.env.REACT_APP_AUTH_SERVER_URL);
       case 'mock':
-        return new MockAuthService();
+        return new MockAuthBackend();
       case 'null':
-        return new NullAuthService();
+        return new NullAuthBackend();
       default:
         throw new Error(
           `Could not instantiate unknown auth type '${authType}'`
@@ -87,29 +87,29 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       user,
       token,
       async signUp(registrationKey, username, password) {
-        const user = await serviceRef.current.signUp(
+        const user = await backendRef.current.signUp(
           registrationKey,
           username,
           password
         );
         if (user !== null) {
           setUser(user);
-          setToken(await serviceRef.current.getToken());
+          setToken(await backendRef.current.getToken());
         }
         return user;
       },
 
       async logIn(username, password) {
-        const user = await serviceRef.current.logIn(username, password);
+        const user = await backendRef.current.logIn(username, password);
         if (user !== null) {
           setUser(user);
-          setToken(await serviceRef.current.getToken());
+          setToken(await backendRef.current.getToken());
         }
         return user;
       },
 
       async logOut() {
-        if (await serviceRef.current.logOut()) {
+        if (await backendRef.current.logOut()) {
           setUser(null);
           return true;
         }
@@ -117,14 +117,14 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       },
 
       async getAllUsers() {
-        return await serviceRef.current.getAllUsers();
+        return await backendRef.current.getAllUsers();
       },
 
       async getPublicUsers() {
-        return await serviceRef.current.getPublicUsers();
+        return await backendRef.current.getPublicUsers();
       },
     }),
-    [isInitializing, serviceRef, token, user]
+    [isInitializing, backendRef, token, user]
   );
 
   useEffect(() => {
