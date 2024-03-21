@@ -33,11 +33,7 @@ export function Sidebar({ isCompact }: SidebarProps) {
       </ScrollShadow>
       <Divider />
       {auth.user ? <UserSnippet user={auth.user} token={auth.token} /> : null}
-      <Link
-        onClick={() => auth.service.logOut()}
-        to="/"
-        className="text-danger"
-      >
+      <Link onClick={() => auth.logOut()} to="/" className="text-danger">
         Sign out
       </Link>
     </div>

@@ -45,19 +45,12 @@ export function SignupCard({ showLogin }: SignupCardProps) {
         setErrorMessage('Passwords do not match');
         return;
       }
-      if (!(await auth.service.signUp(registrationKey, username, password))) {
+      if (!(await auth.signUp(registrationKey, username, password))) {
         setErrorMessage('Could not sign up');
       }
       navigate('/displays');
     },
-    [
-      auth.service,
-      navigate,
-      registrationKey,
-      username,
-      password,
-      repeatedPassword,
-    ]
+    [auth, navigate, registrationKey, username, password, repeatedPassword]
   );
 
   const logIn = useCallback(async () => {

@@ -5,7 +5,13 @@ import { NullAuthService } from '@luna/services/auth/NullAuthService';
 import { Token } from '@luna/services/auth/Token';
 import { User } from '@luna/services/auth/User';
 import { useInitRef } from '@luna/hooks/useInitRef';
-import React, { createContext, ReactNode, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 export interface Auth {
   /** Whether auth is still initializing. */
@@ -17,15 +23,35 @@ export interface Auth {
   /** The current token. */
   readonly token: Token | null;
 
-  /** The service to perform requests. */
-  readonly service: AuthService;
+  /** Sign up a new account using a registration key. */
+  signUp(
+    registrationKey: string,
+    username?: string,
+    password?: string
+  ): Promise<User | null>;
+
+  /** Authenticates with the given credentials. Returns whether this succeeded. */
+  logIn(username?: string, password?: string): Promise<User | null>;
+
+  /** Deauthenticates. Returns whether this succeeded. */
+  logOut(): Promise<boolean>;
+
+  /** Fetches all users. */
+  getAllUsers(): Promise<User[]>;
+
+  /** Fetches the public users. */
+  getPublicUsers(): Promise<User[]>;
 }
 
 export const AuthContext = createContext<Auth>({
   isInitializing: true,
   user: null,
   token: null,
-  service: new NullAuthService(),
+  signUp: async () => null,
+  logIn: async () => null,
+  logOut: async () => true,
+  getAllUsers: async () => [],
+  getPublicUsers: async () => [],
 });
 
 interface AuthContextProviderProps {
@@ -55,64 +81,60 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
 
-  const wrapperRef = useInitRef<AuthService>(() => ({
-    async signUp(registrationKey, username, password) {
-      const user = await serviceRef.current.signUp(
-        registrationKey,
-        username,
-        password
-      );
-      if (user !== null) {
-        setUser(user);
-        setToken(await this.getToken());
-      }
-      return user;
-    },
+  const value: Auth = useMemo(
+    () => ({
+      isInitializing,
+      user,
+      token,
+      async signUp(registrationKey, username, password) {
+        const user = await serviceRef.current.signUp(
+          registrationKey,
+          username,
+          password
+        );
+        if (user !== null) {
+          setUser(user);
+          setToken(await serviceRef.current.getToken());
+        }
+        return user;
+      },
 
-    async logIn(username, password) {
-      const user = await serviceRef.current.logIn(username, password);
-      if (user !== null) {
-        setUser(user);
-        setToken(await this.getToken());
-      }
-      return user;
-    },
+      async logIn(username, password) {
+        const user = await serviceRef.current.logIn(username, password);
+        if (user !== null) {
+          setUser(user);
+          setToken(await serviceRef.current.getToken());
+        }
+        return user;
+      },
 
-    async logOut() {
-      if (await serviceRef.current.logOut()) {
-        setUser(null);
-        return true;
-      }
-      return false;
-    },
+      async logOut() {
+        if (await serviceRef.current.logOut()) {
+          setUser(null);
+          return true;
+        }
+        return false;
+      },
 
-    async getPublicUsers() {
-      return await serviceRef.current.getPublicUsers();
-    },
+      async getAllUsers() {
+        return await serviceRef.current.getAllUsers();
+      },
 
-    async getAllUsers() {
-      return await serviceRef.current.getAllUsers();
-    },
-
-    async getToken() {
-      return await serviceRef.current.getToken();
-    },
-  }));
+      async getPublicUsers() {
+        return await serviceRef.current.getPublicUsers();
+      },
+    }),
+    [isInitializing, serviceRef, token, user]
+  );
 
   useEffect(() => {
     (async () => {
       if (isInitializing) {
-        await wrapperRef.current.logIn();
+        await value.logIn();
         setInitializing(false);
       }
     })();
-  }, [isInitializing, wrapperRef]);
+  }, [isInitializing, value]);
 
-  return (
-    <AuthContext.Provider
-      value={{ isInitializing, user, token, service: wrapperRef.current }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

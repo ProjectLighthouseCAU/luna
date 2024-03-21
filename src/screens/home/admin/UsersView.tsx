@@ -24,9 +24,9 @@ export function UsersView() {
 
   useEffect(() => {
     (async () => {
-      setUsers(await auth.service.getAllUsers());
+      setUsers(await auth.getAllUsers());
     })();
-  }, [auth.service]);
+  }, [auth]);
 
   return (
     // TODO: Lazy rendering

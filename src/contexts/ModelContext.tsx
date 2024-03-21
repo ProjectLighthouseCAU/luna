@@ -1,5 +1,4 @@
 import { ModelService } from '@luna/services/model/ModelService';
-import { NullModelService } from '@luna/services/model/NullModelService';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { useInitRef } from '@luna/hooks/useInitRef';
@@ -28,9 +27,6 @@ export interface Users {
 export interface Model {
   /** The user models, active users etc. */
   readonly users: Users;
-
-  /** The service to perform requests. */
-  readonly service: ModelService;
 }
 
 export const ModelContext = createContext<Model>({
@@ -38,7 +34,6 @@ export const ModelContext = createContext<Model>({
     models: Map(),
     active: Set(),
   },
-  service: new NullModelService(),
 });
 
 interface ModelContextProviderProps {
@@ -67,12 +62,12 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
         setLoggedIn(false);
       }
     })();
-  }, [auth.service, auth.user, auth.token, serviceRef]);
+  }, [auth.user, auth.token, serviceRef]);
 
   const getUserStreams = useCallback(
     async function* () {
       if (!isLoggedIn) return;
-      const users = await auth.service.getPublicUsers();
+      const users = await auth.getPublicUsers();
       // Make sure that every user has at least a black frame
       for (const { username } of users) {
         yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
@@ -88,7 +83,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       );
       yield* mergeAsyncIterables(streams);
     },
-    [isLoggedIn, auth.service, serviceRef]
+    [isLoggedIn, auth, serviceRef]
   );
 
   // NOTE: It is important that we use `useCallback` for the consumption callback
@@ -110,8 +105,6 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   useAsyncIterable(getUserStreams, consumeUserStreams);
 
   return (
-    <ModelContext.Provider value={{ users, service: serviceRef.current }}>
-      {children}
-    </ModelContext.Provider>
+    <ModelContext.Provider value={{ users }}>{children}</ModelContext.Provider>
   );
 }
