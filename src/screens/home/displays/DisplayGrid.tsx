@@ -1,35 +1,34 @@
-import { UserModel } from '@luna/backends/model/UserModel';
 import { DisplayCard } from '@luna/components/DisplayCard';
 import { InView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
 import { Map } from 'immutable';
 
 export interface DisplayGridProps {
-  userModels: Map<string, UserModel>;
+  frames: Map<string, Uint8Array>;
   searchQuery: string;
   displayWidth: number;
 }
 
 export function DisplayGrid({
-  userModels,
+  frames,
   searchQuery,
   displayWidth,
 }: DisplayGridProps) {
   return (
     <div className="flex flex-wrap gap-4 justify-center">
-      {[...userModels.entries()]
+      {[...frames.entries()]
         .filter(([username]) =>
           username.toLowerCase().includes(searchQuery.toLowerCase())
         )
         .sort(([u1], [u2]) => u1.localeCompare(u2))
-        .map(([username, userModel]) => (
+        .map(([username, frame]) => (
           <Link to={username} key={username}>
             <InView>
               {({ inView, ref }) => (
                 <div ref={ref}>
                   <DisplayCard
                     username={username}
-                    frame={userModel.frame}
+                    frame={frame}
                     displayWidth={displayWidth}
                     isSkeleton={!inView}
                   />

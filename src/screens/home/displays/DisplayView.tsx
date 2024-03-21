@@ -14,7 +14,7 @@ export function DisplayView() {
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const userModel = users.models.get(username);
+  const frame = users.frames.get(username);
 
   const onResize = useMemo(
     () =>
@@ -42,14 +42,14 @@ export function DisplayView() {
 
   return (
     <HomeContent title={`${username}'s Display`}>
-      {userModel ? (
+      {frame ? (
         <div className="flex flex-col space-y-4 md:flex-row h-full">
           <div
             ref={wrapperRef}
             className="grow flex flex-row justify-center h-full"
           >
             <div className={isCompact ? '' : 'absolute'}>
-              <Display frame={userModel.frame} width={width} />
+              <Display frame={frame} width={width} />
             </div>
           </div>
           {/* TODO: Only display inspector (or options etc.) for current user themselves and admins? */}

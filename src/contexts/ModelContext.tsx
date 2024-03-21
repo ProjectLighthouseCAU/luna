@@ -2,8 +2,7 @@ import { ModelBackend } from '@luna/backends/model/ModelBackend';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { useInitRef } from '@luna/hooks/useInitRef';
-import { UserModel } from '@luna/backends/model/UserModel';
-import { mapAsyncIterable, mergeAsyncIterables } from '@luna/utils/async';
+import { mergeAsyncIterables } from '@luna/utils/async';
 import {
   ReactNode,
   createContext,
@@ -17,8 +16,8 @@ import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import { Map, Set } from 'immutable';
 
 export interface Users {
-  /** The user models by username. */
-  readonly models: Map<string, UserModel>;
+  /** The most recent frames by username. */
+  readonly frames: Map<string, Uint8Array>;
 
   /** The usernames of active users. */
   readonly active: Set<string>;
@@ -31,7 +30,7 @@ export interface Model {
 
 export const ModelContext = createContext<Model>({
   users: {
-    models: Map(),
+    frames: Map(),
     active: Set(),
   },
 });
@@ -45,7 +44,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
 
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [users, setUsers] = useState<Users>({
-    models: Map(),
+    frames: Map(),
     active: Set(),
   });
 
@@ -72,15 +71,17 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       for (const { username } of users) {
         yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
       }
-      const streams = users.map(({ username }) =>
-        mapAsyncIterable(
-          backendRef.current.streamModel(username),
-          userModel => ({
-            username,
-            ...userModel,
-          })
-        )
-      );
+      const streams = users.map(async function* ({ username }) {
+        for await (const payload of await backendRef.current.stream([
+          'user',
+          username,
+          'model',
+        ])) {
+          if (payload instanceof Uint8Array) {
+            yield { username, frame: payload };
+          }
+        }
+      });
       yield* mergeAsyncIterables(streams);
     },
     [isLoggedIn, auth, backendRef]
@@ -93,10 +94,10 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   // that freezes the application.
 
   const consumeUserStreams = useCallback(
-    async ({ username, ...userModel }: { username: string } & UserModel) => {
-      setUsers(({ models, active }) => ({
-        models: models.set(username, userModel),
-        active: models.has(username) ? active.add(username) : active,
+    async ({ username, frame }: { username: string; frame: Uint8Array }) => {
+      setUsers(({ frames, active }) => ({
+        frames: frames.set(username, frame),
+        active: frames.has(username) ? active.add(username) : active,
       }));
     },
     []
