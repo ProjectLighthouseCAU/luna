@@ -13,7 +13,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { StandardModelService } from '@luna/services/model/StandardModelService';
+import { LighthouseModelService } from '@luna/services/model/LighthouseModelService';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import { Map, Set } from 'immutable';
 
@@ -55,7 +55,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   });
 
   const serviceRef = useInitRef<ModelService>(
-    () => new StandardModelService(process.env.REACT_APP_MODEL_SERVER_URL)
+    () => new LighthouseModelService(process.env.REACT_APP_MODEL_SERVER_URL)
   );
 
   useEffect(() => {
