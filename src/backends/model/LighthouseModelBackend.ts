@@ -4,12 +4,19 @@ import { Lighthouse, connect } from 'nighthouse/browser';
 
 export class LighthouseModelBackend implements ModelBackend {
   private client?: Lighthouse;
+  private username?: string;
 
   constructor(
     private readonly url: string = 'wss://lighthouse.uni-kiel.de/websocket'
   ) {}
 
   async logIn(username: string, token: string): Promise<boolean> {
+    if (this.username === username) {
+      return true;
+    }
+
+    this.username = username;
+
     if (this.client !== undefined) {
       await this.client.close();
     }
