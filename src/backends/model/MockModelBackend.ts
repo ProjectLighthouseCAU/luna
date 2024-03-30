@@ -1,5 +1,4 @@
 import { ModelBackend } from '@luna/backends/model/ModelBackend';
-import { UserModel } from '@luna/backends/model/UserModel';
 import { sleep } from '@luna/utils/async';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 
@@ -8,7 +7,7 @@ export class MockModelBackend implements ModelBackend {
     return true;
   }
 
-  async *streamModel(user: string): AsyncIterable<UserModel> {
+  async *stream(path: string[]): AsyncIterable<unknown> {
     while (true) {
       yield {
         frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES).map(() =>

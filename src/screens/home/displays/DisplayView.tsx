@@ -5,16 +5,26 @@ import { useEventListener } from '@luna/hooks/useEventListener';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { throttle } from '@luna/utils/schedule';
-import { useContext, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
-  const { users } = useContext(ModelContext);
+  const model = useContext(ModelContext);
 
+  const [frame, setFrame] = useState<Uint8Array>();
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const userModel = users.models.get(username);
+
+  useEffect(() => {
+    (async () => {
+      for await (const value of model.stream(['user', username, 'model'])) {
+        if (value instanceof Uint8Array) {
+          setFrame(value);
+        }
+      }
+    })();
+  }, [username, model]);
 
   const onResize = useMemo(
     () =>
@@ -42,14 +52,14 @@ export function DisplayView() {
 
   return (
     <HomeContent title={`${username}'s Display`}>
-      {userModel ? (
+      {frame ? (
         <div className="flex flex-col space-y-4 md:flex-row h-full">
           <div
             ref={wrapperRef}
             className="grow flex flex-row justify-center h-full"
           >
             <div className={isCompact ? '' : 'absolute'}>
-              <Display frame={userModel.frame} width={width} />
+              <Display frame={frame} width={width} />
             </div>
           </div>
           {/* TODO: Only display inspector (or options etc.) for current user themselves and admins? */}

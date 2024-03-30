@@ -5,6 +5,7 @@ import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayGrid } from '@luna/screens/home/displays/DisplayGrid';
 import { DisplaysToolbar } from '@luna/screens/home/displays/DisplaysToolbar';
+import { Map } from 'immutable';
 import { useContext } from 'react';
 
 export function DisplaysView() {
@@ -32,7 +33,7 @@ export function DisplaysView() {
     >
       <div className="flex flex-col items-center">
         <DisplayGrid
-          userModels={users.models}
+          userModels={Map()} /* TODO */
           searchQuery={query}
           displayWidth={displayWidth}
         />
