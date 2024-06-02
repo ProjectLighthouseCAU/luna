@@ -14,8 +14,12 @@ export function AppContainer() {
   }, [colorScheme.isDark]);
 
   return (
-    <div className="h-screen">
-      <Outlet />
+    <div className="flex flex-col h-screen">
+      {/* TODO: Add `REACT_APP_...` env var to check whether we are running in Electron */}
+      <div className="shrink-0 electron-titlebar" />
+      <div className="grow shrink">
+        <Outlet />
+      </div>
     </div>
   );
 }
