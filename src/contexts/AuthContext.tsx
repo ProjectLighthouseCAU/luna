@@ -1,5 +1,6 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
 import { LegacyAuthApi } from '@luna/api/auth/LegacyAuthApi';
+import { LighthouseAuthApi } from '@luna/api/auth/LighthouseAuthApi';
 import { MockAuthApi } from '@luna/api/auth/MockAuthApi';
 import { NullAuthApi } from '@luna/api/auth/NullAuthApi';
 import { Token } from '@luna/api/auth/Token';
@@ -68,6 +69,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     switch (authType) {
       case 'legacy':
         return new LegacyAuthApi(process.env.REACT_APP_AUTH_SERVER_URL);
+      case 'lighthouse':
+        return new LighthouseAuthApi(process.env.REACT_APP_AUTH_SERVER_URL);
       case 'mock':
         return new MockAuthApi();
       case 'null':
