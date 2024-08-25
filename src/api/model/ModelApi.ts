@@ -1,9 +1,9 @@
-import { UserModel } from '@luna/backends/model/UserModel';
+import { UserModel } from '@luna/api/model/UserModel';
 
 /**
  * A facility that talks to a model servers, i.e. streams resources.
  */
-export interface ModelBackend {
+export interface ModelApi {
   /** Authenticates with the given token. Returns whether this succeeded. */
   logIn(username: string, token: string): Promise<boolean>;
 

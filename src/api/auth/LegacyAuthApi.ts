@@ -1,9 +1,9 @@
-import { AuthBackend } from '@luna/backends/auth/AuthBackend';
-import { Role } from '@luna/backends/auth/Role';
-import { Token } from '@luna/backends/auth/Token';
-import { User } from '@luna/backends/auth/User';
+import { AuthApi } from '@luna/api/auth/AuthApi';
+import { Role } from '@luna/api/auth/Role';
+import { Token } from '@luna/api/auth/Token';
+import { User } from '@luna/api/auth/User';
 
-export class LegacyAuthBackend implements AuthBackend {
+export class LegacyAuthApi implements AuthApi {
   private lastUser?: User;
 
   constructor(
@@ -15,7 +15,7 @@ export class LegacyAuthBackend implements AuthBackend {
     username: string,
     password: string
   ): Promise<User | null> {
-    console.error('LegacyAuthBackend: signUp not implemented');
+    console.error('LegacyAuthApi: signUp not implemented');
     return null;
   }
 

@@ -1,9 +1,9 @@
-import { AuthBackend } from '@luna/backends/auth/AuthBackend';
-import { LegacyAuthBackend } from '@luna/backends/auth/LegacyAuthBackend';
-import { MockAuthBackend } from '@luna/backends/auth/MockAuthBackend';
-import { NullAuthBackend } from '@luna/backends/auth/NullAuthBackend';
-import { Token } from '@luna/backends/auth/Token';
-import { User } from '@luna/backends/auth/User';
+import { AuthApi } from '@luna/api/auth/AuthApi';
+import { LegacyAuthApi } from '@luna/api/auth/LegacyAuthApi';
+import { MockAuthApi } from '@luna/api/auth/MockAuthApi';
+import { NullAuthApi } from '@luna/api/auth/NullAuthApi';
+import { Token } from '@luna/api/auth/Token';
+import { User } from '@luna/api/auth/User';
 import { useInitRef } from '@luna/hooks/useInitRef';
 import React, {
   createContext,
@@ -63,15 +63,15 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<Token | null>(null);
 
-  const backendRef = useInitRef<AuthBackend>(() => {
+  const backendRef = useInitRef<AuthApi>(() => {
     const authType = process.env.REACT_APP_AUTH_TYPE;
     switch (authType) {
       case 'legacy':
-        return new LegacyAuthBackend(process.env.REACT_APP_AUTH_SERVER_URL);
+        return new LegacyAuthApi(process.env.REACT_APP_AUTH_SERVER_URL);
       case 'mock':
-        return new MockAuthBackend();
+        return new MockAuthApi();
       case 'null':
-        return new NullAuthBackend();
+        return new NullAuthApi();
       default:
         throw new Error(
           `Could not instantiate unknown auth type '${authType}'`

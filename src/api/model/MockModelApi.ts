@@ -1,9 +1,9 @@
-import { ModelBackend } from '@luna/backends/model/ModelBackend';
-import { UserModel } from '@luna/backends/model/UserModel';
+import { ModelApi } from '@luna/api/model/ModelApi';
+import { UserModel } from '@luna/api/model/UserModel';
 import { sleep } from '@luna/utils/async';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 
-export class MockModelBackend implements ModelBackend {
+export class MockModelApi implements ModelApi {
   async logIn(username: string, token: string): Promise<boolean> {
     return true;
   }

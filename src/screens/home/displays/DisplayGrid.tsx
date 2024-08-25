@@ -1,4 +1,4 @@
-import { UserModel } from '@luna/backends/model/UserModel';
+import { UserModel } from '@luna/api/model/UserModel';
 import { DisplayCard } from '@luna/components/DisplayCard';
 import { InView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
