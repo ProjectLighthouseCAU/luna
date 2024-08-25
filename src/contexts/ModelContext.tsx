@@ -49,20 +49,20 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     active: Set(),
   });
 
-  const backendRef = useInitRef<ModelApi>(
+  const apiRef = useInitRef<ModelApi>(
     () => new LighthouseModelApi(process.env.REACT_APP_MODEL_SERVER_URL)
   );
 
   useEffect(() => {
     (async () => {
       if (auth.user && auth.token) {
-        await backendRef.current.logIn(auth.user.username, auth.token.value);
+        await apiRef.current.logIn(auth.user.username, auth.token.value);
         setLoggedIn(true);
       } else {
         setLoggedIn(false);
       }
     })();
-  }, [auth.user, auth.token, backendRef]);
+  }, [auth.user, auth.token, apiRef]);
 
   const getUserStreams = useCallback(
     async function* () {
@@ -73,17 +73,14 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
         yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
       }
       const streams = users.map(({ username }) =>
-        mapAsyncIterable(
-          backendRef.current.streamModel(username),
-          userModel => ({
-            username,
-            ...userModel,
-          })
-        )
+        mapAsyncIterable(apiRef.current.streamModel(username), userModel => ({
+          username,
+          ...userModel,
+        }))
       );
       yield* mergeAsyncIterables(streams);
     },
-    [isLoggedIn, auth, backendRef]
+    [isLoggedIn, auth, apiRef]
   );
 
   // NOTE: It is important that we use `useCallback` for the consumption callback

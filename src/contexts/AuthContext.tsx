@@ -63,7 +63,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<Token | null>(null);
 
-  const backendRef = useInitRef<AuthApi>(() => {
+  const apiRef = useInitRef<AuthApi>(() => {
     const authType = process.env.REACT_APP_AUTH_TYPE;
     switch (authType) {
       case 'legacy':
@@ -87,29 +87,29 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       user,
       token,
       async signUp(registrationKey, username, password) {
-        const user = await backendRef.current.signUp(
+        const user = await apiRef.current.signUp(
           registrationKey,
           username,
           password
         );
         if (user !== null) {
           setUser(user);
-          setToken(await backendRef.current.getToken());
+          setToken(await apiRef.current.getToken());
         }
         return user;
       },
 
       async logIn(username, password) {
-        const user = await backendRef.current.logIn(username, password);
+        const user = await apiRef.current.logIn(username, password);
         if (user !== null) {
           setUser(user);
-          setToken(await backendRef.current.getToken());
+          setToken(await apiRef.current.getToken());
         }
         return user;
       },
 
       async logOut() {
-        if (await backendRef.current.logOut()) {
+        if (await apiRef.current.logOut()) {
           setUser(null);
           return true;
         }
@@ -117,14 +117,14 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       },
 
       async getAllUsers() {
-        return await backendRef.current.getAllUsers();
+        return await apiRef.current.getAllUsers();
       },
 
       async getPublicUsers() {
-        return await backendRef.current.getPublicUsers();
+        return await apiRef.current.getPublicUsers();
       },
     }),
-    [isInitializing, backendRef, token, user]
+    [isInitializing, apiRef, token, user]
   );
 
   useEffect(() => {
