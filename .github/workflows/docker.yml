@@ -38,3 +38,21 @@ jobs:
         push: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+    - id: meta-dev
+      uses: docker/metadata-action@v5
+      with:
+        images: ghcr.io/projectlighthousecau/luna
+        tags: |
+          type=raw,value=dev,enable={{is_default_branch}}
+          type=sha,format=long
+    - name: Build and Push dev image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64/v8
+        network: host
+        push: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+        tags: ${{ steps.meta-dev.outputs.tags }}
+        labels: ${{ steps.meta-dev.outputs.labels }}
+        build-args: |
+          "DEPLOYMENT_ENVIRONMENT=dev"
