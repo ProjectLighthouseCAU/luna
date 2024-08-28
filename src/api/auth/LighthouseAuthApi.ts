@@ -30,6 +30,7 @@ interface ApiToken {
   username: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface ApiRole {
   id: number;
   created_at: string;
@@ -37,6 +38,7 @@ interface ApiRole {
   name: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface ApiRegistrationKey {
   id: number;
   created_at: string;
@@ -69,7 +71,7 @@ export class LighthouseAuthApi implements AuthApi {
         username,
         password,
         registration_key: registrationKey,
-        email: "todo@example.com" // TODO: add email to parameters
+        email: 'todo@example.com', // TODO: add email to parameters
       }),
     });
     const apiUser: ApiUser = await apiSignUpResponse.json();
@@ -130,7 +132,7 @@ export class LighthouseAuthApi implements AuthApi {
     const apiUsersResponse = await fetch(`${this.url}/users`, {
       credentials: 'include',
     });
-    const apiUsers: ApiUser[] = await apiUsersResponse.json()
+    const apiUsers: ApiUser[] = await apiUsersResponse.json();
     const users: User[] = apiUsers.map(apiUser => {
       const user: User = {
         username: apiUser.username,
@@ -148,9 +150,12 @@ export class LighthouseAuthApi implements AuthApi {
     if (!this.user) {
       return null;
     }
-    const apiTokenResponse = await fetch(`${this.url}/users/${this.user.id}/api-token`, {
-      credentials: 'include',
-    });
+    const apiTokenResponse = await fetch(
+      `${this.url}/users/${this.user.id}/api-token`,
+      {
+        credentials: 'include',
+      }
+    );
     const apiToken: ApiToken = await apiTokenResponse.json();
     const token: Token = {
       value: apiToken.api_token,
