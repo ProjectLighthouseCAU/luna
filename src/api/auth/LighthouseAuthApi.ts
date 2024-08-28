@@ -26,7 +26,7 @@ interface ApiUser {
 interface ApiToken {
   api_token: string;
   expires_at: string;
-  roles: [string];
+  roles: string[];
   username: string;
 }
 
