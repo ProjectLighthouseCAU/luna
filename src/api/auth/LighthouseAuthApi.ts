@@ -50,7 +50,7 @@ interface ApiRegistrationKey {
 }
 
 export class LighthouseAuthApi implements AuthApi {
-  private user?: ApiUser;
+  private apiUser?: ApiUser;
 
   constructor(
     private readonly url: string = 'https://lighthouse.uni-kiel.de/api'
