@@ -145,7 +145,10 @@ export class LighthouseAuthApi implements AuthApi {
   }
 
   async getToken(): Promise<Token | null> {
-    const apiTokenResponse = await fetch(`${this.url}/users/${this.user?.id}/api-token`, {
+    if (!this.user) {
+      return null;
+    }
+    const apiTokenResponse = await fetch(`${this.url}/users/${this.user.id}/api-token`, {
       credentials: 'include',
     });
     const apiToken: ApiToken = await apiTokenResponse.json();
