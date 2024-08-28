@@ -103,7 +103,7 @@ export class LighthouseAuthApi implements AuthApi {
     });
 
     const apiUser: ApiUser = await apiUserResponse.json();
-    this.user = apiUser;
+    this.apiUser = apiUser;
 
     const user: User = {
       username: apiUser.username,
@@ -147,11 +147,11 @@ export class LighthouseAuthApi implements AuthApi {
   }
 
   async getToken(): Promise<Token | null> {
-    if (!this.user) {
+    if (!this.apiUser) {
       return null;
     }
     const apiTokenResponse = await fetch(
-      `${this.url}/users/${this.user.id}/api-token`,
+      `${this.url}/users/${this.apiUser.id}/api-token`,
       {
         credentials: 'include',
       }
