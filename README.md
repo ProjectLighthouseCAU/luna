@@ -12,7 +12,7 @@ To get started developing, make sure to have Node.js and npm available and insta
 npm install
 ```
 
-To run the CORS proxy against the legacy frontend, run
+To run the CORS proxy against the staging API, run
 
 ```sh
 npm run cors-proxy
