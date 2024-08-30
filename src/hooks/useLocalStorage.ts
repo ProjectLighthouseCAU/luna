@@ -5,7 +5,7 @@ export function useLocalStorage<T>(
   key: LocalStorageKey,
   defaultValue: () => T
 ) {
-  const [value, setValue] = useState(() => {
+  const [value, setValue] = useState<T>(() => {
     const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : defaultValue();
   });
@@ -16,5 +16,5 @@ export function useLocalStorage<T>(
     localStorage.setItem(key, json);
   }, [key, json]);
 
-  return [value, setValue];
+  return [value, setValue] as const;
 }
