@@ -86,10 +86,6 @@ export class LighthouseAuthApi implements AuthApi {
   }
 
   async logIn(username?: string, password?: string): Promise<User | null> {
-    if (!username || !password) {
-      return null;
-    }
-
     const apiUserResponse = await fetch(`${this.url}/login`, {
       method: 'POST',
       credentials: 'include',
