@@ -5,7 +5,7 @@ import { useEventListener } from '@luna/hooks/useEventListener';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { throttle } from '@luna/utils/schedule';
-import { useContext, useMemo, useRef, useState } from 'react';
+import { useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 export function DisplayView() {
@@ -30,7 +30,14 @@ export function DisplayView() {
     []
   );
 
-  useEventListener(window, 'resize', onResize, { fireImmediately: true });
+  useEventListener(window, 'resize', onResize);
+
+  // Make sure to update the size after the model canvas has been added to the DOM
+  useLayoutEffect(() => {
+    if (userModel) {
+      onResize();
+    }
+  }, [onResize, userModel]);
 
   const breakpoint = useBreakpoint();
   const isCompact = breakpoint <= Breakpoint.Sm;
