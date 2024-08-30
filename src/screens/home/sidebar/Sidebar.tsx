@@ -4,8 +4,15 @@ import { AuthContext } from '@luna/contexts/AuthContext';
 import { ModelContext } from '@luna/contexts/ModelContext';
 import { SearchContext } from '@luna/contexts/SearchContext';
 import { SidebarRoutes } from '@luna/screens/home/sidebar/SidebarRoutes';
-import { Divider, ScrollShadow } from '@nextui-org/react';
-import { useCallback, useContext } from 'react';
+import {
+  Divider,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  ScrollShadow,
+} from '@nextui-org/react';
+import { useCallback, useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export interface SidebarProps {
@@ -21,9 +28,14 @@ export function Sidebar({ isCompact }: SidebarProps) {
   const { query, setQuery } = useContext(SearchContext);
   const navigate = useNavigate();
 
+  const [logOutFailed, setLogOutFailed] = useState(false);
+
   const logOut = useCallback(async () => {
-    await auth.logOut();
-    navigate('/');
+    const success = await auth.logOut();
+    setLogOutFailed(!success);
+    if (success) {
+      navigate('/');
+    }
   }, [auth, navigate]);
 
   return (
@@ -42,6 +54,16 @@ export function Sidebar({ isCompact }: SidebarProps) {
       <Link onClick={logOut} to="#" className="text-danger">
         Sign out
       </Link>
+      <Modal isOpen={logOutFailed} onOpenChange={setLogOutFailed}>
+        <ModalContent>
+          {onClose => (
+            <>
+              <ModalHeader>Logout</ModalHeader>
+              <ModalBody>Could not sign out, please try again later!</ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }
