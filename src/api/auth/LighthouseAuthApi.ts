@@ -116,10 +116,14 @@ export class LighthouseAuthApi implements AuthApi {
   }
 
   async logOut(): Promise<boolean> {
-    await fetch(`${this.url}/logout`, {
+    const apiResponse = await fetch(`${this.url}/logout`, {
       method: 'POST',
       credentials: 'include',
     });
+    if (!apiResponse.ok) {
+      return false;
+    }
+    this.apiUser = undefined;
     return true;
   }
 

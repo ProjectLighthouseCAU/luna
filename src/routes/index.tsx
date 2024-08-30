@@ -1,13 +1,26 @@
 import { AppContainer } from '@luna/AppContainer';
+import { AuthContext } from '@luna/contexts/AuthContext';
 import { adminRoute } from '@luna/routes/admin';
 import { displaysRoute } from '@luna/routes/displays';
 import { NotFoundScreen } from '@luna/screens/notfound/NotFoundScreen';
 import { RootScreen } from '@luna/screens/root/RootScreen';
+import { useContext } from 'react';
 import {
+  Navigate,
   RouteObject,
   createBrowserRouter,
   createHashRouter,
 } from 'react-router-dom';
+
+function RootRedirect() {
+  const auth = useContext(AuthContext);
+
+  if (auth.user) {
+    return <Navigate to={`/displays/${auth.user?.username ?? ''}`} />;
+  } else {
+    return <></>;
+  }
+}
 
 const routes: RouteObject[] = [
   {
@@ -16,7 +29,14 @@ const routes: RouteObject[] = [
       {
         path: '/',
         element: <RootScreen />,
-        children: [adminRoute, displaysRoute],
+        children: [
+          {
+            path: '/',
+            element: <RootRedirect />,
+          },
+          adminRoute,
+          displaysRoute,
+        ],
       },
       {
         path: '*',

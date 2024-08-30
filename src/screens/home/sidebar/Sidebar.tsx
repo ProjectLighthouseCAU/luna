@@ -5,8 +5,8 @@ import { ModelContext } from '@luna/contexts/ModelContext';
 import { SearchContext } from '@luna/contexts/SearchContext';
 import { SidebarRoutes } from '@luna/screens/home/sidebar/SidebarRoutes';
 import { Divider, ScrollShadow } from '@nextui-org/react';
-import { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { useCallback, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export interface SidebarProps {
   isCompact: boolean;
@@ -19,6 +19,12 @@ export function Sidebar({ isCompact }: SidebarProps) {
   const auth = useContext(AuthContext);
   const model = useContext(ModelContext);
   const { query, setQuery } = useContext(SearchContext);
+  const navigate = useNavigate();
+
+  const logOut = useCallback(async () => {
+    await auth.logOut();
+    navigate('/');
+  }, [auth, navigate]);
 
   return (
     <div className="flex flex-col space-y-2 h-full">
@@ -33,7 +39,7 @@ export function Sidebar({ isCompact }: SidebarProps) {
       </ScrollShadow>
       <Divider />
       {auth.user ? <UserSnippet user={auth.user} token={auth.token} /> : null}
-      <Link onClick={() => auth.logOut()} to="/" className="text-danger">
+      <Link onClick={logOut} to="#" className="text-danger">
         Sign out
       </Link>
     </div>
