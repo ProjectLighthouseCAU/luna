@@ -28,7 +28,7 @@ export function LoginCard({ showSignup }: LoginCardProps) {
       e.preventDefault();
       if (username) {
         if (await auth.logIn(username, password)) {
-          navigate('/displays');
+          navigate(`/displays/${username}`);
         } else {
           setErrorMessage('Could not log in');
         }
