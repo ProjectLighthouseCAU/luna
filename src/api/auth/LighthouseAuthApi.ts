@@ -103,15 +103,10 @@ export class LighthouseAuthApi implements AuthApi {
     }
 
     const apiUser: ApiUser = await apiUserResponse.json();
+    const user: User = apiUserToUser(apiUser);
+
     this.apiUser = apiUser;
 
-    const user: User = {
-      username: apiUser.username,
-      role: undefined, // TODO: change role to roles
-      course: apiUser.registration_key?.key,
-      createdAt: new Date(apiUser.created_at),
-      lastSeen: new Date(apiUser.last_login),
-    };
     return user;
   }
 
@@ -142,16 +137,8 @@ export class LighthouseAuthApi implements AuthApi {
     }
 
     const apiUsers: ApiUser[] = await apiUsersResponse.json();
-    const users: User[] = apiUsers.map(apiUser => {
-      const user: User = {
-        username: apiUser.username,
-        role: undefined, // TODO: change role to roles
-        course: apiUser.registration_key?.key,
-        createdAt: new Date(apiUser.created_at),
-        lastSeen: new Date(apiUser.last_login),
-      };
-      return user;
-    });
+    const users: User[] = apiUsers.map(apiUserToUser);
+
     return users;
   }
 
@@ -172,11 +159,25 @@ export class LighthouseAuthApi implements AuthApi {
     }
 
     const apiToken: ApiToken = await apiTokenResponse.json();
-    const token: Token = {
-      value: apiToken.api_token,
-      expiresAt: new Date(apiToken.expires_at),
-    };
+    const token: Token = apiTokenToToken(apiToken);
 
     return token;
   }
+}
+
+function apiUserToUser(apiUser: ApiUser): User {
+  return {
+    username: apiUser.username,
+    role: undefined, // TODO: change role to roles
+    course: apiUser.registration_key?.key,
+    createdAt: new Date(apiUser.created_at),
+    lastSeen: new Date(apiUser.last_login),
+  };
+}
+
+function apiTokenToToken(apiToken: ApiToken): Token {
+  return {
+    value: apiToken.api_token,
+    expiresAt: new Date(apiToken.expires_at),
+  };
 }
