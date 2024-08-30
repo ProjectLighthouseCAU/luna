@@ -23,7 +23,8 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "builddev": "env-cmd -f .env.development craco build",
+    "build:dev": "env-cmd -f .env.development craco build",
+    "build:prod": "env-cmd -f .env.production craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
     "cors-proxy": "lcp --proxyUrl https://lighthouse.uni-kiel.de --proxyPartial / --credentials --origin http://localhost:3000"
