@@ -98,6 +98,10 @@ export class LighthouseAuthApi implements AuthApi {
       }),
     });
 
+    if (!apiUserResponse.ok) {
+      return null;
+    }
+
     const apiUser: ApiUser = await apiUserResponse.json();
     this.apiUser = apiUser;
 
@@ -128,6 +132,11 @@ export class LighthouseAuthApi implements AuthApi {
     const apiUsersResponse = await fetch(`${this.url}/users`, {
       credentials: 'include',
     });
+
+    if (!apiUsersResponse.ok) {
+      return [];
+    }
+
     const apiUsers: ApiUser[] = await apiUsersResponse.json();
     const users: User[] = apiUsers.map(apiUser => {
       const user: User = {
@@ -146,17 +155,24 @@ export class LighthouseAuthApi implements AuthApi {
     if (!this.apiUser) {
       return null;
     }
+
     const apiTokenResponse = await fetch(
       `${this.url}/users/${this.apiUser.id}/api-token`,
       {
         credentials: 'include',
       }
     );
+
+    if (!apiTokenResponse.ok) {
+      return null;
+    }
+
     const apiToken: ApiToken = await apiTokenResponse.json();
     const token: Token = {
       value: apiToken.api_token,
       expiresAt: new Date(apiToken.expires_at),
     };
+
     return token;
   }
 }
