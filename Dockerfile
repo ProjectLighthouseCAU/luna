@@ -11,7 +11,11 @@ RUN npm install
 
 # Build LUNA for production
 COPY . .
-RUN npm run build
+
+ARG DEPLOYMENT_ENVIRONMENT=prod
+ENV DEPLOYMENT_ENVIRONMENT ${DEPLOYMENT_ENVIRONMENT}
+
+RUN npm run build:$DEPLOYMENT_ENVIRONMENT
 
 # Use Nginx on Alpine as runner base image
 FROM nginx:alpine

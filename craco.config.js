@@ -5,5 +5,8 @@ module.exports = {
     alias: {
       '@luna': path.resolve(__dirname, 'src'),
     },
+    output: {
+      publicPath: 'auto',
+    },
   },
 };

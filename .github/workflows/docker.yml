@@ -10,6 +10,14 @@ on:
 jobs:
   build-push-image:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+        - env: production
+          label: latest
+        - env: staging
+          label: staging
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up QEMU
@@ -27,7 +35,7 @@ jobs:
       with:
         images: ghcr.io/projectlighthousecau/luna
         tags: |
-          type=raw,value=latest,enable={{is_default_branch}}
+          type=raw,value=${{ matrix.label }},enable={{is_default_branch}}
           type=sha,format=long
     - name: Build and Push image
       uses: docker/build-push-action@v5
@@ -38,3 +46,5 @@ jobs:
         push: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        build-args: |
+          "DEPLOYMENT_ENVIRONMENT=${{ matrix.env }}"
