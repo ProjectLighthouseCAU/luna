@@ -11,12 +11,13 @@ import React, {
   ReactNode,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
 export interface Auth {
-  /** Whether auth is still initializing. */
-  readonly isInitializing: boolean;
+  /** Whether the authentication has finished initializing. */
+  readonly isInitialized: boolean;
 
   /** The authenticated user. */
   readonly user: User | null;
@@ -45,7 +46,7 @@ export interface Auth {
 }
 
 export const AuthContext = createContext<Auth>({
-  isInitializing: true,
+  isInitialized: false,
   user: null,
   token: null,
   signUp: async () => null,
@@ -60,7 +61,8 @@ interface AuthContextProviderProps {
 }
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
-  const [isInitializing, setInitializing] = useState(true);
+  const [isInitialized, setInitialized] = useState(false);
+
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<Token | null>(null);
 
@@ -86,7 +88,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   const value: Auth = useMemo(
     () => ({
-      isInitializing,
+      isInitialized,
       user,
       token,
       async signUp(registrationKey, username, password) {
@@ -127,17 +129,23 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         return await apiRef.current.getPublicUsers();
       },
     }),
-    [isInitializing, apiRef, token, user]
+    [isInitialized, apiRef, token, user]
   );
+
+  // We only want to run this effect once to avoid initializing the underlying
+  // WebSocket multiple times (which may happen in React's strict mode). The
+  // workaround is similar to this suggestion: https://stackoverflow.com/a/75126229
+  const hasBegunInitializingRef = useRef(false);
 
   useEffect(() => {
     (async () => {
-      if (isInitializing) {
+      if (!hasBegunInitializingRef.current) {
+        hasBegunInitializingRef.current = true;
         await value.logIn();
-        setInitializing(false);
+        setInitialized(true);
       }
     })();
-  }, [isInitializing, value]);
+  }, [value]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -6,7 +6,7 @@ import { useContext } from 'react';
 
 export function RootScreen() {
   const auth = useContext(AuthContext);
-  return auth.isInitializing ? (
+  return !auth.isInitialized ? (
     <LoadingScreen />
   ) : auth.user !== null ? (
     <HomeScreen />

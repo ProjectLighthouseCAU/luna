@@ -53,16 +53,20 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     () => new LighthouseModelApi(process.env.REACT_APP_MODEL_SERVER_URL)
   );
 
+  const username = auth.user?.username;
+  const tokenValue = auth.token?.value;
+
   useEffect(() => {
     (async () => {
-      if (auth.user && auth.token) {
-        await apiRef.current.logIn(auth.user.username, auth.token.value);
+      if (username && tokenValue) {
+        console.log(`Logging in as ${username}`);
+        await apiRef.current.logIn(username, tokenValue);
         setLoggedIn(true);
       } else {
         setLoggedIn(false);
       }
     })();
-  }, [auth.user, auth.token, apiRef]);
+  }, [username, tokenValue, apiRef]);
 
   const getUserStreams = useCallback(
     async function* () {
