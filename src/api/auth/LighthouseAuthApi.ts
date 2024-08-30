@@ -12,15 +12,7 @@ interface ApiUser {
   username: string;
   email: string;
   permanent_api_token: boolean;
-  registration_key?: {
-    created_at: string;
-    description: string;
-    expires_at: string;
-    id: number;
-    key: string;
-    permanent: boolean;
-    updated_at: string;
-  };
+  registration_key?: ApiRegistrationKey;
 }
 
 interface ApiToken {
@@ -38,7 +30,6 @@ interface ApiRole {
   name: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface ApiRegistrationKey {
   id: number;
   created_at: string;
