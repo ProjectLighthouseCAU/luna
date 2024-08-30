@@ -13,10 +13,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - env: production
-            label: latest
-          - env: staging
-            label: staging
+        - env: production
+          label: latest
+        - env: staging
+          label: staging
 
     steps:
     - uses: actions/checkout@v4
