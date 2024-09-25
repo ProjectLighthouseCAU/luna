@@ -66,13 +66,7 @@ export class LighthouseAuthApi implements AuthApi {
       }),
     });
     const apiUser: ApiUser = await apiSignUpResponse.json();
-    const user: User = {
-      username: apiUser.username,
-      role: undefined, // TODO: change role to roles
-      course: apiUser.registration_key?.key,
-      createdAt: new Date(apiUser.created_at),
-      lastSeen: new Date(apiUser.last_login),
-    };
+    const user: User = apiUserToUser(apiUser);
     return user;
   }
 
