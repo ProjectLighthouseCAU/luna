@@ -16,6 +16,11 @@ export interface SignupCardProps {
   showLogin: () => void;
 }
 
+interface SignupError {
+  kind?: 'registrationKey' | 'username' | 'password' | 'serverError';
+  message: string;
+}
+
 export function SignupCard({ showLogin }: SignupCardProps) {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
@@ -24,31 +29,44 @@ export function SignupCard({ showLogin }: SignupCardProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [repeatedPassword, setRepeatedPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const isInvalid = errorMessage !== null;
+  const [error, setError] = useState<SignupError | null>(null);
 
   const signUp = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (!registrationKey) {
-        setErrorMessage('Please enter a registration key');
+        setError({
+          kind: 'registrationKey',
+          message: 'Please enter a registration key',
+        });
         return;
       }
       if (!username) {
-        setErrorMessage('Please enter a username');
+        setError({
+          kind: 'username',
+          message: 'Please enter a username',
+        });
         return;
       }
       if (!password) {
-        setErrorMessage('Please enter a password');
+        setError({
+          kind: 'password',
+          message: 'Please enter a password',
+        });
         return;
       }
       if (password !== repeatedPassword) {
-        setErrorMessage('Passwords do not match');
+        setError({
+          kind: 'password',
+          message: 'Passwords do not match',
+        });
         return;
       }
       if (!(await auth.signUp(registrationKey, username, password))) {
-        setErrorMessage('Could not sign up');
+        setError({
+          kind: 'serverError',
+          message: 'Could not sign up',
+        });
       }
       navigate('/displays');
     },
@@ -82,9 +100,12 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                 aria-label="Registration Key"
                 onValueChange={registrationKey => {
                   setRegistrationKey(registrationKey);
-                  setErrorMessage(null);
+                  setError(null);
                 }}
-                isInvalid={errorMessage !== null}
+                isInvalid={error?.kind === 'registrationKey'}
+                errorMessage={
+                  error?.kind === 'registrationKey' ? error?.message : null
+                }
               />
             </Tooltip>
             <Tooltip
@@ -103,9 +124,12 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                 aria-label="Username"
                 onValueChange={username => {
                   setUsername(username);
-                  setErrorMessage(null);
+                  setError(null);
                 }}
-                isInvalid={isInvalid}
+                isInvalid={error?.kind === 'username'}
+                errorMessage={
+                  error?.kind === 'username' ? error?.message : null
+                }
               />
             </Tooltip>
             <Tooltip
@@ -125,9 +149,9 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                 type="password"
                 onValueChange={password => {
                   setPassword(password);
-                  setErrorMessage(null);
+                  setError(null);
                 }}
-                isInvalid={isInvalid}
+                isInvalid={error?.kind === 'password'}
               />
             </Tooltip>
             <Tooltip
@@ -146,10 +170,12 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                 type="password"
                 onValueChange={password => {
                   setRepeatedPassword(password);
-                  setErrorMessage(null);
+                  setError(null);
                 }}
-                isInvalid={isInvalid}
-                errorMessage={errorMessage}
+                isInvalid={error?.kind === 'password'}
+                errorMessage={
+                  error?.kind === 'password' ? error?.message : null
+                }
               />
             </Tooltip>
           </div>
