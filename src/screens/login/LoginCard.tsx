@@ -23,6 +23,8 @@ export function LoginCard({ showSignup }: LoginCardProps) {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const isInvalid = errorMessage !== null;
+
   const logIn = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -58,7 +60,7 @@ export function LoginCard({ showSignup }: LoginCardProps) {
                 setUsername(username);
                 setErrorMessage(null);
               }}
-              validationState={errorMessage ? 'invalid' : 'valid'}
+              isInvalid={isInvalid}
             />
             <Input
               size="sm"
@@ -69,7 +71,7 @@ export function LoginCard({ showSignup }: LoginCardProps) {
                 setPassword(password);
                 setErrorMessage(null);
               }}
-              validationState={errorMessage ? 'invalid' : 'valid'}
+              isInvalid={isInvalid}
               errorMessage={errorMessage}
             />
           </div>

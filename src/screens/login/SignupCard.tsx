@@ -26,6 +26,8 @@ export function SignupCard({ showLogin }: SignupCardProps) {
   const [repeatedPassword, setRepeatedPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const isInvalid = errorMessage !== null;
+
   const signUp = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -82,7 +84,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                   setRegistrationKey(registrationKey);
                   setErrorMessage(null);
                 }}
-                validationState={errorMessage ? 'invalid' : 'valid'}
+                isInvalid={errorMessage !== null}
               />
             </Tooltip>
             <Tooltip
@@ -103,7 +105,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                   setUsername(username);
                   setErrorMessage(null);
                 }}
-                validationState={errorMessage ? 'invalid' : 'valid'}
+                isInvalid={isInvalid}
               />
             </Tooltip>
             <Tooltip
@@ -125,7 +127,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                   setPassword(password);
                   setErrorMessage(null);
                 }}
-                validationState={errorMessage ? 'invalid' : 'valid'}
+                isInvalid={isInvalid}
               />
             </Tooltip>
             <Tooltip
@@ -146,7 +148,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                   setRepeatedPassword(password);
                   setErrorMessage(null);
                 }}
-                validationState={errorMessage ? 'invalid' : 'valid'}
+                isInvalid={isInvalid}
                 errorMessage={errorMessage}
               />
             </Tooltip>
