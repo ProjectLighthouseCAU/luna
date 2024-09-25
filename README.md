@@ -70,7 +70,7 @@ To debug LUNA with VSCode and Firefox, install the [Firefox debugger extension](
   "request": "attach",
   "name": "Attach Firefox",
   "webRoot": "${workspaceFolder}/src",
-  "url": "http://localhost:3000"
+  "url": "http://localhost:4000"
 }
 ```
 
