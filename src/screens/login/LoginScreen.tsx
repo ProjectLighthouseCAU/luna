@@ -6,6 +6,7 @@ import { SignupCard } from '@luna/screens/login/SignupCard';
 import { useContext, useState } from 'react';
 import { DISPLAY_ASPECT_RATIO } from '@luna/components/Display';
 import { Logo } from '@luna/components/Logo';
+import ReactCardFlip from 'react-card-flip';
 import { motion } from 'framer-motion';
 
 export function LoginScreen() {
@@ -36,11 +37,10 @@ export function LoginScreen() {
           Project Lighthouse
         </motion.h1>
         <motion.div layout className="min-w-80">
-          {showSignup ? (
-            <SignupCard showLogin={() => setShowSignup(false)} />
-          ) : (
+          <ReactCardFlip isFlipped={showSignup}>
             <LoginCard showSignup={() => setShowSignup(true)} />
-          )}
+            <SignupCard showLogin={() => setShowSignup(false)} />
+          </ReactCardFlip>
         </motion.div>
       </div>
       <LiveDisplay width={displayWidth} />
