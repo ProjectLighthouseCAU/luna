@@ -126,7 +126,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
 
   return (
     <Card className="w-full">
-      <form onSubmit={signUp}>
+      <form onSubmit={signUp} autoComplete="off">
         <CardHeader>Register for a new account</CardHeader>
         <Divider />
         <CardBody className="w-full space-y-6">
