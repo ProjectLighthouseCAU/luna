@@ -29,6 +29,7 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "cors-proxy": "lcp --proxyUrl https://lighthouse.uni-kiel.de/staging/api/ --proxyPartial '' --credentials --origin http://localhost:4000",
+    "regenerate-api-types": "swagger-typescript-api -p https://lighthouse.uni-kiel.de/staging/api/swagger/doc.json -o src/api/auth/lighthouse --api-class-name ApiClient -n generated.ts",
     "update-browserslist": "npx update-browserslist-db@latest"
   },
   "eslintConfig": {
@@ -60,6 +61,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "local-cors-proxy": "^1.1.0",
-    "prettier": "^3.0.2"
+    "prettier": "^3.0.2",
+    "swagger-typescript-api": "^13.0.22"
   }
 }
