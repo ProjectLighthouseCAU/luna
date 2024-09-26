@@ -55,6 +55,10 @@ export function Display({
     const spacersPerRow = 1;
     const windowHeight = height / ((1 + spacersPerRow) * rows);
 
+    // Draw background
+    ctx.fillStyle = 'rgb(50,50,50)';
+    ctx.fillRect(0, 0, width, height);
+
     // Draw bezels
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, bezelWidth, height);
