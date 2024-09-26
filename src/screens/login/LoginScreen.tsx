@@ -31,7 +31,14 @@ export function LoginScreen() {
         isHorizontal ? 'flex-row justify-center' : 'flex-col mt-4'
       } items-center ${isHorizontal ? 'space-x-6' : 'space-y-6'}`}
     >
-      <div className="flex flex-col space-y-8 items-center">
+      <div
+        className={`flex flex-col space-y-8 items-center ${
+          // NOTE: The overflow comes from the card flip container. We could hide
+          // it there, but that would also clip the card during the animation.
+          // This is also the reason why we use the full height here.
+          isHorizontal ? 'h-full justify-center overflow-hidden' : ''
+        }`}
+      >
         {!showSignup && isHorizontal && <Logo />}
         <motion.h1 layout="position" className="text-4xl font-bold">
           Project Lighthouse
