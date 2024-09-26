@@ -12,7 +12,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { LighthouseModelApi } from '@luna/api/model/LighthouseModelApi';
+import { LighthouseModelApi } from '@luna/api/model/lighthouse';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import { Map, Set } from 'immutable';
 

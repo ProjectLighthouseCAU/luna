@@ -1,6 +1,6 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
 import { LegacyAuthApi } from '@luna/api/auth/LegacyAuthApi';
-import { LighthouseAuthApi } from '@luna/api/auth/LighthouseAuthApi';
+import { LighthouseAuthApi } from '@luna/api/auth/lighthouse';
 import { MockAuthApi } from '@luna/api/auth/MockAuthApi';
 import { NullAuthApi } from '@luna/api/auth/NullAuthApi';
 import { Login, Signup, Token, User } from '@luna/api/auth/types';
