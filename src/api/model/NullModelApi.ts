@@ -1,5 +1,5 @@
 import { ModelApi } from '@luna/api/model/ModelApi';
-import { UserModel } from '@luna/api/model/types/UserModel';
+import { UserModel } from '@luna/api/model/types';
 
 export class NullModelApi implements ModelApi {
   async logIn(username: string, token: string): Promise<boolean> {
