@@ -28,15 +28,18 @@ export function Sidebar({ isCompact }: SidebarProps) {
   const { query, setQuery } = useContext(SearchContext);
   const navigate = useNavigate();
 
-  const [logOutFailed, setLogOutFailed] = useState(false);
+  const [logoutErrorMessage, setLogoutErrorMessage] = useState<string | null>(
+    null
+  );
 
   const logOut = useCallback(async () => {
     const logoutResult = await auth.logOut();
-    // TODO: Forward error message to user here
-    setLogOutFailed(!logoutResult.ok);
-    if (logoutResult.ok) {
-      navigate('/');
+    if (!logoutResult.ok) {
+      setLogoutErrorMessage(logoutResult.error);
+      return;
     }
+    setLogoutErrorMessage(null);
+    navigate('/');
   }, [auth, navigate]);
 
   return (
@@ -55,12 +58,30 @@ export function Sidebar({ isCompact }: SidebarProps) {
       <Link onClick={logOut} to="#" className="text-danger">
         Sign out
       </Link>
-      <Modal isOpen={logOutFailed} onOpenChange={setLogOutFailed}>
+      <Modal
+        isOpen={logoutErrorMessage !== null}
+        onOpenChange={isOpen => {
+          if (!isOpen) {
+            setLogoutErrorMessage(null);
+          }
+        }}
+      >
         <ModalContent>
           {onClose => (
             <>
-              <ModalHeader>Logout</ModalHeader>
-              <ModalBody>Could not sign out, please try again later!</ModalBody>
+              <ModalHeader>{logoutErrorMessage}</ModalHeader>
+              <ModalBody>
+                <p className="inline">
+                  This shouldn't happen, please{' '}
+                  <a
+                    href="https://github.com/ProjectLighthouseCAU/luna/issues"
+                    className="underline"
+                  >
+                    file a bug on GitHub
+                  </a>{' '}
+                  and try clearing your cookies!
+                </p>
+              </ModalBody>
             </>
           )}
         </ModalContent>
