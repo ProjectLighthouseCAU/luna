@@ -34,7 +34,7 @@ export function RouteLink({
         className={({ isActive }) =>
           `${
             isActive ? 'bg-primary text-white' : ''
-          } px-2 py-1.5 rounded flex flex-row justify-between h-10`
+          } px-2 py-1.5 rounded flex flex-row items-center justify-between h-10`
         }
       >
         <div className="flex flex-row gap-2">
