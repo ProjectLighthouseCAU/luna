@@ -1,3 +1,4 @@
+import { FormInput } from '@luna/components/FormInput';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import {
   Button,
@@ -6,7 +7,6 @@ import {
   CardFooter,
   CardHeader,
   Divider,
-  Input,
 } from '@nextui-org/react';
 import { FormEvent, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +22,8 @@ export function LoginCard({ showSignup }: LoginCardProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const resetError = useCallback(() => setErrorMessage(null), []);
 
   const isInvalid = errorMessage !== null;
 
@@ -52,25 +54,17 @@ export function LoginCard({ showSignup }: LoginCardProps) {
         <Divider />
         <CardBody className="w-full space-y-6">
           <div className="space-y-2">
-            <Input
-              size="sm"
+            <FormInput
               label="Username"
-              aria-label="Username"
-              onValueChange={username => {
-                setUsername(username);
-                setErrorMessage(null);
-              }}
+              setValue={setUsername}
+              resetError={resetError}
               isInvalid={isInvalid}
             />
-            <Input
-              size="sm"
+            <FormInput
               label="Password"
-              aria-label="Password"
               type="password"
-              onValueChange={password => {
-                setPassword(password);
-                setErrorMessage(null);
-              }}
+              setValue={setPassword}
+              resetError={resetError}
               isInvalid={isInvalid}
               errorMessage={errorMessage}
             />

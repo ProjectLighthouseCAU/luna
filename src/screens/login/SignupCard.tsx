@@ -1,3 +1,4 @@
+import { FormInput } from '@luna/components/FormInput';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import {
   Button,
@@ -6,8 +7,6 @@ import {
   CardFooter,
   CardHeader,
   Divider,
-  Input,
-  Tooltip,
 } from '@nextui-org/react';
 import { FormEvent, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -54,6 +53,8 @@ export function SignupCard({ showLogin }: SignupCardProps) {
   const [password, setPassword] = useState('');
   const [repeatedPassword, setRepeatedPassword] = useState('');
   const [error, setError] = useState<SignupError | null>(null);
+
+  const resetError = useCallback(() => setError(null), []);
 
   const signUp = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
@@ -125,107 +126,43 @@ export function SignupCard({ showLogin }: SignupCardProps) {
         <Divider />
         <CardBody className="w-full space-y-6">
           <div className="space-y-2">
-            <Tooltip
-              placement="left"
-              offset={16}
-              content={
-                <div className="text-center">
-                  <div>You need a valid registration key to sign up. </div>
-                  <div>Ask your tutor or a Lighthouse team member for one.</div>
-                </div>
-              }
-            >
-              <Input
-                size="sm"
-                label="Registration Key"
-                aria-label="Registration Key"
-                onValueChange={registrationKey => {
-                  setRegistrationKey(registrationKey);
-                  setError(null);
-                }}
-                {...errorProps({ kind: 'registrationKey', error })}
-              />
-            </Tooltip>
-            <Tooltip
-              placement="left"
-              offset={16}
-              content="Please provide an email address, e.g. stu123456@mail.uni-kiel.de"
-            >
-              <Input
-                size="sm"
-                label="E-Mail"
-                aria-label="E-Mail"
-                onValueChange={email => {
-                  setEmail(email);
-                  setError(null);
-                }}
-                {...errorProps({ kind: 'email', error })}
-              />
-            </Tooltip>
-            <Tooltip
-              placement="left"
-              offset={16}
-              content={
-                <div className="text-center">
-                  <div>Doesn't have to be your student number</div>
-                  <div>Be creative but nothing inappropriate please</div>
-                </div>
-              }
-            >
-              <Input
-                size="sm"
-                label="Username"
-                aria-label="Username"
-                onValueChange={username => {
-                  setUsername(username);
-                  setError(null);
-                }}
-                {...errorProps({ kind: 'username', error })}
-              />
-            </Tooltip>
-            <Tooltip
-              placement="left"
-              offset={16}
-              content={
-                <div className="text-center">
-                  <div>Please use a secure password of sufficient length</div>
-                  <div>Your password is stored securely, trust me ;)</div>
-                </div>
-              }
-            >
-              <Input
-                size="sm"
-                label="Password"
-                aria-label="Password"
-                type="password"
-                onValueChange={password => {
-                  setPassword(password);
-                  setError(null);
-                }}
-                {...errorProps({ kind: 'password', showMessage: false, error })}
-              />
-            </Tooltip>
-            <Tooltip
-              placement="left"
-              offset={16}
-              content={
-                <div className="text-center">
-                  You know, just to make sure you haven't made an oopsie
-                </div>
-              }
-            >
-              <Input
-                size="sm"
-                label="Repeat Password"
-                aria-label="Repeat Password"
-                type="password"
-                onValueChange={password => {
-                  setRepeatedPassword(password);
-                  setError(null);
-                }}
-                {...errorProps({ kind: 'password', error })}
-              />
-            </Tooltip>
+            <FormInput
+              label="Registration Key"
+              tooltip="You need a valid registration key to sign up. Ask your tutor or a member of the Lighthouse team for one."
+              setValue={setRegistrationKey}
+              resetError={resetError}
+              {...errorProps({ kind: 'registrationKey', error })}
+            />
+            <FormInput
+              label="E-Mail"
+              tooltip="Please provide an email address, e.g. stu123456@mail.uni-kiel.de"
+              setValue={setEmail}
+              resetError={resetError}
+              {...errorProps({ kind: 'email', error })}
+            />
+            <FormInput
+              label="Username"
+              tooltip="Doesn't have to be your student number. Be creative, but nothing inappropriate please!"
+              setValue={setUsername}
+              resetError={resetError}
+              {...errorProps({ kind: 'username', error })}
+            />
+            <FormInput
+              label="Password"
+              type="password"
+              tooltip="Please use a secure password of sufficient length. Your password is stored securely, trust me ;)"
+              setValue={setPassword}
+              resetError={resetError}
+              {...errorProps({ kind: 'password', showMessage: false, error })}
+            />
+            <FormInput
+              label="Repeat Password"
+              type="password"
+              tooltip="You know, just to make sure you haven't made an oopsie"
+              setValue={setRepeatedPassword}
+              resetError={resetError}
+              {...errorProps({ kind: 'password', error })}
+            />
           </div>
           <Button type="submit">Sign up</Button>
         </CardBody>
