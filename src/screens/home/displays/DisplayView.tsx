@@ -9,9 +9,12 @@ import { useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { displayLayoutId } from '@luna/constants/LayoutId';
+import { AuthContext } from '@luna/contexts/AuthContext';
+import { Role } from '@luna/api/auth/types';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
+  const { user: me } = useContext(AuthContext);
   const { users } = useContext(ModelContext);
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
@@ -68,8 +71,9 @@ export function DisplayView() {
               />
             </motion.div>
           </div>
-          {/* TODO: Only display inspector (or options etc.) for current user themselves and admins? */}
-          <DisplayInspector />
+          {(username === me?.username || me?.role === Role.Admin) && (
+            <DisplayInspector />
+          )}
         </div>
       ) : (
         // TODO: Improve error message, perhaps add a link back to /displays?
