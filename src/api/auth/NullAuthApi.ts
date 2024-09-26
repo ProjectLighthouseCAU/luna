@@ -1,17 +1,15 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
+import { Login } from '@luna/api/auth/types/Login';
+import { Signup } from '@luna/api/auth/types/Signup';
 import { Token } from '@luna/api/auth/types/Token';
 import { User } from '@luna/api/auth/types/User';
 
 export class NullAuthApi implements AuthApi {
-  async signUp(
-    registrationKey: string,
-    username: string,
-    password: string
-  ): Promise<User | null> {
+  async signUp(signup: Signup): Promise<User | null> {
     return null;
   }
 
-  async logIn(username?: string, password?: string): Promise<User | null> {
+  async logIn(login?: Login): Promise<User | null> {
     return null;
   }
 

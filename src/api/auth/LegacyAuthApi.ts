@@ -1,5 +1,7 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
+import { Login } from '@luna/api/auth/types/Login';
 import { Role } from '@luna/api/auth/types/Role';
+import { Signup } from '@luna/api/auth/types/Signup';
 import { Token } from '@luna/api/auth/types/Token';
 import { User } from '@luna/api/auth/types/User';
 
@@ -10,22 +12,18 @@ export class LegacyAuthApi implements AuthApi {
     private readonly url: string = 'https://lighthouse.uni-kiel.de'
   ) {}
 
-  async signUp(
-    registrationKey: string,
-    username: string,
-    password: string
-  ): Promise<User | null> {
+  async signUp(signup: Signup): Promise<User | null> {
     console.error('LegacyAuthApi: signUp not implemented');
     return null;
   }
 
-  async logIn(username?: string, password?: string): Promise<User | null> {
+  async logIn(login?: Login): Promise<User | null> {
     const body = new URLSearchParams();
-    if (username !== undefined) {
-      body.append('username', username);
+    if (login?.username !== undefined) {
+      body.append('username', login.username);
     }
-    if (password !== undefined) {
-      body.append('password', password);
+    if (login?.password !== undefined) {
+      body.append('password', login.password);
     }
 
     const response = await fetch(`${this.url}/login`, {

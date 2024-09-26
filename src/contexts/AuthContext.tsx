@@ -3,6 +3,8 @@ import { LegacyAuthApi } from '@luna/api/auth/LegacyAuthApi';
 import { LighthouseAuthApi } from '@luna/api/auth/LighthouseAuthApi';
 import { MockAuthApi } from '@luna/api/auth/MockAuthApi';
 import { NullAuthApi } from '@luna/api/auth/NullAuthApi';
+import { Login } from '@luna/api/auth/types/Login';
+import { Signup } from '@luna/api/auth/types/Signup';
 import { Token } from '@luna/api/auth/types/Token';
 import { User } from '@luna/api/auth/types/User';
 import { useInitRef } from '@luna/hooks/useInitRef';
@@ -26,14 +28,10 @@ export interface Auth {
   readonly token: Token | null;
 
   /** Sign up a new account using a registration key. */
-  signUp(
-    registrationKey: string,
-    username?: string,
-    password?: string
-  ): Promise<User | null>;
+  signUp(signup: Signup): Promise<User | null>;
 
   /** Authenticates with the given credentials. Returns the user on success. */
-  logIn(username?: string, password?: string): Promise<User | null>;
+  logIn(login?: Login): Promise<User | null>;
 
   /** Deauthenticates. Returns whether this succeeded. */
   logOut(): Promise<boolean>;
@@ -91,12 +89,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       isInitialized,
       user,
       token,
-      async signUp(registrationKey, username, password) {
-        const user = await apiRef.current.signUp(
-          registrationKey,
-          username,
-          password
-        );
+      async signUp(signup) {
+        const user = await apiRef.current.signUp(signup);
         if (user !== null) {
           setUser(user);
           setToken(await apiRef.current.getToken());
@@ -104,8 +98,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         return user;
       },
 
-      async logIn(username, password) {
-        const user = await apiRef.current.logIn(username, password);
+      async logIn(login) {
+        const user = await apiRef.current.logIn(login);
         if (user !== null) {
           setUser(user);
           setToken(await apiRef.current.getToken());

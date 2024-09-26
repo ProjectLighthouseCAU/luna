@@ -29,7 +29,7 @@ export function LoginCard({ showSignup }: LoginCardProps) {
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (username) {
-        if (await auth.logIn(username, password)) {
+        if (await auth.logIn({ username, password })) {
           navigate(`/displays/${username}`);
         } else {
           setErrorMessage('Could not log in');

@@ -1,3 +1,5 @@
+import { Login } from '@luna/api/auth/types/Login';
+import { Signup } from '@luna/api/auth/types/Signup';
 import { Token } from '@luna/api/auth/types/Token';
 import { User } from '@luna/api/auth/types/User';
 
@@ -6,14 +8,10 @@ import { User } from '@luna/api/auth/types/User';
  */
 export interface AuthApi {
   /** Sign up a new account using a registration key. */
-  signUp(
-    registrationKey: string,
-    username?: string,
-    password?: string
-  ): Promise<User | null>;
+  signUp(signup: Signup): Promise<User | null>;
 
   /** Authenticates with the given credentials. Returns whether this succeeded. */
-  logIn(username?: string, password?: string): Promise<User | null>;
+  logIn(login?: Login): Promise<User | null>;
 
   /** Deauthenticates. Returns whether this succeeded. */
   logOut(): Promise<boolean>;

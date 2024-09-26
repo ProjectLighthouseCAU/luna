@@ -84,7 +84,9 @@ export function SignupCard({ showLogin }: SignupCardProps) {
         });
         return;
       }
-      if (!(await auth.signUp(registrationKey, username, password))) {
+      if (
+        !(await auth.signUp({ registrationKey, email: '', username, password }))
+      ) {
         setError({
           kind: 'serverError',
           message: 'Could not sign up',

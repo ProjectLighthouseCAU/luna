@@ -1,4 +1,6 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
+import { Login } from '@luna/api/auth/types/Login';
+import { Signup } from '@luna/api/auth/types/Signup';
 import { Token } from '@luna/api/auth/types/Token';
 import { User } from '@luna/api/auth/types/User';
 
@@ -47,11 +49,7 @@ export class LighthouseAuthApi implements AuthApi {
     private readonly url: string = 'https://lighthouse.uni-kiel.de/api'
   ) {}
 
-  async signUp(
-    registrationKey: string,
-    username?: string,
-    password?: string
-  ): Promise<User | null> {
+  async signUp(signup: Signup): Promise<User | null> {
     const apiSignUpResponse = await fetch(`${this.url}/register`, {
       method: 'POST',
       credentials: 'include',
@@ -59,10 +57,10 @@ export class LighthouseAuthApi implements AuthApi {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username,
-        password,
-        registration_key: registrationKey,
-        email: 'todo@example.com', // TODO: add email to parameters
+        username: signup.username,
+        password: signup.password,
+        registration_key: signup.registrationKey,
+        email: signup.email,
       }),
     });
     const apiUser: ApiUser = await apiSignUpResponse.json();
@@ -70,7 +68,7 @@ export class LighthouseAuthApi implements AuthApi {
     return user;
   }
 
-  async logIn(username?: string, password?: string): Promise<User | null> {
+  async logIn(login?: Login): Promise<User | null> {
     const apiUserResponse = await fetch(`${this.url}/login`, {
       method: 'POST',
       credentials: 'include',
@@ -78,8 +76,8 @@ export class LighthouseAuthApi implements AuthApi {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username,
-        password,
+        username: login?.username,
+        password: login?.password,
       }),
     });
 
