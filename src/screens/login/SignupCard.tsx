@@ -16,9 +16,31 @@ export interface SignupCardProps {
   showLogin: () => void;
 }
 
+type SignupErrorKind =
+  | 'registrationKey'
+  | 'username'
+  | 'password'
+  | 'serverError';
+
 interface SignupError {
-  kind?: 'registrationKey' | 'username' | 'password' | 'serverError';
+  kind?: SignupErrorKind;
   message: string;
+}
+
+function errorProps({
+  kind,
+  showMessage = true,
+  error,
+}: {
+  kind: SignupErrorKind;
+  showMessage?: boolean;
+  error: SignupError | null;
+}) {
+  const isInvalid = error?.kind === kind;
+  return {
+    isInvalid,
+    errorMessage: showMessage && isInvalid ? error?.message : null,
+  };
 }
 
 export function SignupCard({ showLogin }: SignupCardProps) {
@@ -102,10 +124,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                   setRegistrationKey(registrationKey);
                   setError(null);
                 }}
-                isInvalid={error?.kind === 'registrationKey'}
-                errorMessage={
-                  error?.kind === 'registrationKey' ? error?.message : null
-                }
+                {...errorProps({ kind: 'registrationKey', error })}
               />
             </Tooltip>
             <Tooltip
@@ -126,10 +145,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                   setUsername(username);
                   setError(null);
                 }}
-                isInvalid={error?.kind === 'username'}
-                errorMessage={
-                  error?.kind === 'username' ? error?.message : null
-                }
+                {...errorProps({ kind: 'username', error })}
               />
             </Tooltip>
             <Tooltip
@@ -151,7 +167,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                   setPassword(password);
                   setError(null);
                 }}
-                isInvalid={error?.kind === 'password'}
+                {...errorProps({ kind: 'password', showMessage: false, error })}
               />
             </Tooltip>
             <Tooltip
@@ -172,10 +188,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                   setRepeatedPassword(password);
                   setError(null);
                 }}
-                isInvalid={error?.kind === 'password'}
-                errorMessage={
-                  error?.kind === 'password' ? error?.message : null
-                }
+                {...errorProps({ kind: 'password', error })}
               />
             </Tooltip>
           </div>
