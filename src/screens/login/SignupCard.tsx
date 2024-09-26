@@ -121,7 +121,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
   return (
     <Card className="w-full">
       <form onSubmit={signUp}>
-        <CardHeader>Register a new account</CardHeader>
+        <CardHeader>Register for a new account</CardHeader>
         <Divider />
         <CardBody className="w-full space-y-6">
           <div className="space-y-2">
