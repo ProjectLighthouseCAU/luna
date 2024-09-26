@@ -29,8 +29,8 @@ export function LoginScreen() {
         isHorizontal ? 'flex-row justify-center' : 'flex-col mt-4'
       } items-center ${isHorizontal ? 'space-x-6' : 'space-y-6'}`}
     >
-      <div className="flex flex-col space-y-8 items-center">
-        {isHorizontal ? <Logo /> : null}
+      <div className="flex flex-col space-y-8 min-w-80 items-center">
+        {!showSignup && isHorizontal ? <Logo /> : null}
         <h1 className="text-4xl font-bold">Project Lighthouse</h1>
         {showSignup ? (
           <SignupCard showLogin={() => setShowSignup(false)} />
