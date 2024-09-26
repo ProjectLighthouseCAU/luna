@@ -6,15 +6,22 @@ interface DisplayCardProps {
   username: string;
   frame: Uint8Array;
   displayWidth: number;
+  className?: string;
   isSkeleton?: boolean;
 }
 
 export const DisplayCard = memo(
-  ({ username, frame, displayWidth, isSkeleton }: DisplayCardProps) => {
+  ({
+    username,
+    frame,
+    displayWidth,
+    className,
+    isSkeleton,
+  }: DisplayCardProps) => {
     const displayHeight = displayWidth / DISPLAY_ASPECT_RATIO;
 
     return (
-      <Card>
+      <Card className={className}>
         {isSkeleton ? (
           <div style={{ width: displayWidth, height: displayHeight }} />
         ) : (
@@ -28,6 +35,7 @@ export const DisplayCard = memo(
   },
   (prevProps, newProps) =>
     prevProps.isSkeleton === newProps.isSkeleton &&
+    prevProps.className === newProps.className &&
     prevProps.displayWidth === newProps.displayWidth &&
     prevProps.username === newProps.username &&
     prevProps.frame.toString() === newProps.frame.toString()
