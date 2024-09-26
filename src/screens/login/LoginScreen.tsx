@@ -39,7 +39,7 @@ export function LoginScreen() {
           isHorizontal ? 'h-full justify-center overflow-hidden' : ''
         }`}
       >
-        {!showSignup && isHorizontal && <Logo />}
+        {!showSignup && isHorizontal ? <Logo /> : null}
         <motion.h1 layout="position" className="text-4xl font-bold">
           Project Lighthouse
         </motion.h1>

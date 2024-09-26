@@ -71,9 +71,9 @@ export function DisplayView() {
               />
             </motion.div>
           </div>
-          {(username === me?.username || me?.role === Role.Admin) && (
+          {username === me?.username || me?.role === Role.Admin ? (
             <DisplayInspector />
-          )}
+          ) : null}
         </div>
       ) : (
         // TODO: Improve error message, perhaps add a link back to /displays?
