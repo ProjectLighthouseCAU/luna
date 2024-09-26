@@ -21,12 +21,6 @@ code {
     monospace;
 }
 
-a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 a:active {
   opacity: 0.8;
 }
