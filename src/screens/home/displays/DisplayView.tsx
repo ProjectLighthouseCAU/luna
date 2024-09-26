@@ -63,6 +63,7 @@ export function DisplayView() {
             <motion.div
               className={isCompact ? '' : 'absolute'}
               layoutId={displayLayoutId(username)}
+              key={displayLayoutId(username)}
             >
               <Display
                 frame={userModel.frame}
