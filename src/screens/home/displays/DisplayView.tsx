@@ -60,7 +60,11 @@ export function DisplayView() {
               className={isCompact ? '' : 'absolute'}
               layoutId={username}
             >
-              <Display frame={userModel.frame} width={width} />
+              <Display
+                frame={userModel.frame}
+                width={width}
+                className="rounded-xl"
+              />
             </motion.div>
           </div>
           {/* TODO: Only display inspector (or options etc.) for current user themselves and admins? */}
