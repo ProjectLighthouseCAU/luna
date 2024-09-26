@@ -1,43 +1,13 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
+import {
+  ApiToken,
+  apiTokenToToken,
+  ApiUser,
+  apiUserToUser,
+} from '@luna/api/auth/lighthouse/types';
 import { Login, Signup, Token, User } from '@luna/api/auth/types';
 
 // TODO: Auto-generate these types from the Swagger definition?
-
-interface ApiUser {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  last_login: string;
-  username: string;
-  email: string;
-  permanent_api_token: boolean;
-  registration_key?: ApiRegistrationKey;
-}
-
-interface ApiToken {
-  api_token: string;
-  expires_at: string;
-  roles: string[];
-  username: string;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface ApiRole {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  name: string;
-}
-
-interface ApiRegistrationKey {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  expires_at: string;
-  key: string;
-  description: string;
-  permanent: boolean;
-}
 
 export class LighthouseAuthApi implements AuthApi {
   private apiUser?: ApiUser;
@@ -143,21 +113,4 @@ export class LighthouseAuthApi implements AuthApi {
 
     return token;
   }
-}
-
-function apiUserToUser(apiUser: ApiUser): User {
-  return {
-    username: apiUser.username,
-    role: undefined, // TODO: change role to roles
-    course: apiUser.registration_key?.key,
-    createdAt: new Date(apiUser.created_at),
-    lastSeen: new Date(apiUser.last_login),
-  };
-}
-
-function apiTokenToToken(apiToken: ApiToken): Token {
-  return {
-    value: apiToken.api_token,
-    expiresAt: new Date(apiToken.expires_at),
-  };
 }
