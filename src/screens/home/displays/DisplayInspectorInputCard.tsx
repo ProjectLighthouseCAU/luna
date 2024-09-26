@@ -6,8 +6,8 @@ export function DisplayInspectorInputCard() {
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
       <div className="flex flex-col space-y-2">
-        <Switch>Keyboard</Switch>
-        <Switch>Controller</Switch>
+        <Switch isDisabled={true}>Keyboard</Switch>
+        <Switch isDisabled={true}>Controller</Switch>
       </div>
     </TitledCard>
   );
