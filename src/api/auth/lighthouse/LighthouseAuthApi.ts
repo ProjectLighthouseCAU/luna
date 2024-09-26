@@ -21,7 +21,6 @@ export class LighthouseAuthApi implements AuthApi {
       const apiResponse = await this.apiClient.register.registerCreate(
         convert.signupToApiRegisterPayload(signup)
       );
-
       const apiUser = apiResponse.data;
       this.apiUser = apiUser;
       return convert.apiUserToUser(apiUser);
@@ -35,7 +34,6 @@ export class LighthouseAuthApi implements AuthApi {
       const apiUserResponse = await this.apiClient.login.loginCreate(
         convert.loginToApiLoginPayload(login)
       );
-
       const apiUser = apiUserResponse.data;
       this.apiUser = apiUser;
       return convert.apiUserToUser(apiUser);
@@ -47,7 +45,6 @@ export class LighthouseAuthApi implements AuthApi {
   async logOut(): Promise<boolean> {
     try {
       await this.apiClient.logout.logoutCreate();
-
       this.apiUser = undefined;
       return true;
     } catch {
@@ -63,7 +60,6 @@ export class LighthouseAuthApi implements AuthApi {
   async getAllUsers(): Promise<User[]> {
     try {
       const apiUsersResponse = await this.apiClient.users.usersList();
-
       const apiUsers: generated.User[] = apiUsersResponse.data;
       return apiUsers.map(convert.apiUserToUser);
     } catch {
@@ -73,6 +69,7 @@ export class LighthouseAuthApi implements AuthApi {
 
   async getToken(): Promise<Token | null> {
     const apiUser = this.apiUser;
+
     if (!apiUser || !apiUser.id) {
       return null;
     }
@@ -81,7 +78,6 @@ export class LighthouseAuthApi implements AuthApi {
       const apiTokenResponse = await this.apiClient.users.apiTokenDetail(
         apiUser.id
       );
-
       const apiToken: generated.APIToken = apiTokenResponse.data;
       return convert.apiTokenToToken(apiToken);
     } catch {
