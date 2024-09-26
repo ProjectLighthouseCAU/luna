@@ -326,7 +326,7 @@ export class HttpClient<SecurityDataType = unknown> {
  * This is the REST API of Project Lighthouse that manages users, roles, registration keys, API tokens and everything about authentication and authorization.
  * NOTE: This API is an early alpha version that still needs a lot of testing (unit tests, end-to-end tests and security tests)
  */
-export class ApiClient<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
   login = {
     /**
      * @description Log in with username and password (sets a cookie with the session id). Returns the full user information if the login was successful or the user is already logged in.

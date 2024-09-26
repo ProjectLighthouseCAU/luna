@@ -1,75 +1,58 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
-import {
-  ApiToken,
-  apiTokenToToken,
-  ApiUser,
-  apiUserToUser,
-} from '@luna/api/auth/lighthouse/types';
+import * as convert from '@luna/api/auth/lighthouse/convert';
+import * as generated from '@luna/api/auth/lighthouse/generated';
 import { Login, Signup, Token, User } from '@luna/api/auth/types';
 
-// TODO: Auto-generate these types from the Swagger definition?
-
 export class LighthouseAuthApi implements AuthApi {
-  private apiUser?: ApiUser;
+  private apiClient: generated.Api<unknown>;
+  private apiUser?: generated.User;
 
-  constructor(
-    private readonly url: string = 'https://lighthouse.uni-kiel.de/api'
-  ) {}
+  constructor(url: string = 'https://lighthouse.uni-kiel.de/api') {
+    this.apiClient = new generated.Api({
+      baseUrl: url,
+      baseApiParams: {
+        credentials: 'include',
+      },
+    });
+  }
 
   async signUp(signup: Signup): Promise<User | null> {
-    const apiSignUpResponse = await fetch(`${this.url}/register`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: signup.username,
-        password: signup.password,
-        registration_key: signup.registrationKey,
-        email: signup.email,
-      }),
-    });
-    const apiUser: ApiUser = await apiSignUpResponse.json();
-    const user: User = apiUserToUser(apiUser);
-    return user;
+    try {
+      const apiResponse = await this.apiClient.register.registerCreate(
+        convert.signupToApiRegisterPayload(signup)
+      );
+
+      const apiUser = apiResponse.data;
+      this.apiUser = apiUser;
+      return convert.apiUserToUser(apiUser);
+    } catch {
+      return null;
+    }
   }
 
   async logIn(login?: Login): Promise<User | null> {
-    const apiUserResponse = await fetch(`${this.url}/login`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: login?.username,
-        password: login?.password,
-      }),
-    });
+    try {
+      const apiUserResponse = await this.apiClient.login.loginCreate(
+        convert.loginToApiLoginPayload(login)
+      );
 
-    if (!apiUserResponse.ok) {
+      const apiUser = apiUserResponse.data;
+      this.apiUser = apiUser;
+      return convert.apiUserToUser(apiUser);
+    } catch {
       return null;
     }
-
-    const apiUser: ApiUser = await apiUserResponse.json();
-    const user: User = apiUserToUser(apiUser);
-
-    this.apiUser = apiUser;
-
-    return user;
   }
 
   async logOut(): Promise<boolean> {
-    const apiResponse = await fetch(`${this.url}/logout`, {
-      method: 'POST',
-      credentials: 'include',
-    });
-    if (!apiResponse.ok) {
+    try {
+      await this.apiClient.logout.logoutCreate();
+
+      this.apiUser = undefined;
+      return true;
+    } catch {
       return false;
     }
-    this.apiUser = undefined;
-    return true;
   }
 
   async getPublicUsers(): Promise<User[]> {
@@ -78,39 +61,31 @@ export class LighthouseAuthApi implements AuthApi {
   }
 
   async getAllUsers(): Promise<User[]> {
-    const apiUsersResponse = await fetch(`${this.url}/users`, {
-      credentials: 'include',
-    });
+    try {
+      const apiUsersResponse = await this.apiClient.users.usersList();
 
-    if (!apiUsersResponse.ok) {
+      const apiUsers: generated.User[] = apiUsersResponse.data;
+      return apiUsers.map(convert.apiUserToUser);
+    } catch {
       return [];
     }
-
-    const apiUsers: ApiUser[] = await apiUsersResponse.json();
-    const users: User[] = apiUsers.map(apiUserToUser);
-
-    return users;
   }
 
   async getToken(): Promise<Token | null> {
-    if (!this.apiUser) {
+    const apiUser = this.apiUser;
+    if (!apiUser || !apiUser.id) {
       return null;
     }
 
-    const apiTokenResponse = await fetch(
-      `${this.url}/users/${this.apiUser.id}/api-token`,
-      {
-        credentials: 'include',
-      }
-    );
+    try {
+      const apiTokenResponse = await this.apiClient.users.apiTokenDetail(
+        apiUser.id
+      );
 
-    if (!apiTokenResponse.ok) {
+      const apiToken: generated.APIToken = apiTokenResponse.data;
+      return convert.apiTokenToToken(apiToken);
+    } catch {
       return null;
     }
-
-    const apiToken: ApiToken = await apiTokenResponse.json();
-    const token: Token = apiTokenToToken(apiToken);
-
-    return token;
   }
 }
