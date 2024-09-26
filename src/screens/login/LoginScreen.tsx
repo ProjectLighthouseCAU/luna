@@ -31,8 +31,8 @@ export function LoginScreen() {
       } items-center ${isHorizontal ? 'space-x-6' : 'space-y-6'}`}
     >
       <div className="flex flex-col space-y-8 items-center">
-        {!showSignup && isHorizontal ? <Logo /> : null}
-        <motion.h1 layout className="text-4xl font-bold">
+        {!showSignup && isHorizontal && <Logo />}
+        <motion.h1 layout="position" className="text-4xl font-bold">
           Project Lighthouse
         </motion.h1>
         <motion.div layout className="min-w-80">
