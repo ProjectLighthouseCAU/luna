@@ -30,15 +30,16 @@ export function LoginCard({ showSignup }: LoginCardProps) {
   const logIn = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (username) {
-        if (await auth.logIn({ username, password })) {
-          navigate(`/displays/${username}`);
-        } else {
-          setErrorMessage('Could not log in');
-        }
-      } else {
+      if (!username) {
         setErrorMessage('Please enter a username');
+        return;
       }
+      const loginResult = await auth.logIn({ username, password });
+      if (!loginResult.ok) {
+        setErrorMessage(loginResult.error);
+        return;
+      }
+      navigate(`/displays/${username}`);
     },
     [auth, navigate, username, password]
   );

@@ -31,9 +31,10 @@ export function Sidebar({ isCompact }: SidebarProps) {
   const [logOutFailed, setLogOutFailed] = useState(false);
 
   const logOut = useCallback(async () => {
-    const success = await auth.logOut();
-    setLogOutFailed(!success);
-    if (success) {
+    const logoutResult = await auth.logOut();
+    // TODO: Forward error message to user here
+    setLogOutFailed(!logoutResult.ok);
+    if (logoutResult.ok) {
       navigate('/');
     }
   }, [auth, navigate]);

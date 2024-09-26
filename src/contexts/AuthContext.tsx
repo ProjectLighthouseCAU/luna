@@ -5,6 +5,7 @@ import { MockAuthApi } from '@luna/api/auth/MockAuthApi';
 import { NullAuthApi } from '@luna/api/auth/NullAuthApi';
 import { Login, Signup, Token, User } from '@luna/api/auth/types';
 import { useInitRef } from '@luna/hooks/useInitRef';
+import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
 import React, {
   createContext,
   ReactNode,
@@ -25,30 +26,30 @@ export interface Auth {
   readonly token: Token | null;
 
   /** Sign up a new account using a registration key. */
-  signUp(signup: Signup): Promise<User | null>;
+  signUp(signup: Signup): Promise<Result<User>>;
 
   /** Authenticates with the given credentials. Returns the user on success. */
-  logIn(login?: Login): Promise<User | null>;
+  logIn(login?: Login): Promise<Result<User>>;
 
   /** Deauthenticates. Returns whether this succeeded. */
-  logOut(): Promise<boolean>;
+  logOut(): Promise<Result<void>>;
 
   /** Fetches all users. */
-  getAllUsers(): Promise<User[]>;
+  getAllUsers(): Promise<Result<User[]>>;
 
   /** Fetches the public users. */
-  getPublicUsers(): Promise<User[]>;
+  getPublicUsers(): Promise<Result<User[]>>;
 }
 
 export const AuthContext = createContext<Auth>({
   isInitialized: false,
   user: null,
   token: null,
-  signUp: async () => null,
-  logIn: async () => null,
-  logOut: async () => true,
-  getAllUsers: async () => [],
-  getPublicUsers: async () => [],
+  signUp: async () => errorResult('No auth context for signing up'),
+  logIn: async () => errorResult('No auth context for logging in'),
+  logOut: async () => errorResult('No auth context for logging out'),
+  getAllUsers: async () => errorResult('No auth context for fetching users'),
+  getPublicUsers: async () => errorResult('No auth context for fetching users'),
 });
 
 interface AuthContextProviderProps {
@@ -86,30 +87,43 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       isInitialized,
       user,
       token,
+
       async signUp(signup) {
-        const user = await apiRef.current.signUp(signup);
-        if (user !== null) {
+        try {
+          const user = getOrThrow(await apiRef.current.signUp(signup));
+          const token = getOrThrow(await apiRef.current.getToken());
+
           setUser(user);
-          setToken(await apiRef.current.getToken());
+          setToken(token);
+
+          return okResult(user);
+        } catch (error) {
+          return errorResult(error);
         }
-        return user;
       },
 
       async logIn(login) {
-        const user = await apiRef.current.logIn(login);
-        if (user !== null) {
+        try {
+          const user = getOrThrow(await apiRef.current.logIn(login));
+          const token = getOrThrow(await apiRef.current.getToken());
+
           setUser(user);
-          setToken(await apiRef.current.getToken());
+          setToken(token);
+
+          return okResult(user);
+        } catch (error) {
+          return errorResult(error);
         }
-        return user;
       },
 
       async logOut() {
-        if (await apiRef.current.logOut()) {
+        try {
+          getOrThrow(await apiRef.current.logOut());
           setUser(null);
-          return true;
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(error);
         }
-        return false;
       },
 
       async getAllUsers() {

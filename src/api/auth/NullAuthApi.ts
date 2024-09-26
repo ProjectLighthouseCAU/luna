@@ -1,28 +1,29 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
 import { Login, Signup, Token, User } from '@luna/api/auth/types';
+import { errorResult, Result } from '@luna/utils/result';
 
 export class NullAuthApi implements AuthApi {
-  async signUp(signup: Signup): Promise<User | null> {
-    return null;
+  async signUp(signup: Signup): Promise<Result<User>> {
+    return errorResult('Null auth API does not support signup');
   }
 
-  async logIn(login?: Login): Promise<User | null> {
-    return null;
+  async logIn(login?: Login): Promise<Result<User>> {
+    return errorResult('Null auth API does not support login');
   }
 
-  async logOut(): Promise<boolean> {
-    return false;
+  async logOut(): Promise<Result<void>> {
+    return errorResult('Null auth API does not support logout');
   }
 
-  async getPublicUsers(): Promise<User[]> {
-    return [];
+  async getPublicUsers(): Promise<Result<User[]>> {
+    return errorResult('Null auth API does not support fetching public users');
   }
 
-  async getAllUsers(): Promise<User[]> {
-    return [];
+  async getAllUsers(): Promise<Result<User[]>> {
+    return errorResult('Null auth API does not support fetching all users');
   }
 
-  async getToken(): Promise<Token | null> {
-    return null;
+  async getToken(): Promise<Result<Token>> {
+    return errorResult('Null auth API does not support fetching token');
   }
 }

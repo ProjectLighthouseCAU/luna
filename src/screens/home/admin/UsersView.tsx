@@ -1,6 +1,7 @@
 import { User } from '@luna/api/auth/types';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
+import { getOrThrow } from '@luna/utils/result';
 import {
   SortDescriptor,
   Table,
@@ -24,7 +25,11 @@ export function UsersView() {
 
   useEffect(() => {
     (async () => {
-      setUsers(await auth.getAllUsers());
+      try {
+        setUsers(getOrThrow(await auth.getAllUsers()));
+      } catch (error) {
+        console.error(`Could not fetch users for users view: ${error}`);
+      }
     })();
   }, [auth]);
 

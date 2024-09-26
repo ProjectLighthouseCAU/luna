@@ -94,13 +94,18 @@ export function SignupCard({ showLogin }: SignupCardProps) {
         });
         return;
       }
-      if (
-        !(await auth.signUp({ registrationKey, email, username, password }))
-      ) {
+      const signupResult = await auth.signUp({
+        registrationKey,
+        email,
+        username,
+        password,
+      });
+      if (!signupResult.ok) {
         setError({
           kind: 'serverError',
-          message: 'Could not sign up',
+          message: signupResult.error,
         });
+        return;
       }
       navigate('/displays');
     },

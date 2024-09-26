@@ -15,6 +15,7 @@ import {
 import { LighthouseModelApi } from '@luna/api/model/lighthouse';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import { Map, Set } from 'immutable';
+import { getOrThrow } from '@luna/utils/result';
 
 export interface Users {
   /** The user models by username. */
@@ -71,18 +72,22 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const getUserStreams = useCallback(
     async function* () {
       if (!isLoggedIn) return;
-      const users = await auth.getPublicUsers();
-      // Make sure that every user has at least a black frame
-      for (const { username } of users) {
-        yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
+      try {
+        const users = getOrThrow(await auth.getPublicUsers());
+        // Make sure that every user has at least a black frame
+        for (const { username } of users) {
+          yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
+        }
+        const streams = users.map(({ username }) =>
+          mapAsyncIterable(apiRef.current.streamModel(username), userModel => ({
+            username,
+            ...userModel,
+          }))
+        );
+        yield* mergeAsyncIterables(streams);
+      } catch (error) {
+        console.error(`Could not get user streams: ${error}`);
       }
-      const streams = users.map(({ username }) =>
-        mapAsyncIterable(apiRef.current.streamModel(username), userModel => ({
-          username,
-          ...userModel,
-        }))
-      );
-      yield* mergeAsyncIterables(streams);
     },
     [isLoggedIn, auth, apiRef]
   );

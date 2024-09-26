@@ -9,7 +9,6 @@ import { useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { displayLayoutId } from '@luna/constants/LayoutId';
-import { Role } from '@luna/api/auth/types';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };

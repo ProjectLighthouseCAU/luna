@@ -1,24 +1,25 @@
 import { Login, Signup, Token, User } from '@luna/api/auth/types';
+import { Result } from '@luna/utils/result';
 
 /**
  * A facility that talks to an authentication backend.
  */
 export interface AuthApi {
   /** Sign up a new account using a registration key. */
-  signUp(signup: Signup): Promise<User | null>;
+  signUp(signup: Signup): Promise<Result<User>>;
 
-  /** Authenticates with the given credentials. Returns whether this succeeded. */
-  logIn(login?: Login): Promise<User | null>;
+  /** Authenticates with the given credentials. Returns the logged in user on success. */
+  logIn(login?: Login): Promise<Result<User>>;
 
-  /** Deauthenticates. Returns whether this succeeded. */
-  logOut(): Promise<boolean>;
+  /** Deauthenticates. */
+  logOut(): Promise<Result<void>>;
 
   /** Fetches a list of public users. */
-  getPublicUsers(): Promise<User[]>;
+  getPublicUsers(): Promise<Result<User[]>>;
 
   /** Fetches a list of all users. Generally admin-only. */
-  getAllUsers(): Promise<User[]>;
+  getAllUsers(): Promise<Result<User[]>>;
 
   /** Fetches the API token for the authenticated user. */
-  getToken(): Promise<Token | null>;
+  getToken(): Promise<Result<Token>>;
 }

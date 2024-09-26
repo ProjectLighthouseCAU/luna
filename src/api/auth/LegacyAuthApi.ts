@@ -1,5 +1,6 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
 import { Login, Role, Signup, Token, User } from '@luna/api/auth/types';
+import { errorResult, okResult, Result } from '@luna/utils/result';
 
 export class LegacyAuthApi implements AuthApi {
   private lastUser?: User;
@@ -8,12 +9,11 @@ export class LegacyAuthApi implements AuthApi {
     private readonly url: string = 'https://lighthouse.uni-kiel.de'
   ) {}
 
-  async signUp(signup: Signup): Promise<User | null> {
-    console.error('LegacyAuthApi: signUp not implemented');
-    return null;
+  async signUp(signup: Signup): Promise<Result<User>> {
+    return errorResult('Signup is not implemented for legacy API');
   }
 
-  async logIn(login?: Login): Promise<User | null> {
+  async logIn(login?: Login): Promise<Result<User>> {
     const body = new URLSearchParams();
     if (login?.username !== undefined) {
       body.append('username', login.username);
@@ -30,7 +30,9 @@ export class LegacyAuthApi implements AuthApi {
     });
 
     if (!response.ok) {
-      return null;
+      return errorResult(
+        `Login failed: ${response.status} ${response.statusText}`
+      );
     }
 
     const responseBody = await response.text();
@@ -39,7 +41,7 @@ export class LegacyAuthApi implements AuthApi {
     );
 
     if (userInfo === null) {
-      return null;
+      return errorResult('Could not parse logged in user from page');
     }
 
     const parsedRole: string | undefined = userInfo[1];
@@ -61,18 +63,25 @@ export class LegacyAuthApi implements AuthApi {
     };
     this.lastUser = user;
 
-    return user;
+    return okResult(user);
   }
 
-  async logOut(): Promise<boolean> {
+  async logOut(): Promise<Result<void>> {
     const response = await fetch(`${this.url}/logout`, {
       mode: 'cors',
       credentials: 'include',
     });
-    return response.ok;
+
+    if (response.ok) {
+      return okResult(undefined);
+    } else {
+      return errorResult(
+        `Logout failed: ${response.status} ${response.statusText}`
+      );
+    }
   }
 
-  async getPublicUsers(): Promise<User[]> {
+  async getPublicUsers(): Promise<Result<User[]>> {
     const response = await fetch(`${this.url}/users`, {
       mode: 'cors',
       credentials: 'include',
@@ -82,23 +91,23 @@ export class LegacyAuthApi implements AuthApi {
 
     const result = /var users = (\[[^\]]+\])/g.exec(body);
     if (result === null) {
-      return [];
+      return errorResult('Could not parse users from page');
     }
 
     const usernames: string[] = JSON.parse(result[1]);
-    return usernames.map(username => ({ username }));
+    return okResult(usernames.map(username => ({ username })));
   }
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<Result<User[]>> {
     // TODO
     return this.getPublicUsers();
   }
 
-  async getToken(): Promise<Token | null> {
+  async getToken(): Promise<Result<Token>> {
     // TODO: We could probably use the redirected login response already
 
     if (this.lastUser === undefined) {
-      return null;
+      return errorResult('Cannot fetch token without a user');
     }
 
     const response = await fetch(`${this.url}/user/${this.lastUser.username}`, {
@@ -110,7 +119,7 @@ export class LegacyAuthApi implements AuthApi {
 
     const result = /"TOKEN":"(API-TOK[^"]+)"/g.exec(body);
     if (result === null) {
-      return null;
+      return errorResult('Could not parse API token from page');
     }
 
     const expiryResult =
@@ -121,9 +130,9 @@ export class LegacyAuthApi implements AuthApi {
       expiresAt = new Date(`${year}-${month}-${day}T${hour}:${minute}:00`);
     }
 
-    return {
+    return okResult({
       value: result[1],
       expiresAt,
-    };
+    });
   }
 }
