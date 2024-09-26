@@ -66,10 +66,10 @@ export function SignupCard({ showLogin }: SignupCardProps) {
         });
         return;
       }
-      if (!email) {
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
         setError({
           kind: 'email',
-          message: 'Please enter an email address',
+          message: 'Please enter a valid email address',
         });
         return;
       }
