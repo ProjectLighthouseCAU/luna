@@ -32,7 +32,7 @@ export interface Auth {
     password?: string
   ): Promise<User | null>;
 
-  /** Authenticates with the given credentials. Returns whether this succeeded. */
+  /** Authenticates with the given credentials. Returns the user on success. */
   logIn(username?: string, password?: string): Promise<User | null>;
 
   /** Deauthenticates. Returns whether this succeeded. */
