@@ -8,6 +8,7 @@ import { throttle } from '@luna/utils/schedule';
 import { useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { displayLayoutId } from '@luna/constants/LayoutId';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
@@ -58,7 +59,7 @@ export function DisplayView() {
           >
             <motion.div
               className={isCompact ? '' : 'absolute'}
-              layoutId={username}
+              layoutId={displayLayoutId(username)}
             >
               <Display
                 frame={userModel.frame}

@@ -4,6 +4,7 @@ import { InView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
 import { Map } from 'immutable';
 import { motion } from 'framer-motion';
+import { displayLayoutId } from '@luna/constants/LayoutId';
 
 export interface DisplayGridProps {
   userModels: Map<string, UserModel>;
@@ -27,7 +28,7 @@ export function DisplayGrid({
           <Link to={username} key={username}>
             <InView>
               {({ inView, ref }) => (
-                <motion.div ref={ref} layoutId={username}>
+                <motion.div ref={ref} layoutId={displayLayoutId(username)}>
                   <DisplayCard
                     username={username}
                     frame={userModel.frame}
