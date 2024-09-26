@@ -1,4 +1,4 @@
-import { Token } from '@luna/api/auth/Token';
+import { Token } from '@luna/api/auth/types/Token';
 import {
   Modal,
   ModalBody,

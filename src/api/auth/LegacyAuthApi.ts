@@ -1,7 +1,7 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
-import { Role } from '@luna/api/auth/Role';
-import { Token } from '@luna/api/auth/Token';
-import { User } from '@luna/api/auth/User';
+import { Role } from '@luna/api/auth/types/Role';
+import { Token } from '@luna/api/auth/types/Token';
+import { User } from '@luna/api/auth/types/User';
 
 export class LegacyAuthApi implements AuthApi {
   private lastUser?: User;

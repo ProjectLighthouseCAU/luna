@@ -1,6 +1,6 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
-import { Token } from '@luna/api/auth/Token';
-import { User } from '@luna/api/auth/User';
+import { Token } from '@luna/api/auth/types/Token';
+import { User } from '@luna/api/auth/types/User';
 
 // TODO: Auto-generate these types from the Swagger definition?
 

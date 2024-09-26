@@ -1,4 +1,4 @@
-import { User } from '@luna/api/auth/User';
+import { User } from '@luna/api/auth/types/User';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import {

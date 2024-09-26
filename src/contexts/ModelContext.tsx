@@ -2,7 +2,7 @@ import { ModelApi } from '@luna/api/model/ModelApi';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { useInitRef } from '@luna/hooks/useInitRef';
-import { UserModel } from '@luna/api/model/UserModel';
+import { UserModel } from '@luna/api/model/types/UserModel';
 import { mapAsyncIterable, mergeAsyncIterables } from '@luna/utils/async';
 import {
   ReactNode,

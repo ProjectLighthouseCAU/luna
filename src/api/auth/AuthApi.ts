@@ -1,5 +1,5 @@
-import { Token } from '@luna/api/auth/Token';
-import { User } from '@luna/api/auth/User';
+import { Token } from '@luna/api/auth/types/Token';
+import { User } from '@luna/api/auth/types/User';
 
 /**
  * A facility that talks to an authentication backend.

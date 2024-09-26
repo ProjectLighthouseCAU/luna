@@ -1,4 +1,4 @@
-import { Role } from '@luna/api/auth/Role';
+import { Role } from '@luna/api/auth/types/Role';
 
 export interface RoleSnippetProps {
   role: Role;

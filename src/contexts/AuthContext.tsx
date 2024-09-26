@@ -3,8 +3,8 @@ import { LegacyAuthApi } from '@luna/api/auth/LegacyAuthApi';
 import { LighthouseAuthApi } from '@luna/api/auth/LighthouseAuthApi';
 import { MockAuthApi } from '@luna/api/auth/MockAuthApi';
 import { NullAuthApi } from '@luna/api/auth/NullAuthApi';
-import { Token } from '@luna/api/auth/Token';
-import { User } from '@luna/api/auth/User';
+import { Token } from '@luna/api/auth/types/Token';
+import { User } from '@luna/api/auth/types/User';
 import { useInitRef } from '@luna/hooks/useInitRef';
 import React, {
   createContext,

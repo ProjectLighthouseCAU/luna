@@ -1,4 +1,4 @@
-import { User } from '@luna/api/auth/User';
+import { User } from '@luna/api/auth/types/User';
 import { RouteLink } from '@luna/components/RouteLink';
 import { truncate } from '@luna/utils/string';
 import {
