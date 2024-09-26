@@ -18,6 +18,7 @@ export interface SignupCardProps {
 
 type SignupErrorKind =
   | 'registrationKey'
+  | 'email'
   | 'username'
   | 'password'
   | 'serverError';
@@ -48,6 +49,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
   const navigate = useNavigate();
 
   const [registrationKey, setRegistrationKey] = useState('');
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [repeatedPassword, setRepeatedPassword] = useState('');
@@ -60,6 +62,13 @@ export function SignupCard({ showLogin }: SignupCardProps) {
         setError({
           kind: 'registrationKey',
           message: 'Please enter a registration key',
+        });
+        return;
+      }
+      if (!email) {
+        setError({
+          kind: 'email',
+          message: 'Please enter an email address',
         });
         return;
       }
@@ -85,7 +94,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
         return;
       }
       if (
-        !(await auth.signUp({ registrationKey, email: '', username, password }))
+        !(await auth.signUp({ registrationKey, email, username, password }))
       ) {
         setError({
           kind: 'serverError',
@@ -94,7 +103,15 @@ export function SignupCard({ showLogin }: SignupCardProps) {
       }
       navigate('/displays');
     },
-    [auth, navigate, registrationKey, username, password, repeatedPassword]
+    [
+      auth,
+      navigate,
+      registrationKey,
+      email,
+      username,
+      password,
+      repeatedPassword,
+    ]
   );
 
   const logIn = useCallback(async () => {
@@ -127,6 +144,22 @@ export function SignupCard({ showLogin }: SignupCardProps) {
                   setError(null);
                 }}
                 {...errorProps({ kind: 'registrationKey', error })}
+              />
+            </Tooltip>
+            <Tooltip
+              placement="left"
+              offset={16}
+              content="Please provide an email address, e.g. stu123456@mail.uni-kiel.de"
+            >
+              <Input
+                size="sm"
+                label="E-Mail"
+                aria-label="E-Mail"
+                onValueChange={email => {
+                  setEmail(email);
+                  setError(null);
+                }}
+                {...errorProps({ kind: 'email', error })}
               />
             </Tooltip>
             <Tooltip
