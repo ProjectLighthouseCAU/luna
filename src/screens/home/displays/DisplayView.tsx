@@ -7,6 +7,7 @@ import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { throttle } from '@luna/utils/schedule';
 import { useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
@@ -55,9 +56,12 @@ export function DisplayView() {
             ref={wrapperRef}
             className="grow flex flex-row justify-center h-full"
           >
-            <div className={isCompact ? '' : 'absolute'}>
+            <motion.div
+              className={isCompact ? '' : 'absolute'}
+              layoutId={username}
+            >
               <Display frame={userModel.frame} width={width} />
-            </div>
+            </motion.div>
           </div>
           {/* TODO: Only display inspector (or options etc.) for current user themselves and admins? */}
           <DisplayInspector />
