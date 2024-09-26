@@ -36,11 +36,11 @@ export function LoginScreen() {
           // NOTE: The overflow comes from the card flip container. We could hide
           // it there, but that would also clip the card during the animation.
           // This is also the reason why we use the full height here.
-          isHorizontal ? 'h-full justify-center overflow-hidden' : ''
+          isHorizontal ? 'h-full justify-center overflow-hidden px-4' : ''
         }`}
       >
         {!showSignup && isHorizontal ? <Logo /> : null}
-        <motion.h1 layout="position" className="text-4xl font-bold">
+        <motion.h1 layout="position" className="text-3xl font-bold">
           Project Lighthouse
         </motion.h1>
         <motion.div layout className="min-w-80">
