@@ -2,6 +2,7 @@ import { Button } from '@nextui-org/react';
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 import { ReactNode, useCallback, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface RouteLinkParams {
   icon: ReactNode;
@@ -53,7 +54,23 @@ export function RouteLink({
           </Button>
         ) : null}
       </NavLink>
-      {isExpanded ? <div className="ml-4">{children}</div> : null}
+      <AnimatePresence initial={isExpanded}>
+        {isExpanded ? (
+          <motion.div
+            initial="collapsed"
+            animate="open"
+            exit="collapsed"
+            variants={{
+              open: { opacity: 1, height: 'auto' },
+              collapsed: { opacity: 0, height: 0 },
+            }}
+            transition={{ duration: 0.2 }}
+            className="ml-4"
+          >
+            {children}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
