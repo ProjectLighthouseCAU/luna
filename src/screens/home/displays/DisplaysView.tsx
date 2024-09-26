@@ -11,8 +11,8 @@ export function DisplaysView() {
   const { query } = useContext(SearchContext);
   const { users } = useContext(ModelContext);
 
-  const minDisplayWidth = 10;
-  const maxDisplayWidth = 800;
+  const minDisplayWidth = 64;
+  const maxDisplayWidth = 512;
   const [displayWidth, setDisplayWidth] = useLocalStorage(
     LocalStorageKey.DisplaysZoom,
     () => 300
