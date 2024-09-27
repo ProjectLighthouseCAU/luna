@@ -28,7 +28,7 @@ export function DisplayGrid({
   // performance reasons. Unfortunately we can't seem to change the layoutId
   // after the component has mounted, so even if a user filters down the view
   // the displays might not animate: https://github.com/framer/motion/issues/2075
-  const animationsEnabled = filteredModels.length <= 512;
+  const animationsEnabled = filteredModels.length <= 360;
 
   return (
     <div className="flex flex-wrap gap-4 justify-center">
