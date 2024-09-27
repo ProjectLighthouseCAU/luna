@@ -43,7 +43,7 @@ export function LoginScreen() {
         <motion.h1 layout="position" className="text-3xl font-bold">
           Project Lighthouse
         </motion.h1>
-        <motion.div layout className="min-w-80">
+        <motion.div layout className={isHorizontal ? 'w-80' : 'max-w-80'}>
           <ReactCardFlip isFlipped={showSignup}>
             <LoginCard showSignup={() => setShowSignup(true)} />
             <SignupCard showLogin={() => setShowSignup(false)} />
