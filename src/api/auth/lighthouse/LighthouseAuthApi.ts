@@ -26,7 +26,7 @@ export class LighthouseAuthApi implements AuthApi {
       this.apiUser = apiUser;
       return okResult(convert.apiUserToUser(apiUser));
     } catch (error) {
-      return errorResult(`Signup failed: ${formatError(error)}`);
+      return errorResult(`Signup failed: ${await formatError(error)}`);
     }
   }
 
@@ -39,7 +39,7 @@ export class LighthouseAuthApi implements AuthApi {
       this.apiUser = apiUser;
       return okResult(convert.apiUserToUser(apiUser));
     } catch (error) {
-      return errorResult(`Login failed: ${formatError(error)}`);
+      return errorResult(`Login failed: ${await formatError(error)}`);
     }
   }
 
@@ -49,7 +49,7 @@ export class LighthouseAuthApi implements AuthApi {
       this.apiUser = undefined;
       return okResult(undefined);
     } catch (error) {
-      return errorResult(`Logout failed: ${formatError(error)}`);
+      return errorResult(`Logout failed: ${await formatError(error)}`);
     }
   }
 
@@ -64,7 +64,9 @@ export class LighthouseAuthApi implements AuthApi {
       const apiUsers: generated.User[] = apiUsersResponse.data;
       return okResult(apiUsers.map(convert.apiUserToUser));
     } catch (error) {
-      return errorResult(`Fetching all users failed: ${formatError(error)}`);
+      return errorResult(
+        `Fetching all users failed: ${await formatError(error)}`
+      );
     }
   }
 
@@ -82,14 +84,19 @@ export class LighthouseAuthApi implements AuthApi {
       const apiToken: generated.APIToken = apiTokenResponse.data;
       return okResult(convert.apiTokenToToken(apiToken));
     } catch (error) {
-      return errorResult(`Fetching token failed: ${formatError(error)}`);
+      return errorResult(`Fetching token failed: ${await formatError(error)}`);
     }
   }
 }
 
-function formatError(error: any): string {
+async function formatError(error: any): Promise<string> {
   if (error instanceof Response) {
-    return `${error.status} ${error.statusText}`;
+    const body = await error.text();
+    if (body.length > 0) {
+      return body;
+    } else {
+      return `${error.status} ${error.statusText}`;
+    }
   } else {
     return `${error}`;
   }
