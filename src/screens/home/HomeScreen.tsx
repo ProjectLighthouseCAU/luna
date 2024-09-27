@@ -34,8 +34,8 @@ export function HomeScreen() {
           <Sidebar isCompact={isCompact} />
         </div>
       ) : null}
-      <div className="flex flex-col space-y-4 grow p-5">
-        <div className="flex flex-row items-center space-x-4">
+      <div className="flex flex-col grow">
+        <div className="flex flex-row items-center space-x-4 sticky top-0 z-50 p-5 bg-white/70 dark:bg-black/30 backdrop-blur-2xl">
           {isCompact ? (
             <Button isIconOnly onPress={toggleExpanded}>
               <IconMenu2 />
@@ -47,7 +47,7 @@ export function HomeScreen() {
           </div>
         </div>
         {isCompact && isExpanded ? <Sidebar isCompact={isCompact} /> : null}
-        <div className="grow">
+        <div className="grow p-5">
           <Outlet context={outletContext} />
         </div>
       </div>
