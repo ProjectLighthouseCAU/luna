@@ -15,7 +15,7 @@ npm install
 To run the CORS proxy against the staging API, run
 
 ```sh
-npm run cors-proxy
+npm run cors-proxy:staging
 ```
 
 To start the development server, run
