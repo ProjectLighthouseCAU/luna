@@ -30,16 +30,23 @@ interface SignupError {
 function errorProps({
   kind,
   showMessage = true,
+  showServerMessage = false,
   error,
 }: {
   kind: SignupErrorKind;
   showMessage?: boolean;
+  showServerMessage?: boolean;
   error: SignupError | null;
 }) {
-  const isInvalid = error?.kind === kind;
+  const isServerError = error?.kind === 'serverError';
+  const isInvalid = isServerError || error?.kind === kind;
   return {
     isInvalid,
-    errorMessage: showMessage && isInvalid ? error?.message : null,
+    errorMessage:
+      showMessage &&
+      ((isInvalid && !isServerError) || (showServerMessage && isServerError))
+        ? error?.message
+        : null,
   };
 }
 
@@ -166,7 +173,11 @@ export function SignupCard({ showLogin }: SignupCardProps) {
               tooltip="You know, just to make sure you haven't made an oopsie"
               setValue={setRepeatedPassword}
               resetError={resetError}
-              {...errorProps({ kind: 'password', error })}
+              {...errorProps({
+                kind: 'password',
+                showServerMessage: true,
+                error,
+              })}
             />
           </div>
           <Button type="submit">Sign up</Button>
