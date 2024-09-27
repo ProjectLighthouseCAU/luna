@@ -20,7 +20,7 @@ type SignupErrorKind =
   | 'email'
   | 'username'
   | 'password'
-  | 'serverError';
+  | 'generic';
 
 interface SignupError {
   kind?: SignupErrorKind;
@@ -28,23 +28,23 @@ interface SignupError {
 }
 
 function errorProps({
-  kind,
-  showMessage = true,
-  showServerMessage = false,
+  filter: { kind: kindFilter, message: messageFilter = new Set(['kind']) },
   error,
 }: {
-  kind: SignupErrorKind;
-  showMessage?: boolean;
-  showServerMessage?: boolean;
+  filter: {
+    kind: SignupErrorKind;
+    message?: Set<'kind' | 'generic'>;
+  };
   error: SignupError | null;
 }) {
-  const isServerError = error?.kind === 'serverError';
-  const isInvalid = isServerError || error?.kind === kind;
+  const isGeneric = error?.kind === 'generic';
+  const isKind = error?.kind === kindFilter;
+  const isInvalid = isKind || isGeneric;
   return {
     isInvalid,
     errorMessage:
-      showMessage &&
-      ((isInvalid && !isServerError) || (showServerMessage && isServerError))
+      (isKind && messageFilter.has('kind')) ||
+      (isGeneric && messageFilter.has('generic'))
         ? error?.message
         : null,
   };
@@ -109,7 +109,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
       });
       if (!signupResult.ok) {
         setError({
-          kind: 'serverError',
+          kind: 'generic',
           message: signupResult.error,
         });
         return;
@@ -143,21 +143,21 @@ export function SignupCard({ showLogin }: SignupCardProps) {
               tooltip="You need a valid registration key to sign up. Ask your tutor or a member of the Lighthouse team for one."
               setValue={setRegistrationKey}
               resetError={resetError}
-              {...errorProps({ kind: 'registrationKey', error })}
+              {...errorProps({ filter: { kind: 'registrationKey' }, error })}
             />
             <FormInput
               label="E-Mail"
               tooltip="Please provide an email address, e.g. stu123456@mail.uni-kiel.de"
               setValue={setEmail}
               resetError={resetError}
-              {...errorProps({ kind: 'email', error })}
+              {...errorProps({ filter: { kind: 'email' }, error })}
             />
             <FormInput
               label="Username"
               tooltip="Doesn't have to be your student number. Be creative, but nothing inappropriate please!"
               setValue={setUsername}
               resetError={resetError}
-              {...errorProps({ kind: 'username', error })}
+              {...errorProps({ filter: { kind: 'username' }, error })}
             />
             <FormInput
               label="Password"
@@ -165,7 +165,10 @@ export function SignupCard({ showLogin }: SignupCardProps) {
               tooltip="Please use a secure password of sufficient length. Your password is stored securely, trust me ;)"
               setValue={setPassword}
               resetError={resetError}
-              {...errorProps({ kind: 'password', showMessage: false, error })}
+              {...errorProps({
+                filter: { kind: 'password', message: new Set() },
+                error,
+              })}
             />
             <FormInput
               label="Repeat Password"
@@ -174,8 +177,10 @@ export function SignupCard({ showLogin }: SignupCardProps) {
               setValue={setRepeatedPassword}
               resetError={resetError}
               {...errorProps({
-                kind: 'password',
-                showServerMessage: true,
+                filter: {
+                  kind: 'password',
+                  message: new Set(['kind', 'generic']),
+                },
                 error,
               })}
             />
