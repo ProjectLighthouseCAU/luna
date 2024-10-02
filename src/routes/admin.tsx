@@ -25,6 +25,15 @@ export const adminRoute: RouteObject = {
       path: 'users',
       element: <UsersView />,
     },
+    // TODO:
+    // {
+    //   path: 'roles',
+    //   element: <RolesView />,
+    // },
+    // {
+    //   path: 'registration-keys',
+    //   element: <RegistrationKeysView />,
+    // },
     {
       path: 'settings',
       element: <SettingsView />,
