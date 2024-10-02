@@ -2,7 +2,7 @@ import { ApiTokenModal } from '@luna/components/ApiTokenModal';
 import { TitledCard } from '@luna/components/TitledCard';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { Button, Tooltip, useDisclosure } from '@nextui-org/react';
-import { IconClipboard, IconLink } from '@tabler/icons-react';
+import { IconClipboard, IconKey } from '@tabler/icons-react';
 import { useCallback, useContext } from 'react';
 
 export function DisplayInspectorApiTokenCard() {
@@ -16,7 +16,7 @@ export function DisplayInspectorApiTokenCard() {
   }, [token]);
 
   return (
-    <TitledCard icon={<IconLink />} title="API Token">
+    <TitledCard icon={<IconKey />} title="API Token">
       <div className="flex flex-row items-center space-x-1">
         <Tooltip content="Show the token">
           <Button size="md" onPress={onOpen}>
