@@ -1,14 +1,9 @@
 import { Role } from '@luna/api/auth/types';
 
 export interface RoleSnippetProps {
-  role: Role;
+  roles: Role[];
 }
 
-export function RoleSnippet({ role }: RoleSnippetProps) {
-  switch (role) {
-    case Role.Admin:
-      return <>Admin</>;
-    case Role.User:
-      return <>User</>;
-  }
+export function RoleSnippet({ roles }: RoleSnippetProps) {
+  return <>{roles.map(role => role.name)}</>;
 }

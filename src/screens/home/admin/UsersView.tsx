@@ -51,16 +51,16 @@ export function UsersView() {
           <TableColumn allowsSorting>Created At</TableColumn>
           <TableColumn allowsSorting>Last Seen</TableColumn>
         </TableHeader>
-        <TableBody>
-          {users.map(user => (
+        <TableBody items={users}>
+          {user => (
             <TableRow key={user.username}>
               <TableCell>{user.username}</TableCell>
-              <TableCell>{user.role}</TableCell>
+              <TableCell>{user.roles?.map(role => role.name)}</TableCell>
               <TableCell>{user.course}</TableCell>
               <TableCell>{user.createdAt?.toLocaleString()}</TableCell>
               <TableCell>{user.lastSeen?.toLocaleString()}</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </HomeContent>

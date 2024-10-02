@@ -1,5 +1,11 @@
 import * as generated from '@luna/api/auth/lighthouse/generated';
-import { Login, Signup, Token, User } from '@luna/api/auth/types';
+import {
+  Login,
+  Signup,
+  Token,
+  User,
+  RegistrationKey,
+} from '@luna/api/auth/types';
 
 export function loginToApiLoginPayload(login?: Login): generated.LoginPayload {
   return {
@@ -28,10 +34,36 @@ export function apiTokenToToken(apiToken: generated.APIToken): Token {
 
 export function apiUserToUser(apiUser: generated.User): User {
   return {
+    id: apiUser.id,
     username: apiUser.username!,
-    role: undefined, // TODO: change role to roles
-    course: apiUser.registration_key?.key,
+    email: apiUser.email,
+    roles: undefined, // TODO: change role to roles
     createdAt: apiUser.created_at ? new Date(apiUser.created_at) : undefined,
+    updatedAt: apiUser.updated_at ? new Date(apiUser.updated_at) : undefined,
     lastSeen: apiUser.last_login ? new Date(apiUser.last_login) : undefined,
+    permanentApiToken: apiUser.permanent_api_token,
+    registrationKey: apiUser.registration_key
+      ? apiRegistrationKeyToRegistrationKey(apiUser.registration_key)
+      : undefined,
+  };
+}
+
+export function apiRegistrationKeyToRegistrationKey(
+  registrationKey: generated.RegistrationKey
+): RegistrationKey {
+  return {
+    id: registrationKey.id ?? 0,
+    key: registrationKey.key ?? '',
+    description: registrationKey.description,
+    createdAt: registrationKey.created_at
+      ? new Date(registrationKey.created_at)
+      : undefined,
+    updatedAt: registrationKey.updated_at
+      ? new Date(registrationKey.updated_at)
+      : undefined,
+    expiresAt: registrationKey.expires_at
+      ? new Date(registrationKey.expires_at)
+      : undefined,
+    permanent: registrationKey.permanent,
   };
 }

@@ -50,10 +50,16 @@ export class LegacyAuthApi implements AuthApi {
 
     switch (parsedRole) {
       case 'admin':
-        role = Role.Admin;
+        role = {
+          id: 0,
+          name: 'admin',
+        };
         break;
       default:
-        role = Role.User;
+        role = {
+          id: 0,
+          name: 'user',
+        };
         break;
     }
 

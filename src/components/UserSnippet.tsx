@@ -20,7 +20,7 @@ export function UserSnippet({ user, token }: UserSnippetProps) {
     <div className="flex flex-row justify-between gap-1">
       <UserComponent
         name={user.username}
-        description={user.role ? <RoleSnippet role={user.role} /> : null}
+        description={user.roles ? <RoleSnippet roles={user.roles} /> : null}
       />
       <Tooltip content="Show the API token">
         <Button isIconOnly onPress={onOpen}>
