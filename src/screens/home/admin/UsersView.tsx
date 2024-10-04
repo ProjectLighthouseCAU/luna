@@ -61,10 +61,10 @@ export function UsersView() {
     },
   });
 
-  const [showAddUserModal, setShowAddUserModal] = useState(false);
-  const [showViewUserModal, setShowViewUserModal] = useState(0);
-  const [showEditUserModal, setShowEditUserModal] = useState(0);
-  const [showDeleteUserModal, setShowDeleteUserModal] = useState(0);
+  const [userModal, setUserModal] = useState<{
+    id: number;
+    action: 'add' | 'view' | 'edit' | 'delete';
+  } | null>(null);
 
   return (
     // TODO: Lazy rendering
@@ -72,35 +72,17 @@ export function UsersView() {
       title="Users"
       toolbar={
         <Tooltip content="Add user" color="success">
-          <Button onPress={() => setShowAddUserModal(true)}>
+          <Button onPress={() => setUserModal({ id: 0, action: 'add' })}>
             <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50"></IconUserPlus>
           </Button>
         </Tooltip>
       }
     >
       <UserModal
-        id={0}
-        action="add"
-        show={showAddUserModal}
-        setShow={setShowAddUserModal}
-      ></UserModal>
-      <UserModal
-        id={showViewUserModal}
-        action="view"
-        show={showViewUserModal > 0}
-        setShow={show => !show && setShowViewUserModal(0)}
-      ></UserModal>
-      <UserModal
-        id={showEditUserModal}
-        action="edit"
-        show={showEditUserModal > 0}
-        setShow={show => !show && setShowEditUserModal(0)}
-      ></UserModal>
-      <UserModal
-        id={showDeleteUserModal}
-        action="delete"
-        show={showDeleteUserModal > 0}
-        setShow={show => !show && setShowDeleteUserModal(0)}
+        id={userModal?.id ?? 0}
+        action={userModal?.action ?? 'add'}
+        show={userModal !== null}
+        setShow={show => !show && setUserModal(null)}
       ></UserModal>
 
       <Table
@@ -169,7 +151,7 @@ export function UsersView() {
                     <IconEye
                       className="text-lg cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setShowViewUserModal(user.id ?? 0);
+                        setUserModal({ id: user.id ?? 0, action: 'view' });
                       }}
                     ></IconEye>
                   </Tooltip>
@@ -177,7 +159,7 @@ export function UsersView() {
                     <IconPencil
                       className="text-lg cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setShowEditUserModal(user.id ?? 0);
+                        setUserModal({ id: user.id ?? 0, action: 'edit' });
                       }}
                     ></IconPencil>
                   </Tooltip>
@@ -185,7 +167,7 @@ export function UsersView() {
                     <IconTrash
                       className="text-lg text-danger cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setShowDeleteUserModal(user.id ?? 0);
+                        setUserModal({ id: user.id ?? 0, action: 'delete' });
                       }}
                     ></IconTrash>
                   </Tooltip>
