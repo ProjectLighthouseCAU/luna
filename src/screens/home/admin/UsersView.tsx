@@ -1,4 +1,5 @@
 import { User } from '@luna/api/auth/types';
+import { UserModal } from '@luna/components/UserModal';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { getOrThrow } from '@luna/utils/result';
@@ -20,7 +21,7 @@ import {
   IconTrash,
   IconUserPlus,
 } from '@tabler/icons-react';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { SortDescriptor } from 'react-stately';
 
 export function UsersView() {
@@ -60,15 +61,48 @@ export function UsersView() {
     },
   });
 
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [showViewUserModal, setShowViewUserModal] = useState(0);
+  const [showEditUserModal, setShowEditUserModal] = useState(0);
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(0);
+
   return (
     // TODO: Lazy rendering
-    <HomeContent title="Users">
-      <Tooltip content="Add user" color="success">
-        <Button className="mb-5">
-          {/* TODO: add user (maybe open modal to input data) */}
-          <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50"></IconUserPlus>
-        </Button>
-      </Tooltip>
+    <HomeContent
+      title="Users"
+      toolbar={
+        <Tooltip content="Add user" color="success">
+          <Button onPress={() => setShowAddUserModal(true)}>
+            <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50"></IconUserPlus>
+          </Button>
+        </Tooltip>
+      }
+    >
+      <UserModal
+        id={0}
+        action="add"
+        show={showAddUserModal}
+        setShow={setShowAddUserModal}
+      ></UserModal>
+      <UserModal
+        id={showViewUserModal}
+        action="view"
+        show={showViewUserModal > 0}
+        setShow={show => !show && setShowViewUserModal(0)}
+      ></UserModal>
+      <UserModal
+        id={showEditUserModal}
+        action="edit"
+        show={showEditUserModal > 0}
+        setShow={show => !show && setShowEditUserModal(0)}
+      ></UserModal>
+      <UserModal
+        id={showDeleteUserModal}
+        action="delete"
+        show={showDeleteUserModal > 0}
+        setShow={show => !show && setShowDeleteUserModal(0)}
+      ></UserModal>
+
       <Table
         aria-label="Table of users for administrators"
         removeWrapper
@@ -132,16 +166,28 @@ export function UsersView() {
               <TableCell>
                 <div className="relative flex items-center gap-2">
                   <Tooltip content="Details">
-                    <IconEye className="text-lg cursor-pointer active:opacity-50"></IconEye>
-                    {/* TODO: show details of user: roles, registration key, ... (maybe open a modal?)*/}
+                    <IconEye
+                      className="text-lg cursor-pointer active:opacity-50"
+                      onClick={() => {
+                        setShowViewUserModal(user.id ?? 0);
+                      }}
+                    ></IconEye>
                   </Tooltip>
                   <Tooltip content="Edit user">
-                    <IconPencil className="text-lg cursor-pointer active:opacity-50"></IconPencil>
-                    {/* TODO: make user editable (maybe open a modal or edit in table?) */}
+                    <IconPencil
+                      className="text-lg cursor-pointer active:opacity-50"
+                      onClick={() => {
+                        setShowEditUserModal(user.id ?? 0);
+                      }}
+                    ></IconPencil>
                   </Tooltip>
                   <Tooltip color="danger" content="Delete user">
-                    <IconTrash className="text-lg text-danger cursor-pointer active:opacity-50"></IconTrash>
-                    {/* TODO: confirm deletion using popup, then send delete request */}
+                    <IconTrash
+                      className="text-lg text-danger cursor-pointer active:opacity-50"
+                      onClick={() => {
+                        setShowDeleteUserModal(user.id ?? 0);
+                      }}
+                    ></IconTrash>
                   </Tooltip>
                 </div>
               </TableCell>
