@@ -6,11 +6,12 @@ export function AppContainer() {
   const { colorScheme } = useContext(ColorSchemeContext);
 
   useEffect(() => {
-    if (colorScheme.isDark) {
-      document.documentElement.className = 'dark';
-    } else {
-      document.documentElement.className = 'light';
-    }
+    const colorSchemeName = colorScheme.isDark ? 'dark' : 'light';
+    document.documentElement.className = colorSchemeName;
+    document.body.style.setProperty(
+      '--luna-background-color',
+      `--luna-background-${colorSchemeName}`
+    );
   }, [colorScheme.isDark]);
 
   return (

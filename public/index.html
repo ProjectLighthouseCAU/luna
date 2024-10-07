@@ -32,16 +32,22 @@
       to support manually toggling the color scheme.
     -->
     <style>
-      body.dark {
-        background-color: black;
+      :root {
+        --luna-background-light: white;
+        --luna-background-dark: black;
+        --luna-background-color: var(--luna-background-light);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --luna-background-color: var(--luna-background-dark);
+        }
+      }
+
+      body {
+        background-color: var(--luna-background-color);
       }
     </style>
-    <script>
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      if (mediaQuery.matches) {
-        document.documentElement.className = 'dark';
-      }
-    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
