@@ -73,7 +73,7 @@ export function Sidebar({ isCompact }: SidebarProps) {
         <Link onClick={logOut} to="#" className="text-danger">
           Sign out
         </Link>
-        <Tooltip content="Toggle light/dark mode">
+        <Tooltip content="Toggle light/dark mode" placement="right">
           <Button isIconOnly onPress={toggleColorScheme} size="sm">
             {colorScheme.isDark ? <IconMoon /> : <IconSun />}
           </Button>

@@ -22,7 +22,7 @@ export function UserSnippet({ user, token }: UserSnippetProps) {
         name={user.username}
         description={user.roles ? <RoleSnippet roles={user.roles} /> : null}
       />
-      <Tooltip content="Show the API token">
+      <Tooltip content="Show the API token" placement="right">
         <Button isIconOnly size="sm" onPress={onOpen}>
           <IconKey />
         </Button>
