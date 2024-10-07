@@ -27,11 +27,11 @@ export class LighthouseAuthApi implements AuthApi {
   async signUp(signup: Signup): Promise<Result<User>> {
     try {
       const apiResponse = await this.apiClient.register.registerCreate(
-        convert.signupToApiRegisterPayload(signup)
+        convert.signupToApi(signup)
       );
       const apiUser = apiResponse.data;
       this.apiUser = apiUser;
-      return okResult(convert.apiUserToUser(apiUser));
+      return okResult(convert.userFromApi(apiUser));
     } catch (error) {
       return errorResult(`Signup failed: ${await formatError(error)}`);
     }
@@ -40,11 +40,11 @@ export class LighthouseAuthApi implements AuthApi {
   async logIn(login?: Login): Promise<Result<User>> {
     try {
       const apiUserResponse = await this.apiClient.login.loginCreate(
-        convert.loginToApiLoginPayload(login)
+        convert.loginToApi(login)
       );
       const apiUser = apiUserResponse.data;
       this.apiUser = apiUser;
-      return okResult(convert.apiUserToUser(apiUser));
+      return okResult(convert.userFromApi(apiUser));
     } catch (error) {
       return errorResult(`Login failed: ${await formatError(error)}`);
     }
@@ -74,7 +74,7 @@ export class LighthouseAuthApi implements AuthApi {
       // TODO: Implement pagination in Heimdall and remove this
       apiUsers = slicePage(apiUsers, pagination);
 
-      return okResult(apiUsers.map(convert.apiUserToUser));
+      return okResult(apiUsers.map(convert.userFromApi));
     } catch (error) {
       return errorResult(
         `Fetching all users failed: ${await formatError(error)}`
@@ -94,7 +94,7 @@ export class LighthouseAuthApi implements AuthApi {
         apiUser.id
       );
       const apiToken: generated.APIToken = apiTokenResponse.data;
-      return okResult(convert.apiTokenToToken(apiToken));
+      return okResult(convert.tokenFromApi(apiToken));
     } catch (error) {
       return errorResult(`Fetching token failed: ${await formatError(error)}`);
     }

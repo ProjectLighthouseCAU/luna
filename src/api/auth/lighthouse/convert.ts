@@ -7,16 +7,14 @@ import {
   RegistrationKey,
 } from '@luna/api/auth/types';
 
-export function loginToApiLoginPayload(login?: Login): generated.LoginPayload {
+export function loginToApi(login?: Login): generated.LoginPayload {
   return {
     username: login?.username,
     password: login?.password,
   };
 }
 
-export function signupToApiRegisterPayload(
-  signup: Signup
-): generated.RegisterPayload {
+export function signupToApi(signup: Signup): generated.RegisterPayload {
   return {
     registration_key: signup.registrationKey,
     email: signup.email,
@@ -25,14 +23,14 @@ export function signupToApiRegisterPayload(
   };
 }
 
-export function apiTokenToToken(apiToken: generated.APIToken): Token {
+export function tokenFromApi(apiToken: generated.APIToken): Token {
   return {
     value: apiToken.api_token!,
     expiresAt: apiToken.expires_at ? new Date(apiToken.expires_at) : undefined,
   };
 }
 
-export function apiUserToUser(apiUser: generated.User): User {
+export function userFromApi(apiUser: generated.User): User {
   return {
     id: apiUser.id,
     username: apiUser.username!,
@@ -43,12 +41,12 @@ export function apiUserToUser(apiUser: generated.User): User {
     lastSeen: apiUser.last_login ? new Date(apiUser.last_login) : undefined,
     permanentApiToken: apiUser.permanent_api_token,
     registrationKey: apiUser.registration_key
-      ? apiRegistrationKeyToRegistrationKey(apiUser.registration_key)
+      ? registrationKeyFromApi(apiUser.registration_key)
       : undefined,
   };
 }
 
-export function apiRegistrationKeyToRegistrationKey(
+export function registrationKeyFromApi(
   registrationKey: generated.RegistrationKey
 ): RegistrationKey {
   return {
