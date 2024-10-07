@@ -72,8 +72,11 @@ export function UsersView() {
       title="Users"
       toolbar={
         <Tooltip content="Add user" color="success">
-          <Button onPress={() => setUserModal({ id: 0, action: 'add' })}>
-            <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50"></IconUserPlus>
+          <Button
+            isIconOnly
+            onPress={() => setUserModal({ id: 0, action: 'add' })}
+          >
+            <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50" />
           </Button>
         </Tooltip>
       }
