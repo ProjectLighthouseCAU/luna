@@ -1,21 +1,18 @@
+import { ColorSchemeButton } from '@luna/components/ColorSchemeButton';
 import { SearchBar } from '@luna/components/SearchBar';
 import { UserSnippet } from '@luna/components/UserSnippet';
 import { AuthContext } from '@luna/contexts/AuthContext';
-import { ColorSchemeContext } from '@luna/contexts/ColorSchemeContext';
 import { ModelContext } from '@luna/contexts/ModelContext';
 import { SearchContext } from '@luna/contexts/SearchContext';
 import { SidebarRoutes } from '@luna/screens/home/sidebar/SidebarRoutes';
 import {
-  Button,
   Divider,
   Modal,
   ModalBody,
   ModalContent,
   ModalHeader,
   ScrollShadow,
-  Tooltip,
 } from '@nextui-org/react';
-import { IconMoon, IconSun } from '@tabler/icons-react';
 import { useCallback, useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -29,14 +26,8 @@ export interface SidebarProps {
 export function Sidebar({ isCompact }: SidebarProps) {
   const auth = useContext(AuthContext);
   const model = useContext(ModelContext);
-  const { colorScheme, setColorScheme } = useContext(ColorSchemeContext);
   const { query, setQuery } = useContext(SearchContext);
   const navigate = useNavigate();
-
-  const toggleColorScheme = useCallback(
-    () => setColorScheme(colorScheme => ({ isDark: !colorScheme.isDark })),
-    [setColorScheme]
-  );
 
   const [logoutErrorMessage, setLogoutErrorMessage] = useState<string | null>(
     null
@@ -73,11 +64,7 @@ export function Sidebar({ isCompact }: SidebarProps) {
         <Link onClick={logOut} to="#" className="text-danger">
           Sign out
         </Link>
-        <Tooltip content="Toggle light/dark mode" placement="right">
-          <Button isIconOnly onPress={toggleColorScheme} size="sm">
-            {colorScheme.isDark ? <IconMoon /> : <IconSun />}
-          </Button>
-        </Tooltip>
+        <ColorSchemeButton />
       </div>
       <Modal
         isOpen={logoutErrorMessage !== null}
