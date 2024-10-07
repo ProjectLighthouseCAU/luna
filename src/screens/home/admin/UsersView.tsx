@@ -15,7 +15,6 @@ import {
   TableRow,
   Tooltip,
 } from '@nextui-org/react';
-import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll';
 import { useAsyncList } from '@react-stately/data';
 import {
   IconEye,
@@ -23,19 +22,15 @@ import {
   IconTrash,
   IconUserPlus,
 } from '@tabler/icons-react';
-import {
-  MutableRefObject,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { InView } from 'react-intersection-observer';
 import { SortDescriptor } from 'react-stately';
 
 export function UsersView() {
   const auth = useContext(AuthContext);
 
   const [isLoading, setLoading] = useState(false);
+  const [needsMore, setNeedsMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
 
   const sortList = useCallback(
@@ -86,17 +81,11 @@ export function UsersView() {
     },
   });
 
-  const [loaderRef, scrollerRef] = useInfiniteScroll({
-    hasMore,
-    onLoadMore: users.loadMore,
-  });
-
-  // A hack to let us use infinite scrolling without a wrapper. Pretty sure you
-  // are not supposed to (ab)use React refs like this, it seems to work well
-  // enough in practice though.
   useEffect(() => {
-    (scrollerRef as MutableRefObject<HTMLElement>).current = document.body;
-  }, [scrollerRef]);
+    if (needsMore) {
+      users.loadMore();
+    }
+  }, [users, needsMore]);
 
   const [userModal, setUserModal] = useState<{
     id: number;
@@ -132,7 +121,13 @@ export function UsersView() {
         isHeaderSticky
         sortDescriptor={users.sortDescriptor}
         onSortChange={users.sort}
-        bottomContent={hasMore ? <Spinner ref={loaderRef} /> : null}
+        bottomContent={
+          hasMore ? (
+            <InView onChange={setNeedsMore}>
+              {({ inView, ref }) => <Spinner ref={ref} />}
+            </InView>
+          ) : null
+        }
       >
         <TableHeader>
           <TableColumn key="id" allowsSorting>
