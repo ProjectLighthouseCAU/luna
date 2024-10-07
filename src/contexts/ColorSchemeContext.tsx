@@ -1,13 +1,17 @@
-import { ReactNode, createContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useEffect, useMemo, useState } from 'react';
 
 interface ColorScheme {
   readonly isDark: boolean;
 }
 
-export type ColorSchemeContextValue = ColorScheme;
+export interface ColorSchemeContextValue {
+  readonly colorScheme: ColorScheme;
+  setColorScheme: (colorScheme: ColorScheme) => void;
+}
 
 export const ColorSchemeContext = createContext<ColorSchemeContextValue>({
-  isDark: false,
+  colorScheme: { isDark: false },
+  setColorScheme() {},
 });
 
 interface ColorSchemeContextProviderProps {
@@ -29,8 +33,16 @@ export function ColorSchemeContextProvider({
     });
   }, []);
 
+  const value: ColorSchemeContextValue = useMemo(
+    () => ({
+      colorScheme,
+      setColorScheme,
+    }),
+    [colorScheme]
+  );
+
   return (
-    <ColorSchemeContext.Provider value={colorScheme}>
+    <ColorSchemeContext.Provider value={value}>
       {children}
     </ColorSchemeContext.Provider>
   );

@@ -3,7 +3,7 @@ import { ColorSchemeContext } from '@luna/contexts/ColorSchemeContext';
 import { Outlet } from 'react-router-dom';
 
 export function AppContainer() {
-  const colorScheme = useContext(ColorSchemeContext);
+  const { colorScheme } = useContext(ColorSchemeContext);
 
   useEffect(() => {
     if (colorScheme.isDark) {
