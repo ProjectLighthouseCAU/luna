@@ -25,12 +25,12 @@ export interface Users {
   readonly active: Set<string>;
 }
 
-export interface Model {
+export interface ModelContextValue {
   /** The user models, active users etc. */
   readonly users: Users;
 }
 
-export const ModelContext = createContext<Model>({
+export const ModelContext = createContext<ModelContextValue>({
   users: {
     models: Map(),
     active: Set(),

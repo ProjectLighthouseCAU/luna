@@ -1,10 +1,12 @@
 import { useLayoutEventListener } from '@luna/hooks/useLayoutEventListener';
 import React, { createContext, ReactNode, useCallback, useState } from 'react';
 
-export interface WindowDimensions {
+interface WindowDimensions {
   readonly width: number;
   readonly height: number;
 }
+
+export type WindowDimensionsContextValue = WindowDimensions;
 
 function getWindowDimensions(): WindowDimensions {
   return {
@@ -13,9 +15,8 @@ function getWindowDimensions(): WindowDimensions {
   };
 }
 
-export const WindowDimensionsContext = createContext<WindowDimensions>(
-  getWindowDimensions()
-);
+export const WindowDimensionsContext =
+  createContext<WindowDimensionsContextValue>(getWindowDimensions());
 
 interface WindowDimensionsContextProviderProps {
   children: ReactNode;

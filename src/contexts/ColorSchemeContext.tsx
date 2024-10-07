@@ -1,10 +1,12 @@
 import { ReactNode, createContext, useEffect, useState } from 'react';
 
-export interface ColorScheme {
+interface ColorScheme {
   readonly isDark: boolean;
 }
 
-export const ColorSchemeContext = createContext<ColorScheme>({
+export type ColorSchemeContextValue = ColorScheme;
+
+export const ColorSchemeContext = createContext<ColorSchemeContextValue>({
   isDark: false,
 });
 
