@@ -22,6 +22,6 @@ export function slicePage<T>(elements: T[], pagination?: Pagination): T[] {
   if (pagination.sorting) {
     elements = sorted(elements, pagination.sorting);
   }
-  const offset = pagination.page;
+  const offset = pagination.page * pagination.perPage;
   return elements.slice(offset, offset + pagination.perPage);
 }
