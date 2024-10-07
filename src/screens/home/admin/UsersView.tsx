@@ -6,6 +6,7 @@ import { getOrThrow } from '@luna/utils/result';
 import {
   Button,
   Chip,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -22,11 +23,14 @@ import {
   IconTrash,
   IconUserPlus,
 } from '@tabler/icons-react';
-import { useContext, useState } from 'react';
+import { MutableRefObject, useContext, useEffect, useState } from 'react';
 import { SortDescriptor } from 'react-stately';
 
 export function UsersView() {
   const auth = useContext(AuthContext);
+
+  const [isLoading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
 
   const sortList = (items: User[], sortDescriptor: SortDescriptor): User[] => {
     let col = sortDescriptor.column ?? 'id';
@@ -42,17 +46,27 @@ export function UsersView() {
     });
   };
 
-  const [hasMore, setHasMore] = useState(false);
-  const users = useAsyncList({
+  const users = useAsyncList<User>({
     initialSortDescriptor: {
       column: 'id',
       direction: 'ascending',
     },
-    async load() {
+    async load({ cursor }) {
       try {
-        let items = getOrThrow(await auth.getAllUsers());
+        if (cursor !== undefined) {
+          setLoading(false);
+        }
+
+        const page = parseInt(cursor ?? '0');
+        let items = getOrThrow(
+          await auth.getAllUsers({
+            page,
+            perPage: 5, // TODO
+          })
+        );
+        setHasMore(items.length > 0);
         items = sortList(items, { column: 'id', direction: 'ascending' });
-        return { items };
+        return { items, cursor: `${page + 1}` };
       } catch (error) {
         console.error(`Could not fetch users for users view: ${error}`);
         return { items: [] };
@@ -67,6 +81,13 @@ export function UsersView() {
     hasMore,
     onLoadMore: users.loadMore,
   });
+
+  // A hack to let us use infinite scrolling without a wrapper. Pretty sure you
+  // are not supposed to (ab)use React refs like this, it seems to work well
+  // enough in practice though.
+  useEffect(() => {
+    (scrollerRef as MutableRefObject<HTMLElement>).current = document.body;
+  }, [scrollerRef]);
 
   const [userModal, setUserModal] = useState<{
     id: number;
@@ -102,6 +123,7 @@ export function UsersView() {
         isHeaderSticky
         sortDescriptor={users.sortDescriptor}
         onSortChange={users.sort}
+        bottomContent={hasMore ? <Spinner ref={loaderRef} /> : null}
       >
         <TableHeader>
           <TableColumn key="id" allowsSorting>
@@ -133,7 +155,7 @@ export function UsersView() {
           </TableColumn> */}
           <TableColumn key="actions">Actions</TableColumn>
         </TableHeader>
-        <TableBody items={users.items}>
+        <TableBody items={users.items} isLoading={isLoading}>
           {user => (
             <TableRow key={user.username}>
               <TableCell>{user.id}</TableCell>
