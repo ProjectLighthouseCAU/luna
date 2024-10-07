@@ -24,3 +24,10 @@ code {
 a:active {
   opacity: 0.8;
 }
+
+.sticky-home-table thead {
+  position: sticky;
+  /* TODO: This is the height of the HomeScreen header bar. We shouldn't hardcode this and find a more elegant solution. */
+  top: 5em;
+  z-index: 20;
+}
