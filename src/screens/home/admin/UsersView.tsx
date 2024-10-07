@@ -65,7 +65,7 @@ export function UsersView() {
         let items = getOrThrow(
           await auth.getAllUsers({
             page,
-            perPage: 5, // TODO
+            perPage: 100,
           })
         );
         setHasMore(items.length > 0);
