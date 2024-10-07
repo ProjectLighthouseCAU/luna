@@ -14,6 +14,7 @@ import {
   TableRow,
   Tooltip,
 } from '@nextui-org/react';
+import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll';
 import { useAsyncList } from '@react-stately/data';
 import {
   IconEye,
@@ -41,6 +42,7 @@ export function UsersView() {
     });
   };
 
+  const [hasMore, setHasMore] = useState(false);
   const users = useAsyncList({
     initialSortDescriptor: {
       column: 'id',
@@ -59,6 +61,11 @@ export function UsersView() {
     async sort({ items, sortDescriptor }) {
       return { items: sortList(items, sortDescriptor) };
     },
+  });
+
+  const [loaderRef, scrollerRef] = useInfiniteScroll({
+    hasMore,
+    onLoadMore: users.loadMore,
   });
 
   const [userModal, setUserModal] = useState<{
