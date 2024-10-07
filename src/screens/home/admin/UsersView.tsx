@@ -83,7 +83,7 @@ export function UsersView() {
     <HomeContent
       title="Users"
       toolbar={
-        <>
+        <div className="flex flex-row gap-4">
           <SearchBar placeholder="Search users..." setQuery={setSearchQuery} />
           <Tooltip content="Add user" color="success">
             <Button
@@ -93,7 +93,7 @@ export function UsersView() {
               <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50" />
             </Button>
           </Tooltip>
-        </>
+        </div>
       }
     >
       <UserModal
