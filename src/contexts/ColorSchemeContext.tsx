@@ -1,4 +1,12 @@
-import { ReactNode, createContext, useEffect, useMemo, useState } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 interface ColorScheme {
   readonly isDark: boolean;
@@ -6,7 +14,7 @@ interface ColorScheme {
 
 export interface ColorSchemeContextValue {
   readonly colorScheme: ColorScheme;
-  setColorScheme: (colorScheme: ColorScheme) => void;
+  setColorScheme: Dispatch<SetStateAction<ColorScheme>>;
 }
 
 export const ColorSchemeContext = createContext<ColorSchemeContextValue>({

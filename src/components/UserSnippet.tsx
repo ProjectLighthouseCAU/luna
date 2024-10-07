@@ -17,13 +17,13 @@ export interface UserSnippetProps {
 export function UserSnippet({ user, token }: UserSnippetProps) {
   const { onOpen, isOpen, onOpenChange } = useDisclosure();
   return (
-    <div className="flex flex-row justify-between gap-1">
+    <div className="flex flex-row justify-between items-center gap-1">
       <UserComponent
         name={user.username}
         description={user.roles ? <RoleSnippet roles={user.roles} /> : null}
       />
       <Tooltip content="Show the API token">
-        <Button isIconOnly onPress={onOpen}>
+        <Button isIconOnly size="sm" onPress={onOpen}>
           <IconKey />
         </Button>
       </Tooltip>
