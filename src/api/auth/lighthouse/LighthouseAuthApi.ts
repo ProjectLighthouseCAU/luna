@@ -1,7 +1,14 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
 import * as convert from '@luna/api/auth/lighthouse/convert';
 import * as generated from '@luna/api/auth/lighthouse/generated';
-import { Login, Pagination, Signup, Token, User } from '@luna/api/auth/types';
+import {
+  Login,
+  Pagination,
+  Signup,
+  slicePage,
+  Token,
+  User,
+} from '@luna/api/auth/types';
 import { errorResult, okResult, Result } from '@luna/utils/result';
 
 export class LighthouseAuthApi implements AuthApi {
@@ -65,10 +72,7 @@ export class LighthouseAuthApi implements AuthApi {
 
       // Emulate pagination since Heimdall doesn't support it
       // TODO: Implement pagination in Heimdall and remove this
-      if (pagination !== undefined) {
-        const offset = pagination.page * pagination.perPage;
-        apiUsers = apiUsers.slice(offset, offset + pagination.perPage);
-      }
+      apiUsers = slicePage(apiUsers, pagination);
 
       return okResult(apiUsers.map(convert.apiUserToUser));
     } catch (error) {

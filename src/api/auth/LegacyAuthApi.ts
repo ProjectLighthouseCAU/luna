@@ -4,6 +4,7 @@ import {
   Pagination,
   Role,
   Signup,
+  slicePage,
   Token,
   User,
 } from '@luna/api/auth/types';
@@ -110,10 +111,7 @@ export class LegacyAuthApi implements AuthApi {
     let usernames: string[] = JSON.parse(result[1]);
 
     // Emulate pagination since the legacy website doesn't support it
-    if (pagination !== undefined) {
-      const offset = pagination.page * pagination.perPage;
-      usernames = usernames.slice(offset, offset + pagination.perPage);
-    }
+    usernames = slicePage(usernames, pagination);
 
     return okResult(usernames.map(username => ({ username })));
   }
