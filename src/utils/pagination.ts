@@ -1,8 +1,10 @@
+import { Filter, filtered } from '@luna/utils/filter';
 import { sorted, Sorting } from '@luna/utils/sort';
 
 export interface Pagination {
   page: number;
   perPage: number;
+  filter?: Filter;
   sorting?: Sorting;
 }
 
@@ -13,6 +15,9 @@ export interface Pagination {
 export function slicePage<T>(elements: T[], pagination?: Pagination): T[] {
   if (pagination === undefined) {
     return elements;
+  }
+  if (pagination.filter) {
+    elements = filtered(elements, pagination.filter);
   }
   if (pagination.sorting) {
     elements = sorted(elements, pagination.sorting);

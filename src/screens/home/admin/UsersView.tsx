@@ -29,7 +29,6 @@ import { InView } from 'react-intersection-observer';
 export function UsersView() {
   const auth = useContext(AuthContext);
 
-  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setLoading] = useState(false);
   const [needsMore, setNeedsMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
@@ -39,7 +38,7 @@ export function UsersView() {
       column: 'id',
       direction: 'ascending',
     },
-    async load({ cursor, sortDescriptor }) {
+    async load({ cursor, sortDescriptor, filterText }) {
       try {
         if (cursor !== undefined) {
           setLoading(false);
@@ -50,6 +49,12 @@ export function UsersView() {
           await auth.getAllUsers({
             page,
             perPage: 50,
+            filter: filterText
+              ? {
+                  key: 'username',
+                  text: filterText,
+                }
+              : undefined,
             sorting: sortDescriptor.column
               ? {
                   key: sortDescriptor.column,
@@ -84,7 +89,10 @@ export function UsersView() {
       title="Users"
       toolbar={
         <div className="flex flex-row gap-4">
-          <SearchBar placeholder="Search users..." setQuery={setSearchQuery} />
+          <SearchBar
+            placeholder="Search users..."
+            setQuery={users.setFilterText}
+          />
           <Tooltip content="Add user" color="success">
             <Button
               isIconOnly
