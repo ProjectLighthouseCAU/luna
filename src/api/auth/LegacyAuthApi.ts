@@ -1,5 +1,12 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
-import { Login, Role, Signup, Token, User } from '@luna/api/auth/types';
+import {
+  Login,
+  Pagination,
+  Role,
+  Signup,
+  Token,
+  User,
+} from '@luna/api/auth/types';
 import { errorResult, okResult, Result } from '@luna/utils/result';
 
 export class LegacyAuthApi implements AuthApi {
@@ -87,7 +94,7 @@ export class LegacyAuthApi implements AuthApi {
     }
   }
 
-  async getPublicUsers(): Promise<Result<User[]>> {
+  async getPublicUsers(pagination?: Pagination): Promise<Result<User[]>> {
     const response = await fetch(`${this.url}/users`, {
       mode: 'cors',
       credentials: 'include',
@@ -100,13 +107,20 @@ export class LegacyAuthApi implements AuthApi {
       return errorResult('Could not parse users from page');
     }
 
-    const usernames: string[] = JSON.parse(result[1]);
+    let usernames: string[] = JSON.parse(result[1]);
+
+    // Emulate pagination since the legacy website doesn't support it
+    if (pagination !== undefined) {
+      const offset = pagination.page * pagination.perPage;
+      usernames = usernames.slice(offset, offset + pagination.perPage);
+    }
+
     return okResult(usernames.map(username => ({ username })));
   }
 
-  async getAllUsers(): Promise<Result<User[]>> {
+  async getAllUsers(pagination?: Pagination): Promise<Result<User[]>> {
     // TODO
-    return this.getPublicUsers();
+    return this.getPublicUsers(pagination);
   }
 
   async getToken(): Promise<Result<Token>> {

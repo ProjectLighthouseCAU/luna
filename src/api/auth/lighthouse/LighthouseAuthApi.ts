@@ -1,7 +1,7 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
 import * as convert from '@luna/api/auth/lighthouse/convert';
 import * as generated from '@luna/api/auth/lighthouse/generated';
-import { Login, Signup, Token, User } from '@luna/api/auth/types';
+import { Login, Pagination, Signup, Token, User } from '@luna/api/auth/types';
 import { errorResult, okResult, Result } from '@luna/utils/result';
 
 export class LighthouseAuthApi implements AuthApi {
@@ -53,15 +53,23 @@ export class LighthouseAuthApi implements AuthApi {
     }
   }
 
-  async getPublicUsers(): Promise<Result<User[]>> {
+  async getPublicUsers(pagination?: Pagination): Promise<Result<User[]>> {
     // TODO: we currently don't have the concept of public users in the new API (heimdall)
-    return this.getAllUsers();
+    return this.getAllUsers(pagination);
   }
 
-  async getAllUsers(): Promise<Result<User[]>> {
+  async getAllUsers(pagination?: Pagination): Promise<Result<User[]>> {
     try {
       const apiUsersResponse = await this.apiClient.users.usersList();
-      const apiUsers: generated.User[] = apiUsersResponse.data;
+      let apiUsers: generated.User[] = apiUsersResponse.data;
+
+      // Emulate pagination since Heimdall doesn't support it
+      // TODO: Implement pagination in Heimdall and remove this
+      if (pagination !== undefined) {
+        const offset = pagination.page * pagination.perPage;
+        apiUsers = apiUsers.slice(offset, offset + pagination.perPage);
+      }
+
       return okResult(apiUsers.map(convert.apiUserToUser));
     } catch (error) {
       return errorResult(

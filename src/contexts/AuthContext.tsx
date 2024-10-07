@@ -3,7 +3,7 @@ import { LegacyAuthApi } from '@luna/api/auth/LegacyAuthApi';
 import { LighthouseAuthApi } from '@luna/api/auth/lighthouse';
 import { MockAuthApi } from '@luna/api/auth/MockAuthApi';
 import { NullAuthApi } from '@luna/api/auth/NullAuthApi';
-import { Login, Signup, Token, User } from '@luna/api/auth/types';
+import { Login, Pagination, Signup, Token, User } from '@luna/api/auth/types';
 import { useInitRef } from '@luna/hooks/useInitRef';
 import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
 import React, {
@@ -35,10 +35,10 @@ export interface Auth {
   logOut(): Promise<Result<void>>;
 
   /** Fetches all users. */
-  getAllUsers(): Promise<Result<User[]>>;
+  getAllUsers(pagination?: Pagination): Promise<Result<User[]>>;
 
   /** Fetches the public users. */
-  getPublicUsers(): Promise<Result<User[]>>;
+  getPublicUsers(pagination?: Pagination): Promise<Result<User[]>>;
 }
 
 export const AuthContext = createContext<Auth>({
@@ -126,12 +126,12 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         }
       },
 
-      async getAllUsers() {
-        return await apiRef.current.getAllUsers();
+      async getAllUsers(pagination) {
+        return await apiRef.current.getAllUsers(pagination);
       },
 
-      async getPublicUsers() {
-        return await apiRef.current.getPublicUsers();
+      async getPublicUsers(pagination) {
+        return await apiRef.current.getPublicUsers(pagination);
       },
     }),
     [isInitialized, apiRef, token, user]
