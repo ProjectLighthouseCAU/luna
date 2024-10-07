@@ -1,4 +1,5 @@
 import { User } from '@luna/api/auth/types';
+import { SearchBar } from '@luna/components/SearchBar';
 import { UserModal } from '@luna/components/UserModal';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
@@ -28,6 +29,7 @@ import { InView } from 'react-intersection-observer';
 export function UsersView() {
   const auth = useContext(AuthContext);
 
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setLoading] = useState(false);
   const [needsMore, setNeedsMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
@@ -81,14 +83,17 @@ export function UsersView() {
     <HomeContent
       title="Users"
       toolbar={
-        <Tooltip content="Add user" color="success">
-          <Button
-            isIconOnly
-            onPress={() => setUserModal({ id: 0, action: 'add' })}
-          >
-            <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50" />
-          </Button>
-        </Tooltip>
+        <>
+          <SearchBar placeholder="Search users..." setQuery={setSearchQuery} />
+          <Tooltip content="Add user" color="success">
+            <Button
+              isIconOnly
+              onPress={() => setUserModal({ id: 0, action: 'add' })}
+            >
+              <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50" />
+            </Button>
+          </Tooltip>
+        </>
       }
     >
       <UserModal
