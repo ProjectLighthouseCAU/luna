@@ -1,13 +1,6 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
-import {
-  Login,
-  Pagination,
-  Role,
-  Signup,
-  slicePage,
-  Token,
-  User,
-} from '@luna/api/auth/types';
+import { Login, Role, Signup, Token, User } from '@luna/api/auth/types';
+import { Pagination, slicePage } from '@luna/utils/pagination';
 import { errorResult, okResult, Result } from '@luna/utils/result';
 
 export class LegacyAuthApi implements AuthApi {

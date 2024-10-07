@@ -3,8 +3,9 @@ import { LegacyAuthApi } from '@luna/api/auth/LegacyAuthApi';
 import { LighthouseAuthApi } from '@luna/api/auth/lighthouse';
 import { MockAuthApi } from '@luna/api/auth/MockAuthApi';
 import { NullAuthApi } from '@luna/api/auth/NullAuthApi';
-import { Login, Pagination, Signup, Token, User } from '@luna/api/auth/types';
+import { Login, Signup, Token, User } from '@luna/api/auth/types';
 import { useInitRef } from '@luna/hooks/useInitRef';
+import { Pagination } from '@luna/utils/pagination';
 import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
 import React, {
   createContext,

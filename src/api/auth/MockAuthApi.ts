@@ -1,5 +1,6 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
-import { Login, Pagination, Signup, Token, User } from '@luna/api/auth/types';
+import { Login, Signup, Token, User } from '@luna/api/auth/types';
+import { Pagination } from '@luna/utils/pagination';
 import { errorResult, okResult, Result } from '@luna/utils/result';
 
 export class MockAuthApi implements AuthApi {
@@ -17,13 +18,13 @@ export class MockAuthApi implements AuthApi {
     return okResult(undefined);
   }
 
-  async getPublicUsers(pagination?: Pagination): Promise<Result<User[]>> {
+  async getPublicUsers(pagination: Pagination): Promise<Result<User[]>> {
     return okResult(
       ['Alice', 'Bob', 'Charles'].map(username => ({ username }))
     );
   }
 
-  async getAllUsers(pagination?: Pagination): Promise<Result<User[]>> {
+  async getAllUsers(pagination: Pagination): Promise<Result<User[]>> {
     return await this.getPublicUsers(pagination);
   }
 

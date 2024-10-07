@@ -1,4 +1,5 @@
-import { Login, Pagination, Signup, Token, User } from '@luna/api/auth/types';
+import { Login, Signup, Token, User } from '@luna/api/auth/types';
+import { Pagination } from '@luna/utils/pagination';
 import { Result } from '@luna/utils/result';
 
 /**
