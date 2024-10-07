@@ -49,12 +49,7 @@ export function UsersView() {
           await auth.getAllUsers({
             page,
             perPage: 50,
-            filter: filterText
-              ? {
-                  key: 'username',
-                  text: filterText,
-                }
-              : undefined,
+            filter: filterText ? { text: filterText } : undefined,
             sorting: sortDescriptor.column
               ? {
                   key: sortDescriptor.column,
