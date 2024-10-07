@@ -13,6 +13,7 @@ import {
   ModalContent,
   ModalHeader,
   ScrollShadow,
+  Tooltip,
 } from '@nextui-org/react';
 import { IconMoon, IconSun } from '@tabler/icons-react';
 import { useCallback, useContext, useState } from 'react';
@@ -72,9 +73,11 @@ export function Sidebar({ isCompact }: SidebarProps) {
         <Link onClick={logOut} to="#" className="text-danger">
           Sign out
         </Link>
-        <Button isIconOnly onPress={toggleColorScheme} size="sm">
-          {colorScheme.isDark ? <IconMoon /> : <IconSun />}
-        </Button>
+        <Tooltip content="Toggle light/dark mode">
+          <Button isIconOnly onPress={toggleColorScheme} size="sm">
+            {colorScheme.isDark ? <IconMoon /> : <IconSun />}
+          </Button>
+        </Tooltip>
       </div>
       <Modal
         isOpen={logoutErrorMessage !== null}
