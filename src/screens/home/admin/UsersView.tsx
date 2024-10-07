@@ -22,9 +22,8 @@ import {
   IconTrash,
   IconUserPlus,
 } from '@tabler/icons-react';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { InView } from 'react-intersection-observer';
-import { SortDescriptor } from 'react-stately';
 
 export function UsersView() {
   const auth = useContext(AuthContext);
@@ -33,29 +32,12 @@ export function UsersView() {
   const [needsMore, setNeedsMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
 
-  const sortList = useCallback(
-    (items: User[], sortDescriptor: SortDescriptor): User[] => {
-      let col = sortDescriptor.column ?? 'id';
-      return items.sort((a: any, b: any): number => {
-        let first = a[col];
-        let second = b[col];
-        let cmp =
-          (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
-        if (sortDescriptor.direction === 'descending') {
-          cmp *= -1;
-        }
-        return cmp;
-      });
-    },
-    []
-  );
-
   const users = useAsyncList<User>({
     initialSortDescriptor: {
       column: 'id',
       direction: 'ascending',
     },
-    async load({ cursor }) {
+    async load({ cursor, sortDescriptor }) {
       try {
         if (cursor !== undefined) {
           setLoading(false);
@@ -66,18 +48,20 @@ export function UsersView() {
           await auth.getAllUsers({
             page,
             perPage: 100,
+            sorting: sortDescriptor.column
+              ? {
+                  key: sortDescriptor.column,
+                  ascending: sortDescriptor.direction === 'ascending',
+                }
+              : undefined,
           })
         );
         setHasMore(items.length > 0);
-        items = sortList(items, { column: 'id', direction: 'ascending' });
         return { items, cursor: `${page + 1}` };
       } catch (error) {
         console.error(`Could not fetch users for users view: ${error}`);
         return { items: [] };
       }
-    },
-    async sort({ items, sortDescriptor }) {
-      return { items: sortList(items, sortDescriptor) };
     },
   });
 

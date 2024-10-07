@@ -1,6 +1,9 @@
+import { sorted, Sorting } from '@luna/utils/sort';
+
 export interface Pagination {
   page: number;
   perPage: number;
+  sorting?: Sorting;
 }
 
 /**
@@ -10,6 +13,9 @@ export interface Pagination {
 export function slicePage<T>(elements: T[], pagination?: Pagination): T[] {
   if (pagination === undefined) {
     return elements;
+  }
+  if (pagination.sorting) {
+    elements = sorted(elements, pagination.sorting);
   }
   const offset = pagination.page;
   return elements.slice(offset, offset + pagination.perPage);
