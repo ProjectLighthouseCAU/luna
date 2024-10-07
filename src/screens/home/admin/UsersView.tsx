@@ -23,7 +23,13 @@ import {
   IconTrash,
   IconUserPlus,
 } from '@tabler/icons-react';
-import { MutableRefObject, useContext, useEffect, useState } from 'react';
+import {
+  MutableRefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { SortDescriptor } from 'react-stately';
 
 export function UsersView() {
@@ -32,19 +38,22 @@ export function UsersView() {
   const [isLoading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(false);
 
-  const sortList = (items: User[], sortDescriptor: SortDescriptor): User[] => {
-    let col = sortDescriptor.column ?? 'id';
-    return items.sort((a: any, b: any): number => {
-      let first = a[col];
-      let second = b[col];
-      let cmp =
-        (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
-      if (sortDescriptor.direction === 'descending') {
-        cmp *= -1;
-      }
-      return cmp;
-    });
-  };
+  const sortList = useCallback(
+    (items: User[], sortDescriptor: SortDescriptor): User[] => {
+      let col = sortDescriptor.column ?? 'id';
+      return items.sort((a: any, b: any): number => {
+        let first = a[col];
+        let second = b[col];
+        let cmp =
+          (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+        if (sortDescriptor.direction === 'descending') {
+          cmp *= -1;
+        }
+        return cmp;
+      });
+    },
+    []
+  );
 
   const users = useAsyncList<User>({
     initialSortDescriptor: {
