@@ -1,3 +1,5 @@
+import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
+import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import {
   Dispatch,
   ReactNode,
@@ -5,11 +7,19 @@ import {
   createContext,
   useEffect,
   useMemo,
-  useState,
 } from 'react';
 
 interface ColorScheme {
   readonly isDark: boolean;
+}
+
+function systemDarkQuery(): MediaQueryList {
+  return window.matchMedia('(prefers-color-scheme: dark)');
+}
+
+function systemColorScheme(): ColorScheme {
+  const query = systemDarkQuery();
+  return { isDark: query.matches };
 }
 
 export interface ColorSchemeContextValue {
@@ -29,24 +39,23 @@ interface ColorSchemeContextProviderProps {
 export function ColorSchemeContextProvider({
   children,
 }: ColorSchemeContextProviderProps) {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>({
-    isDark: false,
-  });
+  const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>(
+    LocalStorageKey.ColorScheme,
+    systemColorScheme
+  );
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setColorScheme({ isDark: mediaQuery.matches });
-    mediaQuery.addEventListener('change', () => {
-      setColorScheme({ isDark: mediaQuery.matches });
+    systemDarkQuery().addEventListener('change', () => {
+      setColorScheme(systemColorScheme());
     });
-  }, []);
+  }, [setColorScheme]);
 
   const value: ColorSchemeContextValue = useMemo(
     () => ({
       colorScheme,
       setColorScheme,
     }),
-    [colorScheme]
+    [colorScheme, setColorScheme]
   );
 
   return (
