@@ -86,7 +86,7 @@ export function UsersView() {
         action={userModal?.action ?? 'add'}
         show={userModal !== null}
         setShow={show => !show && setUserModal(null)}
-      ></UserModal>
+      />
 
       <Table
         aria-label="Table of users for administrators"
@@ -156,7 +156,7 @@ export function UsersView() {
                       onClick={() => {
                         setUserModal({ id: user.id ?? 0, action: 'view' });
                       }}
-                    ></IconEye>
+                    />
                   </Tooltip>
                   <Tooltip content="Edit user">
                     <IconPencil
@@ -164,7 +164,7 @@ export function UsersView() {
                       onClick={() => {
                         setUserModal({ id: user.id ?? 0, action: 'edit' });
                       }}
-                    ></IconPencil>
+                    />
                   </Tooltip>
                   <Tooltip color="danger" content="Delete user">
                     <IconTrash
@@ -172,7 +172,7 @@ export function UsersView() {
                       onClick={() => {
                         setUserModal({ id: user.id ?? 0, action: 'delete' });
                       }}
-                    ></IconTrash>
+                    />
                   </Tooltip>
                 </div>
               </TableCell>
