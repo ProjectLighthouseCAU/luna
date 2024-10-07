@@ -5,10 +5,15 @@ import { useCallback, useState } from 'react';
 
 export interface SearchBarProps {
   placeholder?: string;
+  fullWidth?: boolean;
   setQuery: (query: string) => void;
 }
 
-export function SearchBar({ placeholder, setQuery }: SearchBarProps) {
+export function SearchBar({
+  placeholder,
+  fullWidth,
+  setQuery,
+}: SearchBarProps) {
   const [value, setValue] = useState('');
 
   const setQueryDebounced = useDebounce(setQuery, 200);
@@ -27,6 +32,7 @@ export function SearchBar({ placeholder, setQuery }: SearchBarProps) {
     <Input
       startContent={<IconSearch />}
       placeholder={placeholder}
+      fullWidth={fullWidth}
       value={value}
       onValueChange={onValueChange}
       onClear={clearQuery}

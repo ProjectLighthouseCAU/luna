@@ -44,7 +44,11 @@ export function Sidebar({ isCompact }: SidebarProps) {
 
   return (
     <div className="flex flex-col space-y-2 h-full">
-      <SearchBar placeholder="Search displays..." setQuery={setQuery} />
+      <SearchBar
+        placeholder="Search displays..."
+        fullWidth
+        setQuery={setQuery}
+      />
       <ScrollShadow className="grow">
         <SidebarRoutes
           isCompact={isCompact}
