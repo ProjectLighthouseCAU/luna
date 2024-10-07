@@ -47,7 +47,7 @@ export function UsersView() {
         let items = getOrThrow(
           await auth.getAllUsers({
             page,
-            perPage: 100,
+            perPage: 50,
             sorting: sortDescriptor.column
               ? {
                   key: sortDescriptor.column,
