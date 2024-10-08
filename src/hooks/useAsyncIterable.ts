@@ -12,10 +12,10 @@ export function useAsyncIterable<T>(
     (async () => {
       try {
         for await (const value of iterable()) {
-          consumer(value);
           if (isCancelled) {
             break;
           }
+          consumer(value);
         }
       } catch (error) {
         if (onError) {
