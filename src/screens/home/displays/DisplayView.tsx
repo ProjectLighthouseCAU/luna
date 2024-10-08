@@ -31,7 +31,7 @@ export function DisplayView() {
     frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES),
   });
 
-  const streamModel = useCallback(() => {
+  const streamUserModel = useCallback(() => {
     console.log(`Streaming ${username}`);
 
     // We have to clear the frame since React will persist the userModel state
@@ -42,11 +42,19 @@ export function DisplayView() {
     return model.streamModel(username);
   }, [model, username]);
 
+  const consumeUserModel = useCallback(
+    (userModel: UserModel) => {
+      console.log(`Got model from ${username}`);
+      setUserModel(userModel);
+    },
+    [username]
+  );
+
   const handleStreamError = useCallback((error: any) => {
     console.warn(`Error while streaming from display view: ${error}`);
   }, []);
 
-  useAsyncIterable(streamModel, setUserModel, handleStreamError);
+  useAsyncIterable(streamUserModel, consumeUserModel, handleStreamError);
 
   const onResize = useMemo(
     () =>
