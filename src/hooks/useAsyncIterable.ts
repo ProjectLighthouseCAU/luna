@@ -4,20 +4,29 @@ import { useEffect } from 'react';
 
 export function useAsyncIterable<T>(
   iterable: () => AsyncIterable<T>,
-  consumer: (value: T) => any
+  consumer: (value: T) => any,
+  onError?: (error: any) => any
 ) {
   useEffect(() => {
     let isCancelled = false;
     (async () => {
-      for await (const value of iterable()) {
-        consumer(value);
-        if (isCancelled) {
-          break;
+      try {
+        for await (const value of iterable()) {
+          consumer(value);
+          if (isCancelled) {
+            break;
+          }
+        }
+      } catch (error) {
+        if (onError) {
+          onError(error);
+        } else {
+          throw error;
         }
       }
     })();
     return () => {
       isCancelled = true;
     };
-  }, [iterable, consumer]);
+  }, [iterable, consumer, onError]);
 }
