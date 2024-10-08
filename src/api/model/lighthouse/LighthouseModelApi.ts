@@ -1,7 +1,13 @@
 import { ModelApi } from '@luna/api/model/ModelApi';
 import { UserModel } from '@luna/api/model/types';
 import { Lock } from '@luna/utils/semaphore';
-import { Lighthouse, connect } from 'nighthouse/browser';
+import {
+  ConsoleLogHandler,
+  LeveledLogHandler,
+  Lighthouse,
+  LogLevel,
+  connect,
+} from 'nighthouse/browser';
 
 export class LighthouseModelApi implements ModelApi {
   private client?: Lighthouse;
@@ -20,6 +26,10 @@ export class LighthouseModelApi implements ModelApi {
       this.client = connect({
         url: this.url,
         auth: { USER: username, TOKEN: token },
+        logHandler: new LeveledLogHandler(
+          LogLevel.Debug,
+          new ConsoleLogHandler('Nighthouse: ')
+        ),
       });
       await this.client.ready();
 
