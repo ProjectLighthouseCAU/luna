@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 export function useAsyncIterable<T>(
   iterable: () => AsyncIterable<T>,
-  consumer: (value: T) => Promise<void>
+  consumer: (value: T) => any
 ) {
   useEffect(() => {
     let isCancelled = false;
