@@ -8,7 +8,11 @@ import { displayLayoutId } from '@luna/constants/LayoutId';
 import { ModelContext, Users } from '@luna/contexts/ModelContext';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
-import { mapAsyncIterable, mergeAsyncIterables } from '@luna/utils/async';
+import {
+  catchAsyncIterable,
+  mapAsyncIterable,
+  mergeAsyncIterables,
+} from '@luna/utils/async';
 
 export interface DisplayGridProps {
   users: Users;
@@ -36,18 +40,24 @@ export function DisplayGrid({
   );
 
   // Stream (only) the filtered users
-  const streamUserModels = useCallback(
-    () =>
-      mergeAsyncIterables(
-        filteredUsers.map(user =>
+  const streamUserModels = useCallback(() => {
+    console.log('Streaming user models');
+    return mergeAsyncIterables(
+      filteredUsers.map(user =>
+        catchAsyncIterable(
           mapAsyncIterable(model.streamModel(user), userModel => ({
             user,
             userModel,
-          }))
+          })),
+          error => {
+            console.warn(
+              `Error while streaming ${user} from display grid: ${error}`
+            );
+          }
         )
-      ),
-    [filteredUsers, model]
-  );
+      )
+    );
+  }, [filteredUsers, model]);
 
   const consumeUserModel = useCallback(
     ({ user, userModel }: { user: string; userModel: UserModel }) => {
@@ -56,11 +66,7 @@ export function DisplayGrid({
     []
   );
 
-  const handleStreamError = useCallback((error: any) => {
-    console.warn(`Error while streaming from display grid: ${error}`);
-  }, []);
-
-  useAsyncIterable(streamUserModels, consumeUserModel, handleStreamError);
+  useAsyncIterable(streamUserModels, consumeUserModel);
 
   // Disable animations automatically if there are too many displays for
   // performance reasons. Unfortunately we can't seem to change the layoutId
