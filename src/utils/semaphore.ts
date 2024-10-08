@@ -23,3 +23,15 @@ export class Semaphore {
     }
   }
 }
+
+export class Lock {
+  private readonly semaphore = new Semaphore(1);
+
+  async acquire() {
+    await this.semaphore.wait();
+  }
+
+  release() {
+    this.semaphore.signal();
+  }
+}
