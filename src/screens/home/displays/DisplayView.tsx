@@ -1,81 +1,20 @@
-import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
-import { ModelContext } from '@luna/contexts/ModelContext';
+import { DISPLAY_ASPECT_RATIO } from '@luna/components/Display';
+import { displayLayoutId } from '@luna/constants/LayoutId';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
+import { DisplayStream } from '@luna/screens/home/displays/DisplayStream';
 import { throttle } from '@luna/utils/schedule';
-import {
-  useCallback,
-  useContext,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { displayLayoutId } from '@luna/constants/LayoutId';
-import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
-import { UserModel } from '@luna/api/model/types';
-import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
-import { mapAsyncIterable } from '@luna/utils/async';
+import { useMemo, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
-  const model = useContext(ModelContext);
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-
-  const [userModel, setUserModel] = useState<UserModel>({
-    frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES),
-  });
-
-  const streamUserModel = useCallback(() => {
-    console.log(`Streaming ${username}`);
-
-    // We have to clear the frame since React will persist the userModel state
-    // even as the route changes if the `<DisplayView />` stays where it is in the
-    // DOM (e.g. when switching displays in the sidebar).
-    setUserModel({ frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) });
-
-    return mapAsyncIterable(model.streamModel(username), userModel => ({
-      streamedUser: username,
-      userModel,
-    }));
-  }, [model, username]);
-
-  // TODO: Maybe we should factor out all of this streaming logic and share it
-  // with DisplayGrid's displays.  That would likely simplify it a lot since we
-  // could just pass the username as a prop and wouldn't have to deal with this
-  // out-of-order stuff.
-
-  const consumeUserModel = useCallback(
-    ({
-      streamedUser,
-      userModel,
-    }: {
-      streamedUser: string;
-      userModel: UserModel;
-    }) => {
-      if (streamedUser !== username) {
-        console.warn(
-          `Got out-of-order model for ${streamedUser}, even though we should be receiving ${userModel}`
-        );
-        return;
-      }
-      console.log(`Got model from ${username}`);
-      setUserModel(userModel);
-    },
-    [username]
-  );
-
-  const handleStreamError = useCallback((error: any) => {
-    console.warn(`Error while streaming from display view: ${error}`);
-  }, []);
-
-  useAsyncIterable(streamUserModel, consumeUserModel, handleStreamError);
 
   const onResize = useMemo(
     () =>
@@ -93,13 +32,6 @@ export function DisplayView() {
 
   useEventListener(window, 'resize', onResize);
 
-  // Make sure to update the size after the model canvas has been added to the DOM
-  useLayoutEffect(() => {
-    if (userModel) {
-      onResize();
-    }
-  }, [onResize, userModel]);
-
   const breakpoint = useBreakpoint();
   const isCompact = breakpoint <= Breakpoint.Sm;
 
@@ -110,30 +42,26 @@ export function DisplayView() {
 
   return (
     <HomeContent title={`${username}'s Display`}>
-      {userModel ? (
-        <div className="flex flex-col space-y-4 md:flex-row h-full">
-          <div
-            ref={wrapperRef}
-            className="grow flex flex-row justify-center h-full"
+      <div className="flex flex-col space-y-4 md:flex-row h-full">
+        <div
+          ref={wrapperRef}
+          className="grow flex flex-row justify-center h-full"
+        >
+          <motion.div
+            className={isCompact ? '' : 'absolute'}
+            layoutId={displayLayoutId(username)}
+            key={displayLayoutId(username)}
           >
-            <motion.div
-              className={isCompact ? '' : 'absolute'}
-              layoutId={displayLayoutId(username)}
-              key={displayLayoutId(username)}
-            >
-              <Display
-                frame={userModel.frame}
-                width={width}
-                className="rounded-xl"
-              />
-            </motion.div>
-          </div>
-          <DisplayInspector username={username} />
+            <DisplayStream
+              username={username}
+              width={width}
+              className="rounded-xl"
+              layoutOnModelUpdate={onResize}
+            />
+          </motion.div>
         </div>
-      ) : (
-        // TODO: Improve error message, perhaps add a link back to /displays?
-        <p>No model found!</p>
-      )}
+        <DisplayInspector username={username} />
+      </div>
     </HomeContent>
   );
 }
