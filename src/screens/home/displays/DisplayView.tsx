@@ -31,10 +31,16 @@ export function DisplayView() {
     frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES),
   });
 
-  const streamModel = useCallback(
-    () => model.streamModel(username),
-    [model, username]
-  );
+  const streamModel = useCallback(() => {
+    console.log(`Streaming ${username}`);
+
+    // We have to clear the frame since React will persist the userModel state
+    // even as the route changes if the `<DisplayView />` stays where it is in the
+    // DOM (e.g. when switching displays in the sidebar).
+    setUserModel({ frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) });
+
+    return model.streamModel(username);
+  }, [model, username]);
 
   const handleStreamError = useCallback((error: any) => {
     console.warn(`Error while streaming from display view: ${error}`);
