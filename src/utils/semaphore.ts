@@ -34,4 +34,13 @@ export class Lock {
   release() {
     this.semaphore.signal();
   }
+
+  async use<T>(action: () => Promise<T>): Promise<T> {
+    try {
+      await this.acquire();
+      return await action();
+    } finally {
+      this.release();
+    }
+  }
 }
