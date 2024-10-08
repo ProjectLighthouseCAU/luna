@@ -12,9 +12,7 @@ export class LighthouseModelApi implements ModelApi {
   ) {}
 
   async logIn(username: string, token: string): Promise<boolean> {
-    try {
-      await this.clientLock.acquire();
-
+    return await this.clientLock.use(async () => {
       if (this.client !== undefined) {
         await this.client.close();
       }
@@ -26,39 +24,37 @@ export class LighthouseModelApi implements ModelApi {
       await this.client.ready();
 
       return true;
-    } finally {
-      this.clientLock.release();
-    }
+    });
   }
 
   async *streamModel(user: string): AsyncIterable<UserModel> {
     if (this.client) {
-      try {
-        await this.clientLock.acquire();
+      // NOTE: We only need to lock the client the initial streaming to avoid
+      // any races while the connection is initializing. Any uses after the
+      // client has been closed will already result in an error being thrown.
 
-        for await (const message of this.client.streamModel(user)) {
-          // TODO: Handle events too, perhaps by yielding a sum type of frames and events
-          const payload = message.PAYL;
-          if (payload instanceof Uint8Array) {
-            yield { frame: payload };
-          }
+      const stream = await this.clientLock.use(async () =>
+        this.client!.streamModel(user)
+      );
+
+      for await (const message of stream) {
+        // TODO: Handle events too, perhaps by yielding a sum type of frames and events
+        const payload = message.PAYL;
+        if (payload instanceof Uint8Array) {
+          yield { frame: payload };
         }
-      } finally {
-        this.clientLock.release();
       }
     }
   }
 
   async *streamResource(path: string[]): AsyncIterable<unknown> {
     if (this.client) {
-      try {
-        await this.clientLock.acquire();
+      const stream = await this.clientLock.use(async () =>
+        this.client!.stream(path, {})
+      );
 
-        for await (const message of this.client.stream(path, {})) {
-          yield message.PAYL;
-        }
-      } finally {
-        this.clientLock.release();
+      for await (const message of stream) {
+        yield message.PAYL;
       }
     }
   }
