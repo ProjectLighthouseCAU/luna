@@ -21,6 +21,22 @@ export async function* mapAsyncIterable<T, U>(
 }
 
 /**
+ * Catches an error in an async iterable.
+ */
+export async function* catchAsyncIterable<T>(
+  asyncIterable: AsyncIterable<T>,
+  onError: (error: any) => void
+): AsyncIterable<T> {
+  try {
+    for await (const value of asyncIterable) {
+      yield value;
+    }
+  } catch (error) {
+    onError(error);
+  }
+}
+
+/**
  * Combines an iterable sequence of async iterables into
  * a single async iterable.
  */
