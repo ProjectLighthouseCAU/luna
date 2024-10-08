@@ -27,7 +27,7 @@ export class LighthouseModelApi implements ModelApi {
         url: this.url,
         auth: { USER: username, TOKEN: token },
         logHandler: new LeveledLogHandler(
-          LogLevel.Debug,
+          LogLevel.Trace,
           new ConsoleLogHandler('Nighthouse: ')
         ),
       });

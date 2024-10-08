@@ -19,6 +19,7 @@ import { displayLayoutId } from '@luna/constants/LayoutId';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { UserModel } from '@luna/api/model/types';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
+import { mapAsyncIterable } from '@luna/utils/async';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
@@ -39,11 +40,31 @@ export function DisplayView() {
     // DOM (e.g. when switching displays in the sidebar).
     setUserModel({ frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) });
 
-    return model.streamModel(username);
+    return mapAsyncIterable(model.streamModel(username), userModel => ({
+      streamedUser: username,
+      userModel,
+    }));
   }, [model, username]);
 
+  // TODO: Maybe we should factor out all of this streaming logic and share it
+  // with DisplayGrid's displays.  That would likely simplify it a lot since we
+  // could just pass the username as a prop and wouldn't have to deal with this
+  // out-of-order stuff.
+
   const consumeUserModel = useCallback(
-    (userModel: UserModel) => {
+    ({
+      streamedUser,
+      userModel,
+    }: {
+      streamedUser: string;
+      userModel: UserModel;
+    }) => {
+      if (streamedUser !== username) {
+        console.warn(
+          `Got out-of-order model for ${streamedUser}, even though we should be receiving ${userModel}`
+        );
+        return;
+      }
       console.log(`Got model from ${username}`);
       setUserModel(userModel);
     },
