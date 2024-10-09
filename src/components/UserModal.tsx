@@ -23,7 +23,7 @@ export interface UserModalProps {
 // TODO: maybe split up the modal into AddUserModal, ShowUserModal, EditUserModal and DeleteUserModal
 // FIXME: console warning: "WARN: A component changed from uncontrolled to controlled."
 export function UserModal({ id, action, show, setShow }: UserModalProps) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User>({ username: '' });
   const [password, setPassword] = useState('');
 
   // initialize modal state
@@ -76,10 +76,10 @@ export function UserModal({ id, action, show, setShow }: UserModalProps) {
 
   const addUser = () => {
     const payload = {
-      username: user?.username,
+      username: user.username,
       password: password,
-      email: user?.email,
-      permanent_api_token: user?.permanentApiToken,
+      email: user.email,
+      permanent_api_token: user.permanentApiToken,
     };
     console.log('adding user:', payload);
     // TODO: call POST /users
@@ -89,10 +89,10 @@ export function UserModal({ id, action, show, setShow }: UserModalProps) {
 
   const editUser = () => {
     const payload = {
-      username: user?.username,
+      username: user.username,
       password: password,
-      email: user?.email,
-      permanent_api_token: user?.permanentApiToken,
+      email: user.email,
+      permanent_api_token: user.permanentApiToken,
     };
     console.log('updating user:', payload);
     // TODO: call PUT /users/<id>
@@ -109,7 +109,7 @@ export function UserModal({ id, action, show, setShow }: UserModalProps) {
 
   const onOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-      setUser(null);
+      setUser({ username: '' });
       setPassword('');
     }
     setShow(isOpen);
@@ -129,7 +129,7 @@ export function UserModal({ id, action, show, setShow }: UserModalProps) {
               )}
               <Input
                 label="Username"
-                value={user?.username}
+                value={user.username}
                 onValueChange={username => {
                   if (!user) return;
                   setUser({ ...user, username });
@@ -147,7 +147,7 @@ export function UserModal({ id, action, show, setShow }: UserModalProps) {
               )}
               <Input
                 label="E-Mail"
-                value={user?.email}
+                value={user.email}
                 onValueChange={email => {
                   if (!user) return;
                   setUser({ ...user, email });
@@ -158,23 +158,23 @@ export function UserModal({ id, action, show, setShow }: UserModalProps) {
                 <>
                   <Input
                     label="Created At"
-                    value={user?.createdAt?.toLocaleString()}
+                    value={user.createdAt?.toLocaleString()}
                     isDisabled
                   />
                   <Input
                     label="Updated At"
-                    value={user?.updatedAt?.toLocaleString()}
+                    value={user.updatedAt?.toLocaleString()}
                     isDisabled
                   />
                   <Input
                     label="Last Login"
-                    value={user?.lastSeen?.toLocaleString()}
+                    value={user.lastSeen?.toLocaleString()}
                     isDisabled
                   />
                 </>
               )}
               <Checkbox
-                isSelected={user?.permanentApiToken}
+                isSelected={user.permanentApiToken}
                 onValueChange={permanentApiToken => {
                   if (!user) return;
                   setUser({
@@ -189,12 +189,12 @@ export function UserModal({ id, action, show, setShow }: UserModalProps) {
               {action === 'view' && (
                 <>
                   {/* TODO: find better component for displaying list of roles */}
-                  <Select label="Roles" items={user?.roles || []}>
+                  <Select label="Roles" items={user.roles || []}>
                     {role => <SelectItem key={role.id}>{role.name}</SelectItem>}
                   </Select>
                   <Input
                     label="Registration Key"
-                    value={user?.registrationKey?.key}
+                    value={user.registrationKey?.key}
                     isDisabled={action === 'view'}
                   />
                 </>
