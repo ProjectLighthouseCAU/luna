@@ -5,18 +5,42 @@ import { useEventListener } from '@luna/hooks/useEventListener';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { throttle } from '@luna/utils/schedule';
-import { useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { displayLayoutId } from '@luna/constants/LayoutId';
+import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
+import { UserModel } from '@luna/api/model/types';
+import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
-  const { users } = useContext(ModelContext);
+  const model = useContext(ModelContext);
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const userModel = users.models.get(username);
+
+  const [userModel, setUserModel] = useState<UserModel>({
+    frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES),
+  });
+
+  const streamModel = useCallback(
+    () => model.streamModel(username),
+    [model, username]
+  );
+
+  const handleStreamError = useCallback((error: any) => {
+    console.warn(`Error while streaming from display view: ${error}`);
+  }, []);
+
+  useAsyncIterable(streamModel, setUserModel, handleStreamError);
 
   const onResize = useMemo(
     () =>

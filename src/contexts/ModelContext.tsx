@@ -1,39 +1,43 @@
+import { LighthouseModelApi } from '@luna/api/model/lighthouse';
 import { ModelApi } from '@luna/api/model/ModelApi';
-import { AuthContext } from '@luna/contexts/AuthContext';
-import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
-import { useInitRef } from '@luna/hooks/useInitRef';
 import { UserModel } from '@luna/api/model/types';
-import { mapAsyncIterable, mergeAsyncIterables } from '@luna/utils/async';
+import { AuthContext } from '@luna/contexts/AuthContext';
+import { useInitRef } from '@luna/hooks/useInitRef';
+import { getOrThrow } from '@luna/utils/result';
+import { Set } from 'immutable';
+import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import {
   ReactNode,
   createContext,
-  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
-import { LighthouseModelApi } from '@luna/api/model/lighthouse';
-import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
-import { Map, Set } from 'immutable';
-import { getOrThrow } from '@luna/utils/result';
 
 export interface Users {
-  /** The user models by username. */
-  readonly models: Map<string, UserModel>;
+  /** The usernames of all users. */
+  readonly all: Set<string>;
 
   /** The usernames of active users. */
   readonly active: Set<string>;
 }
 
 export interface ModelContextValue {
-  /** The user models, active users etc. */
+  /** Known/active users. */
   readonly users: Users;
+
+  /** Streams a model. */
+  streamModel(user: string): AsyncIterable<UserModel>;
 }
 
 export const ModelContext = createContext<ModelContextValue>({
   users: {
-    models: Map(),
+    all: Set(),
     active: Set(),
+  },
+  async *streamModel() {
+    yield { frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
   },
 });
 
@@ -46,7 +50,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
 
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [users, setUsers] = useState<Users>({
-    models: Map(),
+    all: Set(),
     active: Set(),
   });
 
@@ -69,48 +73,33 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     })();
   }, [username, tokenValue, apiRef]);
 
-  const getUserStreams = useCallback(
-    async function* () {
+  useEffect(() => {
+    (async () => {
       if (!isLoggedIn) return;
       try {
-        const users = getOrThrow(await auth.getPublicUsers());
-        // Make sure that every user has at least a black frame
-        for (const { username } of users) {
-          yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
-        }
-        const streams = users.map(({ username }) =>
-          mapAsyncIterable(apiRef.current.streamModel(username), userModel => ({
-            username,
-            ...userModel,
-          }))
-        );
-        yield* mergeAsyncIterables(streams);
+        const users = getOrThrow(await auth.getAllUsers());
+        const all = Set(users.map(user => user.username));
+        setUsers(({ active }) => ({ all, active }));
       } catch (error) {
-        console.error(`Could not get user streams: ${error}`);
+        console.error(`Could not get users: ${error}`);
       }
-    },
-    [isLoggedIn, auth, apiRef]
+    })();
+  }, [isLoggedIn, auth]);
+
+  const value: ModelContextValue = useMemo(
+    () => ({
+      users,
+      async *streamModel(user) {
+        if (!users.active.has(user)) {
+          setUsers(({ all, active }) => ({ all, active: active.add(user) }));
+        }
+        yield* apiRef.current.streamModel(user);
+      },
+    }),
+    [apiRef, users]
   );
-
-  // NOTE: It is important that we use `useCallback` for the consumption callback
-  // since otherwise every rerender will create a new function, triggering a change
-  // is the `useEffect` that `useAsyncIterable` uses internally, which reregisters
-  // a new iterator on every render. This seems to cause some kind of cyclic dependency
-  // that freezes the application.
-
-  const consumeUserStreams = useCallback(
-    async ({ username, ...userModel }: { username: string } & UserModel) => {
-      setUsers(({ models, active }) => ({
-        models: models.set(username, userModel),
-        active: models.has(username) ? active.add(username) : active,
-      }));
-    },
-    []
-  );
-
-  useAsyncIterable(getUserStreams, consumeUserStreams);
 
   return (
-    <ModelContext.Provider value={{ users }}>{children}</ModelContext.Provider>
+    <ModelContext.Provider value={value}>{children}</ModelContext.Provider>
   );
 }

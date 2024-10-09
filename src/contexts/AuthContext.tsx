@@ -16,7 +16,7 @@ import React, {
   useState,
 } from 'react';
 
-export interface AuthContextValue {
+export interface Auth {
   /** Whether the authentication has finished initializing. */
   readonly isInitialized: boolean;
 
@@ -42,7 +42,7 @@ export interface AuthContextValue {
   getPublicUsers(pagination?: Pagination): Promise<Result<User[]>>;
 }
 
-export const AuthContext = createContext<AuthContextValue>({
+export const AuthContext = createContext<Auth>({
   isInitialized: false,
   user: null,
   token: null,
@@ -83,7 +83,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
 
-  const value: AuthContextValue = useMemo(
+  const value: Auth = useMemo(
     () => ({
       isInitialized,
       user,
