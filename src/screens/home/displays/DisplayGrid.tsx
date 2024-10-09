@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Map } from 'immutable';
 import { motion } from 'framer-motion';
 import { displayLayoutId } from '@luna/constants/LayoutId';
+import { useMemo } from 'react';
 
 export interface DisplayGridProps {
   userModels: Map<string, UserModel>;
@@ -18,11 +19,15 @@ export function DisplayGrid({
   displayWidth,
 }: DisplayGridProps) {
   // Filter the models case-insensitively by the search query
-  const filteredModels = [...userModels.entries()]
-    .filter(([username]) =>
-      username.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .sort(([u1], [u2]) => u1.localeCompare(u2));
+  const filteredModels = useMemo(
+    () =>
+      [...userModels.entries()]
+        .filter(([username]) =>
+          username.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .sort(([u1], [u2]) => u1.localeCompare(u2)),
+    [searchQuery, userModels]
+  );
 
   // Disable animations automatically if there are too many displays for
   // performance reasons. Unfortunately we can't seem to change the layoutId
