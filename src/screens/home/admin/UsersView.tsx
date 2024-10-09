@@ -103,9 +103,6 @@ export function UsersView() {
           <TableColumn key="email" allowsSorting>
             E-Mail
           </TableColumn>
-          {/* TODO: move to details modal: <TableColumn key="roles" allowsSorting>
-            Roles
-          </TableColumn> */}
           <TableColumn key="createdAt" allowsSorting>
             Created At
           </TableColumn>
@@ -118,9 +115,6 @@ export function UsersView() {
           <TableColumn key="permanentApiToken" allowsSorting>
             Permanent API-Token
           </TableColumn>
-          {/* TODO: move to details modal: <TableColumn key="registrationKey" allowsSorting>
-            Registration-Key
-          </TableColumn> */}
           <TableColumn key="actions">Actions</TableColumn>
         </TableHeader>
         <TableBody items={users.items}>
@@ -129,7 +123,6 @@ export function UsersView() {
               <TableCell>{user.id}</TableCell>
               <TableCell>{user.username}</TableCell>
               <TableCell>{user.email}</TableCell>
-              {/* TODO: move to details modal: <TableCell>{user.roles?.map(role => role.name)}</TableCell> */}
               <TableCell>{user.createdAt?.toLocaleString()}</TableCell>
               <TableCell>{user.updatedAt?.toLocaleString()}</TableCell>
               <TableCell>{user.lastSeen?.toLocaleString()}</TableCell>
@@ -144,7 +137,6 @@ export function UsersView() {
                   </Chip>
                 )}
               </TableCell>
-              {/* TODO: move to details modal: <TableCell>{user.registrationKey?.key}</TableCell> */}
               <TableCell>
                 <div className="relative flex items-center gap-2">
                   <Tooltip content="Details">
