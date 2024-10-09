@@ -140,7 +140,11 @@ export function UserModal({ id, action, show, setShow }: UserModalProps) {
                 <Input
                   type="password"
                   label="Password"
-                  description="Leave empty to keep previous password"
+                  description={
+                    action === 'edit'
+                      ? 'Leave empty to keep previous password'
+                      : ''
+                  }
                   value={password}
                   onValueChange={setPassword}
                 />
