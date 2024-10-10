@@ -38,20 +38,22 @@ export function DisplayGrid({
   );
 
   // Stream (only) the filtered users
-  const streamUserModels = useCallback(() => {
+  const streamUserModels = useCallback(async () => {
     console.log('Streaming user models');
     return mergeAsyncIterables(
-      filteredUsers.map(user =>
-        catchAsyncIterable(
-          mapAsyncIterable(model.streamModel(user), userModel => ({
-            user,
-            userModel,
-          })),
-          error => {
-            console.warn(
-              `Error while streaming ${user} from display grid: ${error}`
-            );
-          }
+      await Promise.all(
+        filteredUsers.map(async user =>
+          catchAsyncIterable(
+            mapAsyncIterable(await model.streamModel(user), userModel => ({
+              user,
+              userModel,
+            })),
+            error => {
+              console.warn(
+                `Error while streaming ${user} from display grid: ${error}`
+              );
+            }
+          )
         )
       )
     );

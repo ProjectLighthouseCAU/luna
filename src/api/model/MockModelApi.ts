@@ -8,14 +8,16 @@ export class MockModelApi implements ModelApi {
     return true;
   }
 
-  async *streamModel(user: string): AsyncIterable<UserModel> {
-    while (true) {
-      yield {
-        frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES).map(() =>
-          Math.floor(Math.random() * 255)
-        ),
-      };
-      await sleep(500);
-    }
+  async streamModel(user: string): Promise<AsyncIterable<UserModel>> {
+    return (async function* () {
+      while (true) {
+        yield {
+          frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES).map(() =>
+            Math.floor(Math.random() * 255)
+          ),
+        };
+        await sleep(500);
+      }
+    })();
   }
 }

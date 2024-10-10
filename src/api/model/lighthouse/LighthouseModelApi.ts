@@ -37,7 +37,7 @@ export class LighthouseModelApi implements ModelApi {
     });
   }
 
-  async *streamModel(user: string): AsyncIterable<UserModel> {
+  async streamModel(user: string): Promise<AsyncIterable<UserModel>> {
     if (this.client) {
       // NOTE: We only need to lock the client the initial streaming to avoid
       // any races while the connection is initializing. Any uses after the
@@ -47,25 +47,33 @@ export class LighthouseModelApi implements ModelApi {
         async () => await this.client!.streamModel(user)
       );
 
-      for await (const message of stream) {
-        // TODO: Handle events too, perhaps by yielding a sum type of frames and events
-        const payload = message.PAYL;
-        if (payload instanceof Uint8Array) {
-          yield { frame: payload };
+      return (async function* () {
+        for await (const message of stream) {
+          // TODO: Handle events too, perhaps by yielding a sum type of frames and events
+          const payload = message.PAYL;
+          if (payload instanceof Uint8Array) {
+            yield { frame: payload };
+          }
         }
-      }
+      })();
+    } else {
+      return (async function* () {})();
     }
   }
 
-  async *streamResource(path: string[]): AsyncIterable<unknown> {
+  async streamResource(path: string[]): Promise<AsyncIterable<unknown>> {
     if (this.client) {
       const stream = await this.clientLock.use(
         async () => await this.client!.stream(path)
       );
 
-      for await (const message of stream) {
-        yield message.PAYL;
-      }
+      return (async function* () {
+        for await (const message of stream) {
+          yield message.PAYL;
+        }
+      })();
+    } else {
+      return (async function* () {})();
     }
   }
 }

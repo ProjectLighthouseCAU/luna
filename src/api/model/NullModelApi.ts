@@ -6,5 +6,7 @@ export class NullModelApi implements ModelApi {
     return false;
   }
 
-  async *streamModel(user: string): AsyncIterable<UserModel> {}
+  async streamModel(user: string): Promise<AsyncIterable<UserModel>> {
+    return (async function* () {})();
+  }
 }

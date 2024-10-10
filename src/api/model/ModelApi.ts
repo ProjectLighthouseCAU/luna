@@ -8,5 +8,5 @@ export interface ModelApi {
   logIn(username: string, token: string): Promise<boolean>;
 
   /** Streams the given user's display model. */
-  streamModel(user: string): AsyncIterable<UserModel>;
+  streamModel(user: string): Promise<AsyncIterable<UserModel>>;
 }

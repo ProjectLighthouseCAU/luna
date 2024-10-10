@@ -28,7 +28,7 @@ export interface ModelContextValue {
   readonly users: Users;
 
   /** Streams a model. */
-  streamModel(user: string): AsyncIterable<UserModel>;
+  streamModel(user: string): Promise<AsyncIterable<UserModel>>;
 }
 
 export const ModelContext = createContext<ModelContextValue>({
@@ -36,8 +36,10 @@ export const ModelContext = createContext<ModelContextValue>({
     all: Set(),
     active: Set(),
   },
-  async *streamModel() {
-    yield { frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
+  async streamModel() {
+    return (async function* () {
+      yield { frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
+    })();
   },
 });
 
@@ -89,11 +91,11 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const value: ModelContextValue = useMemo(
     () => ({
       users,
-      async *streamModel(user) {
+      async streamModel(user) {
         if (!users.active.has(user)) {
           setUsers(({ all, active }) => ({ all, active: active.add(user) }));
         }
-        yield* apiRef.current.streamModel(user);
+        return await apiRef.current.streamModel(user);
       },
     }),
     [apiRef, users]
