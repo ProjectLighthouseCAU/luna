@@ -43,8 +43,8 @@ export class LighthouseModelApi implements ModelApi {
       // any races while the connection is initializing. Any uses after the
       // client has been closed will already result in an error being thrown.
 
-      const stream = await this.clientLock.use(async () =>
-        this.client!.streamModel(user)
+      const stream = await this.clientLock.use(
+        async () => await this.client!.streamModel(user)
       );
 
       for await (const message of stream) {
@@ -59,8 +59,8 @@ export class LighthouseModelApi implements ModelApi {
 
   async *streamResource(path: string[]): AsyncIterable<unknown> {
     if (this.client) {
-      const stream = await this.clientLock.use(async () =>
-        this.client!.stream(path, {})
+      const stream = await this.clientLock.use(
+        async () => await this.client!.stream(path)
       );
 
       for await (const message of stream) {
