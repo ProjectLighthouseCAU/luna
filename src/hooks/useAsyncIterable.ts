@@ -9,13 +9,26 @@ export function useAsyncIterable<T>(
 ) {
   useEffect(() => {
     let isCancelled = false;
+    let cancelHandler: (() => void) | undefined = undefined;
     (async () => {
+      const iterator = iterable()[Symbol.asyncIterator]();
       try {
-        for await (const value of iterable()) {
+        while (true) {
+          const result = await Promise.race([
+            iterator.next(),
+            // eslint-disable-next-line no-loop-func
+            new Promise<{ done: true; value: undefined }>(resolve => {
+              cancelHandler = () => resolve({ done: true, value: undefined });
+            }),
+          ]);
           if (isCancelled) {
+            console.log('Cancelled');
             break;
           }
-          consumer(value);
+          consumer(result.value);
+          if (result.done) {
+            break;
+          }
         }
       } catch (error) {
         if (onError) {
@@ -23,10 +36,14 @@ export function useAsyncIterable<T>(
         } else {
           throw error;
         }
+      } finally {
+        await iterator.return?.();
       }
     })();
     return () => {
+      console.log('Cancelling');
       isCancelled = true;
+      cancelHandler?.();
     };
   }, [iterable, consumer, onError]);
 }
