@@ -1,4 +1,5 @@
 import { User } from '@luna/api/auth/types';
+import { isAdmin } from '@luna/api/auth/utils';
 import { RouteLink } from '@luna/components/RouteLink';
 import { truncate } from '@luna/utils/string';
 import {
@@ -23,24 +24,26 @@ export const SidebarRoutes = memo(
   ({ isCompact, searchQuery, user, allUsernames }: SidebarRoutesProps) => {
     return (
       <>
-        <RouteLink icon={<IconTower />} name="Admin" path="/admin">
-          <RouteLink
-            icon={<IconFolder />}
-            name="Resources"
-            path="/admin/resources"
-          />
-          <RouteLink
-            icon={<IconHeartRateMonitor />}
-            name="Monitor"
-            path="/admin/monitor"
-          />
-          <RouteLink icon={<IconUsers />} name="Users" path="/admin/users" />
-          <RouteLink
-            icon={<IconSettings />}
-            name="Settings"
-            path="/admin/settings"
-          />
-        </RouteLink>
+        {user !== undefined && isAdmin(user) ? (
+          <RouteLink icon={<IconTower />} name="Admin" path="/admin">
+            <RouteLink
+              icon={<IconFolder />}
+              name="Resources"
+              path="/admin/resources"
+            />
+            <RouteLink
+              icon={<IconHeartRateMonitor />}
+              name="Monitor"
+              path="/admin/monitor"
+            />
+            <RouteLink icon={<IconUsers />} name="Users" path="/admin/users" />
+            <RouteLink
+              icon={<IconSettings />}
+              name="Settings"
+              path="/admin/settings"
+            />
+          </RouteLink>
+        ) : null}
         <RouteLink
           icon={<IconBuildingLighthouse />}
           name="Displays"

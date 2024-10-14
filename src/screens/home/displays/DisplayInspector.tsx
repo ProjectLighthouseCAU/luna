@@ -1,3 +1,4 @@
+import { isAdmin } from '@luna/api/auth/utils';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { DisplayInspectorApiTokenCard } from '@luna/screens/home/displays/DisplayInspectorApiTokenCard';
 import { DisplayInspectorInputCard } from '@luna/screens/home/displays/DisplayInspectorInputCard';
@@ -10,9 +11,7 @@ export interface DisplayInspectorProps {
 
 export function DisplayInspector({ username }: DisplayInspectorProps) {
   const { user: me } = useContext(AuthContext);
-  const isMeOrAdmin =
-    username === me?.username ||
-    me?.roles?.find(role => role.name === 'admin') !== undefined;
+  const isMeOrAdmin = username === me?.username || (me !== null && isAdmin(me));
 
   return (
     <div className="flex flex-col space-y-3">
