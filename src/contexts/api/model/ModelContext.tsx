@@ -20,6 +20,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
@@ -59,25 +60,22 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const clientLock = useInitRef<Lock>(() => new Lock());
   const [client, setClient] = useState<Lighthouse>();
 
-  const username = auth.user?.username;
-  const tokenValue = auth.token?.value;
+  const username = useMemo(() => auth.user?.username, [auth.user]);
+  const tokenValue = useMemo(() => auth.token?.value, [auth.token]);
 
   // TODO: Expose more general CRUD methods of the nighthouse API
 
   useEffect(() => {
+    let client: Lighthouse | undefined = undefined;
     (async () => {
       return await clientLock.current.use(async () => {
-        if (client !== undefined) {
-          await client.close();
-        }
-
         if (!username || !tokenValue) {
           setLoggedIn(false);
           return;
         }
 
         console.log(`Connecting as ${username}`);
-        const newClient = connect({
+        client = connect({
           url:
             process.env.REACT_APP_MODEL_SERVER_URL ??
             'wss://lighthouse.uni-kiel.de/websocket',
@@ -87,13 +85,18 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
             new ConsoleLogHandler('Nighthouse: ')
           ),
         });
-        setClient(newClient);
-        await newClient.ready();
+        await client.ready();
 
+        setClient(client);
         setLoggedIn(true);
       });
     })();
-  }, [username, tokenValue, client, clientLock]);
+    return () => {
+      (async () => {
+        await client?.close();
+      })();
+    };
+  }, [username, tokenValue, clientLock]);
 
   const getUserStreams = useCallback(
     async function* () {

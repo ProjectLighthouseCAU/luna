@@ -91,11 +91,20 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     })();
   }, [apiUser, apiRef]);
 
+  const user = useMemo(
+    () => (apiUser ? convert.userFromApi(apiUser) : null),
+    [apiUser]
+  );
+  const token = useMemo(
+    () => (apiToken ? convert.tokenFromApi(apiToken) : null),
+    [apiToken]
+  );
+
   const value: AuthContextValue = useMemo(
     () => ({
       isInitialized,
-      user: apiUser ? convert.userFromApi(apiUser) : null,
-      token: apiToken ? convert.tokenFromApi(apiToken) : null,
+      user,
+      token,
 
       async signUp(signup) {
         try {
@@ -155,7 +164,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         return this.getAllUsers(pagination);
       },
     }),
-    [isInitialized, apiUser, apiToken, apiRef]
+    [apiRef, isInitialized, token, user]
   );
 
   // We only want to run this effect once to avoid initializing the underlying
