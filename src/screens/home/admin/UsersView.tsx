@@ -1,5 +1,8 @@
 import { User } from '@luna/api/auth/types';
-import { UserModal } from '@luna/components/UserModal';
+import { UserAddModal } from '@luna/components/UserAddModal';
+import { UserDeleteModal } from '@luna/components/UserDeleteModal';
+import { UserDetailsModal } from '@luna/components/UserDetailsModal';
+import { UserEditModal } from '@luna/components/UserEditModal';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { getOrThrow } from '@luna/utils/result';
@@ -61,10 +64,11 @@ export function UsersView() {
     },
   });
 
-  const [userModal, setUserModal] = useState<{
-    id: number;
-    action: 'add' | 'view' | 'edit' | 'delete';
-  } | null>(null);
+  const [showUserAddModal, setShowUserAddModal] = useState(false);
+  const [showUserEditModal, setShowUserEditModal] = useState(false);
+  const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
+  const [showUserDeleteModal, setShowUserDeleteModal] = useState(false);
+  const [userId, setUserId] = useState(0);
 
   return (
     // TODO: Lazy rendering
@@ -72,18 +76,31 @@ export function UsersView() {
       title="Users"
       toolbar={
         <Tooltip content="Add user" color="success">
-          <Button onPress={() => setUserModal({ id: 0, action: 'add' })}>
+          <Button onPress={() => setShowUserAddModal(true)}>
             <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50"></IconUserPlus>
           </Button>
         </Tooltip>
       }
     >
-      <UserModal
-        id={userModal?.id ?? 0}
-        action={userModal?.action ?? 'add'}
-        show={userModal !== null}
-        setShow={show => !show && setUserModal(null)}
-      ></UserModal>
+      <UserAddModal
+        show={showUserAddModal}
+        setShow={setShowUserAddModal}
+      ></UserAddModal>
+      <UserEditModal
+        id={userId}
+        show={showUserEditModal}
+        setShow={setShowUserEditModal}
+      ></UserEditModal>
+      <UserDetailsModal
+        id={userId}
+        show={showUserDetailsModal}
+        setShow={setShowUserDetailsModal}
+      ></UserDetailsModal>
+      <UserDeleteModal
+        id={userId}
+        show={showUserDeleteModal}
+        setShow={setShowUserDeleteModal}
+      ></UserDeleteModal>
 
       <Table
         aria-label="Table of users for administrators"
@@ -143,7 +160,8 @@ export function UsersView() {
                     <IconEye
                       className="text-lg cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setUserModal({ id: user.id ?? 0, action: 'view' });
+                        setUserId(user.id ?? 0);
+                        setShowUserDetailsModal(true);
                       }}
                     ></IconEye>
                   </Tooltip>
@@ -151,7 +169,8 @@ export function UsersView() {
                     <IconPencil
                       className="text-lg cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setUserModal({ id: user.id ?? 0, action: 'edit' });
+                        setUserId(user.id ?? 0);
+                        setShowUserEditModal(true);
                       }}
                     ></IconPencil>
                   </Tooltip>
@@ -159,7 +178,8 @@ export function UsersView() {
                     <IconTrash
                       className="text-lg text-danger cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setUserModal({ id: user.id ?? 0, action: 'delete' });
+                        setUserId(user.id ?? 0);
+                        setShowUserDeleteModal(true);
                       }}
                     ></IconTrash>
                   </Tooltip>
