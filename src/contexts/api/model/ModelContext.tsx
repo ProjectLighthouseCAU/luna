@@ -1,21 +1,27 @@
-import { ModelApi } from '@luna/api/model/ModelApi';
+import { UserModel } from '@luna/api/model/types';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { useInitRef } from '@luna/hooks/useInitRef';
-import { UserModel } from '@luna/api/model/types';
 import { mapAsyncIterable, mergeAsyncIterables } from '@luna/utils/async';
+import { getOrThrow } from '@luna/utils/result';
+import { Lock } from '@luna/utils/semaphore';
+import { Map, Set } from 'immutable';
 import {
-  ReactNode,
+  connect,
+  ConsoleLogHandler,
+  LeveledLogHandler,
+  Lighthouse,
+  LIGHTHOUSE_FRAME_BYTES,
+  LogLevel,
+} from 'nighthouse/browser';
+import {
   createContext,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
   useState,
 } from 'react';
-import { LighthouseModelApi } from '@luna/api/model/lighthouse';
-import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
-import { Map, Set } from 'immutable';
-import { getOrThrow } from '@luna/utils/result';
 
 export interface Users {
   /** The user models by username. */
@@ -50,46 +56,75 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     active: Set(),
   });
 
-  const apiRef = useInitRef<ModelApi>(
-    () => new LighthouseModelApi(process.env.REACT_APP_MODEL_SERVER_URL)
-  );
+  const clientLock = useInitRef<Lock>(() => new Lock());
+  const [client, setClient] = useState<Lighthouse>();
 
   const username = auth.user?.username;
   const tokenValue = auth.token?.value;
 
+  // TODO: Expose more general CRUD methods of the nighthouse API
+
   useEffect(() => {
     (async () => {
-      if (username && tokenValue) {
-        console.log(`Logging in as ${username}`);
-        await apiRef.current.logIn(username, tokenValue);
+      return await clientLock.current.use(async () => {
+        if (client !== undefined) {
+          await client.close();
+        }
+
+        if (!username || !tokenValue) {
+          setLoggedIn(false);
+          return;
+        }
+
+        console.log(`Connecting as ${username}`);
+        const newClient = connect({
+          url:
+            process.env.REACT_APP_MODEL_SERVER_URL ??
+            'wss://lighthouse.uni-kiel.de/websocket',
+          auth: { USER: username, TOKEN: tokenValue },
+          logHandler: new LeveledLogHandler(
+            LogLevel.Debug,
+            new ConsoleLogHandler('Nighthouse: ')
+          ),
+        });
+        setClient(newClient);
+        await newClient.ready();
+
         setLoggedIn(true);
-      } else {
-        setLoggedIn(false);
-      }
+      });
     })();
-  }, [username, tokenValue, apiRef]);
+  }, [username, tokenValue, client, clientLock]);
 
   const getUserStreams = useCallback(
     async function* () {
-      if (!isLoggedIn) return;
+      if (!isLoggedIn || !client) return;
       try {
         const users = getOrThrow(await auth.getPublicUsers());
         // Make sure that every user has at least a black frame
         for (const { username } of users) {
           yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
         }
-        const streams = users.map(({ username }) =>
-          mapAsyncIterable(apiRef.current.streamModel(username), userModel => ({
-            username,
-            ...userModel,
-          }))
+        const streams = await Promise.all(
+          users.map(async ({ username }) => {
+            const stream = await clientLock.current.use(
+              async () => await client.streamModel(username)
+            );
+            return mapAsyncIterable(stream, model => ({
+              username,
+              // FIXME: This will not handle events correctly, we should filter properly
+              frame:
+                model.PAYL instanceof Uint8Array
+                  ? model.PAYL
+                  : new Uint8Array(LIGHTHOUSE_FRAME_BYTES),
+            }));
+          })
         );
         yield* mergeAsyncIterables(streams);
       } catch (error) {
         console.error(`Could not get user streams: ${error}`);
       }
     },
-    [isLoggedIn, auth, apiRef]
+    [isLoggedIn, client, auth, clientLock]
   );
 
   // NOTE: It is important that we use `useCallback` for the consumption callback
