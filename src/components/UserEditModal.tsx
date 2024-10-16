@@ -69,7 +69,7 @@ export function UserEditModal({ id, show, setShow }: UserEditModalProps) {
   const editUser = () => {
     const payload = {
       username: user.username,
-      password: password,
+      password,
       email: user.email,
       permanent_api_token: user.permanentApiToken,
     };

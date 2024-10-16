@@ -31,7 +31,7 @@ export function UserAddModal({ show, setShow }: UserAddModalProps) {
   const addUser = () => {
     const payload = {
       username: user.username,
-      password: password,
+      password,
       email: user.email,
       permanent_api_token: user.permanentApiToken,
     };

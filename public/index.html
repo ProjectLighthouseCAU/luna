@@ -25,12 +25,27 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Project Lighthouse: LUNA</title>
+    <!--
+      Define color scheme logic here (instead of in index.css) to prevent
+      the background from flashing white on reloads. We use a variable
+      instead of setting the background color directly in a media query
+      to support manually toggling the color scheme.
+    -->
     <style>
-      /* Prevent background from flashing white on reloads. */
+      :root {
+        --luna-background-light: white;
+        --luna-background-dark: black;
+        --luna-background-color: var(--luna-background-light);
+      }
+
       @media (prefers-color-scheme: dark) {
-        body {
-          background-color: black;
+        :root {
+          --luna-background-color: var(--luna-background-dark);
         }
+      }
+
+      body {
+        background-color: var(--luna-background-color);
       }
     </style>
   </head>

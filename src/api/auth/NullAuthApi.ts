@@ -1,5 +1,6 @@
 import { AuthApi } from '@luna/api/auth/AuthApi';
 import { Login, Signup, Token, User } from '@luna/api/auth/types';
+import { Pagination } from '@luna/utils/pagination';
 import { errorResult, Result } from '@luna/utils/result';
 
 export class NullAuthApi implements AuthApi {
@@ -15,11 +16,11 @@ export class NullAuthApi implements AuthApi {
     return errorResult('Null auth API does not support logout');
   }
 
-  async getPublicUsers(): Promise<Result<User[]>> {
+  async getPublicUsers(pagination?: Pagination): Promise<Result<User[]>> {
     return errorResult('Null auth API does not support fetching public users');
   }
 
-  async getAllUsers(): Promise<Result<User[]>> {
+  async getAllUsers(pagination?: Pagination): Promise<Result<User[]>> {
     return errorResult('Null auth API does not support fetching all users');
   }
 

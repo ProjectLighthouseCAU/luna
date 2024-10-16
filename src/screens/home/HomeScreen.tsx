@@ -46,7 +46,11 @@ export function HomeScreen() {
             {toolbar}
           </div>
         </div>
-        {isCompact && isExpanded ? <Sidebar isCompact={isCompact} /> : null}
+        {isCompact && isExpanded ? (
+          <div className="p-5">
+            <Sidebar isCompact={isCompact} />
+          </div>
+        ) : null}
         <div className="grow p-5">
           <Outlet context={outletContext} />
         </div>

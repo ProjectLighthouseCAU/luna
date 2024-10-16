@@ -1,4 +1,5 @@
 import { Login, Signup, Token, User } from '@luna/api/auth/types';
+import { Pagination } from '@luna/utils/pagination';
 import { Result } from '@luna/utils/result';
 
 /**
@@ -15,10 +16,10 @@ export interface AuthApi {
   logOut(): Promise<Result<void>>;
 
   /** Fetches a list of public users. */
-  getPublicUsers(): Promise<Result<User[]>>;
+  getPublicUsers(pagination?: Pagination): Promise<Result<User[]>>;
 
   /** Fetches a list of all users. Generally admin-only. */
-  getAllUsers(): Promise<Result<User[]>>;
+  getAllUsers(pagination?: Pagination): Promise<Result<User[]>>;
 
   /** Fetches the API token for the authenticated user. */
   getToken(): Promise<Result<Token>>;

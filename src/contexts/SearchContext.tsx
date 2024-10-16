@@ -1,11 +1,11 @@
 import { ReactNode, createContext, useState } from 'react';
 
-export interface Search {
+export interface SearchContextValue {
   query: string;
   setQuery: (query: string) => void;
 }
 
-export const SearchContext = createContext<Search>({
+export const SearchContext = createContext<SearchContextValue>({
   query: '',
   setQuery: () => {},
 });

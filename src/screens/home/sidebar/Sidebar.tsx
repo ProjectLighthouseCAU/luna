@@ -1,3 +1,4 @@
+import { ColorSchemeButton } from '@luna/components/ColorSchemeButton';
 import { SearchBar } from '@luna/components/SearchBar';
 import { UserSnippet } from '@luna/components/UserSnippet';
 import { AuthContext } from '@luna/contexts/AuthContext';
@@ -44,7 +45,11 @@ export function Sidebar({ isCompact }: SidebarProps) {
 
   return (
     <div className="flex flex-col space-y-2 h-full">
-      <SearchBar placeholder="Search displays..." setQuery={setQuery} />
+      <SearchBar
+        placeholder="Search displays..."
+        fullWidth
+        setQuery={setQuery}
+      />
       <ScrollShadow className="grow">
         <SidebarRoutes
           isCompact={isCompact}
@@ -55,9 +60,12 @@ export function Sidebar({ isCompact }: SidebarProps) {
       </ScrollShadow>
       <Divider />
       {auth.user ? <UserSnippet user={auth.user} token={auth.token} /> : null}
-      <Link onClick={logOut} to="#" className="text-danger">
-        Sign out
-      </Link>
+      <div className="flex flex-row justify-between items-center">
+        <Link onClick={logOut} to="#" className="text-danger">
+          Sign out
+        </Link>
+        <ColorSchemeButton />
+      </div>
       <Modal
         isOpen={logoutErrorMessage !== null}
         onOpenChange={isOpen => {

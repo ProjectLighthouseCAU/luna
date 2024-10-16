@@ -1,31 +1,53 @@
 import { ModelApi } from '@luna/api/model/ModelApi';
 import { UserModel } from '@luna/api/model/types';
-import { Lighthouse, connect } from 'nighthouse/browser';
+import { Lock } from '@luna/utils/semaphore';
+import {
+  ConsoleLogHandler,
+  LeveledLogHandler,
+  Lighthouse,
+  LogLevel,
+  connect,
+} from 'nighthouse/browser';
 
 export class LighthouseModelApi implements ModelApi {
   private client?: Lighthouse;
+  private clientLock = new Lock();
 
   constructor(
     private readonly url: string = 'wss://lighthouse.uni-kiel.de/websocket'
   ) {}
 
   async logIn(username: string, token: string): Promise<boolean> {
-    if (this.client !== undefined) {
-      await this.client.close();
-    }
+    return await this.clientLock.use(async () => {
+      if (this.client !== undefined) {
+        await this.client.close();
+      }
 
-    this.client = connect({
-      url: this.url,
-      auth: { USER: username, TOKEN: token },
+      this.client = connect({
+        url: this.url,
+        auth: { USER: username, TOKEN: token },
+        logHandler: new LeveledLogHandler(
+          LogLevel.Debug,
+          new ConsoleLogHandler('Nighthouse: ')
+        ),
+      });
+      await this.client.ready();
+
+      return true;
     });
-    await this.client.ready();
-
-    return true;
   }
 
   async *streamModel(user: string): AsyncIterable<UserModel> {
     if (this.client) {
-      for await (const message of this.client.streamModel(user)) {
+      // NOTE: We only need to lock the client the initial streaming to avoid
+      // any races while the connection is initializing. Any uses after the
+      // client has been closed will already result in an error being thrown.
+
+      const stream = await this.clientLock.use(
+        async () => await this.client!.streamModel(user)
+      );
+
+      for await (const message of stream) {
         // TODO: Handle events too, perhaps by yielding a sum type of frames and events
         const payload = message.PAYL;
         if (payload instanceof Uint8Array) {
@@ -37,7 +59,11 @@ export class LighthouseModelApi implements ModelApi {
 
   async *streamResource(path: string[]): AsyncIterable<unknown> {
     if (this.client) {
-      for await (const message of this.client.stream(path, {})) {
+      const stream = await this.clientLock.use(
+        async () => await this.client!.stream(path)
+      );
+
+      for await (const message of stream) {
         yield message.PAYL;
       }
     }

@@ -6,7 +6,7 @@ export interface LogoProps {
 }
 
 export function Logo({ className }: LogoProps) {
-  const colorScheme = useContext(ColorSchemeContext);
+  const { colorScheme } = useContext(ColorSchemeContext);
 
   return (
     <img

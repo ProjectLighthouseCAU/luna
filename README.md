@@ -50,9 +50,11 @@ If you use VSCode, you may wish to install the [ESLint extension](https://market
 
 ```json
 {
+  "eslint.format.enable": true,
   "[typescript][typescriptreact][javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
     "typescript.preferences.importModuleSpecifier": "non-relative"
   }
 }

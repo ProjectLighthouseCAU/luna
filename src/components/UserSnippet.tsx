@@ -1,13 +1,7 @@
 import { Token, User } from '@luna/api/auth/types';
-import { ApiTokenModal } from '@luna/components/ApiTokenModal';
+import { ApiTokenButton } from '@luna/components/ApiTokenButton';
 import { RoleSnippet } from '@luna/components/RoleSnippet';
-import {
-  Button,
-  Tooltip,
-  User as UserComponent,
-  useDisclosure,
-} from '@nextui-org/react';
-import { IconKey } from '@tabler/icons-react';
+import { User as UserComponent } from '@nextui-org/react';
 
 export interface UserSnippetProps {
   user: User;
@@ -15,23 +9,13 @@ export interface UserSnippetProps {
 }
 
 export function UserSnippet({ user, token }: UserSnippetProps) {
-  const { onOpen, isOpen, onOpenChange } = useDisclosure();
   return (
-    <div className="flex flex-row justify-between gap-1">
+    <div className="flex flex-row justify-between items-center gap-1">
       <UserComponent
         name={user.username}
         description={user.roles ? <RoleSnippet roles={user.roles} /> : null}
       />
-      <Tooltip content="Show the API token">
-        <Button isIconOnly onPress={onOpen}>
-          <IconKey />
-        </Button>
-      </Tooltip>
-      <ApiTokenModal
-        token={token}
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-      />
+      <ApiTokenButton token={token} />
     </div>
   );
 }

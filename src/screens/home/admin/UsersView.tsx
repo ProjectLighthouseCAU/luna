@@ -3,12 +3,14 @@ import { UserAddModal } from '@luna/components/UserAddModal';
 import { UserDeleteModal } from '@luna/components/UserDeleteModal';
 import { UserDetailsModal } from '@luna/components/UserDetailsModal';
 import { UserEditModal } from '@luna/components/UserEditModal';
+import { SearchBar } from '@luna/components/SearchBar';
 import { AuthContext } from '@luna/contexts/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { getOrThrow } from '@luna/utils/result';
 import {
   Button,
   Chip,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -24,45 +26,55 @@ import {
   IconTrash,
   IconUserPlus,
 } from '@tabler/icons-react';
-import { useContext, useState } from 'react';
-import { SortDescriptor } from 'react-stately';
+import { useContext, useEffect, useState } from 'react';
+import { InView } from 'react-intersection-observer';
 
 export function UsersView() {
   const auth = useContext(AuthContext);
 
-  const sortList = (items: User[], sortDescriptor: SortDescriptor): User[] => {
-    let col = sortDescriptor.column ?? 'id';
-    return items.sort((a: any, b: any): number => {
-      let first = a[col];
-      let second = b[col];
-      let cmp =
-        (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
-      if (sortDescriptor.direction === 'descending') {
-        cmp *= -1;
-      }
-      return cmp;
-    });
-  };
+  const [isLoading, setLoading] = useState(false);
+  const [needsMore, setNeedsMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
 
-  const users = useAsyncList({
+  const users = useAsyncList<User>({
     initialSortDescriptor: {
       column: 'id',
       direction: 'ascending',
     },
-    async load() {
+    async load({ cursor, sortDescriptor, filterText }) {
       try {
-        let items = getOrThrow(await auth.getAllUsers());
-        items = sortList(items, { column: 'id', direction: 'ascending' });
-        return { items };
+        if (cursor !== undefined) {
+          setLoading(false);
+        }
+
+        const page = parseInt(cursor ?? '0');
+        let items = getOrThrow(
+          await auth.getAllUsers({
+            page,
+            perPage: 50,
+            filter: filterText ? { text: filterText } : undefined,
+            sorting: sortDescriptor.column
+              ? {
+                  key: sortDescriptor.column,
+                  ascending: sortDescriptor.direction === 'ascending',
+                }
+              : undefined,
+          })
+        );
+        setHasMore(items.length > 0);
+        return { items, cursor: `${page + 1}` };
       } catch (error) {
         console.error(`Could not fetch users for users view: ${error}`);
         return { items: [] };
       }
     },
-    async sort({ items, sortDescriptor }) {
-      return { items: sortList(items, sortDescriptor) };
-    },
   });
+
+  useEffect(() => {
+    if (needsMore) {
+      users.loadMore();
+    }
+  }, [users, needsMore]);
 
   const [showUserAddModal, setShowUserAddModal] = useState(false);
   const [showUserEditModal, setShowUserEditModal] = useState(false);
@@ -75,40 +87,48 @@ export function UsersView() {
     <HomeContent
       title="Users"
       toolbar={
-        <Tooltip content="Add user" color="success">
-          <Button onPress={() => setShowUserAddModal(true)}>
-            <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50"></IconUserPlus>
-          </Button>
-        </Tooltip>
+        <div className="flex flex-row gap-4">
+          <SearchBar
+            placeholder="Search users..."
+            setQuery={users.setFilterText}
+          />
+          <Tooltip content="Add user" color="success">
+            <Button onPress={() => setShowUserAddModal(true)}>
+              <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50" />
+            </Button>
+          </Tooltip>
+        </div>
       }
     >
-      <UserAddModal
-        show={showUserAddModal}
-        setShow={setShowUserAddModal}
-      ></UserAddModal>
+      <UserAddModal show={showUserAddModal} setShow={setShowUserAddModal} />
       <UserEditModal
         id={userId}
         show={showUserEditModal}
         setShow={setShowUserEditModal}
-      ></UserEditModal>
+      />
       <UserDetailsModal
         id={userId}
         show={showUserDetailsModal}
         setShow={setShowUserDetailsModal}
-      ></UserDetailsModal>
+      />
       <UserDeleteModal
         id={userId}
         show={showUserDeleteModal}
         setShow={setShowUserDeleteModal}
-      ></UserDeleteModal>
-
+      />
       <Table
         aria-label="Table of users for administrators"
         removeWrapper
-        // TODO: Add some padding somewhere to make the sticky header look nicer
-        isHeaderSticky
         sortDescriptor={users.sortDescriptor}
         onSortChange={users.sort}
+        className="sticky-home-table"
+        bottomContent={
+          hasMore ? (
+            <InView onChange={setNeedsMore}>
+              {({ inView, ref }) => <Spinner ref={ref} />}
+            </InView>
+          ) : null
+        }
       >
         <TableHeader>
           <TableColumn key="id" allowsSorting>
@@ -134,7 +154,7 @@ export function UsersView() {
           </TableColumn>
           <TableColumn key="actions">Actions</TableColumn>
         </TableHeader>
-        <TableBody items={users.items}>
+        <TableBody items={users.items} isLoading={isLoading}>
           {user => (
             <TableRow key={user.username}>
               <TableCell>{user.id}</TableCell>
@@ -163,7 +183,7 @@ export function UsersView() {
                         setUserId(user.id ?? 0);
                         setShowUserDetailsModal(true);
                       }}
-                    ></IconEye>
+                    />
                   </Tooltip>
                   <Tooltip content="Edit user">
                     <IconPencil
@@ -172,7 +192,7 @@ export function UsersView() {
                         setUserId(user.id ?? 0);
                         setShowUserEditModal(true);
                       }}
-                    ></IconPencil>
+                    />
                   </Tooltip>
                   <Tooltip color="danger" content="Delete user">
                     <IconTrash
@@ -181,7 +201,7 @@ export function UsersView() {
                         setUserId(user.id ?? 0);
                         setShowUserDeleteModal(true);
                       }}
-                    ></IconTrash>
+                    />
                   </Tooltip>
                 </div>
               </TableCell>

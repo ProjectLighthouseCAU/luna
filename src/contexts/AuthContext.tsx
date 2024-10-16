@@ -5,6 +5,7 @@ import { MockAuthApi } from '@luna/api/auth/MockAuthApi';
 import { NullAuthApi } from '@luna/api/auth/NullAuthApi';
 import { Login, Signup, Token, User } from '@luna/api/auth/types';
 import { useInitRef } from '@luna/hooks/useInitRef';
+import { Pagination } from '@luna/utils/pagination';
 import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
 import React, {
   createContext,
@@ -15,7 +16,7 @@ import React, {
   useState,
 } from 'react';
 
-export interface Auth {
+export interface AuthContextValue {
   /** Whether the authentication has finished initializing. */
   readonly isInitialized: boolean;
 
@@ -35,13 +36,13 @@ export interface Auth {
   logOut(): Promise<Result<void>>;
 
   /** Fetches all users. */
-  getAllUsers(): Promise<Result<User[]>>;
+  getAllUsers(pagination?: Pagination): Promise<Result<User[]>>;
 
   /** Fetches the public users. */
-  getPublicUsers(): Promise<Result<User[]>>;
+  getPublicUsers(pagination?: Pagination): Promise<Result<User[]>>;
 }
 
-export const AuthContext = createContext<Auth>({
+export const AuthContext = createContext<AuthContextValue>({
   isInitialized: false,
   user: null,
   token: null,
@@ -82,7 +83,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
 
-  const value: Auth = useMemo(
+  const value: AuthContextValue = useMemo(
     () => ({
       isInitialized,
       user,
@@ -126,12 +127,12 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         }
       },
 
-      async getAllUsers() {
-        return await apiRef.current.getAllUsers();
+      async getAllUsers(pagination) {
+        return await apiRef.current.getAllUsers(pagination);
       },
 
-      async getPublicUsers() {
-        return await apiRef.current.getPublicUsers();
+      async getPublicUsers(pagination) {
+        return await apiRef.current.getPublicUsers(pagination);
       },
     }),
     [isInitialized, apiRef, token, user]
