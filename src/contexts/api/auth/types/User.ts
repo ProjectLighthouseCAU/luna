@@ -12,3 +12,25 @@ export interface User {
   permanentApiToken?: boolean;
   registrationKey?: RegistrationKey;
 }
+
+export function newUninitializedUser(): User {
+  return {
+    id: 0,
+    username: '',
+    email: '',
+    roles: [],
+    createdAt: new Date(0),
+    updatedAt: new Date(0),
+    lastSeen: new Date(0),
+    permanentApiToken: false,
+    registrationKey: {
+      id: 0,
+      key: '',
+      description: '',
+      createdAt: new Date(0),
+      updatedAt: new Date(0),
+      expiresAt: new Date(0),
+      permanent: false,
+    },
+  };
+}
