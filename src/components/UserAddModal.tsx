@@ -1,4 +1,4 @@
-import { newUninitializedUser, User } from '@luna/api/auth/types';
+import { newUninitializedUser, User } from '@luna/contexts/api/auth/types';
 import {
   Button,
   Checkbox,

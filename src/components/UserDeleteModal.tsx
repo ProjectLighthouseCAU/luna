@@ -3,7 +3,7 @@ import {
   RegistrationKey,
   Role,
   User,
-} from '@luna/api/auth/types';
+} from '@luna/contexts/api/auth/types';
 import {
   Button,
   Checkbox,

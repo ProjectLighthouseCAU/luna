@@ -1,11 +1,11 @@
-import * as generated from '@luna/api/auth/lighthouse/generated';
+import * as generated from '@luna/contexts/api/auth/generated';
 import {
   Login,
   Signup,
   Token,
   User,
   RegistrationKey,
-} from '@luna/api/auth/types';
+} from '@luna/contexts/api/auth/types';
 
 export function loginToApi(login?: Login): generated.LoginPayload {
   return {

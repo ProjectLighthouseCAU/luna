@@ -1,5 +1,5 @@
 import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
-import { ModelContext } from '@luna/contexts/ModelContext';
+import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
 import { HomeContent } from '@luna/screens/home/HomeContent';

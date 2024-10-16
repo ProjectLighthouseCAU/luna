@@ -1,10 +1,10 @@
-import { User } from '@luna/api/auth/types';
+import { User } from '@luna/contexts/api/auth/types';
 import { UserAddModal } from '@luna/components/UserAddModal';
 import { UserDeleteModal } from '@luna/components/UserDeleteModal';
 import { UserDetailsModal } from '@luna/components/UserDetailsModal';
 import { UserEditModal } from '@luna/components/UserEditModal';
 import { SearchBar } from '@luna/components/SearchBar';
-import { AuthContext } from '@luna/contexts/AuthContext';
+import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { getOrThrow } from '@luna/utils/result';
 import {
@@ -71,10 +71,10 @@ export function UsersView() {
   });
 
   useEffect(() => {
-    if (needsMore) {
+    if (hasMore && needsMore) {
       users.loadMore();
     }
-  }, [users, needsMore]);
+  }, [users, hasMore, needsMore]);
 
   const [showUserAddModal, setShowUserAddModal] = useState(false);
   const [showUserEditModal, setShowUserEditModal] = useState(false);

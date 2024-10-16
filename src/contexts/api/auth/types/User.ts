@@ -1,5 +1,5 @@
-import { Role } from '@luna/api/auth/types';
-import { RegistrationKey } from '@luna/api/auth/types/RegistrationKey';
+import { Role } from '@luna/contexts/api/auth/types';
+import { RegistrationKey } from '@luna/contexts/api/auth/types/RegistrationKey';
 
 export interface User {
   id?: number;

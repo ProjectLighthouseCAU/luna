@@ -1,4 +1,4 @@
-import { ColorSchemeContext } from '@luna/contexts/ColorSchemeContext';
+import { ColorSchemeContext } from '@luna/contexts/env/ColorSchemeContext';
 import { useContext } from 'react';
 
 export interface LogoProps {

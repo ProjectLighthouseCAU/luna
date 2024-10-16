@@ -1,8 +1,8 @@
-import { AuthContextProvider } from '@luna/contexts/AuthContext';
-import { ColorSchemeContextProvider } from '@luna/contexts/ColorSchemeContext';
-import { ModelContextProvider } from '@luna/contexts/ModelContext';
-import { SearchContextProvider } from '@luna/contexts/SearchContext';
-import { WindowDimensionsContextProvider } from '@luna/contexts/WindowDimensionsContext';
+import { AuthContextProvider } from '@luna/contexts/api/auth/AuthContext';
+import { ColorSchemeContextProvider } from '@luna/contexts/env/ColorSchemeContext';
+import { ModelContextProvider } from '@luna/contexts/api/model/ModelContext';
+import { SearchContextProvider } from '@luna/contexts/filter/SearchContext';
+import { WindowDimensionsContextProvider } from '@luna/contexts/env/WindowDimensionsContext';
 import { router } from '@luna/routes';
 import { NextUIProvider } from '@nextui-org/react';
 import { RouterProvider } from 'react-router-dom';
