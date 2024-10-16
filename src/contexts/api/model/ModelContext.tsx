@@ -1,7 +1,7 @@
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { UserModel } from '@luna/contexts/api/model/types';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
-import { mapAsyncIterable, mergeAsyncIterables } from '@luna/utils/async';
+import { mergeAsyncIterables } from '@luna/utils/async';
 import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
 import { Map, Set } from 'immutable';
 import {
@@ -111,14 +111,13 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
         const streams = await Promise.all(
           users.map(async ({ username }) => {
             const stream = await client.streamModel(username);
-            return mapAsyncIterable(stream, model => ({
-              username,
-              // FIXME: This will not handle events correctly, we should filter properly
-              frame:
-                model.PAYL instanceof Uint8Array
-                  ? model.PAYL
-                  : new Uint8Array(LIGHTHOUSE_FRAME_BYTES),
-            }));
+            return (async function* () {
+              for await (const model of stream) {
+                if (model.PAYL instanceof Uint8Array) {
+                  yield { username, frame: model.PAYL };
+                }
+              }
+            })();
           })
         );
         yield* mergeAsyncIterables(streams);
