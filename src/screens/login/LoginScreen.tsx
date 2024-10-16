@@ -1,4 +1,4 @@
-import { WindowDimensionsContext } from '@luna/contexts/WindowDimensionsContext';
+import { WindowDimensionsContext } from '@luna/contexts/env/WindowDimensionsContext';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { LiveDisplay } from '@luna/components/LiveDisplay';
 import { LoginCard } from '@luna/screens/login/LoginCard';

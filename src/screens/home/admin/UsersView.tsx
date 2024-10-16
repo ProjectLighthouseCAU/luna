@@ -1,7 +1,7 @@
 import { User } from '@luna/api/auth/types';
 import { SearchBar } from '@luna/components/SearchBar';
 import { UserModal } from '@luna/components/UserModal';
-import { AuthContext } from '@luna/contexts/AuthContext';
+import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { getOrThrow } from '@luna/utils/result';
 import {

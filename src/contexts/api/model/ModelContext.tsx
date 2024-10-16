@@ -1,5 +1,5 @@
 import { ModelApi } from '@luna/api/model/ModelApi';
-import { AuthContext } from '@luna/contexts/AuthContext';
+import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { useInitRef } from '@luna/hooks/useInitRef';
 import { UserModel } from '@luna/api/model/types';

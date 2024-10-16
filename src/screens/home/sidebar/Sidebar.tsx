@@ -1,9 +1,9 @@
 import { ColorSchemeButton } from '@luna/components/ColorSchemeButton';
 import { SearchBar } from '@luna/components/SearchBar';
 import { UserSnippet } from '@luna/components/UserSnippet';
-import { AuthContext } from '@luna/contexts/AuthContext';
-import { ModelContext } from '@luna/contexts/ModelContext';
-import { SearchContext } from '@luna/contexts/SearchContext';
+import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
+import { ModelContext } from '@luna/contexts/api/model/ModelContext';
+import { SearchContext } from '@luna/contexts/filter/SearchContext';
 import { SidebarRoutes } from '@luna/screens/home/sidebar/SidebarRoutes';
 import {
   Divider,

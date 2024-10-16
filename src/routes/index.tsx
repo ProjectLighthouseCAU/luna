@@ -1,5 +1,5 @@
 import { AppContainer } from '@luna/AppContainer';
-import { AuthContext } from '@luna/contexts/AuthContext';
+import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { adminRoute } from '@luna/routes/admin';
 import { displaysRoute } from '@luna/routes/displays';
 import { NotFoundScreen } from '@luna/screens/notfound/NotFoundScreen';

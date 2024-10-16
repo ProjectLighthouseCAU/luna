@@ -1,6 +1,6 @@
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
-import { ModelContext } from '@luna/contexts/ModelContext';
-import { SearchContext } from '@luna/contexts/SearchContext';
+import { ModelContext } from '@luna/contexts/api/model/ModelContext';
+import { SearchContext } from '@luna/contexts/filter/SearchContext';
 import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayGrid } from '@luna/screens/home/displays/DisplayGrid';

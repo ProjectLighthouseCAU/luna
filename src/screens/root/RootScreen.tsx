@@ -1,4 +1,4 @@
-import { AuthContext } from '@luna/contexts/AuthContext';
+import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { HomeScreen } from '@luna/screens/home/HomeScreen';
 import { LoadingScreen } from '@luna/screens/loading/LoadingScreen';
 import { LoginScreen } from '@luna/screens/login/LoginScreen';
