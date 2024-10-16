@@ -2,7 +2,7 @@ import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { UserModel } from '@luna/contexts/api/model/types';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { mapAsyncIterable, mergeAsyncIterables } from '@luna/utils/async';
-import { getOrThrow } from '@luna/utils/result';
+import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
 import { Map, Set } from 'immutable';
 import {
   connect,
@@ -12,6 +12,7 @@ import {
   LIGHTHOUSE_FRAME_BYTES,
   LogLevel,
 } from 'nighthouse/browser';
+import { LaserMetrics } from 'nighthouse/out/common/protocol/metrics';
 import {
   createContext,
   ReactNode,
@@ -33,6 +34,9 @@ export interface Users {
 export interface ModelContextValue {
   /** The user models, active users etc. */
   readonly users: Users;
+
+  /** Fetches lamp server metrics. */
+  getLaserMetrics(): Promise<Result<LaserMetrics>>;
 }
 
 export const ModelContext = createContext<ModelContextValue>({
@@ -40,6 +44,8 @@ export const ModelContext = createContext<ModelContextValue>({
     models: Map(),
     active: Set(),
   },
+  getLaserMetrics: async () =>
+    errorResult('No model context for fetching laser metrics'),
 });
 
 interface ModelContextProviderProps {
@@ -141,7 +147,21 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
 
   useAsyncIterable(getUserStreams, consumeUserStreams);
 
+  const value: ModelContextValue = useMemo(
+    () => ({
+      users,
+      async getLaserMetrics() {
+        const message = await client?.getLaserMetrics();
+        if (!message) {
+          return errorResult('Model server provided no laser metrics');
+        }
+        return okResult(message.PAYL);
+      },
+    }),
+    [client, users]
+  );
+
   return (
-    <ModelContext.Provider value={{ users }}>{children}</ModelContext.Provider>
+    <ModelContext.Provider value={value}>{children}</ModelContext.Provider>
   );
 }
