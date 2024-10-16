@@ -31,9 +31,9 @@
     "build:production": "env-cmd -f .env.production craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "cors-proxy:staging": "lcp --proxyUrl https://lighthouse.uni-kiel.de/staging/api/ --proxyPartial '' --credentials --origin http://localhost:4000",
+    "cors-proxy:staging": "lcp --proxyUrl https://lighthouse01.uni-kiel.de --proxyPartial '' --credentials --origin http://localhost:4000",
     "cors-proxy:legacy": "lcp --proxyUrl https://lighthouse.uni-kiel.de --proxyPartial '' --credentials --origin http://localhost:4000",
-    "regenerate-api-types": "swagger-typescript-api -p https://lighthouse.uni-kiel.de/staging/api/swagger/doc.json -o src/contexts/api/auth -n generated.ts",
+    "regenerate-api-types": "swagger-typescript-api -p https://lighthouse01.uni-kiel.de/api/swagger/doc.json -o src/contexts/api/auth -n generated.ts",
     "update-browserslist": "npx update-browserslist-db@latest"
   },
   "eslintConfig": {
