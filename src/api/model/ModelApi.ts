@@ -1,4 +1,4 @@
-import { UserModel } from '@luna/api/model/types';
+import { UserModel } from '@luna/contexts/api/model/types';
 
 /**
  * A facility that talks to a model servers, i.e. streams resources.

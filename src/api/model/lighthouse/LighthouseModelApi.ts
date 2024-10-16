@@ -1,5 +1,5 @@
 import { ModelApi } from '@luna/api/model/ModelApi';
-import { UserModel } from '@luna/api/model/types';
+import { UserModel } from '@luna/contexts/api/model/types';
 import { Lock } from '@luna/utils/semaphore';
 import {
   ConsoleLogHandler,
