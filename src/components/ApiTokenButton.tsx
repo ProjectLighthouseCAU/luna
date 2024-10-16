@@ -1,4 +1,4 @@
-import { Token } from '@luna/api/auth/types';
+import { Token } from '@luna/contexts/api/auth/types';
 import { ApiTokenModal } from '@luna/components/ApiTokenModal';
 import { Button, Tooltip, useDisclosure } from '@nextui-org/react';
 import { IconKey } from '@tabler/icons-react';

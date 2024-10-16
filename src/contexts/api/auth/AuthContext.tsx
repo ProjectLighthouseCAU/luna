@@ -1,13 +1,10 @@
-import { AuthApi } from '@luna/api/auth/AuthApi';
-import { LegacyAuthApi } from '@luna/api/auth/LegacyAuthApi';
-import { LighthouseAuthApi } from '@luna/api/auth/lighthouse';
-import { MockAuthApi } from '@luna/api/auth/MockAuthApi';
-import { NullAuthApi } from '@luna/api/auth/NullAuthApi';
-import { Login, Signup, Token, User } from '@luna/api/auth/types';
+import * as convert from '@luna/contexts/api/auth/convert';
+import * as generated from '@luna/contexts/api/auth/generated';
+import { Login, Signup, Token, User } from '@luna/contexts/api/auth/types';
 import { useInitRef } from '@luna/hooks/useInitRef';
-import { Pagination } from '@luna/utils/pagination';
-import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
-import React, {
+import { Pagination, slicePage } from '@luna/utils/pagination';
+import { errorResult, okResult, Result } from '@luna/utils/result';
+import {
   createContext,
   ReactNode,
   useEffect,
@@ -60,82 +57,105 @@ interface AuthContextProviderProps {
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [isInitialized, setInitialized] = useState(false);
 
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<Token | null>(null);
+  const [apiUser, setApiUser] = useState<generated.User>();
+  const [apiToken, setApiToken] = useState<generated.APIToken>();
 
-  const apiRef = useInitRef<AuthApi>(() => {
+  const apiRef = useInitRef<generated.Api<unknown>>(() => {
     const authType = process.env.REACT_APP_AUTH_TYPE;
-    switch (authType) {
-      case 'legacy':
-        return new LegacyAuthApi(process.env.REACT_APP_AUTH_SERVER_URL);
-      case 'lighthouse':
-        return new LighthouseAuthApi(process.env.REACT_APP_AUTH_SERVER_URL);
-      case 'mock':
-        return new MockAuthApi();
-      case 'null':
-        return new NullAuthApi();
-      default:
-        throw new Error(
-          `Could not instantiate unknown auth type '${authType}'`
-        );
+    if (authType !== 'lighthouse') {
+      throw new Error('Non lighthouse auth types are no longer supported!');
     }
+    return new generated.Api({
+      baseUrl: process.env.REACT_APP_AUTH_SERVER_URL,
+      baseApiParams: {
+        credentials: 'include',
+      },
+    });
   });
 
-  // TODO: Deal with case-sensitivity, what if the user logs in with a different casing?
+  useEffect(() => {
+    (async () => {
+      try {
+        if (!apiUser?.id) {
+          return errorResult('Cannot fetch token without a user');
+        }
+
+        const tokenResponse = await apiRef.current.users.apiTokenDetail(
+          apiUser.id
+        );
+        const apiToken = tokenResponse.data;
+        setApiToken(apiToken);
+      } catch (error) {
+        console.warn(`Fetching token failed: ${await formatError(error)}`);
+      }
+    })();
+  }, [apiUser, apiRef]);
 
   const value: AuthContextValue = useMemo(
     () => ({
       isInitialized,
-      user,
-      token,
+      user: apiUser ? convert.userFromApi(apiUser) : null,
+      token: apiToken ? convert.tokenFromApi(apiToken) : null,
 
       async signUp(signup) {
         try {
-          const user = getOrThrow(await apiRef.current.signUp(signup));
-          const token = getOrThrow(await apiRef.current.getToken());
-
-          setUser(user);
-          setToken(token);
-
-          return okResult(user);
+          const signupResponse = await apiRef.current.register.registerCreate(
+            convert.signupToApi(signup)
+          );
+          const apiUser = signupResponse.data;
+          setApiUser(apiUser);
+          return okResult(convert.userFromApi(apiUser));
         } catch (error) {
-          return errorResult(error);
+          return errorResult(`Signup failed: ${await formatError(error)}`);
         }
       },
 
       async logIn(login) {
         try {
-          const user = getOrThrow(await apiRef.current.logIn(login));
-          const token = getOrThrow(await apiRef.current.getToken());
-
-          setUser(user);
-          setToken(token);
-
-          return okResult(user);
+          const apiUserResponse = await apiRef.current.login.loginCreate(
+            convert.loginToApi(login)
+          );
+          const apiUser = apiUserResponse.data;
+          setApiUser(apiUser);
+          return okResult(convert.userFromApi(apiUser));
         } catch (error) {
-          return errorResult(error);
+          return errorResult(`Login failed: ${await formatError(error)}`);
         }
       },
 
       async logOut() {
         try {
-          getOrThrow(await apiRef.current.logOut());
-          setUser(null);
+          await apiRef.current.logout.logoutCreate();
+          setApiUser(undefined);
           return okResult(undefined);
         } catch (error) {
-          return errorResult(error);
+          return errorResult(`Logout failed: ${await formatError(error)}`);
         }
       },
 
       async getAllUsers(pagination) {
-        return await apiRef.current.getAllUsers(pagination);
+        try {
+          const apiUsersResponse = await apiRef.current.users.usersList();
+          let apiUsers: generated.User[] = apiUsersResponse.data;
+
+          // Emulate pagination since Heimdall doesn't support it
+          // TODO: Implement pagination in Heimdall and remove this
+          apiUsers = slicePage(apiUsers, pagination);
+
+          return okResult(apiUsers.map(convert.userFromApi));
+        } catch (error) {
+          return errorResult(
+            `Fetching all users failed: ${await formatError(error)}`
+          );
+        }
       },
 
       async getPublicUsers(pagination) {
-        return await apiRef.current.getPublicUsers(pagination);
+        // TODO: We currently don't have a concept of public users (Heimdall)
+        return this.getAllUsers(pagination);
       },
     }),
-    [isInitialized, apiRef, token, user]
+    [isInitialized, apiUser, apiToken, apiRef]
   );
 
   // We only want to run this effect once to avoid initializing the underlying
@@ -154,4 +174,17 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }, [value]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+async function formatError(error: any): Promise<string> {
+  if (error instanceof Response) {
+    const body = await error.text();
+    if (body.length > 0) {
+      return body;
+    } else {
+      return `${error.status} ${error.statusText}`;
+    }
+  } else {
+    return `${error}`;
+  }
 }

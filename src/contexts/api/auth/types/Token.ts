@@ -1,4 +1,4 @@
-import { Role } from '@luna/api/auth/types/Role';
+import { Role } from '@luna/contexts/api/auth/types/Role';
 
 export interface Token {
   value: string;
