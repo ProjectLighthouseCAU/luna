@@ -1,10 +1,8 @@
-import { UserModel } from '@luna/contexts/api/model/types';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
+import { UserModel } from '@luna/contexts/api/model/types';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
-import { useInitRef } from '@luna/hooks/useInitRef';
 import { mapAsyncIterable, mergeAsyncIterables } from '@luna/utils/async';
 import { getOrThrow } from '@luna/utils/result';
-import { Lock } from '@luna/utils/semaphore';
 import { Map, Set } from 'immutable';
 import {
   connect,
@@ -57,7 +55,6 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     active: Set(),
   });
 
-  const clientLock = useInitRef<Lock>(() => new Lock());
   const [client, setClient] = useState<Lighthouse>();
 
   const username = useMemo(() => auth.user?.username, [auth.user]);
@@ -68,35 +65,33 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   useEffect(() => {
     let client: Lighthouse | undefined = undefined;
     (async () => {
-      return await clientLock.current.use(async () => {
-        if (!username || !tokenValue) {
-          setLoggedIn(false);
-          return;
-        }
+      if (!username || !tokenValue) {
+        setLoggedIn(false);
+        return;
+      }
 
-        console.log(`Connecting as ${username}`);
-        client = connect({
-          url:
-            process.env.REACT_APP_MODEL_SERVER_URL ??
-            'wss://lighthouse.uni-kiel.de/websocket',
-          auth: { USER: username, TOKEN: tokenValue },
-          logHandler: new LeveledLogHandler(
-            LogLevel.Debug,
-            new ConsoleLogHandler('Nighthouse: ')
-          ),
-        });
-        await client.ready();
-
-        setClient(client);
-        setLoggedIn(true);
+      console.log(`Connecting as ${username}`);
+      client = connect({
+        url:
+          process.env.REACT_APP_MODEL_SERVER_URL ??
+          'wss://lighthouse.uni-kiel.de/websocket',
+        auth: { USER: username, TOKEN: tokenValue },
+        logHandler: new LeveledLogHandler(
+          LogLevel.Debug,
+          new ConsoleLogHandler('Nighthouse: ')
+        ),
       });
+      await client.ready();
+
+      setClient(client);
+      setLoggedIn(true);
     })();
     return () => {
       (async () => {
         await client?.close();
       })();
     };
-  }, [username, tokenValue, clientLock]);
+  }, [username, tokenValue]);
 
   const getUserStreams = useCallback(
     async function* () {
@@ -109,9 +104,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
         }
         const streams = await Promise.all(
           users.map(async ({ username }) => {
-            const stream = await clientLock.current.use(
-              async () => await client.streamModel(username)
-            );
+            const stream = await client.streamModel(username);
             return mapAsyncIterable(stream, model => ({
               username,
               // FIXME: This will not handle events correctly, we should filter properly
@@ -127,7 +120,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
         console.error(`Could not get user streams: ${error}`);
       }
     },
-    [isLoggedIn, client, auth, clientLock]
+    [isLoggedIn, client, auth]
   );
 
   // NOTE: It is important that we use `useCallback` for the consumption callback
