@@ -68,10 +68,10 @@ export function UsersView() {
   });
 
   useEffect(() => {
-    if (needsMore) {
+    if (hasMore && needsMore) {
       users.loadMore();
     }
-  }, [users, needsMore]);
+  }, [users, hasMore, needsMore]);
 
   const [userModal, setUserModal] = useState<{
     id: number;
