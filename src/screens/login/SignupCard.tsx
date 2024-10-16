@@ -1,5 +1,5 @@
 import { FormInput } from '@luna/components/FormInput';
-import { AuthContext } from '@luna/contexts/AuthContext';
+import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import {
   Button,
   Card,

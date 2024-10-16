@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { ColorSchemeContext } from '@luna/contexts/ColorSchemeContext';
+import { ColorSchemeContext } from '@luna/contexts/env/ColorSchemeContext';
 import { Outlet } from 'react-router-dom';
 
 export function AppContainer() {

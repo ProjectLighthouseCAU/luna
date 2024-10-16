@@ -1,6 +1,6 @@
 import { ApiTokenModal } from '@luna/components/ApiTokenModal';
 import { TitledCard } from '@luna/components/TitledCard';
-import { AuthContext } from '@luna/contexts/AuthContext';
+import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { Button, Tooltip, useDisclosure } from '@nextui-org/react';
 import { IconClipboard, IconKey } from '@tabler/icons-react';
 import { useCallback, useContext } from 'react';
