@@ -14,21 +14,20 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export interface UserDeleteModalProps {
   id: number;
-  show: boolean;
-  setShow: (show: boolean) => void;
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
 }
 
-export function UserDeleteModal({ id, show, setShow }: UserDeleteModalProps) {
+export function UserDeleteModal({ id, isOpen, setOpen }: UserDeleteModalProps) {
   const [user, setUser] = useState<User>(newUninitializedUser());
 
   // initialize modal state
   useEffect(() => {
-    // only initialize when the modal is shown
-    if (!show) return;
+    if (!isOpen) return;
 
     // TODO: remove test data and query the API
     const now = new Date();
@@ -63,24 +62,17 @@ export function UserDeleteModal({ id, show, setShow }: UserDeleteModalProps) {
     };
 
     setUser(user);
-  }, [id, show]);
+  }, [id, isOpen]);
 
-  const deleteUser = () => {
+  const deleteUser = useCallback(() => {
     console.log('deleting user with id', id);
     // TODO: call DELETE /users/<id>
     // TODO: feedback from the request (success, error)
-    onOpenChange(false);
-  };
-
-  const onOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      setUser(newUninitializedUser());
-    }
-    setShow(isOpen);
-  };
+    setOpen(false);
+  }, [id, setOpen]);
 
   return (
-    <Modal isOpen={show} onOpenChange={onOpenChange}>
+    <Modal isOpen={isOpen} onOpenChange={setOpen}>
       <ModalContent>
         {onClose => (
           <>

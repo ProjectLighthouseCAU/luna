@@ -14,21 +14,21 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export interface UserEditModalProps {
   id: number;
-  show: boolean;
-  setShow: (show: boolean) => void;
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
 }
 
-export function UserEditModal({ id, show, setShow }: UserEditModalProps) {
+export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
   const [user, setUser] = useState<User>(newUninitializedUser());
   const [password, setPassword] = useState('');
 
   // initialize modal state
   useEffect(() => {
-    if (!show) return; // only initialize when the modal is shown
+    if (!isOpen) return;
 
     // TODO: remove test data and query the API
     const now = new Date();
@@ -64,31 +64,23 @@ export function UserEditModal({ id, show, setShow }: UserEditModalProps) {
 
     setPassword('');
     setUser(user);
-  }, [id, show]);
+  }, [id, isOpen]);
 
-  const editUser = () => {
+  const editUser = useCallback(() => {
     const payload = {
       username: user.username,
       password,
       email: user.email,
       permanent_api_token: user.permanentApiToken,
     };
-    console.log('updating user:', payload);
+    console.log('updating user', id, ':', payload);
     // TODO: call PUT /users/<id>
     // TODO: feedback from the request (success, error)
-    onOpenChange(false);
-  };
-
-  const onOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      setUser(newUninitializedUser());
-      setPassword('');
-    }
-    setShow(isOpen);
-  };
+    setOpen(false);
+  }, [id, setOpen, user, password]);
 
   return (
-    <Modal isOpen={show} onOpenChange={onOpenChange}>
+    <Modal isOpen={isOpen} onOpenChange={setOpen}>
       <ModalContent>
         {onClose => (
           <>
@@ -103,7 +95,6 @@ export function UserEditModal({ id, show, setShow }: UserEditModalProps) {
                   setUser({ ...user, username });
                 }}
               />
-
               <Input
                 type="password"
                 label="Password"

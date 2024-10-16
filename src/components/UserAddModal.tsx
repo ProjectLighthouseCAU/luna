@@ -1,4 +1,4 @@
-import { User } from '@luna/api/auth/types';
+import { newUninitializedUser, User } from '@luna/api/auth/types';
 import {
   Button,
   Checkbox,
@@ -9,26 +9,25 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export interface UserAddModalProps {
-  show: boolean;
-  setShow: (show: boolean) => void;
+  isOpen: boolean;
+  setOpen: (show: boolean) => void;
 }
 
-export function UserAddModal({ show, setShow }: UserAddModalProps) {
-  const [user, setUser] = useState<User>({ username: '' });
+export function UserAddModal({ isOpen, setOpen }: UserAddModalProps) {
+  const [user, setUser] = useState<User>(newUninitializedUser());
   const [password, setPassword] = useState('');
 
   // initialize/reset modal state
   useEffect(() => {
-    setUser({
-      username: '',
-    });
+    if (!isOpen) return;
+    setUser(newUninitializedUser());
     setPassword('');
-  }, [show]);
+  }, [isOpen]);
 
-  const addUser = () => {
+  const addUser = useCallback(() => {
     const payload = {
       username: user.username,
       password,
@@ -38,19 +37,11 @@ export function UserAddModal({ show, setShow }: UserAddModalProps) {
     console.log('adding user:', payload);
     // TODO: call POST /users
     // TODO: feedback from the request (success, error)
-    onOpenChange(false);
-  };
-
-  const onOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      setUser({ username: '' });
-      setPassword('');
-    }
-    setShow(isOpen);
-  };
+    setOpen(false);
+  }, [setOpen, user, password]);
 
   return (
-    <Modal isOpen={show} onOpenChange={onOpenChange}>
+    <Modal isOpen={isOpen} onOpenChange={setOpen}>
       <ModalContent>
         {onClose => (
           <>

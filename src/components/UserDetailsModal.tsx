@@ -20,17 +20,16 @@ import { useEffect, useState } from 'react';
 
 export interface UserShowModalProps {
   id: number;
-  show: boolean;
-  setShow: (show: boolean) => void;
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
 }
 
-export function UserDetailsModal({ id, show, setShow }: UserShowModalProps) {
+export function UserDetailsModal({ id, isOpen, setOpen }: UserShowModalProps) {
   const [user, setUser] = useState<User>(newUninitializedUser());
 
   // initialize modal state
   useEffect(() => {
-    // only initialize when the modal is shown
-    if (!show) return;
+    if (!isOpen) return;
 
     // TODO: remove test data and query the API
     const now = new Date();
@@ -64,16 +63,10 @@ export function UserDetailsModal({ id, show, setShow }: UserShowModalProps) {
       registrationKey,
     };
     setUser(user);
-  }, [id, show]);
+  }, [id, isOpen]);
 
-  const onOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      setUser(newUninitializedUser());
-    }
-    setShow(isOpen);
-  };
   return (
-    <Modal isOpen={show} onOpenChange={onOpenChange}>
+    <Modal isOpen={isOpen} onOpenChange={setOpen}>
       <ModalContent>
         {onClose => (
           <>

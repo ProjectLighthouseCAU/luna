@@ -100,21 +100,21 @@ export function UsersView() {
         </div>
       }
     >
-      <UserAddModal show={showUserAddModal} setShow={setShowUserAddModal} />
+      <UserAddModal isOpen={showUserAddModal} setOpen={setShowUserAddModal} />
       <UserEditModal
         id={userId}
-        show={showUserEditModal}
-        setShow={setShowUserEditModal}
+        isOpen={showUserEditModal}
+        setOpen={setShowUserEditModal}
       />
       <UserDetailsModal
         id={userId}
-        show={showUserDetailsModal}
-        setShow={setShowUserDetailsModal}
+        isOpen={showUserDetailsModal}
+        setOpen={setShowUserDetailsModal}
       />
       <UserDeleteModal
         id={userId}
-        show={showUserDeleteModal}
-        setShow={setShowUserDeleteModal}
+        isOpen={showUserDeleteModal}
+        setOpen={setShowUserDeleteModal}
       />
       <Table
         aria-label="Table of users for administrators"
