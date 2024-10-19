@@ -26,20 +26,22 @@ export function signupToApi(signup: Signup): generated.RegisterPayload {
 export function tokenFromApi(apiToken: generated.APIToken): Token {
   return {
     value: apiToken.api_token!,
-    expiresAt: apiToken.expires_at ? new Date(apiToken.expires_at) : undefined,
+    expiresAt: new Date(apiToken.expires_at!),
+    username: apiToken.username!,
+    roles: apiToken.roles!,
   };
 }
 
 export function userFromApi(apiUser: generated.User): User {
   return {
-    id: apiUser.id,
+    id: apiUser.id!,
     username: apiUser.username!,
-    email: apiUser.email,
-    roles: undefined, // TODO: change role to roles
-    createdAt: apiUser.created_at ? new Date(apiUser.created_at) : undefined,
-    updatedAt: apiUser.updated_at ? new Date(apiUser.updated_at) : undefined,
-    lastSeen: apiUser.last_login ? new Date(apiUser.last_login) : undefined,
-    permanentApiToken: apiUser.permanent_api_token,
+    email: apiUser.email!,
+    roles: [], // TODO: re-run code generator and use roles
+    createdAt: new Date(apiUser.created_at!),
+    updatedAt: new Date(apiUser.updated_at!),
+    lastSeen: new Date(apiUser.last_login!),
+    permanentApiToken: apiUser.permanent_api_token!,
     registrationKey: apiUser.registration_key
       ? registrationKeyFromApi(apiUser.registration_key)
       : undefined,
@@ -50,18 +52,12 @@ export function registrationKeyFromApi(
   registrationKey: generated.RegistrationKey
 ): RegistrationKey {
   return {
-    id: registrationKey.id ?? 0,
-    key: registrationKey.key ?? '',
-    description: registrationKey.description,
-    createdAt: registrationKey.created_at
-      ? new Date(registrationKey.created_at)
-      : undefined,
-    updatedAt: registrationKey.updated_at
-      ? new Date(registrationKey.updated_at)
-      : undefined,
-    expiresAt: registrationKey.expires_at
-      ? new Date(registrationKey.expires_at)
-      : undefined,
-    permanent: registrationKey.permanent,
+    id: registrationKey.id!,
+    key: registrationKey.key!,
+    description: registrationKey.description!,
+    createdAt: new Date(registrationKey.created_at!),
+    updatedAt: new Date(registrationKey.updated_at!),
+    expiresAt: new Date(registrationKey.expires_at!),
+    permanent: registrationKey.permanent!,
   };
 }

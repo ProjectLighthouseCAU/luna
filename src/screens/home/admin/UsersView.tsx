@@ -160,9 +160,9 @@ export function UsersView() {
               <TableCell>{user.id}</TableCell>
               <TableCell>{user.username}</TableCell>
               <TableCell>{user.email}</TableCell>
-              <TableCell>{user.createdAt?.toLocaleString()}</TableCell>
-              <TableCell>{user.updatedAt?.toLocaleString()}</TableCell>
-              <TableCell>{user.lastSeen?.toLocaleString()}</TableCell>
+              <TableCell>{user.createdAt.toLocaleString()}</TableCell>
+              <TableCell>{user.updatedAt.toLocaleString()}</TableCell>
+              <TableCell>{user.lastSeen.toLocaleString()}</TableCell>
               <TableCell>
                 {user.permanentApiToken ? (
                   <Chip color="success" variant="flat">
@@ -180,7 +180,7 @@ export function UsersView() {
                     <IconEye
                       className="text-lg cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setUserId(user.id ?? 0);
+                        setUserId(user.id);
                         setShowUserDetailsModal(true);
                       }}
                     />
@@ -189,7 +189,7 @@ export function UsersView() {
                     <IconPencil
                       className="text-lg cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setUserId(user.id ?? 0);
+                        setUserId(user.id);
                         setShowUserEditModal(true);
                       }}
                     />
@@ -198,7 +198,7 @@ export function UsersView() {
                     <IconTrash
                       className="text-lg text-danger cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setUserId(user.id ?? 0);
+                        setUserId(user.id);
                         setShowUserDeleteModal(true);
                       }}
                     />

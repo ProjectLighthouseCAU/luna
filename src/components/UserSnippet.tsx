@@ -13,7 +13,7 @@ export function UserSnippet({ user, token }: UserSnippetProps) {
     <div className="flex flex-row justify-between items-center gap-1">
       <UserComponent
         name={user.username}
-        description={user.roles ? <RoleSnippet roles={user.roles} /> : null}
+        description={<RoleSnippet roles={user.roles} />}
       />
       <ApiTokenButton token={token} />
     </div>

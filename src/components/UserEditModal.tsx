@@ -52,6 +52,7 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
       permanent: false,
     };
     const user: User = {
+      id: 1,
       username: 'Testuser',
       email: 'test@example.com',
       roles,
@@ -112,17 +113,17 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
               />
               <Input
                 label="Created At"
-                value={user.createdAt?.toLocaleString()}
+                value={user.createdAt.toLocaleString()}
                 isDisabled
               />
               <Input
                 label="Updated At"
-                value={user.updatedAt?.toLocaleString()}
+                value={user.updatedAt.toLocaleString()}
                 isDisabled
               />
               <Input
                 label="Last Login"
-                value={user.lastSeen?.toLocaleString()}
+                value={user.lastSeen.toLocaleString()}
                 isDisabled
               />
               <Checkbox
