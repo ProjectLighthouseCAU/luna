@@ -103,7 +103,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     async function* () {
       if (!isLoggedIn || !client) return;
       try {
-        const users = getOrThrow(await auth.getPublicUsers());
+        const users = getOrThrow(await auth.getAllUsers());
         // Make sure that every user has at least a black frame
         for (const { username } of users) {
           yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
