@@ -1,9 +1,5 @@
-import {
-  newUninitializedUser,
-  RegistrationKey,
-  Role,
-  User,
-} from '@luna/contexts/api/auth/types';
+import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
+import { newUninitializedUser, User } from '@luna/contexts/api/auth/types';
 import {
   Button,
   Checkbox,
@@ -16,7 +12,7 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 export interface UserShowModalProps {
   id: number;
@@ -27,44 +23,22 @@ export interface UserShowModalProps {
 export function UserDetailsModal({ id, isOpen, setOpen }: UserShowModalProps) {
   const [user, setUser] = useState<User>(newUninitializedUser());
 
+  const auth = useContext(AuthContext);
+
   // initialize modal state
   useEffect(() => {
     if (!isOpen) return;
-
-    // TODO: remove test data and query the API
-    const now = new Date();
-    // TODO: call GET /users/<id>/roles
-    const roles: Role[] = [
-      {
-        id: 1,
-        name: 'Testrole',
-        createdAt: now,
-        updatedAt: now,
-      },
-    ];
-    // TODO: call GET /users/<id>
-    const registrationKey: RegistrationKey = {
-      id: 1,
-      key: 'Test-Registration-Key',
-      description: 'Test-Registration-Key for testing purposes',
-      createdAt: now,
-      updatedAt: now,
-      expiresAt: now,
-      permanent: false,
+    const fetchUser = async () => {
+      const userResult = await auth.getUserById(id);
+      if (userResult.ok) {
+        setUser(userResult.value);
+      } else {
+        console.log('Failed to fetch user:', userResult.error);
+        setUser(newUninitializedUser);
+      }
     };
-    const user: User = {
-      id: 1,
-      username: 'Testuser',
-      email: 'test@example.com',
-      roles,
-      createdAt: now,
-      updatedAt: now,
-      lastSeen: now,
-      permanentApiToken: false,
-      registrationKey,
-    };
-    setUser(user);
-  }, [id, isOpen]);
+    fetchUser();
+  }, [auth, id, isOpen, user]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>

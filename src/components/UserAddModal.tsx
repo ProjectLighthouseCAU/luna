@@ -1,4 +1,6 @@
+import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { newUninitializedUser, User } from '@luna/contexts/api/auth/types';
+import { CreateOrUpdateUserPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateUserPayload';
 import {
   Button,
   Checkbox,
@@ -9,7 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 export interface UserAddModalProps {
   isOpen: boolean;
@@ -27,18 +29,24 @@ export function UserAddModal({ isOpen, setOpen }: UserAddModalProps) {
     setPassword('');
   }, [isOpen]);
 
-  const addUser = useCallback(() => {
-    const payload = {
+  const auth = useContext(AuthContext);
+
+  const addUser = useCallback(async () => {
+    const payload: CreateOrUpdateUserPayload = {
       username: user.username,
       password,
       email: user.email,
       permanent_api_token: user.permanentApiToken,
     };
-    console.log('adding user:', payload);
-    // TODO: call POST /users
-    // TODO: feedback from the request (success, error)
+    const result = await auth.createUser(payload);
+    if (result.ok) {
+      console.log('added user:', payload);
+    } else {
+      console.log('failed to add user:', result.error);
+    }
+    // TODO: UI feedback from the request (success, error)
     setOpen(false);
-  }, [setOpen, user, password]);
+  }, [setOpen, user, password, auth]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>

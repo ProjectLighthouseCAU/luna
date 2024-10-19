@@ -1,9 +1,7 @@
-import {
-  newUninitializedUser,
-  RegistrationKey,
-  Role,
-  User,
-} from '@luna/contexts/api/auth/types';
+import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
+
+import { newUninitializedUser, User } from '@luna/contexts/api/auth/types';
+import { CreateOrUpdateUserPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateUserPayload';
 import {
   Button,
   Checkbox,
@@ -14,7 +12,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 export interface UserEditModalProps {
   id: number;
@@ -26,59 +24,40 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
   const [user, setUser] = useState<User>(newUninitializedUser());
   const [password, setPassword] = useState('');
 
+  const auth = useContext(AuthContext);
+
   // initialize modal state
   useEffect(() => {
     if (!isOpen) return;
-
-    // TODO: remove test data and query the API
-    const now = new Date();
-    // TODO: call GET /users/<id>/roles
-    const roles: Role[] = [
-      {
-        id: 1,
-        name: 'Testrole',
-        createdAt: now,
-        updatedAt: now,
-      },
-    ];
-    // TODO: call GET /users/<id>
-    const registrationKey: RegistrationKey = {
-      id: 1,
-      key: 'Test-Registration-Key',
-      description: 'Test-Registration-Key for testing purposes',
-      createdAt: now,
-      updatedAt: now,
-      expiresAt: now,
-      permanent: false,
+    const fetchUser = async () => {
+      const userResult = await auth.getUserById(id);
+      if (userResult.ok) {
+        setUser(userResult.value);
+        setPassword('');
+      } else {
+        setUser(newUninitializedUser());
+        setPassword('');
+      }
     };
-    const user: User = {
-      id: 1,
-      username: 'Testuser',
-      email: 'test@example.com',
-      roles,
-      createdAt: now,
-      updatedAt: now,
-      lastSeen: now,
-      permanentApiToken: false,
-      registrationKey,
-    };
+    fetchUser();
+  }, [id, isOpen, auth]);
 
-    setPassword('');
-    setUser(user);
-  }, [id, isOpen]);
-
-  const editUser = useCallback(() => {
-    const payload = {
+  const editUser = useCallback(async () => {
+    const payload: CreateOrUpdateUserPayload = {
       username: user.username,
       password,
       email: user.email,
       permanent_api_token: user.permanentApiToken,
     };
-    console.log('updating user', id, ':', payload);
-    // TODO: call PUT /users/<id>
+    const result = await auth.updateUser(id, payload);
+    if (result.ok) {
+      console.log('Updated user', id, ':', payload);
+    } else {
+      console.log('Update user failed:', result.error);
+    }
     // TODO: feedback from the request (success, error)
     setOpen(false);
-  }, [id, setOpen, user, password]);
+  }, [user, password, auth, id, setOpen]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
