@@ -1,6 +1,7 @@
 import * as convert from '@luna/contexts/api/auth/convert';
 import * as generated from '@luna/contexts/api/auth/generated';
 import { Login, Signup, Token, User } from '@luna/contexts/api/auth/types';
+import { CreateOrUpdateUserPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateUserPayload';
 import { useInitRef } from '@luna/hooks/useInitRef';
 import { Pagination, slicePage } from '@luna/utils/pagination';
 import { errorResult, okResult, Result } from '@luna/utils/result';
@@ -34,9 +35,17 @@ export interface AuthContextValue {
 
   /** Fetches all users. */
   getAllUsers(pagination?: Pagination): Promise<Result<User[]>>;
-
-  /** Fetches the public users. */
-  getPublicUsers(pagination?: Pagination): Promise<Result<User[]>>;
+  /** Gets a user by id */
+  getUserById(id: number): Promise<Result<User>>;
+  /** Creates a new user */
+  createUser(payload: CreateOrUpdateUserPayload): Promise<Result<void>>;
+  /** Updates an existing user */
+  updateUser(
+    id: number,
+    payload: CreateOrUpdateUserPayload
+  ): Promise<Result<void>>;
+  /** Deletes a user */
+  deleteUser(id: number): Promise<Result<void>>;
 }
 
 export const AuthContext = createContext<AuthContextValue>({
@@ -47,7 +56,10 @@ export const AuthContext = createContext<AuthContextValue>({
   logIn: async () => errorResult('No auth context for logging in'),
   logOut: async () => errorResult('No auth context for logging out'),
   getAllUsers: async () => errorResult('No auth context for fetching users'),
-  getPublicUsers: async () => errorResult('No auth context for fetching users'),
+  getUserById: async () => errorResult('No auth context for fetching users'),
+  createUser: async () => errorResult('No auth context for fetching users'),
+  updateUser: async () => errorResult('No auth context for fetching users'),
+  deleteUser: async () => errorResult('No auth context for fetching users'),
 });
 
 interface AuthContextProviderProps {
@@ -159,9 +171,53 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         }
       },
 
-      async getPublicUsers(pagination) {
-        // TODO: We currently don't have a concept of public users (Heimdall)
-        return this.getAllUsers(pagination);
+      async getUserById(id: number) {
+        try {
+          const apiUserResponse = await apiRef.current.users.getUserByName(id);
+          return okResult(convert.userFromApi(apiUserResponse.data));
+        } catch (error) {
+          return errorResult(
+            `Fetching user with id ${id} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async createUser(payload: CreateOrUpdateUserPayload) {
+        try {
+          await apiRef.current.users.usersCreate(
+            convert.createOrUpdateUserPayloadToApi(payload)
+          );
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Creating user failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async updateUser(id: number, payload: CreateOrUpdateUserPayload) {
+        try {
+          await apiRef.current.users.usersUpdate(
+            id,
+            convert.createOrUpdateUserPayloadToApi(payload)
+          );
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Updating user with id ${id} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async deleteUser(id: number) {
+        try {
+          await apiRef.current.users.usersDelete(id);
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Deleting user with id ${id} failed: ${await formatError(error)}`
+          );
+        }
       },
     }),
     [apiRef, isInitialized, token, user]

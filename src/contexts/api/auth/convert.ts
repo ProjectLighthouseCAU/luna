@@ -6,6 +6,7 @@ import {
   User,
   RegistrationKey,
 } from '@luna/contexts/api/auth/types';
+import { CreateOrUpdateUserPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateUserPayload';
 
 export function loginToApi(login?: Login): generated.LoginPayload {
   return {
@@ -59,5 +60,16 @@ export function registrationKeyFromApi(
     updatedAt: new Date(registrationKey.updated_at!),
     expiresAt: new Date(registrationKey.expires_at!),
     permanent: registrationKey.permanent!,
+  };
+}
+
+export function createOrUpdateUserPayloadToApi(
+  payload: CreateOrUpdateUserPayload
+): generated.CreateOrUpdateUserPayload {
+  return {
+    username: payload.username,
+    password: payload.password,
+    email: payload.email,
+    permanent_api_token: payload.permanent_api_token,
   };
 }
