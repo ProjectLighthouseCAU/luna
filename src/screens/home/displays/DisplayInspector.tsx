@@ -12,7 +12,7 @@ export function DisplayInspector({ username }: DisplayInspectorProps) {
   const { user: me } = useContext(AuthContext);
   const isMeOrAdmin =
     username === me?.username ||
-    me?.roles?.find(role => role.name === 'admin') !== undefined;
+    me?.roles.find(role => role.name === 'admin') !== undefined;
 
   return (
     <div className="flex flex-col space-y-3">
