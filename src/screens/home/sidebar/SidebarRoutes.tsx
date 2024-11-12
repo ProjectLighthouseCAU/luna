@@ -3,8 +3,10 @@ import { RouteLink } from '@luna/components/RouteLink';
 import { truncate } from '@luna/utils/string';
 import {
   IconBuildingLighthouse,
+  IconCategory,
   IconFolder,
   IconHeartRateMonitor,
+  IconKey,
   IconSettings,
   IconTower,
   IconUsers,
@@ -35,6 +37,12 @@ export const SidebarRoutes = memo(
             path="/admin/monitor"
           />
           <RouteLink icon={<IconUsers />} name="Users" path="/admin/users" />
+          <RouteLink icon={<IconCategory />} name="Roles" path="/admin/roles" />
+          <RouteLink
+            icon={<IconKey />}
+            name="Registration Keys"
+            path="/admin/registration-keys"
+          />
           <RouteLink
             icon={<IconSettings />}
             name="Settings"
