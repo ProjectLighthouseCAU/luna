@@ -5,7 +5,10 @@ import {
   Token,
   User,
   RegistrationKey,
+  Role,
 } from '@luna/contexts/api/auth/types';
+import { CreateOrUpdateRegistrationKeyPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateRegistrationKeyPayload';
+import { CreateOrUpdateRolePayload } from '@luna/contexts/api/auth/types/CreateOrUpdateRolePayload';
 import { CreateOrUpdateUserPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateUserPayload';
 
 export function loginToApi(login?: Login): generated.LoginPayload {
@@ -63,6 +66,15 @@ export function registrationKeyFromApi(
   };
 }
 
+export function roleFromApi(role: generated.Role): Role {
+  return {
+    id: role.id!,
+    name: role.name!,
+    createdAt: new Date(role.created_at!),
+    updatedAt: new Date(role.updated_at!),
+  };
+}
+
 export function createOrUpdateUserPayloadToApi(
   payload: CreateOrUpdateUserPayload
 ): generated.CreateOrUpdateUserPayload {
@@ -71,5 +83,24 @@ export function createOrUpdateUserPayloadToApi(
     password: payload.password,
     email: payload.email,
     permanent_api_token: payload.permanent_api_token,
+  };
+}
+
+export function createOrUpdateRolePayloadToApi(
+  payload: CreateOrUpdateRolePayload
+): generated.CreateOrUpdateRolePayload {
+  return {
+    name: payload.name,
+  };
+}
+
+export function createOrUpdateRegistrationKeyPayloadToApi(
+  payload: CreateOrUpdateRegistrationKeyPayload
+): generated.CreateRegistrationKeyPayload {
+  return {
+    key: payload.key,
+    description: payload.description,
+    expires_at: payload.expires_at.toISOString(),
+    permanent: payload.permanent,
   };
 }

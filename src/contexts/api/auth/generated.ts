@@ -505,7 +505,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {}
     ) =>
-      this.request<Role, void>({
+      this.request<Role[], void>({
         path: `/roles`,
         method: 'GET',
         query: query,

@@ -1,6 +1,15 @@
 import * as convert from '@luna/contexts/api/auth/convert';
 import * as generated from '@luna/contexts/api/auth/generated';
-import { Login, Signup, Token, User } from '@luna/contexts/api/auth/types';
+import {
+  Login,
+  RegistrationKey,
+  Role,
+  Signup,
+  Token,
+  User,
+} from '@luna/contexts/api/auth/types';
+import { CreateOrUpdateRegistrationKeyPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateRegistrationKeyPayload';
+import { CreateOrUpdateRolePayload } from '@luna/contexts/api/auth/types/CreateOrUpdateRolePayload';
 import { CreateOrUpdateUserPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateUserPayload';
 import { useInitRef } from '@luna/hooks/useInitRef';
 import { Pagination, slicePage } from '@luna/utils/pagination';
@@ -46,6 +55,34 @@ export interface AuthContextValue {
   ): Promise<Result<void>>;
   /** Deletes a user */
   deleteUser(id: number): Promise<Result<void>>;
+  /** Fetches all roles */
+  getAllRoles(): Promise<Result<Role[]>>;
+  /** Gets a role by id */
+  getRoleById(id: number): Promise<Result<Role>>;
+  /** Creates a new role */
+  createRole(payload: CreateOrUpdateRolePayload): Promise<Result<void>>;
+  /** Updates an existing role */
+  updateRole(
+    id: number,
+    payload: CreateOrUpdateRolePayload
+  ): Promise<Result<void>>;
+  /** Deletes a role */
+  deleteRole(id: number): Promise<Result<void>>;
+  /** Fetches all registration keys */
+  getAllRegistrationKeys(): Promise<Result<RegistrationKey[]>>;
+  /** Gets a registration key by id */
+  getRegistrationKeyById(id: number): Promise<Result<RegistrationKey>>;
+  /** Creates a new registration key */
+  createRegistrationKey(
+    payload: CreateOrUpdateRegistrationKeyPayload
+  ): Promise<Result<void>>;
+  /** Updates an existing registration key */
+  updateRegistrationKey(
+    id: number,
+    payload: CreateOrUpdateRegistrationKeyPayload
+  ): Promise<Result<void>>;
+  /** Deletes a registration key */
+  deleteRegistrationKey(id: number): Promise<Result<void>>;
 }
 
 export const AuthContext = createContext<AuthContextValue>({
@@ -56,10 +93,25 @@ export const AuthContext = createContext<AuthContextValue>({
   logIn: async () => errorResult('No auth context for logging in'),
   logOut: async () => errorResult('No auth context for logging out'),
   getAllUsers: async () => errorResult('No auth context for fetching users'),
-  getUserById: async () => errorResult('No auth context for fetching users'),
-  createUser: async () => errorResult('No auth context for fetching users'),
-  updateUser: async () => errorResult('No auth context for fetching users'),
-  deleteUser: async () => errorResult('No auth context for fetching users'),
+  getUserById: async () => errorResult('No auth context for fetching user'),
+  createUser: async () => errorResult('No auth context for creating user'),
+  updateUser: async () => errorResult('No auth context for updating user'),
+  deleteUser: async () => errorResult('No auth context for deleting user'),
+  getAllRoles: async () => errorResult('No auth context for fetching roles'),
+  getRoleById: async () => errorResult('No auth context for fetching role'),
+  createRole: async () => errorResult('No auth context for creating role'),
+  updateRole: async () => errorResult('No auth context for updating role'),
+  deleteRole: async () => errorResult('No auth context for deleting role'),
+  getAllRegistrationKeys: async () =>
+    errorResult('No auth context for fetching registration keys'),
+  getRegistrationKeyById: async () =>
+    errorResult('No auth context for fetching registration key'),
+  createRegistrationKey: async () =>
+    errorResult('No auth context for creating registration key'),
+  updateRegistrationKey: async () =>
+    errorResult('No auth context for updating registration key'),
+  deleteRegistrationKey: async () =>
+    errorResult('No auth context for deleting registration key'),
 });
 
 interface AuthContextProviderProps {
@@ -216,6 +268,137 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         } catch (error) {
           return errorResult(
             `Deleting user with id ${id} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async getAllRoles() {
+        try {
+          const apiRolesResponse = await apiRef.current.roles.rolesList();
+          let apiRoles: generated.Role[] = apiRolesResponse.data;
+          return okResult(apiRoles.map(convert.roleFromApi));
+        } catch (error) {
+          return errorResult(
+            `Fetching all roles failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async getRoleById(id: number) {
+        try {
+          const apiRoleResponse = await apiRef.current.roles.rolesDetail(id);
+          return okResult(convert.roleFromApi(apiRoleResponse.data));
+        } catch (error) {
+          return errorResult(
+            `Fetching role with id ${id} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async createRole(payload: CreateOrUpdateRolePayload) {
+        try {
+          await apiRef.current.roles.rolesCreate(
+            convert.createOrUpdateRolePayloadToApi(payload)
+          );
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Creating role failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async updateRole(id: number, payload: CreateOrUpdateRolePayload) {
+        try {
+          await apiRef.current.roles.rolesUpdate(
+            id,
+            convert.createOrUpdateRolePayloadToApi(payload)
+          );
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Updating role with id ${id} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async deleteRole(id: number) {
+        try {
+          await apiRef.current.roles.rolesDelete(id);
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Deleting role with id ${id} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async getAllRegistrationKeys() {
+        try {
+          const apiRegKeysResponse =
+            await apiRef.current.registrationKeys.registrationKeysList();
+          let apiRegKeys: generated.Role[] = apiRegKeysResponse.data;
+          return okResult(apiRegKeys.map(convert.registrationKeyFromApi));
+        } catch (error) {
+          return errorResult(
+            `Fetching all registration keys failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async getRegistrationKeyById(id: number) {
+        try {
+          const apiRegKeyResponse =
+            await apiRef.current.registrationKeys.registrationKeysDetail(id);
+          return okResult(
+            convert.registrationKeyFromApi(apiRegKeyResponse.data)
+          );
+        } catch (error) {
+          return errorResult(
+            `Fetching registration key with id ${id} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async createRegistrationKey(
+        payload: CreateOrUpdateRegistrationKeyPayload
+      ) {
+        try {
+          await apiRef.current.registrationKeys.registrationKeysCreate(
+            convert.createOrUpdateRegistrationKeyPayloadToApi(payload)
+          );
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Creating registration key failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async updateRegistrationKey(
+        id: number,
+        payload: CreateOrUpdateRegistrationKeyPayload
+      ) {
+        try {
+          await apiRef.current.registrationKeys.registrationKeysUpdate(
+            id,
+            convert.createOrUpdateRegistrationKeyPayloadToApi(payload)
+          );
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Updating registration key with id ${id} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async deleteRegistrationKey(id: number) {
+        try {
+          await apiRef.current.registrationKeys.registrationKeysDelete(id);
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Deleting registration key with id ${id} failed: ${await formatError(error)}`
           );
         }
       },
