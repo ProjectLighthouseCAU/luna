@@ -38,7 +38,7 @@ export function UserDetailsModal({ id, isOpen, setOpen }: UserShowModalProps) {
       }
     };
     fetchUser();
-  }, [auth, id, isOpen, user]);
+  }, [auth, id, isOpen]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
