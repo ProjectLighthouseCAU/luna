@@ -19,7 +19,7 @@ export const adminRoute: RouteObject = {
       element: <ResourcesView />,
     },
     {
-      path: 'monitor',
+      path: 'monitoring',
       element: <MonitorView />,
       children: [],
     },
