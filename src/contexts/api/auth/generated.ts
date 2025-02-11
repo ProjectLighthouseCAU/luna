@@ -106,6 +106,8 @@ export interface User {
   updated_at?: string;
   /** must be unique */
   username?: string;
+  /** list of roles */
+  roles?: Role[];
 }
 
 export type QueryParamsType = Record<string | number, any>;

@@ -41,7 +41,7 @@ export function userFromApi(apiUser: generated.User): User {
     id: apiUser.id!,
     username: apiUser.username!,
     email: apiUser.email!,
-    roles: [], // TODO: re-run code generator and use roles
+    roles: apiUser.roles!.map(apiRole => roleFromApi(apiRole)), // TODO: re-run code generator and use roles
     createdAt: new Date(apiUser.created_at!),
     updatedAt: new Date(apiUser.updated_at!),
     lastSeen: new Date(apiUser.last_login!),
