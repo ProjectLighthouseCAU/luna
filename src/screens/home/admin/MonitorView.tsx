@@ -63,6 +63,8 @@ export function MonitorView() {
     const m = await model.getLaserMetrics(); // TODO: stream metrics instead
     if (m.ok) {
       setMetrics(m.value);
+    } else {
+      console.log(m.error);
     }
   }, [model]);
 
