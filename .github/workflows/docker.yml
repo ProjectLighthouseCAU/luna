@@ -17,6 +17,8 @@ jobs:
           label: latest
         - env: staging
           label: staging
+        - env: development
+          label: development
 
     steps:
     - uses: actions/checkout@v4
