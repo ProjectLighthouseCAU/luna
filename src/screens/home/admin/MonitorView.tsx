@@ -53,7 +53,7 @@ export function MonitorView() {
   const model = useContext(ModelContext);
   const [metrics, setMetrics] = useState</*LaserMetrics*/ any>(null); // TODO: change when LaserMetrics includes room
 
-  const [selectedWindow, setSelectedWindow] = useState<number>(0);
+  const [selectedWindow, setSelectedWindow] = useState<number>();
 
   const getLatestMetrics = useCallback(async () => {
     // setMetrics(testMetrics); // TODO: change back from test data to fetched data
@@ -105,7 +105,7 @@ export function MonitorView() {
       parity = !parity;
     }
     // show the selected window in white
-    if (selectedWindow != null) {
+    if (selectedWindow !== undefined) {
       frame[selectedWindow * 3] = 255;
       frame[selectedWindow * 3 + 1] = 255;
       frame[selectedWindow * 3 + 2] = 255;
@@ -140,7 +140,7 @@ export function MonitorView() {
 
   // get the selected rooms metrics for rendering
   const selectedRoomMetrics = useMemo(
-    () => roomMetricsFromIndex(selectedWindow),
+    () => (selectedWindow ? roomMetricsFromIndex(selectedWindow) : undefined),
     [roomMetricsFromIndex, selectedWindow]
   );
 
