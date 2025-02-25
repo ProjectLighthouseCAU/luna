@@ -1,5 +1,5 @@
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
-import { UserModel } from '@luna/contexts/api/model/types';
+import { LaserMetrics, UserModel } from '@luna/contexts/api/model/types';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { mergeAsyncIterables } from '@luna/utils/async';
 import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
@@ -12,7 +12,6 @@ import {
   LIGHTHOUSE_FRAME_BYTES,
   LogLevel,
 } from 'nighthouse/browser';
-import { LaserMetrics } from 'nighthouse/out/common/protocol/metrics';
 import {
   createContext,
   ReactNode,
