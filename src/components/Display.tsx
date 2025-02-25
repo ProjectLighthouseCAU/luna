@@ -113,8 +113,8 @@ export function Display({
       const mouseCoords = eventToMouseCoords(event);
       const windowCoords = mouseToWindowCoords(mouseCoords);
       if (!windowCoords) return; // in case of strict bounds checking
-      setPrevCoords(windowCoords); // for consecutive drag
 
+      setPrevCoords(windowCoords); // for consecutive drag
       onMouseDown(windowCoords);
     };
     const onMouseUpHandler = (event: MouseEvent) => {
@@ -123,8 +123,8 @@ export function Display({
       const mouseCoords = eventToMouseCoords(event);
       const windowCoords = mouseToWindowCoords(mouseCoords);
       if (!windowCoords) return; // in case of strict bounds checking
-      setPrevCoords(windowCoords); // for consecutive drag
 
+      setPrevCoords(windowCoords); // for consecutive drag
       onMouseUp(windowCoords);
     };
 
@@ -134,11 +134,11 @@ export function Display({
       const mouseCoords = eventToMouseCoords(event);
       const windowCoords = mouseToWindowCoords(mouseCoords);
       if (!windowCoords) return; // in case of strict bounds checking
-
       // don't emit drag events if coords haven't changed
       if (prevCoords && vec2AreEqual(prevCoords, windowCoords)) {
         return;
       }
+
       setPrevCoords(windowCoords);
       onMouseDrag(windowCoords);
     };
