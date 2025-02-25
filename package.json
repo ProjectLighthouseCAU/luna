@@ -26,6 +26,7 @@
   "scripts": {
     "start": "craco start",
     "start:legacy": "env-cmd -f .env.legacy craco start",
+    "start:staging-proxy": "env-cmd -f .env.staging-proxy craco start",
     "build": "craco build",
     "build:development": "env-cmd -f .env.development craco build",
     "build:staging": "env-cmd -f .env.staging craco build",

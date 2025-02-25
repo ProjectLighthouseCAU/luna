@@ -12,16 +12,22 @@ To get started developing, make sure to have Node.js and npm available and insta
 npm install
 ```
 
+To start the development server against a [local backend stack](https://github.com/ProjectLighthouseCAU/infrastructure/tree/main/local), run
+
+```sh
+npm start
+```
+
 To run the CORS proxy against the staging API, run
 
 ```sh
 npm run cors-proxy:staging
 ```
 
-To start the development server, run
+You can then start the development server against the staging proxy via
 
 ```sh
-npm start
+npm run start:staging-proxy
 ```
 
 > [!TIP]
