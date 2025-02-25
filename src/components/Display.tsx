@@ -33,9 +33,9 @@ export function Display({
   relativeGutterWidth = 0.0064,
   className,
   strictBoundsChecking = false,
-  onMouseDown = (p: Vec2<number>) => {},
-  onMouseUp = (p: Vec2<number>) => {},
-  onMouseDrag = (p: Vec2<number>) => {},
+  onMouseDown = () => {},
+  onMouseUp = () => {},
+  onMouseDrag = () => {},
 }: DisplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
