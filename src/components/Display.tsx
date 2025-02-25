@@ -4,13 +4,9 @@ import {
   LIGHTHOUSE_COLS,
   LIGHTHOUSE_ROWS,
 } from 'nighthouse/browser';
+import { Vec2 } from '@luna/utils/vec2';
 
 export const DISPLAY_ASPECT_RATIO = 0.8634;
-
-export interface MousePos {
-  x: number;
-  y: number;
-}
 
 export interface DisplayProps {
   frame: Uint8Array;
@@ -22,9 +18,9 @@ export interface DisplayProps {
   relativeGutterWidth?: number;
   className?: string;
   strictBoundsChecking?: boolean;
-  onMouseDown?: (p: MousePos) => void;
-  onMouseUp?: (p: MousePos) => void;
-  onMouseDrag?: (p: MousePos) => void;
+  onMouseDown?: (p: Vec2<number>) => void;
+  onMouseUp?: (p: Vec2<number>) => void;
+  onMouseDrag?: (p: Vec2<number>) => void;
 }
 
 export function Display({
@@ -37,9 +33,9 @@ export function Display({
   relativeGutterWidth = 0.0064,
   className,
   strictBoundsChecking = false,
-  onMouseDown = (p: MousePos) => {},
-  onMouseUp = (p: MousePos) => {},
-  onMouseDrag = (p: MousePos) => {},
+  onMouseDown = (p: Vec2<number>) => {},
+  onMouseUp = (p: Vec2<number>) => {},
+  onMouseDrag = (p: Vec2<number>) => {},
 }: DisplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 

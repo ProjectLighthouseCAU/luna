@@ -1,13 +1,10 @@
-import {
-  DISPLAY_ASPECT_RATIO,
-  Display,
-  MousePos,
-} from '@luna/components/Display';
+import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { throttle } from '@luna/utils/schedule';
+import { Vec2 } from '@luna/utils/vec2';
 import { Button, Card, CardBody, CardHeader, Chip } from '@nextui-org/react';
 import { LIGHTHOUSE_COLS, LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 // import {
@@ -136,7 +133,7 @@ export function MonitorView() {
   );
 
   // set the selected window index on click
-  const onMouseDown = useCallback((p: MousePos) => {
+  const onMouseDown = useCallback((p: Vec2<number>) => {
     const lampIdx = p.y * LIGHTHOUSE_COLS + p.x;
     setSelectedWindow(lampIdx);
   }, []);
