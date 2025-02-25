@@ -150,11 +150,11 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       users,
       async getLaserMetrics() {
         try {
-          const message = await client?.getLaserMetrics();
+          const message = await client?.get(['metrics', 'laser']);
           if (!message || message.RNUM >= 400) {
             return errorResult('Model server provided no laser metrics');
           }
-          return okResult(message.PAYL);
+          return okResult(message.PAYL as LaserMetrics);
         } catch (error) {
           return errorResult(error);
         }
