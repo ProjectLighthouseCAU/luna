@@ -149,7 +149,19 @@ export function MonitorView() {
 
   // TODO: more appealing UI (maybe tables, inputs or custom stuff?)
   return (
-    <HomeContent title="Monitoring">
+    <HomeContent
+      title="Monitoring"
+      toolbar={
+        /* TODO: auto-refresh (polling) or streaming metrics */
+        <Button
+          color="secondary"
+          className="flex flex-col"
+          onPress={getLatestMetrics}
+        >
+          Refresh all
+        </Button>
+      }
+    >
       <div className="flex flex-col space-y-4 md:flex-row h-full">
         <div
           ref={wrapperRef}
@@ -160,14 +172,6 @@ export function MonitorView() {
           </div>
         </div>
         <>
-          {/* TODO: auto-refresh (polling) or streaming metrics */}
-          <Button
-            color="secondary"
-            className="flex flex-col"
-            onPress={getLatestMetrics}
-          >
-            Refresh all
-          </Button>
           <Card className="p-2 m-2 min-w-[420px] h-fit">
             {selectedRoomMetrics ? (
               <>
