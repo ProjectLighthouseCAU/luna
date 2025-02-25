@@ -1,6 +1,9 @@
 import { User } from '@luna/contexts/api/auth/types';
+import { UserAddModal } from '@luna/components/UserAddModal';
+import { UserDeleteModal } from '@luna/components/UserDeleteModal';
+import { UserDetailsModal } from '@luna/components/UserDetailsModal';
+import { UserEditModal } from '@luna/components/UserEditModal';
 import { SearchBar } from '@luna/components/SearchBar';
-import { UserModal } from '@luna/components/UserModal';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { getOrThrow } from '@luna/utils/result';
@@ -73,10 +76,11 @@ export function UsersView() {
     }
   }, [users, hasMore, needsMore]);
 
-  const [userModal, setUserModal] = useState<{
-    id: number;
-    action: 'add' | 'view' | 'edit' | 'delete';
-  } | null>(null);
+  const [showUserAddModal, setShowUserAddModal] = useState(false);
+  const [showUserEditModal, setShowUserEditModal] = useState(false);
+  const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
+  const [showUserDeleteModal, setShowUserDeleteModal] = useState(false);
+  const [userId, setUserId] = useState(0);
 
   return (
     // TODO: Lazy rendering
@@ -89,23 +93,29 @@ export function UsersView() {
             setQuery={users.setFilterText}
           />
           <Tooltip content="Add user" color="success">
-            <Button
-              isIconOnly
-              onPress={() => setUserModal({ id: 0, action: 'add' })}
-            >
+            <Button onPress={() => setShowUserAddModal(true)}>
               <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50" />
             </Button>
           </Tooltip>
         </div>
       }
     >
-      <UserModal
-        id={userModal?.id ?? 0}
-        action={userModal?.action ?? 'add'}
-        show={userModal !== null}
-        setShow={show => !show && setUserModal(null)}
+      <UserAddModal isOpen={showUserAddModal} setOpen={setShowUserAddModal} />
+      <UserEditModal
+        id={userId}
+        isOpen={showUserEditModal}
+        setOpen={setShowUserEditModal}
       />
-
+      <UserDetailsModal
+        id={userId}
+        isOpen={showUserDetailsModal}
+        setOpen={setShowUserDetailsModal}
+      />
+      <UserDeleteModal
+        id={userId}
+        isOpen={showUserDeleteModal}
+        setOpen={setShowUserDeleteModal}
+      />
       <Table
         aria-label="Table of users for administrators"
         removeWrapper
@@ -130,9 +140,6 @@ export function UsersView() {
           <TableColumn key="email" allowsSorting>
             E-Mail
           </TableColumn>
-          {/* TODO: move to details modal: <TableColumn key="roles" allowsSorting>
-            Roles
-          </TableColumn> */}
           <TableColumn key="createdAt" allowsSorting>
             Created At
           </TableColumn>
@@ -145,9 +152,6 @@ export function UsersView() {
           <TableColumn key="permanentApiToken" allowsSorting>
             Permanent API-Token
           </TableColumn>
-          {/* TODO: move to details modal: <TableColumn key="registrationKey" allowsSorting>
-            Registration-Key
-          </TableColumn> */}
           <TableColumn key="actions">Actions</TableColumn>
         </TableHeader>
         <TableBody items={users.items} isLoading={isLoading}>
@@ -156,10 +160,9 @@ export function UsersView() {
               <TableCell>{user.id}</TableCell>
               <TableCell>{user.username}</TableCell>
               <TableCell>{user.email}</TableCell>
-              {/* TODO: move to details modal: <TableCell>{user.roles?.map(role => role.name)}</TableCell> */}
-              <TableCell>{user.createdAt?.toLocaleString()}</TableCell>
-              <TableCell>{user.updatedAt?.toLocaleString()}</TableCell>
-              <TableCell>{user.lastSeen?.toLocaleString()}</TableCell>
+              <TableCell>{user.createdAt.toLocaleString()}</TableCell>
+              <TableCell>{user.updatedAt.toLocaleString()}</TableCell>
+              <TableCell>{user.lastSeen.toLocaleString()}</TableCell>
               <TableCell>
                 {user.permanentApiToken ? (
                   <Chip color="success" variant="flat">
@@ -171,14 +174,14 @@ export function UsersView() {
                   </Chip>
                 )}
               </TableCell>
-              {/* TODO: move to details modal: <TableCell>{user.registrationKey?.key}</TableCell> */}
               <TableCell>
                 <div className="relative flex items-center gap-2">
                   <Tooltip content="Details">
                     <IconEye
                       className="text-lg cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setUserModal({ id: user.id ?? 0, action: 'view' });
+                        setUserId(user.id);
+                        setShowUserDetailsModal(true);
                       }}
                     />
                   </Tooltip>
@@ -186,7 +189,8 @@ export function UsersView() {
                     <IconPencil
                       className="text-lg cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setUserModal({ id: user.id ?? 0, action: 'edit' });
+                        setUserId(user.id);
+                        setShowUserEditModal(true);
                       }}
                     />
                   </Tooltip>
@@ -194,7 +198,8 @@ export function UsersView() {
                     <IconTrash
                       className="text-lg text-danger cursor-pointer active:opacity-50"
                       onClick={() => {
-                        setUserModal({ id: user.id ?? 0, action: 'delete' });
+                        setUserId(user.id);
+                        setShowUserDeleteModal(true);
                       }}
                     />
                   </Tooltip>

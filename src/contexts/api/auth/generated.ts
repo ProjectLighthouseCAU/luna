@@ -106,6 +106,8 @@ export interface User {
   updated_at?: string;
   /** must be unique */
   username?: string;
+  /** list of roles */
+  roles?: Role[];
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -505,7 +507,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {}
     ) =>
-      this.request<Role, void>({
+      this.request<Role[], void>({
         path: `/roles`,
         method: 'GET',
         query: query,

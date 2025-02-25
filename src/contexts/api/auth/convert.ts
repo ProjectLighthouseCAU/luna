@@ -5,7 +5,11 @@ import {
   Token,
   User,
   RegistrationKey,
+  Role,
 } from '@luna/contexts/api/auth/types';
+import { CreateOrUpdateRegistrationKeyPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateRegistrationKeyPayload';
+import { CreateOrUpdateRolePayload } from '@luna/contexts/api/auth/types/CreateOrUpdateRolePayload';
+import { CreateOrUpdateUserPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateUserPayload';
 
 export function loginToApi(login?: Login): generated.LoginPayload {
   return {
@@ -26,20 +30,22 @@ export function signupToApi(signup: Signup): generated.RegisterPayload {
 export function tokenFromApi(apiToken: generated.APIToken): Token {
   return {
     value: apiToken.api_token!,
-    expiresAt: apiToken.expires_at ? new Date(apiToken.expires_at) : undefined,
+    expiresAt: new Date(apiToken.expires_at!),
+    username: apiToken.username!,
+    roles: apiToken.roles!,
   };
 }
 
 export function userFromApi(apiUser: generated.User): User {
   return {
-    id: apiUser.id,
+    id: apiUser.id!,
     username: apiUser.username!,
-    email: apiUser.email,
-    roles: undefined, // TODO: change role to roles
-    createdAt: apiUser.created_at ? new Date(apiUser.created_at) : undefined,
-    updatedAt: apiUser.updated_at ? new Date(apiUser.updated_at) : undefined,
-    lastSeen: apiUser.last_login ? new Date(apiUser.last_login) : undefined,
-    permanentApiToken: apiUser.permanent_api_token,
+    email: apiUser.email!,
+    roles: apiUser.roles!.map(apiRole => roleFromApi(apiRole)), // TODO: re-run code generator and use roles
+    createdAt: new Date(apiUser.created_at!),
+    updatedAt: new Date(apiUser.updated_at!),
+    lastSeen: new Date(apiUser.last_login!),
+    permanentApiToken: apiUser.permanent_api_token!,
     registrationKey: apiUser.registration_key
       ? registrationKeyFromApi(apiUser.registration_key)
       : undefined,
@@ -50,18 +56,51 @@ export function registrationKeyFromApi(
   registrationKey: generated.RegistrationKey
 ): RegistrationKey {
   return {
-    id: registrationKey.id ?? 0,
-    key: registrationKey.key ?? '',
-    description: registrationKey.description,
-    createdAt: registrationKey.created_at
-      ? new Date(registrationKey.created_at)
-      : undefined,
-    updatedAt: registrationKey.updated_at
-      ? new Date(registrationKey.updated_at)
-      : undefined,
-    expiresAt: registrationKey.expires_at
-      ? new Date(registrationKey.expires_at)
-      : undefined,
-    permanent: registrationKey.permanent,
+    id: registrationKey.id!,
+    key: registrationKey.key!,
+    description: registrationKey.description!,
+    createdAt: new Date(registrationKey.created_at!),
+    updatedAt: new Date(registrationKey.updated_at!),
+    expiresAt: new Date(registrationKey.expires_at!),
+    permanent: registrationKey.permanent!,
+  };
+}
+
+export function roleFromApi(role: generated.Role): Role {
+  return {
+    id: role.id!,
+    name: role.name!,
+    createdAt: new Date(role.created_at!),
+    updatedAt: new Date(role.updated_at!),
+  };
+}
+
+export function createOrUpdateUserPayloadToApi(
+  payload: CreateOrUpdateUserPayload
+): generated.CreateOrUpdateUserPayload {
+  return {
+    username: payload.username,
+    password: payload.password,
+    email: payload.email,
+    permanent_api_token: payload.permanent_api_token,
+  };
+}
+
+export function createOrUpdateRolePayloadToApi(
+  payload: CreateOrUpdateRolePayload
+): generated.CreateOrUpdateRolePayload {
+  return {
+    name: payload.name,
+  };
+}
+
+export function createOrUpdateRegistrationKeyPayloadToApi(
+  payload: CreateOrUpdateRegistrationKeyPayload
+): generated.CreateRegistrationKeyPayload {
+  return {
+    key: payload.key,
+    description: payload.description,
+    expires_at: payload.expires_at.toISOString(),
+    permanent: payload.permanent,
   };
 }

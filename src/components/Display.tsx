@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import {
   LIGHTHOUSE_COLOR_CHANNELS,
   LIGHTHOUSE_COLS,
@@ -6,6 +6,11 @@ import {
 } from 'nighthouse/browser';
 
 export const DISPLAY_ASPECT_RATIO = 0.8634;
+
+export interface MousePos {
+  x: number;
+  y: number;
+}
 
 export interface DisplayProps {
   frame: Uint8Array;
@@ -16,6 +21,10 @@ export interface DisplayProps {
   relativeBezelWidth?: number;
   relativeGutterWidth?: number;
   className?: string;
+  strictBoundsChecking?: boolean;
+  onMouseDown?: (p: MousePos) => void;
+  onMouseUp?: (p: MousePos) => void;
+  onMouseDrag?: (p: MousePos) => void;
 }
 
 export function Display({
@@ -27,9 +36,15 @@ export function Display({
   relativeBezelWidth = 0.0183,
   relativeGutterWidth = 0.0064,
   className,
+  strictBoundsChecking = false,
+  onMouseDown = (p: MousePos) => {},
+  onMouseUp = (p: MousePos) => {},
+  onMouseDrag = (p: MousePos) => {},
 }: DisplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const [drag, setDrag] = useState(false);
+  const [prevCoords, setPrevCoords] = useState<number[] | null>(null);
   // Set up rendering
   useLayoutEffect(() => {
     const canvas = canvasRef.current!;
@@ -71,18 +86,111 @@ export function Display({
       ctx.fillRect(x, 0, gutterWidth, height);
     }
 
+    const midPoints: number[][] = [];
     // Draw windows
     for (let j = 0; j < columns; j++) {
       const x = bezelWidth + j * windowWidth + (j + 1) * gutterWidth;
 
       for (let i = 0; i < rows; i++) {
         const y = i * (1 + spacersPerRow) * windowHeight;
+        midPoints.push([x + windowWidth / 2, y + windowHeight / 2]);
         const k = (i * LIGHTHOUSE_COLS + j) * LIGHTHOUSE_COLOR_CHANNELS;
         const rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
         ctx.fillStyle = `rgb(${rgb.join(',')})`;
         ctx.fillRect(x, y, windowWidth, windowHeight);
       }
     }
+
+    const dist = ([x1, y1]: number[], [x2, y2]: number[]) => {
+      const xDiff = x1 - x2;
+      const yDiff = y1 - y2;
+      return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+    };
+
+    const mouseToWindowCoords = (mouseCoords: number[]) => {
+      const closestPointIdx = midPoints
+        .map(p => dist(p, mouseCoords))
+        .reduce(
+          ([aIdx, acc], val, idx) => [
+            val < acc ? idx : aIdx,
+            Math.min(acc, val),
+          ],
+          [-1, Infinity]
+        )[0];
+      const closestPoint = midPoints[closestPointIdx];
+      const x = closestPoint[0] - windowWidth / 2;
+      const y = closestPoint[1] - windowHeight / 2;
+      if (
+        strictBoundsChecking &&
+        !(
+          mouseCoords[0] >= x &&
+          mouseCoords[0] <= x + windowWidth &&
+          mouseCoords[1] >= y &&
+          mouseCoords[1] <= y + windowHeight
+        )
+      ) {
+        return null;
+      }
+      const j = Math.round(
+        (x - bezelWidth - gutterWidth) / (windowWidth + gutterWidth)
+      );
+      const i = Math.round(y / (windowHeight * (1 + spacersPerRow)));
+      return [i, j];
+    };
+
+    const onMouseDownHandler = (event: MouseEvent) => {
+      setDrag(true);
+
+      const rect = canvas.getBoundingClientRect();
+      const mouseCoords = [event.clientX - rect.left, event.clientY - rect.top];
+
+      const windowCoords = mouseToWindowCoords(mouseCoords);
+      if (!windowCoords) return; // in case of strict bounds checking
+      setPrevCoords(windowCoords); // for consecutive drag
+
+      onMouseDown({ x: windowCoords[1], y: windowCoords[0] });
+    };
+    const onMouseUpHandler = (event: MouseEvent) => {
+      setDrag(false);
+
+      const rect = canvas.getBoundingClientRect();
+      const mouseCoords = [event.clientX - rect.left, event.clientY - rect.top];
+
+      const windowCoords = mouseToWindowCoords(mouseCoords);
+      if (!windowCoords) return; // in case of strict bounds checking
+      setPrevCoords(windowCoords); // for consecutive drag
+
+      onMouseUp({ x: windowCoords[1], y: windowCoords[0] });
+    };
+
+    const onMouseDragHandler = (event: MouseEvent) => {
+      if (!drag) return;
+      const rect = canvas.getBoundingClientRect();
+      const mouseCoords = [event.clientX - rect.left, event.clientY - rect.top];
+
+      const windowCoords = mouseToWindowCoords(mouseCoords);
+      if (!windowCoords) return; // in case of strict bounds checking
+
+      // don't emit drag events if coords haven't changed
+      if (
+        prevCoords &&
+        prevCoords[0] === windowCoords[0] &&
+        prevCoords[1] === windowCoords[1]
+      ) {
+        return;
+      }
+      setPrevCoords(windowCoords);
+      onMouseDrag({ x: windowCoords[1], y: windowCoords[0] });
+    };
+    canvas.style.cursor = 'crosshair';
+    canvas.addEventListener('mousedown', onMouseDownHandler);
+    canvas.addEventListener('mousemove', onMouseDragHandler);
+    canvas.addEventListener('mouseup', onMouseUpHandler);
+    return () => {
+      canvas.removeEventListener('mousedown', onMouseDownHandler);
+      canvas.removeEventListener('mousemove', onMouseDragHandler);
+      canvas.removeEventListener('mouseup', onMouseUpHandler);
+    };
   }, [
     customWidth,
     aspectRatio,
@@ -91,6 +199,14 @@ export function Display({
     columns,
     relativeBezelWidth,
     relativeGutterWidth,
+    strictBoundsChecking,
+    setDrag,
+    drag,
+    setPrevCoords,
+    prevCoords,
+    onMouseDown,
+    onMouseUp,
+    onMouseDrag,
   ]);
 
   return <canvas ref={canvasRef} className={className} />;

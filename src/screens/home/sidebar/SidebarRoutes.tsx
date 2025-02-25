@@ -3,8 +3,10 @@ import { RouteLink } from '@luna/components/RouteLink';
 import { truncate } from '@luna/utils/string';
 import {
   IconBuildingLighthouse,
+  IconCategory,
   IconFolder,
   IconHeartRateMonitor,
+  IconKey,
   IconSettings,
   IconTower,
   IconUsers,
@@ -23,24 +25,38 @@ export const SidebarRoutes = memo(
   ({ isCompact, searchQuery, user, allUsernames }: SidebarRoutesProps) => {
     return (
       <>
-        <RouteLink icon={<IconTower />} name="Admin" path="/admin">
-          <RouteLink
-            icon={<IconFolder />}
-            name="Resources"
-            path="/admin/resources"
-          />
-          <RouteLink
-            icon={<IconHeartRateMonitor />}
-            name="Monitor"
-            path="/admin/monitor"
-          />
-          <RouteLink icon={<IconUsers />} name="Users" path="/admin/users" />
-          <RouteLink
-            icon={<IconSettings />}
-            name="Settings"
-            path="/admin/settings"
-          />
-        </RouteLink>
+        {user?.roles.find(role => role.name === 'admin') !== undefined ? (
+          <RouteLink icon={<IconTower />} name="Admin" path="/admin">
+            <RouteLink
+              icon={<IconFolder />}
+              name="Resources"
+              path="/admin/resources"
+            />
+            <RouteLink
+              icon={<IconHeartRateMonitor />}
+              name="Monitoring"
+              path="/admin/monitoring"
+            />
+            <RouteLink icon={<IconUsers />} name="Users" path="/admin/users" />
+            <RouteLink
+              icon={<IconCategory />}
+              name="Roles"
+              path="/admin/roles"
+            />
+            <RouteLink
+              icon={<IconKey />}
+              name="Registration Keys"
+              path="/admin/registration-keys"
+            />
+            <RouteLink
+              icon={<IconSettings />}
+              name="Settings"
+              path="/admin/settings"
+            />
+          </RouteLink>
+        ) : (
+          <></>
+        )}
         <RouteLink
           icon={<IconBuildingLighthouse />}
           name="Displays"
