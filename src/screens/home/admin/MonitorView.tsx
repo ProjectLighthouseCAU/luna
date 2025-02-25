@@ -134,7 +134,7 @@ export function MonitorView() {
 
   // set the selected window index on click
   const onMouseDown = useCallback((p: Vec2<number>) => {
-    const lampIdx = p.y * LIGHTHOUSE_COLS + p.x;
+    const lampIdx = Math.floor(p.y) * LIGHTHOUSE_COLS + Math.floor(p.x);
     setSelectedWindow(lampIdx);
   }, []);
 

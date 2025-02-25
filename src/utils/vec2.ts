@@ -31,3 +31,7 @@ export function length(operand: Vec2<number>): number {
 export function dist(lhs: Vec2<number>, rhs: Vec2<number>): number {
   return length(sub(lhs, rhs));
 }
+
+export function vec2Equal(lhs: Vec2<number>, rhs: Vec2<number>): boolean {
+  return lhs.x === rhs.x && lhs.y === rhs.y;
+}

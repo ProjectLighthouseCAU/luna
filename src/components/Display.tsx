@@ -4,7 +4,7 @@ import {
   LIGHTHOUSE_COLS,
   LIGHTHOUSE_ROWS,
 } from 'nighthouse/browser';
-import { Vec2 } from '@luna/utils/vec2';
+import { Vec2, vec2Equal as vec2AreEqual } from '@luna/utils/vec2';
 
 export const DISPLAY_ASPECT_RATIO = 0.8634;
 
@@ -40,7 +40,7 @@ export function Display({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [drag, setDrag] = useState(false);
-  const [prevCoords, setPrevCoords] = useState<number[] | null>(null);
+  const [prevCoords, setPrevCoords] = useState<Vec2<number>>();
   // Set up rendering
   useLayoutEffect(() => {
     const canvas = canvasRef.current!;
@@ -82,14 +82,12 @@ export function Display({
       ctx.fillRect(x, 0, gutterWidth, height);
     }
 
-    const midPoints: number[][] = [];
     // Draw windows
     for (let j = 0; j < columns; j++) {
       const x = bezelWidth + j * windowWidth + (j + 1) * gutterWidth;
 
       for (let i = 0; i < rows; i++) {
         const y = i * (1 + spacersPerRow) * windowHeight;
-        midPoints.push([x + windowWidth / 2, y + windowHeight / 2]);
         const k = (i * LIGHTHOUSE_COLS + j) * LIGHTHOUSE_COLOR_CHANNELS;
         const rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
         ctx.fillStyle = `rgb(${rgb.join(',')})`;
@@ -97,86 +95,52 @@ export function Display({
       }
     }
 
-    const dist = ([x1, y1]: number[], [x2, y2]: number[]) => {
-      const xDiff = x1 - x2;
-      const yDiff = y1 - y2;
-      return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+    const eventToMouseCoords = (event: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
     };
 
-    const mouseToWindowCoords = (mouseCoords: number[]) => {
-      const closestPointIdx = midPoints
-        .map(p => dist(p, mouseCoords))
-        .reduce(
-          ([aIdx, acc], val, idx) => [
-            val < acc ? idx : aIdx,
-            Math.min(acc, val),
-          ],
-          [-1, Infinity]
-        )[0];
-      const closestPoint = midPoints[closestPointIdx];
-      const x = closestPoint[0] - windowWidth / 2;
-      const y = closestPoint[1] - windowHeight / 2;
-      if (
-        strictBoundsChecking &&
-        !(
-          mouseCoords[0] >= x &&
-          mouseCoords[0] <= x + windowWidth &&
-          mouseCoords[1] >= y &&
-          mouseCoords[1] <= y + windowHeight
-        )
-      ) {
-        return null;
-      }
-      const j = Math.round(
-        (x - bezelWidth - gutterWidth) / (windowWidth + gutterWidth)
-      );
-      const i = Math.round(y / (windowHeight * (1 + spacersPerRow)));
-      return [i, j];
+    const mouseToWindowCoords = (mouseCoords: Vec2<number>) => {
+      return {
+        x: (mouseCoords.x / width) * LIGHTHOUSE_COLS,
+        y: (mouseCoords.y / height) * LIGHTHOUSE_ROWS,
+      };
     };
 
     const onMouseDownHandler = (event: MouseEvent) => {
       setDrag(true);
 
-      const rect = canvas.getBoundingClientRect();
-      const mouseCoords = [event.clientX - rect.left, event.clientY - rect.top];
-
+      const mouseCoords = eventToMouseCoords(event);
       const windowCoords = mouseToWindowCoords(mouseCoords);
       if (!windowCoords) return; // in case of strict bounds checking
       setPrevCoords(windowCoords); // for consecutive drag
 
-      onMouseDown({ x: windowCoords[1], y: windowCoords[0] });
+      onMouseDown(windowCoords);
     };
     const onMouseUpHandler = (event: MouseEvent) => {
       setDrag(false);
 
-      const rect = canvas.getBoundingClientRect();
-      const mouseCoords = [event.clientX - rect.left, event.clientY - rect.top];
-
+      const mouseCoords = eventToMouseCoords(event);
       const windowCoords = mouseToWindowCoords(mouseCoords);
       if (!windowCoords) return; // in case of strict bounds checking
       setPrevCoords(windowCoords); // for consecutive drag
 
-      onMouseUp({ x: windowCoords[1], y: windowCoords[0] });
+      onMouseUp(windowCoords);
     };
 
     const onMouseDragHandler = (event: MouseEvent) => {
       if (!drag) return;
-      const rect = canvas.getBoundingClientRect();
-      const mouseCoords = [event.clientX - rect.left, event.clientY - rect.top];
 
+      const mouseCoords = eventToMouseCoords(event);
       const windowCoords = mouseToWindowCoords(mouseCoords);
       if (!windowCoords) return; // in case of strict bounds checking
 
       // don't emit drag events if coords haven't changed
-      if (
-        prevCoords &&
-        prevCoords[0] === windowCoords[0] &&
-        prevCoords[1] === windowCoords[1]
-      ) {
+      if (prevCoords && vec2AreEqual(prevCoords, windowCoords)) {
         return;
       }
       setPrevCoords(windowCoords);
-      onMouseDrag({ x: windowCoords[1], y: windowCoords[0] });
+      onMouseDrag(windowCoords);
     };
     canvas.style.cursor = 'crosshair';
     canvas.addEventListener('mousedown', onMouseDownHandler);
