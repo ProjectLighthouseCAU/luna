@@ -4,7 +4,8 @@ import {
   LIGHTHOUSE_COLS,
   LIGHTHOUSE_ROWS,
 } from 'nighthouse/browser';
-import { Vec2, vec2Equal as vec2AreEqual } from '@luna/utils/vec2';
+import { Vec2 } from '@luna/utils/vec2';
+import * as vec2 from '@luna/utils/vec2';
 
 export const DISPLAY_ASPECT_RATIO = 0.8634;
 
@@ -135,7 +136,7 @@ export function Display({
       const windowCoords = mouseToWindowCoords(mouseCoords);
       if (!windowCoords) return; // in case of strict bounds checking
       // don't emit drag events if coords haven't changed
-      if (prevCoords && vec2AreEqual(prevCoords, windowCoords)) {
+      if (prevCoords && vec2.areEqual(prevCoords, windowCoords)) {
         return;
       }
 
