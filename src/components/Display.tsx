@@ -22,6 +22,7 @@ export interface DisplayProps {
   onMouseDown?: (p: Vec2<number>) => void;
   onMouseUp?: (p: Vec2<number>) => void;
   onMouseDrag?: (p: Vec2<number>) => void;
+  onMouseMove?: (p?: Vec2<number>) => void;
 }
 
 export function Display({
@@ -37,6 +38,7 @@ export function Display({
   onMouseDown = () => {},
   onMouseUp = () => {},
   onMouseDrag = () => {},
+  onMouseMove = () => {},
 }: DisplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -113,44 +115,51 @@ export function Display({
 
       const mouseCoords = eventToMouseCoords(event);
       const windowCoords = mouseToWindowCoords(mouseCoords);
-      if (!windowCoords) return; // in case of strict bounds checking
 
       setPrevCoords(windowCoords); // for consecutive drag
       onMouseDown(windowCoords);
     };
+
     const onMouseUpHandler = (event: MouseEvent) => {
       setDrag(false);
 
       const mouseCoords = eventToMouseCoords(event);
       const windowCoords = mouseToWindowCoords(mouseCoords);
-      if (!windowCoords) return; // in case of strict bounds checking
 
       setPrevCoords(windowCoords); // for consecutive drag
       onMouseUp(windowCoords);
     };
 
-    const onMouseDragHandler = (event: MouseEvent) => {
-      if (!drag) return;
-
+    const onMouseMoveHandler = (event: MouseEvent) => {
       const mouseCoords = eventToMouseCoords(event);
       const windowCoords = mouseToWindowCoords(mouseCoords);
-      if (!windowCoords) return; // in case of strict bounds checking
       // don't emit drag events if coords haven't changed
       if (prevCoords && vec2.areEqual(prevCoords, windowCoords)) {
         return;
       }
 
       setPrevCoords(windowCoords);
-      onMouseDrag(windowCoords);
+      if (drag) {
+        onMouseDrag(windowCoords);
+      } else {
+        onMouseMove(windowCoords);
+      }
     };
+
+    const onMouseOutHandler = (event: MouseEvent) => {
+      onMouseMove(undefined);
+    };
+
     canvas.style.cursor = 'crosshair';
     canvas.addEventListener('mousedown', onMouseDownHandler);
-    canvas.addEventListener('mousemove', onMouseDragHandler);
+    canvas.addEventListener('mousemove', onMouseMoveHandler);
     canvas.addEventListener('mouseup', onMouseUpHandler);
+    canvas.addEventListener('mouseout', onMouseOutHandler);
     return () => {
       canvas.removeEventListener('mousedown', onMouseDownHandler);
-      canvas.removeEventListener('mousemove', onMouseDragHandler);
+      canvas.removeEventListener('mousemove', onMouseMoveHandler);
       canvas.removeEventListener('mouseup', onMouseUpHandler);
+      canvas.removeEventListener('mouseout', onMouseOutHandler);
     };
   }, [
     customWidth,
@@ -168,6 +177,7 @@ export function Display({
     onMouseDown,
     onMouseUp,
     onMouseDrag,
+    onMouseMove,
   ]);
 
   return <canvas ref={canvasRef} className={className} />;
