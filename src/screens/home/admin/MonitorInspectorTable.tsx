@@ -1,6 +1,5 @@
-import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { Table, TableCell, TableColumn, TableRow } from '@nextui-org/react';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { TableBody, TableHeader } from 'react-stately';
 
 // TODO: Generalize this to a generic component for data tables?
@@ -8,11 +7,13 @@ import { TableBody, TableHeader } from 'react-stately';
 export interface MonitorInspectorTableProps<T> {
   metrics: T[];
   names: { [Property in keyof T]: string };
+  render: (value: T[keyof T]) => ReactNode;
 }
 
 export function MonitorInspectorTable<T extends object>({
   metrics,
   names,
+  render,
 }: MonitorInspectorTableProps<T>) {
   const columns = [...Array(metrics.length + 1).keys()].map(i => ({
     key: i,
@@ -23,7 +24,10 @@ export function MonitorInspectorTable<T extends object>({
       metrics.length > 0
         ? (Object.keys(metrics[0]) as (keyof T)[]).map((prop, i) => ({
             key: i,
-            values: [names[prop], ...metrics.map(v => v[prop])],
+            values: [names[prop], ...metrics.map(v => v[prop])] as [
+              string,
+              ...T[keyof T][],
+            ],
           }))
         : [],
     [metrics, names]
@@ -49,7 +53,9 @@ export function MonitorInspectorTable<T extends object>({
               const i = columnKey as number;
               return (
                 <TableCell>
-                  <MonitorInspectorValue value={item.values[i]} />
+                  {i === 0
+                    ? item.values[0]
+                    : render(item.values[i] as T[keyof T])}
                 </TableCell>
               );
             }}

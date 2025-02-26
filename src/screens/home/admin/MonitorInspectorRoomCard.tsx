@@ -4,6 +4,7 @@ import {
   RoomV2Metrics,
 } from '@luna/contexts/api/model/types';
 import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
+import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
@@ -51,9 +52,10 @@ export function MonitorInspectorRoomCard({
   );
   return (
     <TitledCard icon={<IconDoor />} title={`Room ${metrics?.room ?? ''}`}>
-      <MonitorInspectorTable<RenderedMetrics>
+      <MonitorInspectorTable
         metrics={renderedMetrics}
         names={names}
+        render={value => <MonitorInspectorValue value={value} />}
       />
     </TitledCard>
   );

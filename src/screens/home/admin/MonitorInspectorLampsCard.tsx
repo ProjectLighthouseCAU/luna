@@ -1,6 +1,7 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import { LampV2Metrics } from '@luna/contexts/api/model/types';
 import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
+import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconLamp } from '@tabler/icons-react';
 
 export interface MonitorInspectorLampsCardProps {
@@ -22,7 +23,11 @@ export function MonitorInspectorLampsCard({
 }: MonitorInspectorLampsCardProps) {
   return (
     <TitledCard icon={<IconLamp />} title="Lamps">
-      <MonitorInspectorTable metrics={metrics} names={names} />
+      <MonitorInspectorTable
+        metrics={metrics}
+        names={names}
+        render={value => <MonitorInspectorValue value={value} />}
+      />
       {/* <div className="flex flex-row">
         {metrics
           ? metrics.map((lamp: any, idx: number) => (
