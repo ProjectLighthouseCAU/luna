@@ -9,7 +9,7 @@ export function MonitorInspectorValue({ value }: MonitorInspectorValueProps) {
     case 'string':
       return <>{value}</>;
     case 'number':
-      return <>{value}</>;
+      return <>{Number.isInteger(value) ? value : value.toFixed(4)}</>;
     case 'boolean':
       return (
         <Chip color={value ? 'success' : 'danger'} variant="flat">
