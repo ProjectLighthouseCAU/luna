@@ -1,7 +1,7 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import {
-  FlatRoomMetrics,
-  flattenRoomMetrics,
+  FlatRoomV2Metrics,
+  flattenRoomV2Metrics,
   RoomV2Metrics,
 } from '@luna/contexts/api/model/types';
 import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
@@ -13,7 +13,7 @@ export interface MonitorInspectorRoomCardProps {
   metrics?: RoomV2Metrics;
 }
 
-const names: { [Property in keyof FlatRoomMetrics]: string } = {
+const names: { [Property in keyof FlatRoomV2Metrics]: string } = {
   api_version: 'API version',
   responsive_lamps: 'Lamps (responsive)',
   total_lamps: 'Lamps (total)',
@@ -31,7 +31,7 @@ const names: { [Property in keyof FlatRoomMetrics]: string } = {
   voltage: 'Voltage',
 };
 
-const units: { [Property in keyof FlatRoomMetrics]?: string } = {
+const units: { [Property in keyof FlatRoomV2Metrics]?: string } = {
   board_temperature: '°C',
   core_temperature: '°C',
   current: 'A',
@@ -44,9 +44,9 @@ const units: { [Property in keyof FlatRoomMetrics]?: string } = {
 export function MonitorInspectorRoomCard({
   metrics,
 }: MonitorInspectorRoomCardProps) {
-  const [selection, setSelection] = useState<keyof FlatRoomMetrics>();
-  const renderedMetrics = useMemo<FlatRoomMetrics[]>(
-    () => (metrics ? [flattenRoomMetrics(metrics)] : []),
+  const [selection, setSelection] = useState<keyof FlatRoomV2Metrics>();
+  const renderedMetrics = useMemo<FlatRoomV2Metrics[]>(
+    () => (metrics ? [flattenRoomV2Metrics(metrics)] : []),
     [metrics]
   );
 
@@ -69,11 +69,11 @@ export function MonitorInspectorRoomCard({
   );
 }
 
-function MonitorInspectorRoomValue<K extends keyof FlatRoomMetrics>({
+function MonitorInspectorRoomValue<K extends keyof FlatRoomV2Metrics>({
   value,
   prop,
 }: {
-  value: FlatRoomMetrics[K];
+  value: FlatRoomV2Metrics[K];
   prop: K;
 }) {
   return <MonitorInspectorValue value={value} unit={units[prop]} />;

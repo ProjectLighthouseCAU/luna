@@ -54,13 +54,15 @@ export interface LampV2Metrics {
 
 export type RoomMetrics = RoomV1Metrics | RoomV2Metrics;
 
-export interface FlatRoomMetrics extends ControllerV2Metrics {
+export interface FlatRoomV2Metrics extends ControllerV2Metrics {
   api_version: number;
   responsive_lamps: number;
   total_lamps: number;
 }
 
-export function flattenRoomMetrics(metrics: RoomV2Metrics): FlatRoomMetrics {
+export function flattenRoomV2Metrics(
+  metrics: RoomV2Metrics
+): FlatRoomV2Metrics {
   return {
     api_version: metrics.api_version,
     responsive_lamps: metrics.lamp_metrics.filter(l => l.responding).length,
