@@ -25,6 +25,7 @@ import {
   useState,
 } from 'react';
 import { Set } from 'immutable';
+import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
 // import testMetrics from './statusLamps.json'; // TODO: remove testMetrics
 
 export function MonitorView() {
@@ -56,9 +57,9 @@ export function MonitorView() {
       : maxSize.height * DISPLAY_ASPECT_RATIO;
 
   const model = useContext(ModelContext);
-  const [metrics, setMetrics] = useState</*LaserMetrics*/ any>(null); // TODO: change when LaserMetrics includes room
+  const [metrics, setMetrics] = useState<LaserMetrics>();
 
-  const [selectedWindow, setSelectedWindow] = useState<number>();
+  const [selectedWindows, setSelectedWindows] = useState<Set<number>>(Set());
   const [hoveredWindows, setHoveredWindows] = useState<Set<number>>(Set());
 
   const getLatestMetrics = useCallback(async () => {
@@ -118,7 +119,7 @@ export function MonitorView() {
       }
     };
 
-    if (selectedWindow !== undefined) {
+    for (const selectedWindow of selectedWindows) {
       highlight(selectedWindow, 0.5);
     }
 
@@ -127,7 +128,7 @@ export function MonitorView() {
     }
 
     return frame;
-  }, [metrics, selectedWindow, hoveredWindows]);
+  }, [metrics, selectedWindows, hoveredWindows]);
 
   // search for the correct room metrics from a single index into the lamp array
   const roomMetricsFromIndex = useCallback(
@@ -135,40 +136,66 @@ export function MonitorView() {
       if (!metrics) return null;
       let currIdx = 0;
       for (const room of metrics.rooms) {
+        const roomV2 = room as RoomV2Metrics;
         if (
           lampIdx >= currIdx &&
-          lampIdx < currIdx + room.lamp_metrics.length
+          lampIdx < currIdx + roomV2.lamp_metrics.length
         ) {
           return room;
         }
-        currIdx += room.lamp_metrics.length;
+        currIdx += roomV2.lamp_metrics.length;
       }
       return null;
     },
     [metrics]
   );
 
+  const [roomsByWindow, windowsByRoom] = useMemo<[number[], number[][]]>(() => {
+    const roomsByWindow: number[] = [];
+    const windowsByRoom: number[][] = [];
+    let windowIdx = 0;
+    let roomIdx = 0;
+    for (const room of metrics?.rooms ?? []) {
+      const roomV2 = room as RoomV2Metrics;
+      for (let i = 0; i < roomV2.lamp_metrics.length; i++) {
+        roomsByWindow[windowIdx] = roomIdx;
+        windowsByRoom[roomIdx] = [...(windowsByRoom[roomIdx] ?? []), windowIdx];
+        windowIdx++;
+      }
+      roomIdx++;
+    }
+    return [roomsByWindow, windowsByRoom];
+  }, [metrics?.rooms]);
+
   const windowForPosition = useCallback(
     (p: Vec2<number>) => Math.floor(p.y) * LIGHTHOUSE_COLS + Math.floor(p.x),
     []
   );
 
+  const roomWindowsForPosition = useCallback(
+    (p?: Vec2<number>) =>
+      p ? windowsByRoom[roomsByWindow[windowForPosition(p)]] : [],
+    [windowForPosition, roomsByWindow, windowsByRoom]
+  );
+
   // set the selected window index on click
   const onMouseDown = useCallback(
-    (p: Vec2<number>) => setSelectedWindow(windowForPosition(p)),
-    [windowForPosition]
+    (p: Vec2<number>) => setSelectedWindows(Set(roomWindowsForPosition(p))),
+    [roomWindowsForPosition]
   );
 
   const onMouseMove = useCallback(
-    (p?: Vec2<number>) =>
-      setHoveredWindows(p ? Set([windowForPosition(p)]) : Set()),
-    [windowForPosition]
+    (p?: Vec2<number>) => setHoveredWindows(Set(roomWindowsForPosition(p))),
+    [roomWindowsForPosition]
   );
 
   // get the selected rooms metrics for rendering
   const selectedRoomMetrics = useMemo(
-    () => (selectedWindow ? roomMetricsFromIndex(selectedWindow) : undefined),
-    [roomMetricsFromIndex, selectedWindow]
+    () =>
+      !selectedWindows.isEmpty()
+        ? (roomMetricsFromIndex(selectedWindows.first()) as RoomV2Metrics)
+        : undefined,
+    [roomMetricsFromIndex, selectedWindows]
   );
 
   // TODO: more appealing UI (maybe tables, inputs or custom stuff?)

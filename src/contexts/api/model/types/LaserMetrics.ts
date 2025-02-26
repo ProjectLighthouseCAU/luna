@@ -22,6 +22,7 @@ export interface BoardV1Metrics {
 
 export interface RoomV2Metrics {
   api_version: 2;
+  room: number;
   controller_metrics: ControllerV2Metrics;
   lamp_metrics: LampV2Metrics[];
 }
