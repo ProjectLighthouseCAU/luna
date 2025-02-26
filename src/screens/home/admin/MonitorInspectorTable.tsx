@@ -30,7 +30,15 @@ export function MonitorInspectorTable<T extends object>({
   );
 
   return (
-    <Table hideHeader isStriped isCompact aria-label="Lamp monitoring values">
+    <Table
+      hideHeader
+      classNames={{
+        table: 'bg-red',
+      }}
+      isStriped
+      isCompact
+      aria-label="Lamp monitoring values"
+    >
       <TableHeader columns={columns}>
         {column => <TableColumn key={column.key}>{column.key}</TableColumn>}
       </TableHeader>
