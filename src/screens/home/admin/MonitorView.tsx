@@ -6,7 +6,11 @@ import { HomeContent } from '@luna/screens/home/HomeContent';
 import { throttle } from '@luna/utils/schedule';
 import { Vec2 } from '@luna/utils/vec2';
 import { Button, Card, CardBody, CardHeader, Chip } from '@nextui-org/react';
-import { LIGHTHOUSE_COLS, LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
+import {
+  LIGHTHOUSE_COLOR_CHANNELS,
+  LIGHTHOUSE_COLS,
+  LIGHTHOUSE_FRAME_BYTES,
+} from 'nighthouse/browser';
 // import {
 //   LaserMetrics,
 //   RoomMetrics,
@@ -20,6 +24,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { Set } from 'immutable';
 // import testMetrics from './statusLamps.json'; // TODO: remove testMetrics
 
 export function MonitorView() {
@@ -54,6 +59,7 @@ export function MonitorView() {
   const [metrics, setMetrics] = useState</*LaserMetrics*/ any>(null); // TODO: change when LaserMetrics includes room
 
   const [selectedWindow, setSelectedWindow] = useState<number>();
+  const [hoveredWindows, setHoveredWindows] = useState<Set<number>>(Set());
 
   const getLatestMetrics = useCallback(async () => {
     // setMetrics(testMetrics); // TODO: change back from test data to fetched data
@@ -81,11 +87,11 @@ export function MonitorView() {
     let i = 0;
     for (const room of metrics!.rooms!) {
       if (room.api_version !== 2) continue;
-      const endIdx = i + 3 * room.lamp_metrics.length;
+      const endIdx = i + LIGHTHOUSE_COLOR_CHANNELS * room.lamp_metrics.length;
       // controller works?
       if (room.controller_metrics.responding) {
         let lampIdx = 0;
-        for (; i < endIdx; i += 3) {
+        for (; i < endIdx; i += LIGHTHOUSE_COLOR_CHANNELS) {
           // lamp works?
           if (room.lamp_metrics[lampIdx].responding) {
             frame[i + 1] = parity ? 255 : 128; // green
@@ -104,14 +110,24 @@ export function MonitorView() {
       }
       parity = !parity;
     }
-    // show the selected window in white
+
+    const highlight = (window: number, brightness: number) => {
+      const i = window * LIGHTHOUSE_COLOR_CHANNELS;
+      for (let c = 0; c < LIGHTHOUSE_COLOR_CHANNELS; c++) {
+        frame[i + c] = (1 - brightness) * frame[i + c] + brightness * 255;
+      }
+    };
+
     if (selectedWindow !== undefined) {
-      frame[selectedWindow * 3] = 255;
-      frame[selectedWindow * 3 + 1] = 255;
-      frame[selectedWindow * 3 + 2] = 255;
+      highlight(selectedWindow, 0.5);
     }
+
+    for (const hoveredWindow of hoveredWindows) {
+      highlight(hoveredWindow, 0.5);
+    }
+
     return frame;
-  }, [metrics, selectedWindow]);
+  }, [metrics, selectedWindow, hoveredWindows]);
 
   // search for the correct room metrics from a single index into the lamp array
   const roomMetricsFromIndex = useCallback(
@@ -132,11 +148,22 @@ export function MonitorView() {
     [metrics]
   );
 
+  const windowForPosition = useCallback(
+    (p: Vec2<number>) => Math.floor(p.y) * LIGHTHOUSE_COLS + Math.floor(p.x),
+    []
+  );
+
   // set the selected window index on click
-  const onMouseDown = useCallback((p: Vec2<number>) => {
-    const lampIdx = Math.floor(p.y) * LIGHTHOUSE_COLS + Math.floor(p.x);
-    setSelectedWindow(lampIdx);
-  }, []);
+  const onMouseDown = useCallback(
+    (p: Vec2<number>) => setSelectedWindow(windowForPosition(p)),
+    [windowForPosition]
+  );
+
+  const onMouseMove = useCallback(
+    (p?: Vec2<number>) =>
+      setHoveredWindows(p ? Set([windowForPosition(p)]) : Set()),
+    [windowForPosition]
+  );
 
   // get the selected rooms metrics for rendering
   const selectedRoomMetrics = useMemo(
@@ -165,7 +192,12 @@ export function MonitorView() {
           className="grow flex flex-row justify-center h-full"
         >
           <div className={isCompact ? '' : 'absolute'}>
-            <Display width={width} frame={frame} onMouseDown={onMouseDown} />
+            <Display
+              width={width}
+              frame={frame}
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+            />
           </div>
         </div>
         <>
