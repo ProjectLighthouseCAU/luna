@@ -12,12 +12,12 @@ export interface MonitorInspectorRoomCardProps {
   metrics?: RoomV2Metrics;
 }
 
-export interface MonitorInspectorRoomMetrics extends ControllerV2Metrics {
+interface FlatRoomMetrics extends ControllerV2Metrics {
   api_version: number;
   lamps: string;
 }
 
-const names: { [Property in keyof MonitorInspectorRoomMetrics]: string } = {
+const names: { [Property in keyof FlatRoomMetrics]: string } = {
   api_version: 'API version',
   lamps: 'Lamps',
   board_temperature: 'Board temperature (accurate)',
@@ -34,7 +34,7 @@ const names: { [Property in keyof MonitorInspectorRoomMetrics]: string } = {
   voltage: 'Voltage',
 };
 
-const units: { [Property in keyof MonitorInspectorRoomMetrics]?: string } = {
+const units: { [Property in keyof FlatRoomMetrics]?: string } = {
   board_temperature: '°C',
   core_temperature: '°C',
   current: 'A',
@@ -44,22 +44,20 @@ const units: { [Property in keyof MonitorInspectorRoomMetrics]?: string } = {
   voltage: 'V',
 };
 
+function flattenRoomMetrics(metrics: RoomV2Metrics): FlatRoomMetrics {
+  return {
+    api_version: metrics.api_version,
+    lamps: `${metrics.lamp_metrics.filter(l => l.responding).length} of ${metrics.lamp_metrics.length}`,
+    ...metrics.controller_metrics,
+  };
+}
+
 export function MonitorInspectorRoomCard({
   metrics,
 }: MonitorInspectorRoomCardProps) {
-  const [selection, setSelection] =
-    useState<keyof MonitorInspectorRoomMetrics>();
-  const renderedMetrics = useMemo<MonitorInspectorRoomMetrics[]>(
-    () =>
-      metrics
-        ? [
-            {
-              api_version: metrics.api_version,
-              lamps: `${metrics.lamp_metrics.filter(l => l.responding).length} of ${metrics.lamp_metrics.length}`,
-              ...metrics.controller_metrics,
-            },
-          ]
-        : [],
+  const [selection, setSelection] = useState<keyof FlatRoomMetrics>();
+  const renderedMetrics = useMemo<FlatRoomMetrics[]>(
+    () => (metrics ? [flattenRoomMetrics(metrics)] : []),
     [metrics]
   );
 
@@ -82,8 +80,12 @@ export function MonitorInspectorRoomCard({
   );
 }
 
-function MonitorInspectorRoomValue<
-  K extends keyof MonitorInspectorRoomMetrics,
->({ value, prop }: { value: MonitorInspectorRoomMetrics[K]; prop: K }) {
+function MonitorInspectorRoomValue<K extends keyof FlatRoomMetrics>({
+  value,
+  prop,
+}: {
+  value: FlatRoomMetrics[K];
+  prop: K;
+}) {
   return <MonitorInspectorValue value={value} unit={units[prop]} />;
 }
