@@ -26,6 +26,7 @@ import {
 } from 'react';
 import { Set } from 'immutable';
 import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
+import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 // import testMetrics from './statusLamps.json'; // TODO: remove testMetrics
 
 export function MonitorView() {
@@ -203,139 +204,7 @@ export function MonitorView() {
             />
           </div>
         </div>
-        <>
-          <Card className="p-2 m-2 min-w-[420px] h-fit">
-            {selectedRoomMetrics ? (
-              <>
-                <CardHeader>
-                  <b>Room {selectedRoomMetrics.room}</b>
-                </CardHeader>
-                <CardBody>
-                  <div>API-Version: {selectedRoomMetrics.api_version}</div>
-                  <div>
-                    Responding:
-                    {selectedRoomMetrics.controller_metrics.responding ? (
-                      <Chip color="success" variant="flat">
-                        true
-                      </Chip>
-                    ) : (
-                      <Chip color="danger" variant="flat">
-                        false
-                      </Chip>
-                    )}
-                  </div>
-                  <div>
-                    Ping Latency:
-                    {selectedRoomMetrics.controller_metrics.ping_latency_ms}ms
-                  </div>
-                  <div>
-                    Firmware-Version:
-                    {selectedRoomMetrics.controller_metrics.firmware_version}
-                  </div>
-                  <div>
-                    Uptime: {selectedRoomMetrics.controller_metrics.uptime}s
-                  </div>
-                  <div>
-                    Frames received (total):
-                    {selectedRoomMetrics.controller_metrics.frames}
-                  </div>
-                  <div>
-                    Current frames per second (FPS):
-                    {selectedRoomMetrics.controller_metrics.fps}
-                  </div>
-                  <div>
-                    Core temperature (not very accurate):
-                    {selectedRoomMetrics.controller_metrics.core_temperature}
-                    °C
-                  </div>
-                  <div>
-                    Board temperature (accurate):
-                    {selectedRoomMetrics.controller_metrics.board_temperature}
-                    °C
-                  </div>
-                  <div>
-                    Shunt voltage:
-                    {selectedRoomMetrics.controller_metrics.shunt_voltage}V
-                  </div>
-                  <div>
-                    Voltage: {selectedRoomMetrics.controller_metrics.voltage}V
-                  </div>
-                  <div>
-                    Power: {selectedRoomMetrics.controller_metrics.power}W
-                  </div>
-                  <div>
-                    Current: {selectedRoomMetrics.controller_metrics.current}A
-                  </div>
-                  <div>
-                    Number of lamps responding/connected:{' '}
-                    {selectedRoomMetrics.lamp_metrics.reduce(
-                      (a: number, v: any) => a + (v.responding ? 1 : 0),
-                      0
-                    )}
-                    /{selectedRoomMetrics.lamp_metrics.length}
-                  </div>
-                </CardBody>
-              </>
-            ) : (
-              <></>
-            )}
-          </Card>
-          <Card className="p-2 m-2 min-w-[320px] h-fit">
-            {selectedRoomMetrics ? (
-              <>
-                <CardHeader>
-                  <b>Lamps:</b>
-                </CardHeader>
-                <CardBody>
-                  {selectedRoomMetrics.lamp_metrics.map(
-                    (lamp: any, idx: number) => (
-                      <>
-                        <div>
-                          <br />
-                          <b>Lamp {idx + 1}:</b>
-                          <div>
-                            Responding:{' '}
-                            {lamp.responding ? (
-                              <Chip color="success" variant="flat">
-                                true
-                              </Chip>
-                            ) : (
-                              <Chip color="danger" variant="flat">
-                                false
-                              </Chip>
-                            )}
-                          </div>
-                          <div>Firmware-Version: {lamp.firmware_version}</div>
-                          <div>Uptime (not very accurate): {lamp.uptime}s</div>
-                          <div>Timeout: {lamp.timeout}s</div>
-                          <div>
-                            Temperature (not very accurate): {lamp.temperature}
-                            °C
-                          </div>
-                          <div>
-                            Fuse tripped?{' '}
-                            {lamp.fuse_tripped ? (
-                              <Chip color="danger" variant="flat">
-                                Yes
-                              </Chip>
-                            ) : (
-                              <Chip color="success" variant="flat">
-                                No
-                              </Chip>
-                            )}
-                          </div>
-                          <div>Flashing status: {lamp.flashing_status}</div>
-                        </div>
-                      </>
-                    )
-                  )}
-                </CardBody>
-              </>
-            ) : (
-              <></>
-            )}
-          </Card>
-        </>
+        <MonitorInspector metrics={selectedRoomMetrics} />
       </div>
     </HomeContent>
   );
