@@ -12,7 +12,6 @@ export interface MonitorInspectorRoomCardProps {
 const names: { [Property in keyof FlatRoomV2Metrics]?: string } = {
   api_version: 'API version',
   responsive_lamps: 'Lamps (responsive)',
-  total_lamps: 'Lamps (total)',
   board_temperature: 'Board temperature (accurate)',
   core_temperature: 'Core temperature (not accurate)',
   current: 'Current',

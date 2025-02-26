@@ -1,3 +1,5 @@
+import { Bounded } from '@luna/utils/bounded';
+
 export interface LaserMetrics {
   rooms: RoomMetrics[];
 }
@@ -57,8 +59,7 @@ export type RoomMetrics = RoomV1Metrics | RoomV2Metrics;
 export interface FlatRoomV2Metrics extends ControllerV2Metrics {
   api_version: 2;
   room: number;
-  responsive_lamps: number;
-  total_lamps: number;
+  responsive_lamps: Bounded<number>;
 }
 
 export function flattenRoomV2Metrics(
@@ -67,8 +68,10 @@ export function flattenRoomV2Metrics(
   return {
     api_version: metrics.api_version,
     room: metrics.room,
-    responsive_lamps: metrics.lamp_metrics.filter(l => l.responding).length,
-    total_lamps: metrics.lamp_metrics.length,
+    responsive_lamps: {
+      value: metrics.lamp_metrics.filter(l => l.responding).length,
+      total: metrics.lamp_metrics.length,
+    },
     ...metrics.controller_metrics,
   };
 }

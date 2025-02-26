@@ -1,3 +1,4 @@
+import { isBounded } from '@luna/utils/bounded';
 import { Chip } from '@nextui-org/react';
 
 export interface MonitorInspectorValueProps {
@@ -18,6 +19,12 @@ export function MonitorInspectorValue({
 }
 
 function MonitorInspectorRawValue({ value }: { value: any }) {
+  if (value === null) {
+    return <>null</>;
+  }
+  if (value === undefined) {
+    return <>undefined</>;
+  }
   switch (typeof value) {
     case 'string':
       return <>{value}</>;
@@ -30,6 +37,14 @@ function MonitorInspectorRawValue({ value }: { value: any }) {
         </Chip>
       );
     default:
+      if (typeof value === 'object' && isBounded(value)) {
+        return (
+          <>
+            <MonitorInspectorRawValue value={value.value} /> of{' '}
+            <MonitorInspectorRawValue value={value.total} />
+          </>
+        );
+      }
       return <>{JSON.stringify(value)}</>;
   }
 }
