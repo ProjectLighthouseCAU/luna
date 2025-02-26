@@ -52,11 +52,15 @@ export function MonitorInspectorRoomCard({
   );
   return (
     <TitledCard icon={<IconDoor />} title={`Room ${metrics?.room ?? ''}`}>
-      <MonitorInspectorTable
-        metrics={renderedMetrics}
-        names={names}
-        render={value => <MonitorInspectorValue value={value} />}
-      />
+      {metrics ? (
+        <MonitorInspectorTable
+          metrics={renderedMetrics}
+          names={names}
+          render={value => <MonitorInspectorValue value={value} />}
+        />
+      ) : (
+        <div className="opacity-50">No room selected</div>
+      )}
     </TitledCard>
   );
 }

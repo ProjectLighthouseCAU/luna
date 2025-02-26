@@ -23,11 +23,15 @@ export function MonitorInspectorLampsCard({
 }: MonitorInspectorLampsCardProps) {
   return (
     <TitledCard icon={<IconLamp />} title="Lamps">
-      <MonitorInspectorTable
-        metrics={metrics}
-        names={names}
-        render={value => <MonitorInspectorValue value={value} />}
-      />
+      {metrics.length > 0 ? (
+        <MonitorInspectorTable
+          metrics={metrics}
+          names={names}
+          render={value => <MonitorInspectorValue value={value} />}
+        />
+      ) : (
+        <div className="opacity-50">No lamps selected</div>
+      )}
     </TitledCard>
   );
 }
