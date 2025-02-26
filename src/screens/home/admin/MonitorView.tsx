@@ -196,7 +196,11 @@ export function MonitorView() {
             />
           </div>
         </div>
-        <MonitorInspector metrics={selectedRoomMetrics} />
+        <div
+          className={isCompact ? '' : 'flex flex-row justify-end grow-0 w-1/3'}
+        >
+          <MonitorInspector metrics={selectedRoomMetrics} />
+        </div>
       </div>
     </HomeContent>
   );
