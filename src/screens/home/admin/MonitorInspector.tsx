@@ -7,7 +7,7 @@ export interface MonitorInspectorProps {
 
 export function MonitorInspector({ metrics }: MonitorInspectorProps) {
   return (
-    <>
+    <div className="flex flex-col">
       <Card className="p-2 m-2 min-w-[420px] h-fit">
         {metrics ? (
           <>
@@ -129,6 +129,6 @@ export function MonitorInspector({ metrics }: MonitorInspectorProps) {
           <></>
         )}
       </Card>
-    </>
+    </div>
   );
 }
