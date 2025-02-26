@@ -73,9 +73,10 @@ export function Display({
       (width - 2 * bezelWidth - gutterCount * gutterWidth) / columns;
     const spacersPerRow = 1;
     const windowHeight = height / ((1 + spacersPerRow) * rows);
+    const hasSpotlights = !spotlightedWindows.isEmpty();
 
     // Draw background
-    ctx.fillStyle = 'rgb(50,50,50)';
+    ctx.fillStyle = 'rgb(50, 50, 50)';
     ctx.fillRect(0, 0, width, height);
 
     // Draw bezels
@@ -84,7 +85,7 @@ export function Display({
     ctx.fillRect(width - bezelWidth, 0, bezelWidth, height);
 
     // Draw gutters
-    ctx.fillStyle = 'gray';
+    ctx.fillStyle = `rgba(128, 128, 128, ${hasSpotlights ? 0.5 : 1})`;
     for (let j = 0; j < gutterCount; j++) {
       const x = bezelWidth + j * (windowWidth + gutterWidth);
       ctx.fillRect(x, 0, gutterWidth, height);
@@ -107,7 +108,6 @@ export function Display({
     }
 
     // Draw windows
-    const hasSpotlights = !spotlightedWindows.isEmpty();
     for (let j = 0; j < columns; j++) {
       const x = bezelWidth + j * windowWidth + (j + 1) * gutterWidth;
 
@@ -118,7 +118,7 @@ export function Display({
         let rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
 
         if (hasSpotlights && !spotlightedWindows.contains(w)) {
-          rgb = rgb.map(c => c / 2);
+          rgb = rgb.map(c => c / 4);
         }
 
         ctx.fillStyle = `rgb(${rgb.join(',')})`;

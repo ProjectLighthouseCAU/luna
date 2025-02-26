@@ -112,19 +112,8 @@ export function MonitorView() {
       parity = !parity;
     }
 
-    const highlight = (window: number, brightness: number) => {
-      const i = window * LIGHTHOUSE_COLOR_CHANNELS;
-      for (let c = 0; c < LIGHTHOUSE_COLOR_CHANNELS; c++) {
-        frame[i + c] = (1 - brightness) * frame[i + c] + brightness * 255;
-      }
-    };
-
-    for (const selectedWindow of selectedWindows) {
-      highlight(selectedWindow, 0.5);
-    }
-
     return frame;
-  }, [metrics, selectedWindows]);
+  }, [metrics]);
 
   const [roomsByWindow, windowsByRoom] = useMemo<[number[], number[][]]>(() => {
     const roomsByWindow: number[] = [];
@@ -211,6 +200,7 @@ export function MonitorView() {
               width={width}
               frame={frame}
               highlightedWindows={hoveredWindows}
+              spotlightedWindows={selectedWindows}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
             />
