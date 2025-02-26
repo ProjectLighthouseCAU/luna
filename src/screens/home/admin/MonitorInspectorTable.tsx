@@ -7,7 +7,7 @@ import { TableBody, TableHeader } from 'react-stately';
 export interface MonitorInspectorTableProps<T> {
   metrics: T[];
   names: { [Property in keyof T]: string };
-  render: (value: T[keyof T]) => ReactNode;
+  render: <K extends keyof T>(value: T[K], prop: K) => ReactNode;
 }
 
 export function MonitorInspectorTable<T extends object>({
@@ -24,6 +24,7 @@ export function MonitorInspectorTable<T extends object>({
       metrics.length > 0
         ? (Object.keys(metrics[0]) as (keyof T)[]).map((prop, i) => ({
             key: i,
+            prop,
             values: [names[prop], ...metrics.map(v => v[prop])] as [
               string,
               ...T[keyof T][],
@@ -55,7 +56,7 @@ export function MonitorInspectorTable<T extends object>({
                 <TableCell>
                   {i === 0
                     ? item.values[0]
-                    : render(item.values[i] as T[keyof T])}
+                    : render(item.values[i] as T[keyof T], item.prop)}
                 </TableCell>
               );
             }}
