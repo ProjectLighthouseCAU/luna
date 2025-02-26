@@ -8,7 +8,7 @@ export interface MonitorInspectorProps {
 
 export function MonitorInspector({ metrics }: MonitorInspectorProps) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col space-y-3">
       <MonitorInspectorRoomCard metrics={metrics} />
       <MonitorInspectorLampsCard metrics={metrics?.lamp_metrics ?? []} />
     </div>
