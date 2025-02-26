@@ -1,7 +1,16 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import { LampV2Metrics } from '@luna/contexts/api/model/types';
-import { Chip } from '@nextui-org/react';
+import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
+import {
+  Table,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@nextui-org/react';
 import { IconLamp } from '@tabler/icons-react';
+import { useMemo } from 'react';
+import { TableBody } from 'react-stately';
 
 export interface MonitorInspectorLampsCardProps {
   metrics: LampV2Metrics[];
@@ -10,9 +19,58 @@ export interface MonitorInspectorLampsCardProps {
 export function MonitorInspectorLampsCard({
   metrics,
 }: MonitorInspectorLampsCardProps) {
+  const columns = [...Array(metrics.length + 1).keys()].map(i => ({
+    key: i,
+  }));
+
+  const rows = useMemo(
+    () =>
+      metrics.length > 0
+        ? Object.keys(metrics[0]).map((prop, i) => ({
+            key: i,
+            lampValues: [
+              prop,
+              ...metrics.map(lamp => lamp[prop as keyof LampV2Metrics]),
+            ],
+          }))
+        : [],
+    [metrics]
+  );
+
   return (
     <TitledCard icon={<IconLamp />} title="Lamps">
-      <div className="flex flex-row">
+      <Table hideHeader isStriped isCompact aria-label="Lamp monitoring values">
+        <TableHeader columns={columns}>
+          {column => <TableColumn key={column.key}>{column.key}</TableColumn>}
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <TableRow key={item.key}>
+              {columnKey => {
+                const i = columnKey as number;
+                return (
+                  <TableCell>
+                    <MonitorInspectorValue value={item.lampValues[i]} />
+                  </TableCell>
+                );
+              }}
+            </TableRow>
+          )}
+        </TableBody>
+        {/* <TableHeader columns={columns}>
+          {column => <TableColumn key={column.key}>{column.key}</TableColumn>}
+        </TableHeader>
+        <TableBody items={metricsByProp}>
+          {item => (
+            <TableRow key={item.key}>
+              {i => (
+                <TableCell key={i}>{item.lampValues[i as number]}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody> */}
+      </Table>
+      {/* <div className="flex flex-row">
         {metrics
           ? metrics.map((lamp: any, idx: number) => (
               <div key={idx}>
@@ -52,7 +110,7 @@ export function MonitorInspectorLampsCard({
               </div>
             ))
           : undefined}
-      </div>
+      </div> */}
     </TitledCard>
   );
 }
