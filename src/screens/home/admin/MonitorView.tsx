@@ -1,20 +1,20 @@
-import {
-  DISPLAY_ASPECT_RATIO,
-  Display,
-  MousePos,
-} from '@luna/components/Display';
+import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
+import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
+import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { throttle } from '@luna/utils/schedule';
-import { Button, Card, CardBody, CardHeader, Chip } from '@nextui-org/react';
-import { LIGHTHOUSE_COLS, LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
-// import {
-//   LaserMetrics,
-//   RoomMetrics,
-//   RoomV2Metrics,
-// } from 'nighthouse/out/common/protocol/metrics';
+import { Vec2 } from '@luna/utils/vec2';
+import { Button } from '@nextui-org/react';
+import { IconRefresh } from '@tabler/icons-react';
+import { Set } from 'immutable';
+import {
+  LIGHTHOUSE_COLOR_CHANNELS,
+  LIGHTHOUSE_COLS,
+  LIGHTHOUSE_FRAME_BYTES,
+} from 'nighthouse/browser';
 import {
   useCallback,
   useContext,
@@ -23,7 +23,6 @@ import {
   useRef,
   useState,
 } from 'react';
-// import testMetrics from './statusLamps.json'; // TODO: remove testMetrics
 
 export function MonitorView() {
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
@@ -54,9 +53,10 @@ export function MonitorView() {
       : maxSize.height * DISPLAY_ASPECT_RATIO;
 
   const model = useContext(ModelContext);
-  const [metrics, setMetrics] = useState</*LaserMetrics*/ any>(null); // TODO: change when LaserMetrics includes room
+  const [metrics, setMetrics] = useState<LaserMetrics>();
 
-  const [selectedWindow, setSelectedWindow] = useState<number>(0);
+  const [focusedRoom, setSelectedRoom] = useState<number>();
+  const [hoveredRoom, setHoveredRoom] = useState<number>();
 
   const getLatestMetrics = useCallback(async () => {
     // setMetrics(testMetrics); // TODO: change back from test data to fetched data
@@ -84,11 +84,11 @@ export function MonitorView() {
     let i = 0;
     for (const room of metrics!.rooms!) {
       if (room.api_version !== 2) continue;
-      const endIdx = i + 3 * room.lamp_metrics.length;
+      const endIdx = i + LIGHTHOUSE_COLOR_CHANNELS * room.lamp_metrics.length;
       // controller works?
       if (room.controller_metrics.responding) {
         let lampIdx = 0;
-        for (; i < endIdx; i += 3) {
+        for (; i < endIdx; i += LIGHTHOUSE_COLOR_CHANNELS) {
           // lamp works?
           if (room.lamp_metrics[lampIdx].responding) {
             frame[i + 1] = parity ? 255 : 128; // green
@@ -107,199 +107,100 @@ export function MonitorView() {
       }
       parity = !parity;
     }
-    // show the selected window in white
-    if (selectedWindow != null) {
-      frame[selectedWindow * 3] = 255;
-      frame[selectedWindow * 3 + 1] = 255;
-      frame[selectedWindow * 3 + 2] = 255;
-    }
-    return frame;
-  }, [metrics, selectedWindow]);
 
-  // search for the correct room metrics from a single index into the lamp array
-  const roomMetricsFromIndex = useCallback(
-    (lampIdx: number) => {
-      if (!metrics) return null;
-      let currIdx = 0;
-      for (const room of metrics.rooms) {
-        if (
-          lampIdx >= currIdx &&
-          lampIdx < currIdx + room.lamp_metrics.length
-        ) {
-          return room;
-        }
-        currIdx += room.lamp_metrics.length;
+    return frame;
+  }, [metrics]);
+
+  const [roomsByWindow, windowsByRoom] = useMemo<[number[], number[][]]>(() => {
+    const roomsByWindow: number[] = [];
+    const windowsByRoom: number[][] = [];
+    let windowIdx = 0;
+    let roomIdx = 0;
+    for (const room of metrics?.rooms ?? []) {
+      const roomV2 = room as RoomV2Metrics;
+      for (let i = 0; i < roomV2.lamp_metrics.length; i++) {
+        roomsByWindow[windowIdx] = roomIdx;
+        windowsByRoom[roomIdx] = [...(windowsByRoom[roomIdx] ?? []), windowIdx];
+        windowIdx++;
       }
-      return null;
-    },
-    [metrics]
+      roomIdx++;
+    }
+    return [roomsByWindow, windowsByRoom];
+  }, [metrics?.rooms]);
+
+  const windowForPosition = useCallback(
+    (p: Vec2<number>) => Math.floor(p.y) * LIGHTHOUSE_COLS + Math.floor(p.x),
+    []
+  );
+
+  const roomForPosition = useCallback(
+    (p?: Vec2<number>) => (p ? roomsByWindow[windowForPosition(p)] : undefined),
+    [roomsByWindow, windowForPosition]
   );
 
   // set the selected window index on click
-  const onMouseDown = useCallback((p: MousePos) => {
-    const lampIdx = p.y * LIGHTHOUSE_COLS + p.x;
-    setSelectedWindow(lampIdx);
-  }, []);
+  const onMouseDown = useCallback(
+    (p: Vec2<number>) => setSelectedRoom(roomForPosition(p)),
+    [roomForPosition]
+  );
+
+  const onMouseMove = useCallback(
+    (p?: Vec2<number>) => setHoveredRoom(roomForPosition(p)),
+    [roomForPosition]
+  );
+
+  const focusedWindows = useMemo<Set<number>>(
+    () => (focusedRoom !== undefined ? Set(windowsByRoom[focusedRoom]) : Set()),
+    [focusedRoom, windowsByRoom]
+  );
+
+  const hoveredWindows = useMemo<Set<number>>(
+    () => (hoveredRoom !== undefined ? Set(windowsByRoom[hoveredRoom]) : Set()),
+    [hoveredRoom, windowsByRoom]
+  );
 
   // get the selected rooms metrics for rendering
   const selectedRoomMetrics = useMemo(
-    () => roomMetricsFromIndex(selectedWindow),
-    [roomMetricsFromIndex, selectedWindow]
+    () =>
+      focusedRoom !== undefined
+        ? (metrics?.rooms[focusedRoom] as RoomV2Metrics | undefined)
+        : undefined,
+    [metrics?.rooms, focusedRoom]
   );
 
   // TODO: more appealing UI (maybe tables, inputs or custom stuff?)
   return (
-    <HomeContent title="Monitoring">
+    <HomeContent
+      title="Monitoring"
+      toolbar={
+        /* TODO: auto-refresh (polling) or streaming metrics */
+        <Button color="secondary" onPress={getLatestMetrics}>
+          <IconRefresh />
+          Refresh all
+        </Button>
+      }
+    >
       <div className="flex flex-col space-y-4 md:flex-row h-full">
         <div
           ref={wrapperRef}
           className="grow flex flex-row justify-center h-full"
         >
           <div className={isCompact ? '' : 'absolute'}>
-            <Display width={width} frame={frame} onMouseDown={onMouseDown} />
+            <Display
+              width={width}
+              frame={frame}
+              highlightedWindows={hoveredWindows}
+              focusedWindows={focusedWindows}
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+            />
           </div>
         </div>
-        <>
-          {/* TODO: auto-refresh (polling) or streaming metrics */}
-          <Button
-            color="secondary"
-            className="flex flex-col"
-            onPress={getLatestMetrics}
-          >
-            Refresh all
-          </Button>
-          <Card className="p-2 m-2 min-w-[420px] h-fit">
-            {selectedRoomMetrics ? (
-              <>
-                <CardHeader>
-                  <b>Room {selectedRoomMetrics.room}</b>
-                </CardHeader>
-                <CardBody>
-                  <div>API-Version: {selectedRoomMetrics.api_version}</div>
-                  <div>
-                    Responding:
-                    {selectedRoomMetrics.controller_metrics.responding ? (
-                      <Chip color="success" variant="flat">
-                        true
-                      </Chip>
-                    ) : (
-                      <Chip color="danger" variant="flat">
-                        false
-                      </Chip>
-                    )}
-                  </div>
-                  <div>
-                    Ping Latency:
-                    {selectedRoomMetrics.controller_metrics.ping_latency_ms}ms
-                  </div>
-                  <div>
-                    Firmware-Version:
-                    {selectedRoomMetrics.controller_metrics.firmware_version}
-                  </div>
-                  <div>
-                    Uptime: {selectedRoomMetrics.controller_metrics.uptime}s
-                  </div>
-                  <div>
-                    Frames received (total):
-                    {selectedRoomMetrics.controller_metrics.frames}
-                  </div>
-                  <div>
-                    Current frames per second (FPS):
-                    {selectedRoomMetrics.controller_metrics.fps}
-                  </div>
-                  <div>
-                    Core temperature (not very accurate):
-                    {selectedRoomMetrics.controller_metrics.core_temperature}
-                    °C
-                  </div>
-                  <div>
-                    Board temperature (accurate):
-                    {selectedRoomMetrics.controller_metrics.board_temperature}
-                    °C
-                  </div>
-                  <div>
-                    Shunt voltage:
-                    {selectedRoomMetrics.controller_metrics.shunt_voltage}V
-                  </div>
-                  <div>
-                    Voltage: {selectedRoomMetrics.controller_metrics.voltage}V
-                  </div>
-                  <div>
-                    Power: {selectedRoomMetrics.controller_metrics.power}W
-                  </div>
-                  <div>
-                    Current: {selectedRoomMetrics.controller_metrics.current}A
-                  </div>
-                  <div>
-                    Number of lamps responding/connected:{' '}
-                    {selectedRoomMetrics.lamp_metrics.reduce(
-                      (a: number, v: any) => a + (v.responding ? 1 : 0),
-                      0
-                    )}
-                    /{selectedRoomMetrics.lamp_metrics.length}
-                  </div>
-                </CardBody>
-              </>
-            ) : (
-              <></>
-            )}
-          </Card>
-          <Card className="p-2 m-2 min-w-[320px] h-fit">
-            {selectedRoomMetrics ? (
-              <>
-                <CardHeader>
-                  <b>Lamps:</b>
-                </CardHeader>
-                <CardBody>
-                  {selectedRoomMetrics.lamp_metrics.map(
-                    (lamp: any, idx: number) => (
-                      <>
-                        <div>
-                          <br />
-                          <b>Lamp {idx + 1}:</b>
-                          <div>
-                            Responding:{' '}
-                            {lamp.responding ? (
-                              <Chip color="success" variant="flat">
-                                true
-                              </Chip>
-                            ) : (
-                              <Chip color="danger" variant="flat">
-                                false
-                              </Chip>
-                            )}
-                          </div>
-                          <div>Firmware-Version: {lamp.firmware_version}</div>
-                          <div>Uptime (not very accurate): {lamp.uptime}s</div>
-                          <div>Timeout: {lamp.timeout}s</div>
-                          <div>
-                            Temperature (not very accurate): {lamp.temperature}
-                            °C
-                          </div>
-                          <div>
-                            Fuse tripped?{' '}
-                            {lamp.fuse_tripped ? (
-                              <Chip color="danger" variant="flat">
-                                Yes
-                              </Chip>
-                            ) : (
-                              <Chip color="success" variant="flat">
-                                No
-                              </Chip>
-                            )}
-                          </div>
-                          <div>Flashing status: {lamp.flashing_status}</div>
-                        </div>
-                      </>
-                    )
-                  )}
-                </CardBody>
-              </>
-            ) : (
-              <></>
-            )}
-          </Card>
-        </>
+        <div
+          className={isCompact ? '' : 'flex flex-row justify-end grow-0 w-1/3'}
+        >
+          <MonitorInspector metrics={selectedRoomMetrics} />
+        </div>
       </div>
     </HomeContent>
   );
