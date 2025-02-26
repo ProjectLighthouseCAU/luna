@@ -1,5 +1,11 @@
-import { Table, TableCell, TableColumn, TableRow } from '@nextui-org/react';
-import { ReactNode, useMemo } from 'react';
+import {
+  Selection,
+  Table,
+  TableCell,
+  TableColumn,
+  TableRow,
+} from '@nextui-org/react';
+import { ReactNode, useCallback, useMemo } from 'react';
 import { TableBody, TableHeader } from 'react-stately';
 
 // TODO: Generalize this to a generic component for data tables?
@@ -7,12 +13,16 @@ import { TableBody, TableHeader } from 'react-stately';
 export interface MonitorInspectorTableProps<T> {
   metrics: T[];
   names: { [Property in keyof T]: string };
+  selection?: keyof T;
+  onSelect?: (prop?: keyof T) => void;
   render: <K extends keyof T>(value: T[K], prop: K) => ReactNode;
 }
 
 export function MonitorInspectorTable<T extends object>({
   metrics,
   names,
+  selection,
+  onSelect,
   render,
 }: MonitorInspectorTableProps<T>) {
   const columns = useMemo(
@@ -26,8 +36,8 @@ export function MonitorInspectorTable<T extends object>({
   const rows = useMemo(
     () =>
       metrics.length > 0
-        ? (Object.keys(metrics[0]) as (keyof T)[]).map((prop, i) => ({
-            key: i,
+        ? (Object.keys(metrics[0]) as (keyof T)[]).map(prop => ({
+            key: prop as string,
             prop,
             values: [names[prop], ...metrics.map(v => v[prop])] as [
               string,
@@ -38,6 +48,17 @@ export function MonitorInspectorTable<T extends object>({
     [metrics, names]
   );
 
+  const onSelectionChange = useCallback(
+    (selection: Selection) => {
+      onSelect?.(
+        selection !== 'all' && selection.size > 0
+          ? (selection.values().next().value as keyof T)
+          : undefined
+      );
+    },
+    [onSelect]
+  );
+
   return (
     <Table
       hideHeader
@@ -46,6 +67,9 @@ export function MonitorInspectorTable<T extends object>({
       }}
       isStriped
       isCompact
+      selectedKeys={[selection as string]}
+      selectionMode={selection || onSelect ? 'single' : undefined}
+      onSelectionChange={onSelectionChange}
       aria-label="Lamp monitoring values"
     >
       <TableHeader columns={columns}>

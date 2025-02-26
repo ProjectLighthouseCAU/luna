@@ -6,7 +6,7 @@ import {
 import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
 import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 export interface MonitorInspectorRoomCardProps {
   metrics?: RoomV2Metrics;
@@ -47,6 +47,7 @@ const units: { [Property in keyof RenderedMetrics]?: string } = {
 export function MonitorInspectorRoomCard({
   metrics,
 }: MonitorInspectorRoomCardProps) {
+  const [selection, setSelection] = useState<keyof RenderedMetrics>();
   const renderedMetrics = useMemo<RenderedMetrics[]>(
     () =>
       metrics
@@ -60,12 +61,15 @@ export function MonitorInspectorRoomCard({
         : [],
     [metrics]
   );
+
   return (
     <TitledCard icon={<IconDoor />} title={`Room ${metrics?.room ?? ''}`}>
       {metrics ? (
         <MonitorInspectorTable
           metrics={renderedMetrics}
           names={names}
+          selection={selection}
+          onSelect={setSelection}
           render={(value, prop) => (
             <MonitorInspectorRoomValue value={value} prop={prop} />
           )}
