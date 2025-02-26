@@ -1,6 +1,7 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import {
-  ControllerV2Metrics,
+  FlatRoomMetrics,
+  flattenRoomMetrics,
   RoomV2Metrics,
 } from '@luna/contexts/api/model/types';
 import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
@@ -12,14 +13,10 @@ export interface MonitorInspectorRoomCardProps {
   metrics?: RoomV2Metrics;
 }
 
-interface FlatRoomMetrics extends ControllerV2Metrics {
-  api_version: number;
-  lamps: string;
-}
-
 const names: { [Property in keyof FlatRoomMetrics]: string } = {
   api_version: 'API version',
-  lamps: 'Lamps',
+  responsive_lamps: 'Lamps (responsive)',
+  total_lamps: 'Lamps (total)',
   board_temperature: 'Board temperature (accurate)',
   core_temperature: 'Core temperature (not accurate)',
   current: 'Current',
@@ -43,14 +40,6 @@ const units: { [Property in keyof FlatRoomMetrics]?: string } = {
   uptime: 's',
   voltage: 'V',
 };
-
-function flattenRoomMetrics(metrics: RoomV2Metrics): FlatRoomMetrics {
-  return {
-    api_version: metrics.api_version,
-    lamps: `${metrics.lamp_metrics.filter(l => l.responding).length} of ${metrics.lamp_metrics.length}`,
-    ...metrics.controller_metrics,
-  };
-}
 
 export function MonitorInspectorRoomCard({
   metrics,
