@@ -59,8 +59,8 @@ export function MonitorView() {
   const model = useContext(ModelContext);
   const [metrics, setMetrics] = useState<LaserMetrics>();
 
-  const [selectedWindows, setSelectedWindows] = useState<Set<number>>(Set());
-  const [hoveredWindows, setHoveredWindows] = useState<Set<number>>(Set());
+  const [focusedRoom, setSelectedRoom] = useState<number>();
+  const [hoveredRoom, setHoveredRoom] = useState<number>();
 
   const getLatestMetrics = useCallback(async () => {
     // setMetrics(testMetrics); // TODO: change back from test data to fetched data
@@ -137,42 +137,39 @@ export function MonitorView() {
     []
   );
 
-  const roomWindowsForWindow = useCallback(
-    (windowIdx: number) => windowsByRoom[roomsByWindow[windowIdx]],
-    [roomsByWindow, windowsByRoom]
-  );
-
-  const roomMetricsForWindow = useCallback(
-    (windowIdx: number) => {
-      if (!metrics) return null;
-      return metrics.rooms[roomsByWindow[windowIdx]] as RoomV2Metrics;
-    },
-    [metrics, roomsByWindow]
-  );
-
-  const roomWindowsForPosition = useCallback(
-    (p?: Vec2<number>) => (p ? roomWindowsForWindow(windowForPosition(p)) : []),
-    [roomWindowsForWindow, windowForPosition]
+  const roomForPosition = useCallback(
+    (p?: Vec2<number>) => (p ? roomsByWindow[windowForPosition(p)] : undefined),
+    [roomsByWindow, windowForPosition]
   );
 
   // set the selected window index on click
   const onMouseDown = useCallback(
-    (p: Vec2<number>) => setSelectedWindows(Set(roomWindowsForPosition(p))),
-    [roomWindowsForPosition]
+    (p: Vec2<number>) => setSelectedRoom(roomForPosition(p)),
+    [roomForPosition]
   );
 
   const onMouseMove = useCallback(
-    (p?: Vec2<number>) => setHoveredWindows(Set(roomWindowsForPosition(p))),
-    [roomWindowsForPosition]
+    (p?: Vec2<number>) => setHoveredRoom(roomForPosition(p)),
+    [roomForPosition]
+  );
+
+  const focusedWindows = useMemo<Set<number>>(
+    () => (focusedRoom !== undefined ? Set(windowsByRoom[focusedRoom]) : Set()),
+    [focusedRoom, windowsByRoom]
+  );
+
+  const hoveredWindows = useMemo<Set<number>>(
+    () => (hoveredRoom !== undefined ? Set(windowsByRoom[hoveredRoom]) : Set()),
+    [hoveredRoom, windowsByRoom]
   );
 
   // get the selected rooms metrics for rendering
   const selectedRoomMetrics = useMemo(
     () =>
-      !selectedWindows.isEmpty()
-        ? (roomMetricsForWindow(selectedWindows.first()) as RoomV2Metrics)
+      focusedRoom !== undefined
+        ? (metrics?.rooms[focusedRoom] as RoomV2Metrics | undefined)
         : undefined,
-    [roomMetricsForWindow, selectedWindows]
+    [metrics?.rooms, focusedRoom]
   );
 
   // TODO: more appealing UI (maybe tables, inputs or custom stuff?)
@@ -200,7 +197,7 @@ export function MonitorView() {
               width={width}
               frame={frame}
               highlightedWindows={hoveredWindows}
-              focusedWindows={selectedWindows}
+              focusedWindows={focusedWindows}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
             />
