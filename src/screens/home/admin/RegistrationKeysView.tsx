@@ -55,7 +55,7 @@ export function RegistrationKeysView() {
 
   return (
     // TODO: Lazy rendering
-    (<HomeContent
+    <HomeContent
       title="Registration Keys"
       toolbar={
         <div className="flex flex-row gap-4">
@@ -157,6 +157,6 @@ export function RegistrationKeysView() {
           )}
         </TableBody>
       </Table>
-    </HomeContent>)
+    </HomeContent>
   );
 }
