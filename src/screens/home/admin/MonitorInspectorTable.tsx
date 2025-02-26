@@ -15,9 +15,13 @@ export function MonitorInspectorTable<T extends object>({
   names,
   render,
 }: MonitorInspectorTableProps<T>) {
-  const columns = [...Array(metrics.length + 1).keys()].map(i => ({
-    key: `${i}`,
-  }));
+  const columns = useMemo(
+    () =>
+      [...Array(metrics.length + 1).keys()].map(i => ({
+        key: `${i}`,
+      })),
+    [metrics.length]
+  );
 
   const rows = useMemo(
     () =>
