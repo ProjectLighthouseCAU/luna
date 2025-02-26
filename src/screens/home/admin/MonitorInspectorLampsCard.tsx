@@ -57,18 +57,6 @@ export function MonitorInspectorLampsCard({
             </TableRow>
           )}
         </TableBody>
-        {/* <TableHeader columns={columns}>
-          {column => <TableColumn key={column.key}>{column.key}</TableColumn>}
-        </TableHeader>
-        <TableBody items={metricsByProp}>
-          {item => (
-            <TableRow key={item.key}>
-              {i => (
-                <TableCell key={i}>{item.lampValues[i as number]}</TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody> */}
       </Table>
       {/* <div className="flex flex-row">
         {metrics
