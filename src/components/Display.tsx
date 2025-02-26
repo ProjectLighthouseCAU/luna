@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
+import { Set } from 'immutable';
 import {
   LIGHTHOUSE_COLOR_CHANNELS,
   LIGHTHOUSE_COLS,
@@ -19,6 +20,7 @@ export interface DisplayProps {
   relativeGutterWidth?: number;
   className?: string;
   strictBoundsChecking?: boolean;
+  highlightedWindows?: Set<number>;
   onMouseDown?: (p: Vec2<number>) => void;
   onMouseUp?: (p: Vec2<number>) => void;
   onMouseDrag?: (p: Vec2<number>) => void;
@@ -35,6 +37,7 @@ export function Display({
   relativeGutterWidth = 0.0064,
   className,
   strictBoundsChecking = false,
+  highlightedWindows = Set(),
   onMouseDown = () => {},
   onMouseUp = () => {},
   onMouseDrag = () => {},
@@ -68,6 +71,7 @@ export function Display({
       (width - 2 * bezelWidth - gutterCount * gutterWidth) / columns;
     const spacersPerRow = 1;
     const windowHeight = height / ((1 + spacersPerRow) * rows);
+    const highlightFactor = 0.5;
 
     // Draw background
     ctx.fillStyle = 'rgb(50,50,50)';
@@ -91,8 +95,16 @@ export function Display({
 
       for (let i = 0; i < rows; i++) {
         const y = i * (1 + spacersPerRow) * windowHeight;
-        const k = (i * LIGHTHOUSE_COLS + j) * LIGHTHOUSE_COLOR_CHANNELS;
-        const rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
+        const w = i * LIGHTHOUSE_COLS + j;
+        const k = w * LIGHTHOUSE_COLOR_CHANNELS;
+        let rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
+
+        if (highlightedWindows.contains(w)) {
+          rgb = rgb.map(
+            c => (1 - highlightFactor) * c + (1 - highlightFactor) * 255
+          );
+        }
+
         ctx.fillStyle = `rgb(${rgb.join(',')})`;
         ctx.fillRect(x, y, windowWidth, windowHeight);
       }
@@ -178,6 +190,7 @@ export function Display({
     onMouseUp,
     onMouseDrag,
     onMouseMove,
+    highlightedWindows,
   ]);
 
   return <canvas ref={canvasRef} className={className} />;

@@ -123,12 +123,8 @@ export function MonitorView() {
       highlight(selectedWindow, 0.5);
     }
 
-    for (const hoveredWindow of hoveredWindows) {
-      highlight(hoveredWindow, 0.5);
-    }
-
     return frame;
-  }, [metrics, selectedWindows, hoveredWindows]);
+  }, [metrics, selectedWindows]);
 
   const [roomsByWindow, windowsByRoom] = useMemo<[number[], number[][]]>(() => {
     const roomsByWindow: number[] = [];
@@ -214,6 +210,7 @@ export function MonitorView() {
             <Display
               width={width}
               frame={frame}
+              highlightedWindows={hoveredWindows}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
             />
