@@ -57,7 +57,7 @@ export function MonitorInspectorTable<T extends object>({
             {columnKey => {
               const i = parseInt(columnKey as string);
               return (
-                <TableCell>
+                <TableCell key={i}>
                   {i === 0
                     ? item.values[0]
                     : render(item.values[i] as T[keyof T], item.prop)}
