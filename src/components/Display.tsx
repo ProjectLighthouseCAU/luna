@@ -93,19 +93,24 @@ export function Display({
 
     // Draw highlights
     const highlightPadding = gutterWidth;
-    ctx.fillStyle = 'rgb(200, 200, 200)';
-    for (const w of highlightedWindows) {
-      const i = Math.floor(w / LIGHTHOUSE_COLS);
-      const j = w % LIGHTHOUSE_COLS;
-      const x = bezelWidth + j * windowWidth + (j + 1) * gutterWidth;
-      const y = i * (1 + spacersPerRow) * windowHeight;
-      ctx.fillRect(
-        x - highlightPadding,
-        y - highlightPadding,
-        windowWidth + 2 * highlightPadding,
-        windowHeight + 2 * highlightPadding
-      );
-    }
+    const drawHighlights = (windows: Set<number>) => {
+      for (const w of windows) {
+        const i = Math.floor(w / LIGHTHOUSE_COLS);
+        const j = w % LIGHTHOUSE_COLS;
+        const x = bezelWidth + j * windowWidth + (j + 1) * gutterWidth;
+        const y = i * (1 + spacersPerRow) * windowHeight;
+        ctx.fillRect(
+          x - highlightPadding,
+          y - highlightPadding,
+          windowWidth + 2 * highlightPadding,
+          windowHeight + 2 * highlightPadding
+        );
+      }
+    };
+    ctx.fillStyle = 'rgb(180, 180, 180)';
+    drawHighlights(highlightedWindows);
+    ctx.fillStyle = 'white';
+    drawHighlights(focusedWindows);
 
     // Draw windows
     for (let j = 0; j < columns; j++) {
@@ -115,12 +120,7 @@ export function Display({
         const y = i * (1 + spacersPerRow) * windowHeight;
         const w = i * LIGHTHOUSE_COLS + j;
         const k = w * LIGHTHOUSE_COLOR_CHANNELS;
-        let rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
-
-        if (hasSpotlights && !focusedWindows.contains(w)) {
-          rgb = rgb.map(c => c / 4);
-        }
-
+        const rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
         ctx.fillStyle = `rgb(${rgb.join(',')})`;
         ctx.fillRect(x, y, windowWidth, windowHeight);
       }
