@@ -73,7 +73,6 @@ export function Display({
       (width - 2 * bezelWidth - gutterCount * gutterWidth) / columns;
     const spacersPerRow = 1;
     const windowHeight = height / ((1 + spacersPerRow) * rows);
-    const hasSpotlights = !focusedWindows.isEmpty();
 
     // Draw background
     ctx.fillStyle = 'rgb(50, 50, 50)';
@@ -85,7 +84,7 @@ export function Display({
     ctx.fillRect(width - bezelWidth, 0, bezelWidth, height);
 
     // Draw gutters
-    ctx.fillStyle = `rgba(128, 128, 128, ${hasSpotlights ? 0.5 : 1})`;
+    ctx.fillStyle = 'rgb(128, 128, 128)';
     for (let j = 0; j < gutterCount; j++) {
       const x = bezelWidth + j * (windowWidth + gutterWidth);
       ctx.fillRect(x, 0, gutterWidth, height);
