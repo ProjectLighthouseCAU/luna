@@ -16,6 +16,16 @@ export interface MonitorInspectorLampsCardProps {
   metrics: LampV2Metrics[];
 }
 
+const names: { [Property in keyof LampV2Metrics]: string } = {
+  firmware_version: 'Firmware version',
+  flashing_status: 'Flashing status',
+  fuse_tripped: 'Fuse tripped',
+  responding: 'Responding',
+  temperature: 'Temperature',
+  timeout: 'Timeout',
+  uptime: 'Uptime',
+};
+
 export function MonitorInspectorLampsCard({
   metrics,
 }: MonitorInspectorLampsCardProps) {
@@ -26,13 +36,12 @@ export function MonitorInspectorLampsCard({
   const rows = useMemo(
     () =>
       metrics.length > 0
-        ? Object.keys(metrics[0]).map((prop, i) => ({
-            key: i,
-            lampValues: [
-              prop,
-              ...metrics.map(lamp => lamp[prop as keyof LampV2Metrics]),
-            ],
-          }))
+        ? (Object.keys(metrics[0]) as (keyof LampV2Metrics)[]).map(
+            (prop, i) => ({
+              key: i,
+              lampValues: [names[prop], ...metrics.map(lamp => lamp[prop])],
+            })
+          )
         : [],
     [metrics]
   );
