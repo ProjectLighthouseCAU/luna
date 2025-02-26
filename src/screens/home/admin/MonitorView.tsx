@@ -3,6 +3,7 @@ import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
+import { flattenRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
 import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { throttle } from '@luna/utils/schedule';
@@ -73,16 +74,23 @@ export function MonitorView() {
     getLatestMetrics();
   }, [getLatestMetrics]);
 
+  const roomMetrics = useMemo(
+    () => (metrics?.rooms ?? []) as RoomV2Metrics[],
+    [metrics?.rooms]
+  );
+
+  const flatRoomMetrics = useMemo(
+    () => roomMetrics.map(room => flattenRoomV2Metrics(room)),
+    [roomMetrics]
+  );
+
   // fill the frame with colors according to the metrics data
   const frame = useMemo(() => {
     const frame = new Uint8Array(LIGHTHOUSE_FRAME_BYTES);
-    if (!metrics || !metrics.rooms) {
-      return frame;
-    }
     // alternate between light and dark color to visualize room borders
     let parity = false;
     let i = 0;
-    for (const room of metrics!.rooms!) {
+    for (const room of roomMetrics) {
       if (room.api_version !== 2) continue;
       const endIdx = i + LIGHTHOUSE_COLOR_CHANNELS * room.lamp_metrics.length;
       // controller works?
@@ -109,16 +117,15 @@ export function MonitorView() {
     }
 
     return frame;
-  }, [metrics]);
+  }, [roomMetrics]);
 
   const [roomsByWindow, windowsByRoom] = useMemo<[number[], number[][]]>(() => {
     const roomsByWindow: number[] = [];
     const windowsByRoom: number[][] = [];
     let windowIdx = 0;
     let roomIdx = 0;
-    for (const room of metrics?.rooms ?? []) {
-      const roomV2 = room as RoomV2Metrics;
-      for (let i = 0; i < roomV2.lamp_metrics.length; i++) {
+    for (const room of roomMetrics) {
+      for (let i = 0; i < room.lamp_metrics.length; i++) {
         roomsByWindow[windowIdx] = roomIdx;
         windowsByRoom[roomIdx] = [...(windowsByRoom[roomIdx] ?? []), windowIdx];
         windowIdx++;
@@ -126,7 +133,7 @@ export function MonitorView() {
       roomIdx++;
     }
     return [roomsByWindow, windowsByRoom];
-  }, [metrics?.rooms]);
+  }, [roomMetrics]);
 
   const windowForPosition = useCallback(
     (p: Vec2<number>) => Math.floor(p.y) * LIGHTHOUSE_COLS + Math.floor(p.x),
@@ -160,12 +167,12 @@ export function MonitorView() {
   );
 
   // get the selected rooms metrics for rendering
-  const selectedRoomMetrics = useMemo(
+  const [focusedFlatRoomMetrics, focusedLampMetrics] = useMemo(
     () =>
       focusedRoom !== undefined
-        ? (metrics?.rooms[focusedRoom] as RoomV2Metrics | undefined)
-        : undefined,
-    [metrics?.rooms, focusedRoom]
+        ? [flatRoomMetrics[focusedRoom], roomMetrics[focusedRoom].lamp_metrics]
+        : [undefined, undefined],
+    [flatRoomMetrics, roomMetrics, focusedRoom]
   );
 
   // TODO: more appealing UI (maybe tables, inputs or custom stuff?)
@@ -199,7 +206,10 @@ export function MonitorView() {
         <div
           className={isCompact ? '' : 'flex flex-row justify-end grow-0 w-1/3'}
         >
-          <MonitorInspector metrics={selectedRoomMetrics} />
+          <MonitorInspector
+            flatRoomMetrics={focusedFlatRoomMetrics}
+            lampMetrics={focusedLampMetrics}
+          />
         </div>
       </div>
     </HomeContent>

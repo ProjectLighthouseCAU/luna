@@ -130,10 +130,19 @@ export function Display({
       return { x: event.clientX - rect.left, y: event.clientY - rect.top };
     };
 
+    const clampToNormalizedRange = (x: number) =>
+      Math.min(0.99999, Math.max(0, x));
+
     const mouseToWindowCoords = (mouseCoords: Vec2<number>) => {
       return {
-        x: (mouseCoords.x / width) * LIGHTHOUSE_COLS,
-        y: (mouseCoords.y / height) * LIGHTHOUSE_ROWS,
+        x:
+          clampToNormalizedRange(
+            (mouseCoords.x - bezelWidth - gutterWidth) /
+              (width - 2 * bezelWidth - gutterWidth)
+          ) * LIGHTHOUSE_COLS,
+        y:
+          clampToNormalizedRange((mouseCoords.y + windowHeight / 2) / height) *
+          LIGHTHOUSE_ROWS,
       };
     };
 
