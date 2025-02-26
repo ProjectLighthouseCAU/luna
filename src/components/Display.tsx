@@ -21,6 +21,7 @@ export interface DisplayProps {
   className?: string;
   strictBoundsChecking?: boolean;
   highlightedWindows?: Set<number>;
+  spotlightedWindows?: Set<number>;
   onMouseDown?: (p: Vec2<number>) => void;
   onMouseUp?: (p: Vec2<number>) => void;
   onMouseDrag?: (p: Vec2<number>) => void;
@@ -38,6 +39,7 @@ export function Display({
   className,
   strictBoundsChecking = false,
   highlightedWindows = Set(),
+  spotlightedWindows = Set(),
   onMouseDown = () => {},
   onMouseUp = () => {},
   onMouseDrag = () => {},
@@ -71,7 +73,6 @@ export function Display({
       (width - 2 * bezelWidth - gutterCount * gutterWidth) / columns;
     const spacersPerRow = 1;
     const windowHeight = height / ((1 + spacersPerRow) * rows);
-    const highlightFactor = 0.5;
 
     // Draw background
     ctx.fillStyle = 'rgb(50,50,50)';
@@ -106,6 +107,7 @@ export function Display({
     }
 
     // Draw windows
+    const hasSpotlights = !spotlightedWindows.isEmpty();
     for (let j = 0; j < columns; j++) {
       const x = bezelWidth + j * windowWidth + (j + 1) * gutterWidth;
 
@@ -114,6 +116,10 @@ export function Display({
         const w = i * LIGHTHOUSE_COLS + j;
         const k = w * LIGHTHOUSE_COLOR_CHANNELS;
         let rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
+
+        if (hasSpotlights && !spotlightedWindows.contains(w)) {
+          rgb = rgb.map(c => c / 2);
+        }
 
         ctx.fillStyle = `rgb(${rgb.join(',')})`;
         ctx.fillRect(x, y, windowWidth, windowHeight);
@@ -201,6 +207,7 @@ export function Display({
     onMouseDrag,
     onMouseMove,
     highlightedWindows,
+    spotlightedWindows,
   ]);
 
   return <canvas ref={canvasRef} className={className} />;
