@@ -2,9 +2,22 @@ import { Chip } from '@nextui-org/react';
 
 export interface MonitorInspectorValueProps {
   value: any;
+  unit?: string;
 }
 
-export function MonitorInspectorValue({ value }: MonitorInspectorValueProps) {
+export function MonitorInspectorValue({
+  value,
+  unit,
+}: MonitorInspectorValueProps) {
+  return (
+    <div className="flex flex-row gap-1">
+      <MonitorInspectorRawValue value={value} />
+      <div>{unit}</div>
+    </div>
+  );
+}
+
+function MonitorInspectorRawValue({ value }: { value: any }) {
   switch (typeof value) {
     case 'string':
       return <>{value}</>;

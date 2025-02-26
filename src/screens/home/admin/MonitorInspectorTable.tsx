@@ -16,7 +16,7 @@ export function MonitorInspectorTable<T extends object>({
   render,
 }: MonitorInspectorTableProps<T>) {
   const columns = [...Array(metrics.length + 1).keys()].map(i => ({
-    key: i,
+    key: `${i}`,
   }));
 
   const rows = useMemo(
@@ -51,7 +51,7 @@ export function MonitorInspectorTable<T extends object>({
         {item => (
           <TableRow key={item.key}>
             {columnKey => {
-              const i = columnKey as number;
+              const i = parseInt(columnKey as string);
               return (
                 <TableCell>
                   {i === 0

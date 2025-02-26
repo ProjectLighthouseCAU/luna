@@ -22,16 +22,26 @@ const names: { [Property in keyof RenderedMetrics]: string } = {
   lamps: 'Lamps',
   board_temperature: 'Board temperature (accurate)',
   core_temperature: 'Core temperature (not accurate)',
-  current: 'Current (A)',
+  current: 'Current',
   firmware_version: 'Firmware version',
   fps: 'FPS',
   frames: 'Frames received (total)',
-  ping_latency_ms: 'Ping/latency (ms)',
-  power: 'Power (W)',
+  ping_latency_ms: 'Ping/latency',
+  power: 'Power',
   responding: 'Responding',
   shunt_voltage: 'Shunt voltage',
-  uptime: 'Uptime (s)',
-  voltage: 'Voltage (V)',
+  uptime: 'Uptime',
+  voltage: 'Voltage',
+};
+
+const units: { [Property in keyof RenderedMetrics]?: string } = {
+  board_temperature: '°C',
+  core_temperature: '°C',
+  current: 'A',
+  ping_latency_ms: 'ms',
+  power: 'W',
+  uptime: 's',
+  voltage: 'V',
 };
 
 export function MonitorInspectorRoomCard({
@@ -56,11 +66,23 @@ export function MonitorInspectorRoomCard({
         <MonitorInspectorTable
           metrics={renderedMetrics}
           names={names}
-          render={value => <MonitorInspectorValue value={value} />}
+          render={(value, prop) => (
+            <MonitorInspectorRoomValue value={value} prop={prop} />
+          )}
         />
       ) : (
         <div className="opacity-50">No room selected</div>
       )}
     </TitledCard>
   );
+}
+
+function MonitorInspectorRoomValue<K extends keyof RenderedMetrics>({
+  value,
+  prop,
+}: {
+  value: RenderedMetrics[K];
+  prop: K;
+}) {
+  return <MonitorInspectorValue value={value} unit={units[prop]} />;
 }
