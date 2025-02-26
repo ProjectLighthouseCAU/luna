@@ -21,7 +21,7 @@ export interface DisplayProps {
   className?: string;
   strictBoundsChecking?: boolean;
   highlightedWindows?: Set<number>;
-  spotlightedWindows?: Set<number>;
+  focusedWindows?: Set<number>;
   onMouseDown?: (p: Vec2<number>) => void;
   onMouseUp?: (p: Vec2<number>) => void;
   onMouseDrag?: (p: Vec2<number>) => void;
@@ -39,7 +39,7 @@ export function Display({
   className,
   strictBoundsChecking = false,
   highlightedWindows = Set(),
-  spotlightedWindows = Set(),
+  focusedWindows = Set(),
   onMouseDown = () => {},
   onMouseUp = () => {},
   onMouseDrag = () => {},
@@ -73,7 +73,7 @@ export function Display({
       (width - 2 * bezelWidth - gutterCount * gutterWidth) / columns;
     const spacersPerRow = 1;
     const windowHeight = height / ((1 + spacersPerRow) * rows);
-    const hasSpotlights = !spotlightedWindows.isEmpty();
+    const hasSpotlights = !focusedWindows.isEmpty();
 
     // Draw background
     ctx.fillStyle = 'rgb(50, 50, 50)';
@@ -117,7 +117,7 @@ export function Display({
         const k = w * LIGHTHOUSE_COLOR_CHANNELS;
         let rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
 
-        if (hasSpotlights && !spotlightedWindows.contains(w)) {
+        if (hasSpotlights && !focusedWindows.contains(w)) {
           rgb = rgb.map(c => c / 4);
         }
 
@@ -207,7 +207,7 @@ export function Display({
     onMouseDrag,
     onMouseMove,
     highlightedWindows,
-    spotlightedWindows,
+    focusedWindows,
   ]);
 
   return <canvas ref={canvasRef} className={className} />;

@@ -200,7 +200,7 @@ export function MonitorView() {
               width={width}
               frame={frame}
               highlightedWindows={hoveredWindows}
-              spotlightedWindows={selectedWindows}
+              focusedWindows={selectedWindows}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
             />
