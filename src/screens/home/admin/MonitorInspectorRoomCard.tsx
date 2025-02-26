@@ -1,19 +1,15 @@
 import { TitledCard } from '@luna/components/TitledCard';
-import {
-  FlatRoomV2Metrics,
-  flattenRoomV2Metrics,
-  RoomV2Metrics,
-} from '@luna/contexts/api/model/types';
+import { FlatRoomV2Metrics } from '@luna/contexts/api/model/types';
 import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
 import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 export interface MonitorInspectorRoomCardProps {
-  metrics?: RoomV2Metrics;
+  metrics?: FlatRoomV2Metrics;
 }
 
-const names: { [Property in keyof FlatRoomV2Metrics]: string } = {
+const names: { [Property in keyof FlatRoomV2Metrics]?: string } = {
   api_version: 'API version',
   responsive_lamps: 'Lamps (responsive)',
   total_lamps: 'Lamps (total)',
@@ -46,7 +42,7 @@ export function MonitorInspectorRoomCard({
 }: MonitorInspectorRoomCardProps) {
   const [selection, setSelection] = useState<keyof FlatRoomV2Metrics>();
   const renderedMetrics = useMemo<FlatRoomV2Metrics[]>(
-    () => (metrics ? [flattenRoomV2Metrics(metrics)] : []),
+    () => (metrics ? [metrics] : []),
     [metrics]
   );
 

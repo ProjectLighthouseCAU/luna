@@ -12,7 +12,7 @@ import { TableBody, TableHeader } from 'react-stately';
 
 export interface MonitorInspectorTableProps<T> {
   metrics: T[];
-  names: { [Property in keyof T]: string };
+  names: { [Property in keyof T]?: string };
   selection?: keyof T;
   onSelect?: (prop?: keyof T) => void;
   render: <K extends keyof T>(value: T[K], prop: K) => ReactNode;
@@ -36,7 +36,7 @@ export function MonitorInspectorTable<T extends object>({
   const rows = useMemo(
     () =>
       metrics.length > 0
-        ? (Object.keys(metrics[0]) as (keyof T)[]).map(prop => ({
+        ? (Object.keys(names) as (keyof T)[]).map(prop => ({
             key: prop as string,
             prop,
             values: [names[prop], ...metrics.map(v => v[prop])] as [
