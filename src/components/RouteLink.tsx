@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/react';
+import { Button } from '@heroui/react';
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 import { ReactNode, useCallback, useState } from 'react';
 import { NavLink } from 'react-router-dom';

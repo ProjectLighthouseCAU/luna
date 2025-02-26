@@ -4,7 +4,7 @@ import {
   TableCell,
   TableColumn,
   TableRow,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { TableBody, TableHeader } from 'react-stately';
 

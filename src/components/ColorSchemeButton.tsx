@@ -1,5 +1,5 @@
 import { ColorSchemeContext } from '@luna/contexts/env/ColorSchemeContext';
-import { Button, Tooltip } from '@nextui-org/react';
+import { Button, Tooltip } from '@heroui/react';
 import { IconMoon, IconSun } from '@tabler/icons-react';
 import { useCallback, useContext } from 'react';
 

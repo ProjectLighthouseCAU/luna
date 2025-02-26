@@ -1,5 +1,5 @@
 import { useDebounce } from '@luna/hooks/useDebounce';
-import { Input } from '@nextui-org/react';
+import { Input } from '@heroui/react';
 import { IconSearch } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
 
@@ -30,7 +30,7 @@ export function SearchBar({
 
   return (
     // TODO: Pass fullWidth directly to <Input> once https://github.com/nextui-org/nextui/pull/3768 is released
-    <div className={fullWidth ? '' : 'max-w-60'}>
+    (<div className={fullWidth ? '' : 'max-w-60'}>
       <Input
         startContent={<IconSearch />}
         placeholder={placeholder}
@@ -38,6 +38,6 @@ export function SearchBar({
         onValueChange={onValueChange}
         onClear={clearQuery}
       />
-    </div>
+    </div>)
   );
 }

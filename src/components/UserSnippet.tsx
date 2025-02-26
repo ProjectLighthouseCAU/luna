@@ -1,7 +1,7 @@
 import { Token, User } from '@luna/contexts/api/auth/types';
 import { ApiTokenButton } from '@luna/components/ApiTokenButton';
 import { RoleSnippet } from '@luna/components/RoleSnippet';
-import { User as UserComponent } from '@nextui-org/react';
+import { User as UserComponent } from '@heroui/react';
 
 export interface UserSnippetProps {
   user: User;

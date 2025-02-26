@@ -11,7 +11,7 @@ import {
   ModalHeader,
   Select,
   SelectItem,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { useContext, useEffect, useState } from 'react';
 
 export interface UserShowModalProps {

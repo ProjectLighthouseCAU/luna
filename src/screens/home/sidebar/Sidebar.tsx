@@ -12,7 +12,7 @@ import {
   ModalContent,
   ModalHeader,
   ScrollShadow,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { useCallback, useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 

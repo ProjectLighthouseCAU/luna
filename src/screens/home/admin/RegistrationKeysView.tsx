@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { useAsyncList } from '@react-stately/data';
 import { IconEye, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useContext, useState } from 'react';
@@ -55,7 +55,7 @@ export function RegistrationKeysView() {
 
   return (
     // TODO: Lazy rendering
-    <HomeContent
+    (<HomeContent
       title="Registration Keys"
       toolbar={
         <div className="flex flex-row gap-4">
@@ -157,6 +157,6 @@ export function RegistrationKeysView() {
           )}
         </TableBody>
       </Table>
-    </HomeContent>
+    </HomeContent>)
   );
 }

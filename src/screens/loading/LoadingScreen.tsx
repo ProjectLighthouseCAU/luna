@@ -1,6 +1,6 @@
 import { Center } from '@luna/components/Center';
 import { Logo } from '@luna/components/Logo';
-import { Spinner } from '@nextui-org/react';
+import { Spinner } from '@heroui/react';
 
 export function LoadingScreen() {
   return (

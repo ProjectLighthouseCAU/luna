@@ -1,5 +1,5 @@
 import { TitledCard } from '@luna/components/TitledCard';
-import { Switch } from '@nextui-org/react';
+import { Switch } from '@heroui/react';
 import { IconDeviceGamepad2 } from '@tabler/icons-react';
 
 export function DisplayInspectorInputCard() {

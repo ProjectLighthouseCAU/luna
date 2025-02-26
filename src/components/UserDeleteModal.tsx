@@ -9,7 +9,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 export interface UserDeleteModalProps {

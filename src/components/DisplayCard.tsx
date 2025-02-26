@@ -1,5 +1,5 @@
 import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
-import { Card, CardFooter } from '@nextui-org/react';
+import { Card, CardFooter } from '@heroui/react';
 import React, { memo } from 'react';
 
 interface DisplayCardProps {

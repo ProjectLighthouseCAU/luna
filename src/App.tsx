@@ -4,12 +4,12 @@ import { ModelContextProvider } from '@luna/contexts/api/model/ModelContext';
 import { SearchContextProvider } from '@luna/contexts/filter/SearchContext';
 import { WindowDimensionsContextProvider } from '@luna/contexts/env/WindowDimensionsContext';
 import { router } from '@luna/routes';
-import { NextUIProvider } from '@nextui-org/react';
+import { HeroUIProvider } from '@heroui/react';
 import { RouterProvider } from 'react-router-dom';
 
 export function App() {
   return (
-    <NextUIProvider>
+    <HeroUIProvider>
       <ColorSchemeContextProvider>
         <WindowDimensionsContextProvider>
           <AuthContextProvider>
@@ -21,6 +21,6 @@ export function App() {
           </AuthContextProvider>
         </WindowDimensionsContextProvider>
       </ColorSchemeContextProvider>
-    </NextUIProvider>
+    </HeroUIProvider>
   );
 }

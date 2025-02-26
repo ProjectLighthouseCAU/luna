@@ -1,5 +1,5 @@
 import { TitledCard } from '@luna/components/TitledCard';
-import { Tab, Tabs } from '@nextui-org/react';
+import { Tab, Tabs } from '@heroui/react';
 import { IconAdjustments } from '@tabler/icons-react';
 
 export interface DisplayInspectorOptionsCardProps {
