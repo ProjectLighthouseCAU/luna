@@ -1,5 +1,5 @@
 import { TitledCard } from '@luna/components/TitledCard';
-import { FlatRoomV2Metrics } from '@luna/contexts/api/model/types';
+import { FlatRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
 import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
 import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconDoor } from '@tabler/icons-react';

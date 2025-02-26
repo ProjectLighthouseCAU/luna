@@ -1,7 +1,5 @@
-import {
-  FlatRoomV2Metrics,
-  LampV2Metrics,
-} from '@luna/contexts/api/model/types';
+import { LampV2Metrics } from '@luna/contexts/api/model/types';
+import { FlatRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
 import { MonitorInspectorLampsCard } from '@luna/screens/home/admin/MonitorInspectorLampsCard';
 import { MonitorInspectorRoomCard } from '@luna/screens/home/admin/MonitorInspectorRoomCard';
 

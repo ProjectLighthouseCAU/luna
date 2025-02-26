@@ -1,12 +1,9 @@
 import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
-import {
-  flattenRoomV2Metrics,
-  LaserMetrics,
-  RoomV2Metrics,
-} from '@luna/contexts/api/model/types';
+import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
+import { flattenRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
 import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { throttle } from '@luna/utils/schedule';
