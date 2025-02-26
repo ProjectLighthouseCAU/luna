@@ -130,26 +130,6 @@ export function MonitorView() {
     return frame;
   }, [metrics, selectedWindows, hoveredWindows]);
 
-  // search for the correct room metrics from a single index into the lamp array
-  const roomMetricsFromIndex = useCallback(
-    (lampIdx: number) => {
-      if (!metrics) return null;
-      let currIdx = 0;
-      for (const room of metrics.rooms) {
-        const roomV2 = room as RoomV2Metrics;
-        if (
-          lampIdx >= currIdx &&
-          lampIdx < currIdx + roomV2.lamp_metrics.length
-        ) {
-          return room;
-        }
-        currIdx += roomV2.lamp_metrics.length;
-      }
-      return null;
-    },
-    [metrics]
-  );
-
   const [roomsByWindow, windowsByRoom] = useMemo<[number[], number[][]]>(() => {
     const roomsByWindow: number[] = [];
     const windowsByRoom: number[][] = [];
@@ -172,10 +152,22 @@ export function MonitorView() {
     []
   );
 
+  const roomWindowsForWindow = useCallback(
+    (windowIdx: number) => windowsByRoom[roomsByWindow[windowIdx]],
+    [roomsByWindow, windowsByRoom]
+  );
+
+  const roomMetricsForWindow = useCallback(
+    (windowIdx: number) => {
+      if (!metrics) return null;
+      return metrics.rooms[roomsByWindow[windowIdx]] as RoomV2Metrics;
+    },
+    [metrics, roomsByWindow]
+  );
+
   const roomWindowsForPosition = useCallback(
-    (p?: Vec2<number>) =>
-      p ? windowsByRoom[roomsByWindow[windowForPosition(p)]] : [],
-    [windowForPosition, roomsByWindow, windowsByRoom]
+    (p?: Vec2<number>) => (p ? roomWindowsForWindow(windowForPosition(p)) : []),
+    [roomWindowsForWindow, windowForPosition]
   );
 
   // set the selected window index on click
@@ -193,9 +185,9 @@ export function MonitorView() {
   const selectedRoomMetrics = useMemo(
     () =>
       !selectedWindows.isEmpty()
-        ? (roomMetricsFromIndex(selectedWindows.first()) as RoomV2Metrics)
+        ? (roomMetricsForWindow(selectedWindows.first()) as RoomV2Metrics)
         : undefined,
-    [roomMetricsFromIndex, selectedWindows]
+    [roomMetricsForWindow, selectedWindows]
   );
 
   // TODO: more appealing UI (maybe tables, inputs or custom stuff?)
