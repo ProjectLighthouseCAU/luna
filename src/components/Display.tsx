@@ -89,6 +89,22 @@ export function Display({
       ctx.fillRect(x, 0, gutterWidth, height);
     }
 
+    // Draw highlights
+    const highlightPadding = gutterWidth;
+    ctx.fillStyle = 'rgb(200, 200, 200)';
+    for (const w of highlightedWindows) {
+      const i = Math.floor(w / LIGHTHOUSE_COLS);
+      const j = w % LIGHTHOUSE_COLS;
+      const x = bezelWidth + j * windowWidth + (j + 1) * gutterWidth;
+      const y = i * (1 + spacersPerRow) * windowHeight;
+      ctx.fillRect(
+        x - highlightPadding,
+        y - highlightPadding,
+        windowWidth + 2 * highlightPadding,
+        windowHeight + 2 * highlightPadding
+      );
+    }
+
     // Draw windows
     for (let j = 0; j < columns; j++) {
       const x = bezelWidth + j * windowWidth + (j + 1) * gutterWidth;
@@ -98,12 +114,6 @@ export function Display({
         const w = i * LIGHTHOUSE_COLS + j;
         const k = w * LIGHTHOUSE_COLOR_CHANNELS;
         let rgb = frame.slice(k, k + LIGHTHOUSE_COLOR_CHANNELS);
-
-        if (highlightedWindows.contains(w)) {
-          rgb = rgb.map(
-            c => (1 - highlightFactor) * c + (1 - highlightFactor) * 255
-          );
-        }
 
         ctx.fillStyle = `rgb(${rgb.join(',')})`;
         ctx.fillRect(x, y, windowWidth, windowHeight);
