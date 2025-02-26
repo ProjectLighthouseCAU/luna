@@ -1,5 +1,7 @@
+import { TitledCard } from '@luna/components/TitledCard';
 import { LampV2Metrics } from '@luna/contexts/api/model/types';
-import { Card, CardBody, CardHeader, Chip } from '@nextui-org/react';
+import { Chip } from '@nextui-org/react';
+import { IconLamp } from '@tabler/icons-react';
 
 export interface MonitorInspectorLampsCardProps {
   metrics: LampV2Metrics[];
@@ -9,16 +11,11 @@ export function MonitorInspectorLampsCard({
   metrics,
 }: MonitorInspectorLampsCardProps) {
   return (
-    <Card className="p-2 m-2 min-w-[320px] h-fit">
-      {metrics ? (
-        <>
-          <CardHeader>
-            <b>Lamps:</b>
-          </CardHeader>
-          <CardBody>
-            {metrics.map((lamp: any, idx: number) => (
+    <TitledCard icon={<IconLamp />} title="Lamps">
+      <div className="flex flex-row">
+        {metrics
+          ? metrics.map((lamp: any, idx: number) => (
               <div key={idx}>
-                <br />
                 <b>Lamp {idx + 1}:</b>
                 <div>
                   Responding:{' '}
@@ -53,12 +50,9 @@ export function MonitorInspectorLampsCard({
                 </div>
                 <div>Flashing status: {lamp.flashing_status}</div>
               </div>
-            ))}
-          </CardBody>
-        </>
-      ) : (
-        <></>
-      )}
-    </Card>
+            ))
+          : undefined}
+      </div>
+    </TitledCard>
   );
 }
