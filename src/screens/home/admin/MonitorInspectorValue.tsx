@@ -1,7 +1,7 @@
 import { Chip } from '@nextui-org/react';
 
 export interface MonitorInspectorValueProps {
-  value: string | number | boolean;
+  value: any;
 }
 
 export function MonitorInspectorValue({ value }: MonitorInspectorValueProps) {
