@@ -1,19 +1,20 @@
 import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
+import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
+import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { throttle } from '@luna/utils/schedule';
 import { Vec2 } from '@luna/utils/vec2';
 import { Button } from '@nextui-org/react';
+import { IconRefresh } from '@tabler/icons-react';
+import { Set } from 'immutable';
 import {
   LIGHTHOUSE_COLOR_CHANNELS,
   LIGHTHOUSE_COLS,
   LIGHTHOUSE_FRAME_BYTES,
 } from 'nighthouse/browser';
-import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
-import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
-import { Set } from 'immutable';
 import {
   useCallback,
   useContext,
@@ -173,11 +174,8 @@ export function MonitorView() {
       title="Monitoring"
       toolbar={
         /* TODO: auto-refresh (polling) or streaming metrics */
-        <Button
-          color="secondary"
-          className="flex flex-col"
-          onPress={getLatestMetrics}
-        >
+        <Button color="secondary" onPress={getLatestMetrics}>
+          <IconRefresh />
           Refresh all
         </Button>
       }
