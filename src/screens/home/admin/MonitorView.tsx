@@ -4,6 +4,7 @@ import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
 import { flattenRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
+import { MonitorFilter } from '@luna/screens/home/admin/helpers/MonitorFilter';
 import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { throttle } from '@luna/utils/schedule';
@@ -58,6 +59,10 @@ export function MonitorView() {
 
   const [focusedRoom, setSelectedRoom] = useState<number>();
   const [hoveredRoom, setHoveredRoom] = useState<number>();
+  const [filter, setFilter] = useState<MonitorFilter>({
+    type: 'lamp',
+    key: 'responding',
+  });
 
   const getLatestMetrics = useCallback(async () => {
     // setMetrics(testMetrics); // TODO: change back from test data to fetched data
@@ -83,6 +88,17 @@ export function MonitorView() {
     () => roomMetrics.map(room => flattenRoomV2Metrics(room)),
     [roomMetrics]
   );
+
+  const filteredValues = useMemo(() => {
+    switch (filter.type) {
+      case 'room':
+        return flatRoomMetrics.map(room => room[filter.key]);
+      case 'lamp':
+        return roomMetrics.flatMap(room =>
+          room.lamp_metrics.map(lamp => lamp[filter.key])
+        );
+    }
+  }, [filter, flatRoomMetrics, roomMetrics]);
 
   // fill the frame with colors according to the metrics data
   const frame = useMemo(() => {
