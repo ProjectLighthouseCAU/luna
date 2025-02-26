@@ -8,7 +8,7 @@ import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { throttle } from '@luna/utils/schedule';
 import { Vec2 } from '@luna/utils/vec2';
-import { Button } from '@nextui-org/react';
+import { Button } from '@heroui/react';
 import { IconRefresh } from '@tabler/icons-react';
 import { Set } from 'immutable';
 import {

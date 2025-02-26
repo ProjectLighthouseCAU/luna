@@ -3,7 +3,7 @@ import {
   resourcesLayouts,
 } from '@luna/screens/home/admin/ResourcesLayout';
 import { ResourcesLayoutIcon } from '@luna/screens/home/admin/ResourcesLayoutIcon';
-import { Tab, Tabs } from '@nextui-org/react';
+import { Tab, Tabs } from '@heroui/react';
 import { Key } from 'react';
 
 export interface ResourcesToolbarProps {

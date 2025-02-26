@@ -6,7 +6,7 @@ import {
   ModalHeader,
   Skeleton,
   Snippet,
-} from '@nextui-org/react';
+} from '@heroui/react';
 
 export interface ApiTokenModalProps {
   token: Token | null;

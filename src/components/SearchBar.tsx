@@ -1,5 +1,5 @@
 import { useDebounce } from '@luna/hooks/useDebounce';
-import { Input } from '@nextui-org/react';
+import { Input } from '@heroui/react';
 import { IconSearch } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
 

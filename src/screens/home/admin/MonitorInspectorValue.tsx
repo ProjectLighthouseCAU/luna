@@ -1,5 +1,5 @@
 import { isBounded } from '@luna/utils/bounded';
-import { Chip } from '@nextui-org/react';
+import { Chip } from '@heroui/react';
 
 export interface MonitorInspectorValueProps {
   value: any;

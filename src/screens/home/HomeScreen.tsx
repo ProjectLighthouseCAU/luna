@@ -1,7 +1,7 @@
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { HomeContentContext } from '@luna/screens/home/HomeContent';
 import { Sidebar } from '@luna/screens/home/sidebar/Sidebar';
-import { Button } from '@nextui-org/react';
+import { Button } from '@heroui/react';
 import { IconMenu2 } from '@tabler/icons-react';
 import React, {
   ReactNode,

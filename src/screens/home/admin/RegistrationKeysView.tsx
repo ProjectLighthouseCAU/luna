@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { useAsyncList } from '@react-stately/data';
 import { IconEye, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useContext, useState } from 'react';

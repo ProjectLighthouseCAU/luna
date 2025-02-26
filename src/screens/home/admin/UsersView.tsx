@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { useAsyncList } from '@react-stately/data';
 import {
   IconEye,
@@ -53,7 +53,7 @@ export function UsersView() {
             page,
             perPage: 50,
             filter: filterText ? { text: filterText } : undefined,
-            sorting: sortDescriptor.column
+            sorting: sortDescriptor?.column
               ? {
                   key: sortDescriptor.column,
                   ascending: sortDescriptor.direction === 'ascending',

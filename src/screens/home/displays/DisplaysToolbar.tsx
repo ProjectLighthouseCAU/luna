@@ -1,5 +1,5 @@
 import { useDebounce } from '@luna/hooks/useDebounce';
-import { Slider } from '@nextui-org/react';
+import { Slider } from '@heroui/react';
 import { IconArrowsDiagonal } from '@tabler/icons-react';
 import { useState } from 'react';
 

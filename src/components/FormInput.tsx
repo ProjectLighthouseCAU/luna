@@ -1,4 +1,4 @@
-import { Input, Tooltip } from '@nextui-org/react';
+import { Input, Tooltip } from '@heroui/react';
 import { ReactNode, useCallback } from 'react';
 
 export interface FormInputProps {
