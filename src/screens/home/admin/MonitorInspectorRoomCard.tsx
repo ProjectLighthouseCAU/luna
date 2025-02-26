@@ -12,12 +12,12 @@ export interface MonitorInspectorRoomCardProps {
   metrics?: RoomV2Metrics;
 }
 
-interface RenderedMetrics extends ControllerV2Metrics {
+export interface MonitorInspectorRoomMetrics extends ControllerV2Metrics {
   api_version: number;
   lamps: string;
 }
 
-const names: { [Property in keyof RenderedMetrics]: string } = {
+const names: { [Property in keyof MonitorInspectorRoomMetrics]: string } = {
   api_version: 'API version',
   lamps: 'Lamps',
   board_temperature: 'Board temperature (accurate)',
@@ -34,7 +34,7 @@ const names: { [Property in keyof RenderedMetrics]: string } = {
   voltage: 'Voltage',
 };
 
-const units: { [Property in keyof RenderedMetrics]?: string } = {
+const units: { [Property in keyof MonitorInspectorRoomMetrics]?: string } = {
   board_temperature: '°C',
   core_temperature: '°C',
   current: 'A',
@@ -47,8 +47,9 @@ const units: { [Property in keyof RenderedMetrics]?: string } = {
 export function MonitorInspectorRoomCard({
   metrics,
 }: MonitorInspectorRoomCardProps) {
-  const [selection, setSelection] = useState<keyof RenderedMetrics>();
-  const renderedMetrics = useMemo<RenderedMetrics[]>(
+  const [selection, setSelection] =
+    useState<keyof MonitorInspectorRoomMetrics>();
+  const renderedMetrics = useMemo<MonitorInspectorRoomMetrics[]>(
     () =>
       metrics
         ? [
@@ -81,12 +82,8 @@ export function MonitorInspectorRoomCard({
   );
 }
 
-function MonitorInspectorRoomValue<K extends keyof RenderedMetrics>({
-  value,
-  prop,
-}: {
-  value: RenderedMetrics[K];
-  prop: K;
-}) {
+function MonitorInspectorRoomValue<
+  K extends keyof MonitorInspectorRoomMetrics,
+>({ value, prop }: { value: MonitorInspectorRoomMetrics[K]; prop: K }) {
   return <MonitorInspectorValue value={value} unit={units[prop]} />;
 }
