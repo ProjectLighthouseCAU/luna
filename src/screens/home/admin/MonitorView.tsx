@@ -5,17 +5,15 @@ import { useEventListener } from '@luna/hooks/useEventListener';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { throttle } from '@luna/utils/schedule';
 import { Vec2 } from '@luna/utils/vec2';
-import { Button, Card, CardBody, CardHeader, Chip } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import {
   LIGHTHOUSE_COLOR_CHANNELS,
   LIGHTHOUSE_COLS,
   LIGHTHOUSE_FRAME_BYTES,
 } from 'nighthouse/browser';
-// import {
-//   LaserMetrics,
-//   RoomMetrics,
-//   RoomV2Metrics,
-// } from 'nighthouse/out/common/protocol/metrics';
+import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
+import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
+import { Set } from 'immutable';
 import {
   useCallback,
   useContext,
@@ -24,10 +22,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Set } from 'immutable';
-import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
-import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
-// import testMetrics from './statusLamps.json'; // TODO: remove testMetrics
 
 export function MonitorView() {
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
