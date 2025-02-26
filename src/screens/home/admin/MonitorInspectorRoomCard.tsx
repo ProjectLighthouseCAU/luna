@@ -1,11 +1,14 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import { FlatRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
+import { MonitorRoomFilter } from '@luna/screens/home/admin/helpers/MonitorFilter';
 import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
 import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 export interface MonitorInspectorRoomCardProps {
+  filter?: MonitorRoomFilter;
+  setFilter: (filter: MonitorRoomFilter) => void;
   metrics?: FlatRoomV2Metrics;
 }
 

@@ -223,6 +223,8 @@ export function MonitorView() {
           className={isCompact ? '' : 'flex flex-row justify-end grow-0 w-1/3'}
         >
           <MonitorInspector
+            filter={filter}
+            setFilter={setFilter}
             flatRoomMetrics={focusedFlatRoomMetrics}
             lampMetrics={focusedLampMetrics}
           />

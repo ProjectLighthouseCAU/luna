@@ -1,10 +1,13 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import { LampV2Metrics } from '@luna/contexts/api/model/types';
+import { MonitorLampFilter } from '@luna/screens/home/admin/helpers/MonitorFilter';
 import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
 import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconCheck, IconLamp } from '@tabler/icons-react';
 
 export interface MonitorInspectorLampsCardProps {
+  filter?: MonitorLampFilter;
+  setFilter: (filter: MonitorLampFilter) => void;
   metrics: LampV2Metrics[];
 }
 
