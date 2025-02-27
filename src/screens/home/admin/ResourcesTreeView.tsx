@@ -1,8 +1,14 @@
 import {
   Button,
+  Code,
   Divider,
   DropdownItem,
   DropdownMenu,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -205,36 +211,89 @@ function ResourcesTreeButton({
   layout: ResourcesLayout;
   expanded: string | undefined;
   setExpanded: (name?: string) => void;
-  refreshListing: () => void;
+  refreshListing: () => Promise<void>;
 }) {
   const model = useContext(ModelContext);
 
+  const [isDeleting, setDeleting] = useState(false);
+  const [isRenaming, setRenaming] = useState(false);
+
   const name = useMemo(() => path[path.length - 1], [path]);
   const isExpanded = useMemo(() => expanded === name, [expanded, name]);
+  const isResource = useMemo(() => subTree === null, [subTree]);
 
   const color = useMemo(
     () => (isExpanded && layout === 'column' ? 'primary' : 'default'),
     [isExpanded, layout]
   );
 
-  const onPress = useCallback(() => {
+  const toggleExpanded = useCallback(() => {
     setExpanded(isExpanded ? undefined : name);
   }, [name, isExpanded, setExpanded]);
 
+  const openDeleteModal = useCallback(() => setDeleting(true), []);
+  const closeDeleteModal = useCallback(() => setDeleting(false), []);
+  const openRenameModal = useCallback(() => setRenaming(true), []);
+
+  const downloadPath = useCallback(async () => {
+    const result = await model.get(path);
+    if (result.ok) {
+      const json = JSON.stringify(result.value, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.download = `${name}.json`;
+      a.href = url;
+      a.click();
+    } else {
+      console.log(result.error);
+    }
+  }, [model, name, path]);
+
   const deletePath = useCallback(async () => {
     await model.delete(path);
-    refreshListing();
-  }, [model, path, refreshListing]);
+    await refreshListing();
+    if (isExpanded) {
+      setExpanded(undefined);
+    }
+  }, [isExpanded, model, path, refreshListing, setExpanded]);
+
+  const renamePath = useCallback(
+    async (newName: string) => {
+      if (isResource) {
+        const newPath = [...path.slice(0, -1), newName];
+        console.log('Moving to', newPath);
+        await model.move(path, newPath);
+        await refreshListing();
+        if (isExpanded) {
+          setExpanded(newName);
+        }
+      }
+      setRenaming(false);
+    },
+    [isResource, path, model, refreshListing, isExpanded, setExpanded]
+  );
 
   return (
     <ContextMenu
       menu={
         <DropdownMenu>
+          {isResource ? (
+            <>
+              <DropdownItem key="rename" onPress={openRenameModal}>
+                Rename
+              </DropdownItem>
+              <DropdownItem key="download" onPress={downloadPath}>
+                Download
+              </DropdownItem>
+            </>
+          ) : null}
           <DropdownItem
             key="delete"
             className="text-danger"
             color="danger"
-            onPress={deletePath}
+            onPress={openDeleteModal}
           >
             Delete
           </DropdownItem>
@@ -242,7 +301,7 @@ function ResourcesTreeButton({
       }
     >
       <Button
-        onPress={onPress}
+        onPress={toggleExpanded}
         color={color}
         variant="faded"
         className="w-full"
@@ -259,6 +318,28 @@ function ResourcesTreeButton({
           {name}
         </div>
       </Button>
+      <Modal isOpen={isRenaming} onOpenChange={setRenaming}>
+        <ModalContent>
+          <ModalHeader>Rename {name}...</ModalHeader>
+          <ModalBody>
+            <SimpleEditForm initialValue={name} onSubmit={renamePath} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isDeleting} onOpenChange={setDeleting}>
+        <ModalContent>
+          <ModalHeader>Delete {name}...</ModalHeader>
+          <ModalBody>
+            Are you sure that you wish to delete {path.join('/')}?
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" onPress={deletePath}>
+              Delete {name}
+            </Button>
+            <Button onPress={closeDeleteModal}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </ContextMenu>
   );
 }

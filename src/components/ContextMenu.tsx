@@ -23,7 +23,7 @@ export function ContextMenu({ menu, children }: ContextMenuProps) {
     return () => {
       div.removeEventListener('contextmenu', listener);
     };
-  }, [divRef]);
+  }, []);
 
   return (
     <div ref={divRef}>
