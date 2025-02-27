@@ -21,6 +21,8 @@ export function ResourcesTreeView({
   tree,
   layout,
 }: ResourcesTreeViewProps) {
+  // TODO: Use a set here and let the user expand multiple nodes (but only in
+  // list view, in column view this doesn't make sense and shouldn't be allowed)
   const [expanded, setExpanded] = useState<string>();
 
   const sortedEntries = useMemo(
