@@ -127,6 +127,8 @@ export function Display({
 
     const eventToMouseCoords = (event: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
+      // Note that we need to normalize/rescale here to obtain logical
+      // coordinates on high-DPI displays. See https://stackoverflow.com/a/33063222
       return {
         x:
           ((event.clientX - rect.left) / (rect.right - rect.left)) *
