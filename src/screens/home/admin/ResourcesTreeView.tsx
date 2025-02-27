@@ -311,7 +311,7 @@ function ResourcesTreeButton({
       </Button>
       <Modal isOpen={isRenaming} onOpenChange={setRenaming}>
         <ModalContent>
-          <ModalHeader>Rename {name}...</ModalHeader>
+          <ModalHeader>Rename Resource...</ModalHeader>
           <ModalBody>
             <SimpleEditForm initialValue={name} onSubmit={renamePath} />
           </ModalBody>
