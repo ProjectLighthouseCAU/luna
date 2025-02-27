@@ -22,6 +22,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { Bounded, isBounded } from '@luna/utils/bounded';
 
 export function MonitorView() {
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
@@ -86,17 +87,34 @@ export function MonitorView() {
     [roomMetrics]
   );
 
+  const valueToNumber = useCallback(
+    (value: number | string | boolean | Bounded<number> | null | undefined) => {
+      if (value === null || value === undefined) {
+        return 0;
+      }
+      if (typeof value === 'object' && isBounded(value)) {
+        return value.value;
+      }
+      return +value;
+    },
+    []
+  );
+
   const filteredValues = useMemo(() => {
     if (filter === undefined) return undefined;
     switch (filter.type) {
       case 'room':
-        return flatRoomMetrics.map(room => room[filter.key]);
+        return flatRoomMetrics.flatMap(room =>
+          [...Array(room.responsive_lamps.total)].map(() =>
+            valueToNumber(room[filter.key])
+          )
+        );
       case 'lamp':
         return roomMetrics.flatMap(room =>
-          room.lamp_metrics.map(lamp => lamp[filter.key])
+          room.lamp_metrics.map(lamp => valueToNumber(lamp[filter.key]))
         );
     }
-  }, [filter, flatRoomMetrics, roomMetrics]);
+  }, [filter, flatRoomMetrics, roomMetrics, valueToNumber]);
 
   const filterColormap = useMemo(() => {
     if (filter !== undefined) {
