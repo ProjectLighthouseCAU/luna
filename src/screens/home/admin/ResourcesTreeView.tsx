@@ -24,12 +24,14 @@ export interface ResourcesTreeViewProps {
   parentPath?: string[];
   tree: DirectoryTree | undefined | null;
   layout: ResourcesLayout;
+  refreshListing: () => Promise<void>;
 }
 
 export function ResourcesTreeView({
   parentPath: path = [],
   tree,
   layout,
+  refreshListing,
 }: ResourcesTreeViewProps) {
   const model = useContext(ModelContext);
 
@@ -72,15 +74,17 @@ export function ResourcesTreeView({
   const createFolder = useCallback(
     async (name: string) => {
       await model.mkdir([...path, name]);
+      await refreshListing();
     },
-    [model, path]
+    [model, path, refreshListing]
   );
 
   const createResource = useCallback(
     async (name: string) => {
       await model.put([...path, name], null);
+      await refreshListing();
     },
-    [model, path]
+    [model, path, refreshListing]
   );
 
   const additionalElements = useMemo(
@@ -128,6 +132,7 @@ export function ResourcesTreeView({
                     parentPath={[...path, expanded]}
                     tree={tree?.[expanded]!}
                     layout={layout}
+                    refreshListing={refreshListing}
                   />
                 </>
               ) : (
@@ -169,6 +174,7 @@ export function ResourcesTreeView({
                           parentPath={[...path, expanded]}
                           tree={subTree}
                           layout={layout}
+                          refreshListing={refreshListing}
                         />
                       )}
                     </div>
