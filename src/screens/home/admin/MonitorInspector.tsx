@@ -5,8 +5,8 @@ import { MonitorInspectorLampsCard } from '@luna/screens/home/admin/MonitorInspe
 import { MonitorInspectorRoomCard } from '@luna/screens/home/admin/MonitorInspectorRoomCard';
 
 export interface MonitorInspectorProps {
-  filter: MonitorFilter;
-  setFilter: (filter: MonitorFilter) => void;
+  filter?: MonitorFilter;
+  setFilter: (filter?: MonitorFilter) => void;
   flatRoomMetrics?: FlatRoomV2Metrics;
   lampMetrics?: LampV2Metrics[];
 }
@@ -20,12 +20,12 @@ export function MonitorInspector({
   return (
     <div className="flex flex-col space-y-3">
       <MonitorInspectorRoomCard
-        filter={filter.type === 'room' ? filter : undefined}
+        filter={filter?.type === 'room' ? filter : undefined}
         setFilter={setFilter}
         metrics={flatRoomMetrics}
       />
       <MonitorInspectorLampsCard
-        filter={filter.type === 'lamp' ? filter : undefined}
+        filter={filter?.type === 'lamp' ? filter : undefined}
         setFilter={setFilter}
         metrics={lampMetrics ?? []}
       />

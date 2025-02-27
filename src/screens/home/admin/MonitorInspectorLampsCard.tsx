@@ -7,7 +7,7 @@ import { IconCheck, IconLamp } from '@tabler/icons-react';
 
 export interface MonitorInspectorLampsCardProps {
   filter?: MonitorLampFilter;
-  setFilter: (filter: MonitorLampFilter) => void;
+  setFilter: (filter?: MonitorLampFilter) => void;
   metrics: LampV2Metrics[];
 }
 

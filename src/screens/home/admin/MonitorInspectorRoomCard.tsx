@@ -8,7 +8,7 @@ import { useMemo, useState } from 'react';
 
 export interface MonitorInspectorRoomCardProps {
   filter?: MonitorRoomFilter;
-  setFilter: (filter: MonitorRoomFilter) => void;
+  setFilter: (filter?: MonitorRoomFilter) => void;
   metrics?: FlatRoomV2Metrics;
 }
 

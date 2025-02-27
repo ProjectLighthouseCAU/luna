@@ -56,10 +56,7 @@ export function MonitorView() {
 
   const [focusedRoom, setSelectedRoom] = useState<number>();
   const [hoveredRoom, setHoveredRoom] = useState<number>();
-  const [filter, setFilter] = useState<MonitorFilter>({
-    type: 'lamp',
-    key: 'responding',
-  });
+  const [filter, setFilter] = useState<MonitorFilter>();
 
   const getLatestMetrics = useCallback(async () => {
     // setMetrics(testMetrics); // TODO: change back from test data to fetched data
@@ -90,6 +87,7 @@ export function MonitorView() {
   );
 
   const filteredValues = useMemo(() => {
+    if (filter === undefined) return undefined;
     switch (filter.type) {
       case 'room':
         return flatRoomMetrics.map(room => room[filter.key]);
