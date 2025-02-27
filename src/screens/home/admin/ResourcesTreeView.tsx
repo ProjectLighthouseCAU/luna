@@ -1,6 +1,5 @@
 import {
   Button,
-  Code,
   Divider,
   DropdownItem,
   DropdownMenu,
