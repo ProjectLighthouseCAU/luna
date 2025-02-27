@@ -1,4 +1,4 @@
-import { Button, Divider } from '@heroui/react';
+import { Button, Divider, Tooltip } from '@heroui/react';
 import { SearchBar } from '@luna/components/SearchBar';
 import { ResourcesContentsView } from '@luna/screens/home/admin/ResourcesContentsView';
 import { ResourcesLayout } from '@luna/screens/home/admin/ResourcesLayout';
@@ -7,9 +7,10 @@ import {
   IconChevronRight,
   IconFile,
   IconFolder,
+  IconPlus,
 } from '@tabler/icons-react';
 import { DirectoryTree } from 'nighthouse/browser';
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 export interface ResourcesTreeViewProps {
   parentPath?: string[];
@@ -44,15 +45,40 @@ export function ResourcesTreeView({
     [filter, tree]
   );
 
-  const toolbar = (
-    <>
-      <SearchBar
-        fullWidth
-        placeholder={`Search ${name}`}
-        className="max-w-40"
-        setQuery={setFilter}
-      />
-    </>
+  const toolbar = useMemo(
+    () => (
+      <>
+        <SearchBar
+          fullWidth
+          placeholder={`Search ${name}`}
+          className={layout === 'column' ? 'max-w-40' : 'max-w-full'}
+          setQuery={setFilter}
+        />
+      </>
+    ),
+    [layout, name]
+  );
+
+  const additionalButton = useCallback(
+    (icon: ReactNode, title: string) => (
+      <Button variant="ghost">
+        <div className="flex flex-row justify-start items-center gap-2 grow">
+          {icon}
+          {title}
+        </div>
+      </Button>
+    ),
+    []
+  );
+
+  const additionalElements = useMemo(
+    () => (
+      <>
+        {additionalButton(<IconPlus />, 'New Folder')}
+        {additionalButton(<IconPlus />, 'New Resource')}
+      </>
+    ),
+    [additionalButton]
   );
 
   switch (layout) {
@@ -73,6 +99,7 @@ export function ResourcesTreeView({
                   />
                 ))
               : undefined}
+            {additionalElements}
           </div>
           {expanded !== undefined ? (
             <>
@@ -98,6 +125,10 @@ export function ResourcesTreeView({
     case 'list':
       return (
         <div className="flex flex-col gap-1">
+          <div className="flex flex-row gap-1">
+            {toolbar}
+            {additionalElements}
+          </div>
           {sortedEntries
             ? sortedEntries.map(([name, subTree]) => (
                 <>
@@ -112,7 +143,6 @@ export function ResourcesTreeView({
                         setExpanded={setExpanded}
                       />
                     </div>
-                    {toolbar}
                   </div>
                   {expanded === name ? (
                     <div className="ml-4">
@@ -167,7 +197,7 @@ function ResourcesTreeButton({
       variant="faded"
       className={layout === 'list' ? 'w-full' : ''}
     >
-      <div className="flex flex-row justify-start gap-2 grow">
+      <div className="flex flex-row justify-start items-center gap-2 grow">
         {layout === 'list' ? (
           isExpanded ? (
             <IconChevronDown />
