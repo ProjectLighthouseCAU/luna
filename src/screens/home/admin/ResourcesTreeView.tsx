@@ -217,7 +217,7 @@ function ResourcesTreeButton({
   const name = useMemo(() => path[path.length - 1], [path]);
   const isExpanded = useMemo(() => expanded === name, [expanded, name]);
 
-  const supportsRenaming = useMemo(() => subTree === null, [subTree]);
+  const isResource = useMemo(() => subTree === null, [subTree]);
 
   const color = useMemo(
     () => (isExpanded && layout === 'column' ? 'primary' : 'default'),
@@ -253,7 +253,7 @@ function ResourcesTreeButton({
 
   const renamePath = useCallback(
     async (newName: string) => {
-      if (supportsRenaming) {
+      if (isResource) {
         const newPath = [...path.slice(0, -1), newName];
         console.log('Moving to', newPath);
         await model.move(path, newPath);
@@ -261,21 +261,23 @@ function ResourcesTreeButton({
       }
       setRenaming(false);
     },
-    [model, path, refreshListing, supportsRenaming]
+    [model, path, refreshListing, isResource]
   );
 
   return (
     <ContextMenu
       menu={
         <DropdownMenu>
-          {supportsRenaming ? (
-            <DropdownItem key="rename" onPress={openRename}>
-              Rename
-            </DropdownItem>
+          {isResource ? (
+            <>
+              <DropdownItem key="rename" onPress={openRename}>
+                Rename
+              </DropdownItem>
+              <DropdownItem key="download" onPress={downloadPath}>
+                Download
+              </DropdownItem>
+            </>
           ) : null}
-          <DropdownItem key="download" onPress={downloadPath}>
-            Download
-          </DropdownItem>
           <DropdownItem
             key="delete"
             className="text-danger"
