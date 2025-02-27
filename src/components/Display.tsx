@@ -132,7 +132,8 @@ export function Display({
           ((event.clientX - rect.left) / (rect.right - rect.left)) *
           canvas.width,
         y:
-          event.clientY - (rect.top / (rect.bottom - rect.top)) * canvas.height,
+          ((event.clientY - rect.top) / (rect.bottom - rect.top)) *
+          canvas.height,
       };
     };
 
