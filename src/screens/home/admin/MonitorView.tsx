@@ -248,7 +248,6 @@ export function MonitorView() {
 
   const isColumnLayout = breakpoint < Breakpoint.TwoXl;
 
-  // TODO: more appealing UI (maybe tables, inputs or custom stuff?)
   return (
     <HomeContent
       title="Monitoring"
