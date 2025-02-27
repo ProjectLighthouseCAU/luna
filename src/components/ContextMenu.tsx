@@ -27,9 +27,11 @@ export function ContextMenu({ menu, children }: ContextMenuProps) {
 
   return (
     <div ref={divRef}>
-      <Dropdown isOpen={isShown} onOpenChange={setShown} isTriggerDisabled>
-        <DropdownTrigger onPress={() => console.log('test')}>
-          {children}
+      {children}
+      <Dropdown isOpen={isShown} onOpenChange={setShown}>
+        <DropdownTrigger>
+          {/* Workaround: We don't want the dropdown to trigger on simple clicks therefore we give it an empty div. */}
+          <div />
         </DropdownTrigger>
         {menu}
       </Dropdown>
