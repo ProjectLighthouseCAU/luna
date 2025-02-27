@@ -258,10 +258,11 @@ function ResourcesTreeButton({
         console.log('Moving to', newPath);
         await model.move(path, newPath);
         await refreshListing();
+        setExpanded(newName);
       }
       setRenaming(false);
     },
-    [model, path, refreshListing, isResource]
+    [isResource, path, model, refreshListing, setExpanded]
   );
 
   return (
