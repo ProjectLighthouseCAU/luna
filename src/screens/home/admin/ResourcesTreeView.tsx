@@ -1,10 +1,13 @@
 import {
   Button,
   Divider,
+  DropdownItem,
+  DropdownMenu,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@heroui/react';
+import { ContextMenu } from '@luna/components/ContextMenu';
 import { SearchBar } from '@luna/components/SearchBar';
 import { SimpleEditForm } from '@luna/components/SimpleEditForm';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
@@ -110,11 +113,12 @@ export function ResourcesTreeView({
               ? sortedEntries.map(([name, subTree]) => (
                   <ResourcesTreeButton
                     key={JSON.stringify([...path, name])}
-                    name={name}
+                    path={[...path, name]}
                     layout={layout}
                     subTree={subTree}
                     expanded={expanded}
                     setExpanded={setExpanded}
+                    refreshListing={refreshListing}
                   />
                 ))
               : undefined}
@@ -156,11 +160,12 @@ export function ResourcesTreeView({
                     <div className="grow">
                       <ResourcesTreeButton
                         key={JSON.stringify([...path, name])}
-                        name={name}
+                        path={[...path, name]}
                         subTree={subTree}
                         layout={layout}
                         expanded={expanded}
                         setExpanded={setExpanded}
+                        refreshListing={refreshListing}
                       />
                     </div>
                   </div>
@@ -188,18 +193,23 @@ export function ResourcesTreeView({
 }
 
 function ResourcesTreeButton({
-  name,
   subTree,
+  path,
   layout,
   expanded,
   setExpanded,
+  refreshListing,
 }: {
-  name: string;
   subTree: DirectoryTree | null;
+  path: string[];
   layout: ResourcesLayout;
   expanded: string | undefined;
   setExpanded: (name?: string) => void;
+  refreshListing: () => void;
 }) {
+  const model = useContext(ModelContext);
+
+  const name = useMemo(() => path[path.length - 1], [path]);
   const isExpanded = useMemo(() => expanded === name, [expanded, name]);
 
   const color = useMemo(
@@ -211,25 +221,45 @@ function ResourcesTreeButton({
     setExpanded(isExpanded ? undefined : name);
   }, [name, isExpanded, setExpanded]);
 
+  const deletePath = useCallback(async () => {
+    await model.delete(path);
+    refreshListing();
+  }, [model, path, refreshListing]);
+
   return (
-    <Button
-      onPress={onPress}
-      color={color}
-      variant="faded"
-      className={layout === 'list' ? 'w-full' : ''}
+    <ContextMenu
+      menu={
+        <DropdownMenu>
+          <DropdownItem
+            key="delete"
+            className="text-danger"
+            color="danger"
+            onPress={deletePath}
+          >
+            Delete
+          </DropdownItem>
+        </DropdownMenu>
+      }
     >
-      <div className="flex flex-row justify-start items-center gap-2 grow">
-        {layout === 'list' ? (
-          isExpanded ? (
-            <IconChevronDown />
-          ) : (
-            <IconChevronRight />
-          )
-        ) : undefined}
-        {subTree === null ? <IconFile /> : <IconFolder />}
-        {name}
-      </div>
-    </Button>
+      <Button
+        onPress={onPress}
+        color={color}
+        variant="faded"
+        className={layout === 'list' ? 'w-full' : ''}
+      >
+        <div className="flex flex-row justify-start items-center gap-2 grow">
+          {layout === 'list' ? (
+            isExpanded ? (
+              <IconChevronDown />
+            ) : (
+              <IconChevronRight />
+            )
+          ) : undefined}
+          {subTree === null ? <IconFile /> : <IconFolder />}
+          {name}
+        </div>
+      </Button>
+    </ContextMenu>
   );
 }
 
