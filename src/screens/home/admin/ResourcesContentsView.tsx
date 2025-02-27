@@ -23,7 +23,7 @@ export function ResourcesContentsView({ path }: ResourcesContentsViewProps) {
   }, [model, path]);
 
   return (
-    <>
+    <div>
       {value !== undefined ? (
         <pre contentEditable>{JSON.stringify(value, null, 2)}</pre>
       ) : error ? (
@@ -31,6 +31,6 @@ export function ResourcesContentsView({ path }: ResourcesContentsViewProps) {
       ) : (
         <Spinner />
       )}
-    </>
+    </div>
   );
 }
