@@ -3,6 +3,10 @@ import {
   Divider,
   DropdownItem,
   DropdownMenu,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -205,21 +209,26 @@ function ResourcesTreeButton({
   layout: ResourcesLayout;
   expanded: string | undefined;
   setExpanded: (name?: string) => void;
-  refreshListing: () => void;
+  refreshListing: () => Promise<void>;
 }) {
   const model = useContext(ModelContext);
+  const [isRenaming, setRenaming] = useState(false);
 
   const name = useMemo(() => path[path.length - 1], [path]);
   const isExpanded = useMemo(() => expanded === name, [expanded, name]);
+
+  const supportsRenaming = useMemo(() => subTree === null, [subTree]);
 
   const color = useMemo(
     () => (isExpanded && layout === 'column' ? 'primary' : 'default'),
     [isExpanded, layout]
   );
 
-  const onPress = useCallback(() => {
+  const toggleExpanded = useCallback(() => {
     setExpanded(isExpanded ? undefined : name);
   }, [name, isExpanded, setExpanded]);
+
+  const openRename = useCallback(() => setRenaming(true), []);
 
   const downloadPath = useCallback(async () => {
     const result = await model.get(path);
@@ -239,13 +248,31 @@ function ResourcesTreeButton({
 
   const deletePath = useCallback(async () => {
     await model.delete(path);
-    refreshListing();
+    await refreshListing();
   }, [model, path, refreshListing]);
+
+  const renamePath = useCallback(
+    async (newName: string) => {
+      if (supportsRenaming) {
+        const newPath = [...path.slice(0, -1), newName];
+        console.log('Moving to', newPath);
+        await model.move(path, newPath);
+        await refreshListing();
+      }
+      setRenaming(false);
+    },
+    [model, path, refreshListing, supportsRenaming]
+  );
 
   return (
     <ContextMenu
       menu={
         <DropdownMenu>
+          {supportsRenaming ? (
+            <DropdownItem key="rename" onPress={openRename}>
+              Rename
+            </DropdownItem>
+          ) : null}
           <DropdownItem key="download" onPress={downloadPath}>
             Download
           </DropdownItem>
@@ -261,7 +288,7 @@ function ResourcesTreeButton({
       }
     >
       <Button
-        onPress={onPress}
+        onPress={toggleExpanded}
         color={color}
         variant="faded"
         className="w-full"
@@ -278,6 +305,14 @@ function ResourcesTreeButton({
           {name}
         </div>
       </Button>
+      <Modal isOpen={isRenaming} onOpenChange={setRenaming}>
+        <ModalContent>
+          <ModalHeader>Rename {name}...</ModalHeader>
+          <ModalBody>
+            <SimpleEditForm initialValue={name} onSubmit={renamePath} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </ContextMenu>
   );
 }

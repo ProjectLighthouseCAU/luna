@@ -54,6 +54,12 @@ export interface ModelContextValue {
   /** Creates a directory at an arbitrary path. */
   mkdir(path: string[]): Promise<Result<unknown>>;
 
+  /** Tests whether a path is a directory. */
+  isDirectory(path: string[]): Promise<boolean>;
+
+  /** Moves a resource to an arbitrary path. */
+  move(path: string[], newPath: string[]): Promise<Result<void>>;
+
   /** Fetches lamp server metrics. */
   getLaserMetrics(): Promise<Result<LaserMetrics>>;
 }
@@ -69,6 +75,8 @@ export const ModelContext = createContext<ModelContextValue>({
   put: async () => errorResult('No model context for updating resource'),
   create: async () => errorResult('No model context for creating resource'),
   mkdir: async () => errorResult('No model context for creating directory'),
+  isDirectory: async () => false,
+  move: async () => errorResult('No model context for moving resource'),
   getLaserMetrics: async () =>
     errorResult('No model context for fetching laser metrics'),
 });
@@ -207,6 +215,31 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       },
       async mkdir(path) {
         return messageToResult(await client?.mkdir(path));
+      },
+      async isDirectory(path) {
+        try {
+          getOrThrow(messageToResult(await client?.list(path)));
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      async move(path, newPath) {
+        // TODO: Implement native move in beacon?
+        try {
+          if (JSON.stringify(path) === JSON.stringify(newPath)) {
+            return okResult(undefined);
+          }
+          if (await this.isDirectory(path)) {
+            return errorResult('Cannot move directories (yet)');
+          }
+          const value = getOrThrow(messageToResult(await client?.get(path)));
+          getOrThrow(messageToResult(await client?.post(newPath, value)));
+          getOrThrow(messageToResult(await client?.delete(path)));
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(error);
+        }
       },
       async getLaserMetrics() {
         return (await this.get(['metrics', 'laser'])) as Result<LaserMetrics>;
