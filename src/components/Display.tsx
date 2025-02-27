@@ -127,7 +127,13 @@ export function Display({
 
     const eventToMouseCoords = (event: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      return {
+        x:
+          ((event.clientX - rect.left) / (rect.right - rect.left)) *
+          canvas.width,
+        y:
+          event.clientY - (rect.top / (rect.bottom - rect.top)) * canvas.height,
+      };
     };
 
     const clampToNormalizedRange = (x: number) =>
