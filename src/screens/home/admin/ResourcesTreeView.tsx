@@ -1,4 +1,5 @@
 import { Button, Divider } from '@heroui/react';
+import { SearchBar } from '@luna/components/SearchBar';
 import { ResourcesContentsView } from '@luna/screens/home/admin/ResourcesContentsView';
 import { ResourcesLayout } from '@luna/screens/home/admin/ResourcesLayout';
 import {
@@ -24,15 +25,23 @@ export function ResourcesTreeView({
   // TODO: Use a set here and let the user expand multiple nodes (but only in
   // list view, in column view this doesn't make sense and shouldn't be allowed)
   const [expanded, setExpanded] = useState<string>();
+  const [filter, setFilter] = useState<string>('');
+
+  const name = useMemo(
+    () => (path.length === 0 ? 'root' : path[path.length - 1]),
+    [path]
+  );
 
   const sortedEntries = useMemo(
     () =>
       tree
-        ? Object.entries(tree).sort(([name1, _1], [name2, _2]) =>
-            name1.localeCompare(name2)
-          )
+        ? Object.entries(tree)
+            .filter(([name, _]) =>
+              name.toLowerCase().includes(filter.toLowerCase())
+            )
+            .sort(([name1, _1], [name2, _2]) => name1.localeCompare(name2))
         : undefined,
-    [tree]
+    [filter, tree]
   );
 
   switch (layout) {
@@ -40,6 +49,12 @@ export function ResourcesTreeView({
       return (
         <div className="flex flex-row gap-2 h-full">
           <div className="flex flex-col gap-2 h-full">
+            <SearchBar
+              fullWidth
+              placeholder={`Search ${name}`}
+              className="max-w-40"
+              setQuery={setFilter}
+            />
             {sortedEntries
               ? sortedEntries.map(([name, subTree]) => (
                   <ResourcesTreeButton
