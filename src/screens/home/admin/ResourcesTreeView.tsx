@@ -249,7 +249,8 @@ function ResourcesTreeButton({
   const deletePath = useCallback(async () => {
     await model.delete(path);
     await refreshListing();
-  }, [model, path, refreshListing]);
+    setExpanded(undefined);
+  }, [model, path, refreshListing, setExpanded]);
 
   const renamePath = useCallback(
     async (newName: string) => {
