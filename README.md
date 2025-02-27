@@ -4,6 +4,8 @@
 
 The unified web frontend for Project Lighthouse.
 
+![Screenshot](screenshot.png)
+
 ## Getting Started
 
 To get started developing, make sure to have Node.js and npm available and install the dependencies by running
