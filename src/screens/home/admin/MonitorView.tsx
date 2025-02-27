@@ -133,7 +133,17 @@ export function MonitorView() {
             case 'board_temperature':
             case 'core_temperature':
               return [rgb.BLUE, rgb.RED];
+            case 'responding':
+              return [rgb.GREEN, rgb.RED];
           }
+          break;
+        case 'lamp':
+          switch (filter.key) {
+            case 'responding':
+            case 'fuse_tripped':
+              return [rgb.GREEN, rgb.RED];
+          }
+          break;
       }
     }
     return [rgb.BLACK, rgb.RED, rgb.YELLOW, rgb.WHITE];
