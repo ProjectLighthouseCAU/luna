@@ -87,10 +87,10 @@ export function MonitorView() {
     [roomMetrics]
   );
 
-  const valueToNumber = useCallback(
+  const valueToNumberOrNull = useCallback(
     (value: number | string | boolean | Bounded<number> | null | undefined) => {
       if (value === null || value === undefined) {
-        return 0;
+        return null;
       }
       if (typeof value === 'object' && isBounded(value)) {
         return value.value;
@@ -106,15 +106,24 @@ export function MonitorView() {
       case 'room':
         return flatRoomMetrics.flatMap(room =>
           [...Array(room.responsive_lamps.total)].map(() =>
-            valueToNumber(room[filter.key])
+            valueToNumberOrNull(room[filter.key])
           )
         );
       case 'lamp':
         return roomMetrics.flatMap(room =>
-          room.lamp_metrics.map(lamp => valueToNumber(lamp[filter.key]))
+          room.lamp_metrics.map(lamp => valueToNumberOrNull(lamp[filter.key]))
         );
     }
-  }, [filter, flatRoomMetrics, roomMetrics, valueToNumber]);
+  }, [filter, flatRoomMetrics, roomMetrics, valueToNumberOrNull]);
+
+  const filteredNormalizedValues = useMemo(() => {
+    if (filteredValues === undefined) return undefined;
+    if (filteredValues.length === 0) return [];
+    const nonNulls = filteredValues.filter(v => v !== null) as number[];
+    const min = nonNulls.reduce((x, y) => Math.min(x, y));
+    const max = nonNulls.reduce((x, y) => Math.max(x, y));
+    return filteredValues.map(x => (x === null ? 0 : (x - min) / (max - min)));
+  }, [filteredValues]);
 
   const filterColormap = useMemo(() => {
     if (filter !== undefined) {
@@ -135,13 +144,10 @@ export function MonitorView() {
     const frame = new Uint8Array(LIGHTHOUSE_FRAME_BYTES);
     let windowIdx = 0;
 
-    const hasValidFilter =
-      filteredValues !== undefined &&
-      filteredValues.length > 0 &&
-      typeof filteredValues[0] === 'number';
+    const hasValidFilter = filteredNormalizedValues !== undefined;
 
     if (hasValidFilter) {
-      for (const value of filteredValues as number[]) {
+      for (const value of filteredNormalizedValues as number[]) {
         const color = rgb.lerpMultiple(filterColormap, value);
         rgb.setAt(windowIdx, color, frame);
         windowIdx++;
@@ -171,7 +177,7 @@ export function MonitorView() {
     }
 
     return frame;
-  }, [filterColormap, filteredValues, roomMetrics]);
+  }, [filterColormap, filteredNormalizedValues, roomMetrics]);
 
   const [roomsByWindow, windowsByRoom] = useMemo<[number[], number[][]]>(() => {
     const roomsByWindow: number[] = [];
