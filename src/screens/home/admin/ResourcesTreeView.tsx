@@ -1,4 +1,4 @@
-import { Button } from '@heroui/react';
+import { Button, Divider } from '@heroui/react';
 import { UnderConstruction } from '@luna/components/UnderConstruction';
 import { ResourcesLayout } from '@luna/screens/home/admin/ResourcesLayout';
 import { IconFile, IconFolder } from '@tabler/icons-react';
@@ -6,11 +6,16 @@ import { DirectoryTree } from 'nighthouse/browser';
 import { useCallback, useMemo, useState } from 'react';
 
 export interface ResourcesTreeViewProps {
+  parentPath?: string[];
   tree: DirectoryTree | undefined | null;
   layout: ResourcesLayout;
 }
 
-export function ResourcesTreeView({ tree, layout }: ResourcesTreeViewProps) {
+export function ResourcesTreeView({
+  parentPath: path = [],
+  tree,
+  layout,
+}: ResourcesTreeViewProps) {
   const [expanded, setExpanded] = useState<string>();
 
   const sortedEntries = useMemo(
@@ -31,7 +36,7 @@ export function ResourcesTreeView({ tree, layout }: ResourcesTreeViewProps) {
             {sortedEntries
               ? sortedEntries.map(([name, subTree]) => (
                   <ResourcesTreeButton
-                    key={name}
+                    key={JSON.stringify([...path, name])}
                     name={name}
                     subTree={subTree}
                     expanded={expanded}
@@ -41,7 +46,17 @@ export function ResourcesTreeView({ tree, layout }: ResourcesTreeViewProps) {
               : undefined}
           </div>
           {expanded !== undefined && tree?.[expanded] !== null ? (
-            <ResourcesTreeView tree={tree?.[expanded]!} layout={layout} />
+            <>
+              <div>
+                <Divider orientation="vertical" />
+              </div>
+              <ResourcesTreeView
+                key={JSON.stringify([...path, expanded])}
+                parentPath={[...path, expanded]}
+                tree={tree?.[expanded]!}
+                layout={layout}
+              />
+            </>
           ) : undefined}
         </div>
       );
