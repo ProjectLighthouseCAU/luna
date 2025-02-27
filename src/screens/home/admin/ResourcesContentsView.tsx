@@ -28,19 +28,19 @@ export function ResourcesContentsView({ path }: ResourcesContentsViewProps) {
     })();
   }, [model, path]);
 
-  const onChange = useCallback(() => {
+  const onChange = useCallback(async () => {
     const pre = preRef.current;
     if (pre === null) {
       return;
     }
     try {
       const parsedValue = JSON.parse(pre.innerText);
-      console.log('Parsed', parsedValue);
       setValue({ value: parsedValue, userEdited: true });
+      await model.put(path, parsedValue);
     } catch {
       // Swallow parse errors
     }
-  }, []);
+  }, [model, path]);
 
   useEffect(() => {
     const pre = preRef.current;
