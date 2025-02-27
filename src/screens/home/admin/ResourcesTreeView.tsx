@@ -245,7 +245,7 @@ function ResourcesTreeButton({
         onPress={onPress}
         color={color}
         variant="faded"
-        className={layout === 'list' ? 'w-full' : ''}
+        className="w-full"
       >
         <div className="flex flex-row justify-start items-center gap-2 grow">
           {layout === 'list' ? (
