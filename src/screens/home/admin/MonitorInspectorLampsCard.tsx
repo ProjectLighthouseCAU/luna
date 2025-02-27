@@ -1,13 +1,13 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import { LampV2Metrics } from '@luna/contexts/api/model/types';
-import { MonitorLampFilter } from '@luna/screens/home/admin/helpers/MonitorFilter';
+import { MonitorLampCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
 import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
 import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconCheck, IconLamp } from '@tabler/icons-react';
 
 export interface MonitorInspectorLampsCardProps {
-  filter?: MonitorLampFilter;
-  setFilter: (filter?: MonitorLampFilter) => void;
+  criterion?: MonitorLampCriterion;
+  setCriterion: (criterion?: MonitorLampCriterion) => void;
   metrics: LampV2Metrics[];
 }
 
@@ -22,8 +22,8 @@ const names: { [Property in keyof LampV2Metrics]: string } = {
 };
 
 export function MonitorInspectorLampsCard({
-  filter,
-  setFilter,
+  criterion,
+  setCriterion,
   metrics,
 }: MonitorInspectorLampsCardProps) {
   return (
@@ -32,8 +32,10 @@ export function MonitorInspectorLampsCard({
         <MonitorInspectorTable
           metrics={metrics}
           names={names}
-          selection={filter?.key}
-          onSelect={key => setFilter(key ? { type: 'lamp', key } : undefined)}
+          selection={criterion?.key}
+          onSelect={key =>
+            setCriterion(key ? { type: 'lamp', key } : undefined)
+          }
           render={(value, prop) => (
             <MonitorInspectorLampValue value={value} prop={prop} />
           )}

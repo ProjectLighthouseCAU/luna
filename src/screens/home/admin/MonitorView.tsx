@@ -4,7 +4,7 @@ import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
 import { flattenRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
-import { MonitorFilter } from '@luna/screens/home/admin/helpers/MonitorFilter';
+import { MonitorCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
 import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import * as rgb from '@luna/utils/rgb';
@@ -57,7 +57,7 @@ export function MonitorView() {
 
   const [focusedRoom, setSelectedRoom] = useState<number>();
   const [hoveredRoom, setHoveredRoom] = useState<number>();
-  const [filter, setFilter] = useState<MonitorFilter>();
+  const [criterion, setCriterion] = useState<MonitorCriterion>();
 
   const getLatestMetrics = useCallback(async () => {
     // setMetrics(testMetrics); // TODO: change back from test data to fetched data
@@ -100,36 +100,38 @@ export function MonitorView() {
     []
   );
 
-  const filteredValues = useMemo(() => {
-    if (filter === undefined) return undefined;
-    switch (filter.type) {
+  const criterionValues = useMemo(() => {
+    if (criterion === undefined) return undefined;
+    switch (criterion.type) {
       case 'room':
         return flatRoomMetrics.flatMap(room =>
           [...Array(room.responsive_lamps.total)].map(() =>
-            valueToNumberOrNull(room[filter.key])
+            valueToNumberOrNull(room[criterion.key])
           )
         );
       case 'lamp':
         return roomMetrics.flatMap(room =>
-          room.lamp_metrics.map(lamp => valueToNumberOrNull(lamp[filter.key]))
+          room.lamp_metrics.map(lamp =>
+            valueToNumberOrNull(lamp[criterion.key])
+          )
         );
     }
-  }, [filter, flatRoomMetrics, roomMetrics, valueToNumberOrNull]);
+  }, [criterion, flatRoomMetrics, roomMetrics, valueToNumberOrNull]);
 
-  const filteredNormalizedValues = useMemo(() => {
-    if (filteredValues === undefined) return undefined;
-    if (filteredValues.length === 0) return [];
-    const nonNulls = filteredValues.filter(v => v !== null) as number[];
+  const normalizedCriterionValues = useMemo(() => {
+    if (criterionValues === undefined) return undefined;
+    if (criterionValues.length === 0) return [];
+    const nonNulls = criterionValues.filter(v => v !== null) as number[];
     const min = nonNulls.reduce((x, y) => Math.min(x, y));
     const max = nonNulls.reduce((x, y) => Math.max(x, y));
-    return filteredValues.map(x => (x === null ? 0 : (x - min) / (max - min)));
-  }, [filteredValues]);
+    return criterionValues.map(x => (x === null ? 0 : (x - min) / (max - min)));
+  }, [criterionValues]);
 
-  const filterColormap = useMemo(() => {
-    if (filter !== undefined) {
-      switch (filter.type) {
+  const criterionColormap = useMemo(() => {
+    if (criterion !== undefined) {
+      switch (criterion.type) {
         case 'room':
-          switch (filter.key) {
+          switch (criterion.key) {
             case 'board_temperature':
             case 'core_temperature':
               return [rgb.BLUE, rgb.RED];
@@ -138,7 +140,7 @@ export function MonitorView() {
           }
           break;
         case 'lamp':
-          switch (filter.key) {
+          switch (criterion.key) {
             case 'responding':
             case 'fuse_tripped':
               return [rgb.GREEN, rgb.RED];
@@ -147,18 +149,17 @@ export function MonitorView() {
       }
     }
     return [rgb.BLACK, rgb.RED, rgb.YELLOW, rgb.WHITE];
-  }, [filter]);
+  }, [criterion]);
 
   // fill the frame with colors according to the metrics data
   const frame = useMemo(() => {
     const frame = new Uint8Array(LIGHTHOUSE_FRAME_BYTES);
     let windowIdx = 0;
 
-    const hasValidFilter = filteredNormalizedValues !== undefined;
-
-    if (hasValidFilter) {
-      for (const value of filteredNormalizedValues as number[]) {
-        const color = rgb.lerpMultiple(filterColormap, value);
+    const hasActiveCriterion = normalizedCriterionValues !== undefined;
+    if (hasActiveCriterion) {
+      for (const value of normalizedCriterionValues as number[]) {
+        const color = rgb.lerpMultiple(criterionColormap, value);
         rgb.setAt(windowIdx, color, frame);
         windowIdx++;
       }
@@ -187,7 +188,7 @@ export function MonitorView() {
     }
 
     return frame;
-  }, [filterColormap, filteredNormalizedValues, roomMetrics]);
+  }, [criterionColormap, normalizedCriterionValues, roomMetrics]);
 
   const [roomsByWindow, windowsByRoom] = useMemo<[number[], number[][]]>(() => {
     const roomsByWindow: number[] = [];
@@ -277,8 +278,8 @@ export function MonitorView() {
           className={isCompact ? '' : 'flex flex-row justify-end grow-0 w-1/3'}
         >
           <MonitorInspector
-            filter={filter}
-            setFilter={setFilter}
+            criterion={criterion}
+            setCriterion={setCriterion}
             flatRoomMetrics={focusedFlatRoomMetrics}
             lampMetrics={focusedLampMetrics}
           />

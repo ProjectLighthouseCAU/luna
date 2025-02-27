@@ -1,14 +1,14 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import { FlatRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
-import { MonitorRoomFilter } from '@luna/screens/home/admin/helpers/MonitorFilter';
+import { MonitorRoomCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
 import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
 import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 export interface MonitorInspectorRoomCardProps {
-  filter?: MonitorRoomFilter;
-  setFilter: (filter?: MonitorRoomFilter) => void;
+  criterion?: MonitorRoomCriterion;
+  setCriterion: (criterion?: MonitorRoomCriterion) => void;
   metrics?: FlatRoomV2Metrics;
 }
 
@@ -40,8 +40,8 @@ const units: { [Property in keyof FlatRoomV2Metrics]?: string } = {
 };
 
 export function MonitorInspectorRoomCard({
-  filter,
-  setFilter,
+  criterion,
+  setCriterion,
   metrics,
 }: MonitorInspectorRoomCardProps) {
   const renderedMetrics = useMemo<FlatRoomV2Metrics[]>(
@@ -55,8 +55,10 @@ export function MonitorInspectorRoomCard({
         <MonitorInspectorTable
           metrics={renderedMetrics}
           names={names}
-          selection={filter?.key}
-          onSelect={key => setFilter(key ? { type: 'room', key } : undefined)}
+          selection={criterion?.key}
+          onSelect={key =>
+            setCriterion(key ? { type: 'room', key } : undefined)
+          }
           render={(value, prop) => (
             <MonitorInspectorRoomValue value={value} prop={prop} />
           )}
