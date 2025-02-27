@@ -252,9 +252,9 @@ export function MonitorView() {
       title="Monitoring"
       toolbar={
         /* TODO: auto-refresh (polling) or streaming metrics */
-        <Button color="secondary" onPress={getLatestMetrics}>
+        <Button color="secondary" variant="ghost" onPress={getLatestMetrics}>
           <IconRefresh />
-          Refresh all
+          Refresh All
         </Button>
       }
     >

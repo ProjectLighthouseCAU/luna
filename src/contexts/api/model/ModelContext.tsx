@@ -7,10 +7,12 @@ import { Map, Set } from 'immutable';
 import {
   connect,
   ConsoleLogHandler,
+  DirectoryTree,
   LeveledLogHandler,
   Lighthouse,
   LIGHTHOUSE_FRAME_BYTES,
   LogLevel,
+  ServerMessage,
 } from 'nighthouse/browser';
 import {
   createContext,
@@ -34,6 +36,12 @@ export interface ModelContextValue {
   /** The user models, active users etc. */
   readonly users: Users;
 
+  /** Lists an arbitrary path. */
+  list(path: string[]): Promise<Result<DirectoryTree>>;
+
+  /** Fetches an arbitrary path. */
+  get(path: string[]): Promise<Result<unknown>>;
+
   /** Fetches lamp server metrics. */
   getLaserMetrics(): Promise<Result<LaserMetrics>>;
 }
@@ -43,12 +51,30 @@ export const ModelContext = createContext<ModelContextValue>({
     models: Map(),
     active: Set(),
   },
+  list: async () => errorResult('No model context for listing path'),
+  get: async () => errorResult('No model context for fetching path'),
   getLaserMetrics: async () =>
     errorResult('No model context for fetching laser metrics'),
 });
 
 interface ModelContextProviderProps {
   children: ReactNode;
+}
+
+function messageToResult<T>(message: ServerMessage<T> | undefined): Result<T> {
+  try {
+    if (!message) {
+      return errorResult('Model server provided no results');
+    }
+    if (message.RNUM >= 400) {
+      return errorResult(
+        `Model server errored: ${message.RNUM} ${message.RESPONSE ?? ''}`
+      );
+    }
+    return okResult(message.PAYL);
+  } catch (error) {
+    return errorResult(error);
+  }
 }
 
 export function ModelContextProvider({ children }: ModelContextProviderProps) {
@@ -148,16 +174,16 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const value: ModelContextValue = useMemo(
     () => ({
       users,
+      async list(path) {
+        const message = await client?.list(path);
+        return messageToResult(message);
+      },
+      async get(path) {
+        const message = await client?.get(path);
+        return messageToResult(message);
+      },
       async getLaserMetrics() {
-        try {
-          const message = await client?.get(['metrics', 'laser']);
-          if (!message || message.RNUM >= 400) {
-            return errorResult('Model server provided no laser metrics');
-          }
-          return okResult(message.PAYL as LaserMetrics);
-        } catch (error) {
-          return errorResult(error);
-        }
+        return (await this.get(['metrics', 'laser'])) as Result<LaserMetrics>;
       },
     }),
     [client, users]
