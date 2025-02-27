@@ -1,5 +1,12 @@
-import { Button, Divider, Tooltip } from '@heroui/react';
+import {
+  Button,
+  Divider,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@heroui/react';
 import { SearchBar } from '@luna/components/SearchBar';
+import { SimpleEditForm } from '@luna/components/SimpleEditForm';
 import { ResourcesContentsView } from '@luna/screens/home/admin/ResourcesContentsView';
 import { ResourcesLayout } from '@luna/screens/home/admin/ResourcesLayout';
 import {
@@ -59,26 +66,21 @@ export function ResourcesTreeView({
     [layout, name]
   );
 
-  const additionalButton = useCallback(
-    (icon: ReactNode, title: string) => (
-      <Button variant="ghost">
-        <div className="flex flex-row justify-start items-center gap-2 grow">
-          {icon}
-          {title}
-        </div>
-      </Button>
-    ),
-    []
-  );
+  const createFolder = useCallback((name: string) => {}, []);
+
+  const createResource = useCallback((name: string) => {}, []);
 
   const additionalElements = useMemo(
     () => (
       <>
-        {additionalButton(<IconPlus />, 'New Folder')}
-        {additionalButton(<IconPlus />, 'New Resource')}
+        <ResourcesTreeCreateButton title="New Folder" onCreate={createFolder} />
+        <ResourcesTreeCreateButton
+          title="New Resource"
+          onCreate={createFolder}
+        />
       </>
     ),
-    [additionalButton]
+    [createFolder]
   );
 
   switch (layout) {
@@ -209,5 +211,46 @@ function ResourcesTreeButton({
         {name}
       </div>
     </Button>
+  );
+}
+
+function ResourcesTreeCreateButton({
+  icon = <IconPlus />,
+  title,
+  onCreate,
+}: {
+  icon?: ReactNode;
+  title: string;
+  onCreate: (name: string) => void;
+}) {
+  const [isOpen, setOpen] = useState(false);
+
+  const onSubmit = useCallback(
+    (name: string) => {
+      setOpen(false);
+      onCreate(name);
+    },
+    [onCreate]
+  );
+
+  return (
+    <Popover
+      placement="bottom"
+      showArrow
+      isOpen={isOpen}
+      onOpenChange={setOpen}
+    >
+      <PopoverTrigger>
+        <Button variant="ghost">
+          <div className="flex flex-row justify-start items-center gap-2 grow">
+            {icon}
+            {title}
+          </div>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <SimpleEditForm onSubmit={onSubmit} />
+      </PopoverContent>
+    </Popover>
   );
 }
