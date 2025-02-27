@@ -81,7 +81,10 @@ export function MonitorView() {
   }, [getLatestMetrics]);
 
   const roomMetrics = useMemo(
-    () => (metrics?.rooms ?? []) as RoomV2Metrics[],
+    () =>
+      (metrics?.rooms ?? []).filter(
+        room => room.api_version === 2
+      ) as RoomV2Metrics[],
     [metrics?.rooms]
   );
 
@@ -109,7 +112,6 @@ export function MonitorView() {
     let windowIdx = 0;
     const parityDim = (c: rgb.Color) => rgb.scale(c, parity ? 1 : 0.6);
     for (const room of roomMetrics) {
-      if (room.api_version !== 2) continue;
       const lampCount = room.lamp_metrics.length;
       // controller works?
       if (room.controller_metrics.responding) {
