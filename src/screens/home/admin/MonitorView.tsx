@@ -246,6 +246,8 @@ export function MonitorView() {
     [flatRoomMetrics, roomMetrics, focusedRoom]
   );
 
+  const isColumnLayout = breakpoint < Breakpoint.TwoXl;
+
   // TODO: more appealing UI (maybe tables, inputs or custom stuff?)
   return (
     <HomeContent
@@ -258,12 +260,12 @@ export function MonitorView() {
         </Button>
       }
     >
-      <div className="flex flex-col space-y-4 md:flex-row h-full">
+      <div className="flex flex-col space-y-4 2xl:flex-row h-full">
         <div
           ref={wrapperRef}
           className="grow flex flex-row justify-center h-full"
         >
-          <div className={isCompact ? '' : 'absolute'}>
+          <div className={isColumnLayout ? '' : 'absolute'}>
             <Display
               width={width}
               frame={frame}
@@ -275,7 +277,9 @@ export function MonitorView() {
           </div>
         </div>
         <div
-          className={isCompact ? '' : 'flex flex-row justify-end grow-0 w-1/3'}
+          className={
+            isColumnLayout ? '' : 'flex flex-row justify-end grow-0 w-1/3'
+          }
         >
           <MonitorInspector
             criterion={criterion}
