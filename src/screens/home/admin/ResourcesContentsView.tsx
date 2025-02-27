@@ -25,7 +25,7 @@ export function ResourcesContentsView({ path }: ResourcesContentsViewProps) {
   return (
     <>
       {value !== undefined ? (
-        <pre>{JSON.stringify(value, null, 2)}</pre>
+        <pre contentEditable>{JSON.stringify(value, null, 2)}</pre>
       ) : error ? (
         error
       ) : (
