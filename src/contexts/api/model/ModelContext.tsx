@@ -43,6 +43,9 @@ export interface ModelContextValue {
   get(path: string[]): Promise<Result<unknown>>;
 
   /** Creates a resource at an arbitrary path. */
+  create(path: string[]): Promise<Result<unknown>>;
+
+  /** Updates a resource at an arbitrary path. */
   put(path: string[], payload: any): Promise<Result<unknown>>;
 
   /** Creates a directory at an arbitrary path. */
@@ -59,7 +62,8 @@ export const ModelContext = createContext<ModelContextValue>({
   },
   list: async () => errorResult('No model context for listing path'),
   get: async () => errorResult('No model context for fetching path'),
-  put: async () => errorResult('No model context for creating resource'),
+  put: async () => errorResult('No model context for updating resource'),
+  create: async () => errorResult('No model context for creating resource'),
   mkdir: async () => errorResult('No model context for creating directory'),
   getLaserMetrics: async () =>
     errorResult('No model context for fetching laser metrics'),
@@ -190,6 +194,9 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       },
       async put(path, payload) {
         return messageToResult(await client?.put(path, payload));
+      },
+      async create(path) {
+        return messageToResult(await client?.create(path));
       },
       async mkdir(path) {
         return messageToResult(await client?.mkdir(path));

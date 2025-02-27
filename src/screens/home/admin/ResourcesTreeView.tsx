@@ -81,7 +81,7 @@ export function ResourcesTreeView({
 
   const createResource = useCallback(
     async (name: string) => {
-      await model.put([...path, name], null);
+      await model.create([...path, name]);
       await refreshListing();
     },
     [model, path, refreshListing]
