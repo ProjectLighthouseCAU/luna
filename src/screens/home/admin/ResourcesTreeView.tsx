@@ -44,17 +44,23 @@ export function ResourcesTreeView({
     [filter, tree]
   );
 
+  const toolbar = (
+    <>
+      <SearchBar
+        fullWidth
+        placeholder={`Search ${name}`}
+        className="max-w-40"
+        setQuery={setFilter}
+      />
+    </>
+  );
+
   switch (layout) {
     case 'column':
       return (
         <div className="flex flex-row gap-2 h-full">
           <div className="flex flex-col gap-2 h-full">
-            <SearchBar
-              fullWidth
-              placeholder={`Search ${name}`}
-              className="max-w-40"
-              setQuery={setFilter}
-            />
+            {toolbar}
             {sortedEntries
               ? sortedEntries.map(([name, subTree]) => (
                   <ResourcesTreeButton
@@ -91,18 +97,23 @@ export function ResourcesTreeView({
       );
     case 'list':
       return (
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-1">
           {sortedEntries
             ? sortedEntries.map(([name, subTree]) => (
                 <>
-                  <ResourcesTreeButton
-                    key={JSON.stringify([...path, name])}
-                    name={name}
-                    subTree={subTree}
-                    layout={layout}
-                    expanded={expanded}
-                    setExpanded={setExpanded}
-                  />
+                  <div className="flex flex-row gap-1">
+                    <div className="grow">
+                      <ResourcesTreeButton
+                        key={JSON.stringify([...path, name])}
+                        name={name}
+                        subTree={subTree}
+                        layout={layout}
+                        expanded={expanded}
+                        setExpanded={setExpanded}
+                      />
+                    </div>
+                    {toolbar}
+                  </div>
                   {expanded === name ? (
                     <div className="ml-4">
                       {subTree === null ? (
@@ -150,7 +161,12 @@ function ResourcesTreeButton({
   }, [name, isExpanded, setExpanded]);
 
   return (
-    <Button onPress={onPress} color={color} variant="faded">
+    <Button
+      onPress={onPress}
+      color={color}
+      variant="faded"
+      className={layout === 'list' ? 'w-full' : ''}
+    >
       <div className="flex flex-row justify-start gap-2 grow">
         {layout === 'list' ? (
           isExpanded ? (
