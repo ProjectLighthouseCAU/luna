@@ -41,7 +41,13 @@ export function ResourcesView() {
         />
       }
     >
-      {tree ? <ResourcesTreeView tree={tree} layout={layout} /> : undefined}
+      {tree ? (
+        <ResourcesTreeView
+          tree={tree}
+          layout={layout}
+          refreshListing={refreshListing}
+        />
+      ) : undefined}
     </HomeContent>
   );
 }

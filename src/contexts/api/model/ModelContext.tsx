@@ -42,6 +42,18 @@ export interface ModelContextValue {
   /** Fetches an arbitrary path. */
   get(path: string[]): Promise<Result<unknown>>;
 
+  /** Deletes a resource at an arbitrary path. */
+  delete(path: string[]): Promise<Result<unknown>>;
+
+  /** Creates a resource at an arbitrary path. */
+  create(path: string[]): Promise<Result<unknown>>;
+
+  /** Updates a resource at an arbitrary path. */
+  put(path: string[], payload: any): Promise<Result<unknown>>;
+
+  /** Creates a directory at an arbitrary path. */
+  mkdir(path: string[]): Promise<Result<unknown>>;
+
   /** Fetches lamp server metrics. */
   getLaserMetrics(): Promise<Result<LaserMetrics>>;
 }
@@ -53,6 +65,10 @@ export const ModelContext = createContext<ModelContextValue>({
   },
   list: async () => errorResult('No model context for listing path'),
   get: async () => errorResult('No model context for fetching path'),
+  delete: async () => errorResult('No model context for deleting path'),
+  put: async () => errorResult('No model context for updating resource'),
+  create: async () => errorResult('No model context for creating resource'),
+  mkdir: async () => errorResult('No model context for creating directory'),
   getLaserMetrics: async () =>
     errorResult('No model context for fetching laser metrics'),
 });
@@ -175,12 +191,22 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     () => ({
       users,
       async list(path) {
-        const message = await client?.list(path);
-        return messageToResult(message);
+        return messageToResult(await client?.list(path));
       },
       async get(path) {
-        const message = await client?.get(path);
-        return messageToResult(message);
+        return messageToResult(await client?.get(path));
+      },
+      async delete(path) {
+        return messageToResult(await client?.delete(path));
+      },
+      async put(path, payload) {
+        return messageToResult(await client?.put(path, payload));
+      },
+      async create(path) {
+        return messageToResult(await client?.create(path));
+      },
+      async mkdir(path) {
+        return messageToResult(await client?.mkdir(path));
       },
       async getLaserMetrics() {
         return (await this.get(['metrics', 'laser'])) as Result<LaserMetrics>;

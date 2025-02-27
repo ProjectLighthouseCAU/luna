@@ -1,4 +1,16 @@
-import { Button, Divider } from '@heroui/react';
+import {
+  Button,
+  Divider,
+  DropdownItem,
+  DropdownMenu,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@heroui/react';
+import { ContextMenu } from '@luna/components/ContextMenu';
+import { SearchBar } from '@luna/components/SearchBar';
+import { SimpleEditForm } from '@luna/components/SimpleEditForm';
+import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { ResourcesContentsView } from '@luna/screens/home/admin/ResourcesContentsView';
 import { ResourcesLayout } from '@luna/screens/home/admin/ResourcesLayout';
 import {
@@ -6,52 +18,111 @@ import {
   IconChevronRight,
   IconFile,
   IconFolder,
+  IconPlus,
 } from '@tabler/icons-react';
 import { DirectoryTree } from 'nighthouse/browser';
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 
 export interface ResourcesTreeViewProps {
   parentPath?: string[];
   tree: DirectoryTree | undefined | null;
   layout: ResourcesLayout;
+  refreshListing: () => Promise<void>;
 }
 
 export function ResourcesTreeView({
   parentPath: path = [],
   tree,
   layout,
+  refreshListing,
 }: ResourcesTreeViewProps) {
+  const model = useContext(ModelContext);
+
   // TODO: Use a set here and let the user expand multiple nodes (but only in
   // list view, in column view this doesn't make sense and shouldn't be allowed)
   const [expanded, setExpanded] = useState<string>();
+  const [filter, setFilter] = useState<string>('');
+
+  const name = useMemo(
+    () => (path.length === 0 ? 'root' : path[path.length - 1]),
+    [path]
+  );
 
   const sortedEntries = useMemo(
     () =>
       tree
-        ? Object.entries(tree).sort(([name1, _1], [name2, _2]) =>
-            name1.localeCompare(name2)
-          )
+        ? Object.entries(tree)
+            .filter(([name, _]) =>
+              name.toLowerCase().includes(filter.toLowerCase())
+            )
+            .sort(([name1, _1], [name2, _2]) => name1.localeCompare(name2))
         : undefined,
-    [tree]
+    [filter, tree]
+  );
+
+  const toolbar = useMemo(
+    () => (
+      <>
+        <SearchBar
+          fullWidth
+          placeholder={`Search ${name}`}
+          className={layout === 'column' ? 'max-w-40' : 'max-w-full'}
+          setQuery={setFilter}
+        />
+      </>
+    ),
+    [layout, name]
+  );
+
+  const createFolder = useCallback(
+    async (name: string) => {
+      await model.mkdir([...path, name]);
+      await refreshListing();
+    },
+    [model, path, refreshListing]
+  );
+
+  const createResource = useCallback(
+    async (name: string) => {
+      await model.create([...path, name]);
+      await refreshListing();
+    },
+    [model, path, refreshListing]
+  );
+
+  const additionalElements = useMemo(
+    () => (
+      <>
+        <ResourcesTreeCreateButton title="New Folder" onCreate={createFolder} />
+        <ResourcesTreeCreateButton
+          title="New Resource"
+          onCreate={createResource}
+        />
+      </>
+    ),
+    [createFolder, createResource]
   );
 
   switch (layout) {
     case 'column':
       return (
-        <div className="flex flex-row gap-2">
-          <div className="flex flex-col gap-2">
+        <div className="flex flex-row gap-2 h-full">
+          <div className="flex flex-col gap-2 h-full">
+            {toolbar}
             {sortedEntries
               ? sortedEntries.map(([name, subTree]) => (
                   <ResourcesTreeButton
                     key={JSON.stringify([...path, name])}
-                    name={name}
+                    path={[...path, name]}
                     layout={layout}
                     subTree={subTree}
                     expanded={expanded}
                     setExpanded={setExpanded}
+                    refreshListing={refreshListing}
                   />
                 ))
               : undefined}
+            {additionalElements}
           </div>
           {expanded !== undefined ? (
             <>
@@ -65,6 +136,7 @@ export function ResourcesTreeView({
                     parentPath={[...path, expanded]}
                     tree={tree?.[expanded]!}
                     layout={layout}
+                    refreshListing={refreshListing}
                   />
                 </>
               ) : (
@@ -76,18 +148,27 @@ export function ResourcesTreeView({
       );
     case 'list':
       return (
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-1">
+          <div className="flex flex-row gap-1">
+            {toolbar}
+            {additionalElements}
+          </div>
           {sortedEntries
             ? sortedEntries.map(([name, subTree]) => (
                 <>
-                  <ResourcesTreeButton
-                    key={JSON.stringify([...path, name])}
-                    name={name}
-                    subTree={subTree}
-                    layout={layout}
-                    expanded={expanded}
-                    setExpanded={setExpanded}
-                  />
+                  <div className="flex flex-row gap-1">
+                    <div className="grow">
+                      <ResourcesTreeButton
+                        key={JSON.stringify([...path, name])}
+                        path={[...path, name]}
+                        subTree={subTree}
+                        layout={layout}
+                        expanded={expanded}
+                        setExpanded={setExpanded}
+                        refreshListing={refreshListing}
+                      />
+                    </div>
+                  </div>
                   {expanded === name ? (
                     <div className="ml-4">
                       {subTree === null ? (
@@ -98,6 +179,7 @@ export function ResourcesTreeView({
                           parentPath={[...path, expanded]}
                           tree={subTree}
                           layout={layout}
+                          refreshListing={refreshListing}
                         />
                       )}
                     </div>
@@ -111,18 +193,23 @@ export function ResourcesTreeView({
 }
 
 function ResourcesTreeButton({
-  name,
   subTree,
+  path,
   layout,
   expanded,
   setExpanded,
+  refreshListing,
 }: {
-  name: string;
   subTree: DirectoryTree | null;
+  path: string[];
   layout: ResourcesLayout;
   expanded: string | undefined;
   setExpanded: (name?: string) => void;
+  refreshListing: () => void;
 }) {
+  const model = useContext(ModelContext);
+
+  const name = useMemo(() => path[path.length - 1], [path]);
   const isExpanded = useMemo(() => expanded === name, [expanded, name]);
 
   const color = useMemo(
@@ -134,19 +221,85 @@ function ResourcesTreeButton({
     setExpanded(isExpanded ? undefined : name);
   }, [name, isExpanded, setExpanded]);
 
+  const deletePath = useCallback(async () => {
+    await model.delete(path);
+    refreshListing();
+  }, [model, path, refreshListing]);
+
   return (
-    <Button onPress={onPress} color={color} variant="faded">
-      <div className="flex flex-row justify-start gap-2 grow">
-        {layout === 'list' ? (
-          isExpanded ? (
-            <IconChevronDown />
-          ) : (
-            <IconChevronRight />
-          )
-        ) : undefined}
-        {subTree === null ? <IconFile /> : <IconFolder />}
-        {name}
-      </div>
-    </Button>
+    <ContextMenu
+      menu={
+        <DropdownMenu>
+          <DropdownItem
+            key="delete"
+            className="text-danger"
+            color="danger"
+            onPress={deletePath}
+          >
+            Delete
+          </DropdownItem>
+        </DropdownMenu>
+      }
+    >
+      <Button
+        onPress={onPress}
+        color={color}
+        variant="faded"
+        className="w-full"
+      >
+        <div className="flex flex-row justify-start items-center gap-2 grow">
+          {layout === 'list' ? (
+            isExpanded ? (
+              <IconChevronDown />
+            ) : (
+              <IconChevronRight />
+            )
+          ) : undefined}
+          {subTree === null ? <IconFile /> : <IconFolder />}
+          {name}
+        </div>
+      </Button>
+    </ContextMenu>
+  );
+}
+
+function ResourcesTreeCreateButton({
+  icon = <IconPlus />,
+  title,
+  onCreate,
+}: {
+  icon?: ReactNode;
+  title: string;
+  onCreate: (name: string) => void;
+}) {
+  const [isOpen, setOpen] = useState(false);
+
+  const onSubmit = useCallback(
+    (name: string) => {
+      setOpen(false);
+      onCreate(name);
+    },
+    [onCreate]
+  );
+
+  return (
+    <Popover
+      placement="bottom"
+      showArrow
+      isOpen={isOpen}
+      onOpenChange={setOpen}
+    >
+      <PopoverTrigger>
+        <Button variant="ghost">
+          <div className="flex flex-row justify-start items-center gap-2 grow">
+            {icon}
+            {title}
+          </div>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <SimpleEditForm onSubmit={onSubmit} />
+      </PopoverContent>
+    </Popover>
   );
 }
