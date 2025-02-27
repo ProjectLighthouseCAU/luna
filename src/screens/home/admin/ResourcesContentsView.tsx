@@ -14,7 +14,6 @@ export function ResourcesContentsView({ path }: ResourcesContentsViewProps) {
   useEffect(() => {
     (async () => {
       const result = await model.get(path);
-      console.log(result);
       if (result.ok) {
         setValue(result.value);
       } else {
@@ -26,7 +25,7 @@ export function ResourcesContentsView({ path }: ResourcesContentsViewProps) {
   return (
     <>
       {value !== undefined ? (
-        JSON.stringify(value)
+        <pre>{JSON.stringify(value, null, 2)}</pre>
       ) : error ? (
         error
       ) : (
