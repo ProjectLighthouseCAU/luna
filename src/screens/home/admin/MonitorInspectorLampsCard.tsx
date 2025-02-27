@@ -22,6 +22,8 @@ const names: { [Property in keyof LampV2Metrics]: string } = {
 };
 
 export function MonitorInspectorLampsCard({
+  filter,
+  setFilter,
   metrics,
 }: MonitorInspectorLampsCardProps) {
   return (
@@ -30,6 +32,8 @@ export function MonitorInspectorLampsCard({
         <MonitorInspectorTable
           metrics={metrics}
           names={names}
+          selection={filter?.key}
+          onSelect={key => setFilter(key ? { type: 'lamp', key } : undefined)}
           render={(value, prop) => (
             <MonitorInspectorLampValue value={value} prop={prop} />
           )}
