@@ -183,20 +183,16 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     () => ({
       users,
       async list(path) {
-        const message = await client?.list(path);
-        return messageToResult(message);
+        return messageToResult(await client?.list(path));
       },
       async get(path) {
-        const message = await client?.get(path);
-        return messageToResult(message);
+        return messageToResult(await client?.get(path));
       },
       async put(path, payload) {
-        const message = await client?.put(path, payload);
-        return messageToResult(message);
+        return messageToResult(await client?.put(path, payload));
       },
       async mkdir(path) {
-        const message = await client?.mkdir(path);
-        return messageToResult(message);
+        return messageToResult(await client?.mkdir(path));
       },
       async getLaserMetrics() {
         return (await this.get(['metrics', 'laser'])) as Result<LaserMetrics>;
