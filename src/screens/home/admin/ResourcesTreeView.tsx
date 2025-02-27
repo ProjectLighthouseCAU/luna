@@ -221,6 +221,22 @@ function ResourcesTreeButton({
     setExpanded(isExpanded ? undefined : name);
   }, [name, isExpanded, setExpanded]);
 
+  const downloadPath = useCallback(async () => {
+    const result = await model.get(path);
+    if (result.ok) {
+      const json = JSON.stringify(result.value, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.download = `${name}.json`;
+      a.href = url;
+      a.click();
+    } else {
+      console.log(result.error);
+    }
+  }, [model, name, path]);
+
   const deletePath = useCallback(async () => {
     await model.delete(path);
     refreshListing();
@@ -230,6 +246,9 @@ function ResourcesTreeButton({
     <ContextMenu
       menu={
         <DropdownMenu>
+          <DropdownItem key="download" onPress={downloadPath}>
+            Download
+          </DropdownItem>
           <DropdownItem
             key="delete"
             className="text-danger"
