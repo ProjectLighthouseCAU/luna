@@ -1,5 +1,6 @@
 import { Button, Divider } from '@heroui/react';
 import { UnderConstruction } from '@luna/components/UnderConstruction';
+import { ResourcesContentsView } from '@luna/screens/home/admin/ResourcesContentsView';
 import { ResourcesLayout } from '@luna/screens/home/admin/ResourcesLayout';
 import { IconFile, IconFolder } from '@tabler/icons-react';
 import { DirectoryTree } from 'nighthouse/browser';
@@ -45,17 +46,23 @@ export function ResourcesTreeView({
                 ))
               : undefined}
           </div>
-          {expanded !== undefined && tree?.[expanded] !== null ? (
+          {expanded !== undefined ? (
             <>
               <div>
                 <Divider orientation="vertical" />
               </div>
-              <ResourcesTreeView
-                key={JSON.stringify([...path, expanded])}
-                parentPath={[...path, expanded]}
-                tree={tree?.[expanded]!}
-                layout={layout}
-              />
+              {tree?.[expanded] !== null ? (
+                <>
+                  <ResourcesTreeView
+                    key={JSON.stringify([...path, expanded])}
+                    parentPath={[...path, expanded]}
+                    tree={tree?.[expanded]!}
+                    layout={layout}
+                  />
+                </>
+              ) : (
+                <ResourcesContentsView path={[...path, expanded]} />
+              )}
             </>
           ) : undefined}
         </div>
