@@ -1,8 +1,12 @@
 import { Button, Divider } from '@heroui/react';
-import { UnderConstruction } from '@luna/components/UnderConstruction';
 import { ResourcesContentsView } from '@luna/screens/home/admin/ResourcesContentsView';
 import { ResourcesLayout } from '@luna/screens/home/admin/ResourcesLayout';
-import { IconFile, IconFolder } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconChevronRight,
+  IconFile,
+  IconFolder,
+} from '@tabler/icons-react';
 import { DirectoryTree } from 'nighthouse/browser';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -39,6 +43,7 @@ export function ResourcesTreeView({
                   <ResourcesTreeButton
                     key={JSON.stringify([...path, name])}
                     name={name}
+                    layout={layout}
                     subTree={subTree}
                     expanded={expanded}
                     setExpanded={setExpanded}
@@ -68,33 +73,75 @@ export function ResourcesTreeView({
         </div>
       );
     case 'list':
-      return <UnderConstruction />; // TODO
+      return (
+        <div className="flex flex-col">
+          {sortedEntries
+            ? sortedEntries.map(([name, subTree]) => (
+                <>
+                  <ResourcesTreeButton
+                    key={JSON.stringify([...path, name])}
+                    name={name}
+                    subTree={subTree}
+                    layout={layout}
+                    expanded={expanded}
+                    setExpanded={setExpanded}
+                  />
+                  {expanded === name ? (
+                    <div className="ml-4">
+                      {subTree === null ? (
+                        <ResourcesContentsView path={[...path, expanded]} />
+                      ) : (
+                        <ResourcesTreeView
+                          key={JSON.stringify([...path, expanded])}
+                          parentPath={[...path, expanded]}
+                          tree={subTree}
+                          layout={layout}
+                        />
+                      )}
+                    </div>
+                  ) : undefined}
+                </>
+              ))
+            : undefined}
+        </div>
+      );
   }
 }
 
 function ResourcesTreeButton({
   name,
   subTree,
+  layout,
   expanded,
   setExpanded,
 }: {
   name: string;
   subTree: DirectoryTree | null;
+  layout: ResourcesLayout;
   expanded: string | undefined;
-  setExpanded: (name: string) => void;
+  setExpanded: (name?: string) => void;
 }) {
+  const isExpanded = useMemo(() => expanded === name, [expanded, name]);
+
   const color = useMemo(
-    () => (expanded === name ? 'primary' : 'default'),
-    [expanded, name]
+    () => (isExpanded && layout === 'column' ? 'primary' : 'default'),
+    [isExpanded, layout]
   );
 
   const onPress = useCallback(() => {
-    setExpanded(name);
-  }, [name, setExpanded]);
+    setExpanded(isExpanded ? undefined : name);
+  }, [name, isExpanded, setExpanded]);
 
   return (
     <Button onPress={onPress} color={color} variant="faded">
       <div className="flex flex-row justify-start gap-2 grow">
+        {layout === 'list' ? (
+          isExpanded ? (
+            <IconChevronDown />
+          ) : (
+            <IconChevronRight />
+          )
+        ) : undefined}
         {subTree === null ? <IconFile /> : <IconFolder />}
         {name}
       </div>
