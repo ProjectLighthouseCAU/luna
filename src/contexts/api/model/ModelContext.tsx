@@ -34,6 +34,9 @@ export interface ModelContextValue {
   /** The user models, active users etc. */
   readonly users: Users;
 
+  /** Fetches an arbitrary path. */
+  get(path: string[]): Promise<Result<unknown>>;
+
   /** Fetches lamp server metrics. */
   getLaserMetrics(): Promise<Result<LaserMetrics>>;
 }
@@ -43,6 +46,7 @@ export const ModelContext = createContext<ModelContextValue>({
     models: Map(),
     active: Set(),
   },
+  get: async () => errorResult('No model context for fetching path'),
   getLaserMetrics: async () =>
     errorResult('No model context for fetching laser metrics'),
 });
@@ -148,16 +152,24 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const value: ModelContextValue = useMemo(
     () => ({
       users,
-      async getLaserMetrics() {
+      async get(path) {
         try {
-          const message = await client?.get(['metrics', 'laser']);
-          if (!message || message.RNUM >= 400) {
-            return errorResult('Model server provided no laser metrics');
+          const message = await client?.get(path);
+          if (!message) {
+            return errorResult('Model server provided no results');
           }
-          return okResult(message.PAYL as LaserMetrics);
+          if (message.RNUM >= 400) {
+            return errorResult(
+              `Model server errored while fetching ${JSON.stringify(path)}: ${message.RNUM} ${message.RESPONSE ?? ''}`
+            );
+          }
+          return okResult(message.PAYL);
         } catch (error) {
           return errorResult(error);
         }
+      },
+      async getLaserMetrics() {
+        return (await this.get(['metrics', 'laser'])) as Result<LaserMetrics>;
       },
     }),
     [client, users]
