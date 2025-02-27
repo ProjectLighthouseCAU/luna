@@ -7,6 +7,7 @@ import {
 } from '@heroui/react';
 import { SearchBar } from '@luna/components/SearchBar';
 import { SimpleEditForm } from '@luna/components/SimpleEditForm';
+import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { ResourcesContentsView } from '@luna/screens/home/admin/ResourcesContentsView';
 import { ResourcesLayout } from '@luna/screens/home/admin/ResourcesLayout';
 import {
@@ -17,7 +18,7 @@ import {
   IconPlus,
 } from '@tabler/icons-react';
 import { DirectoryTree } from 'nighthouse/browser';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 
 export interface ResourcesTreeViewProps {
   parentPath?: string[];
@@ -30,6 +31,8 @@ export function ResourcesTreeView({
   tree,
   layout,
 }: ResourcesTreeViewProps) {
+  const model = useContext(ModelContext);
+
   // TODO: Use a set here and let the user expand multiple nodes (but only in
   // list view, in column view this doesn't make sense and shouldn't be allowed)
   const [expanded, setExpanded] = useState<string>();
@@ -66,9 +69,19 @@ export function ResourcesTreeView({
     [layout, name]
   );
 
-  const createFolder = useCallback((name: string) => {}, []);
+  const createFolder = useCallback(
+    async (name: string) => {
+      await model.mkdir([...path, name]);
+    },
+    [model, path]
+  );
 
-  const createResource = useCallback((name: string) => {}, []);
+  const createResource = useCallback(
+    async (name: string) => {
+      await model.put([...path, name], null);
+    },
+    [model, path]
+  );
 
   const additionalElements = useMemo(
     () => (
@@ -76,11 +89,11 @@ export function ResourcesTreeView({
         <ResourcesTreeCreateButton title="New Folder" onCreate={createFolder} />
         <ResourcesTreeCreateButton
           title="New Resource"
-          onCreate={createFolder}
+          onCreate={createResource}
         />
       </>
     ),
-    [createFolder]
+    [createFolder, createResource]
   );
 
   switch (layout) {

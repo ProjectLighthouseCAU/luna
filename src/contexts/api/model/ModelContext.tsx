@@ -42,6 +42,12 @@ export interface ModelContextValue {
   /** Fetches an arbitrary path. */
   get(path: string[]): Promise<Result<unknown>>;
 
+  /** Creates a resource at an arbitrary path. */
+  put(path: string[], payload: any): Promise<Result<unknown>>;
+
+  /** Creates a directory at an arbitrary path. */
+  mkdir(path: string[]): Promise<Result<unknown>>;
+
   /** Fetches lamp server metrics. */
   getLaserMetrics(): Promise<Result<LaserMetrics>>;
 }
@@ -53,6 +59,8 @@ export const ModelContext = createContext<ModelContextValue>({
   },
   list: async () => errorResult('No model context for listing path'),
   get: async () => errorResult('No model context for fetching path'),
+  put: async () => errorResult('No model context for creating resource'),
+  mkdir: async () => errorResult('No model context for creating directory'),
   getLaserMetrics: async () =>
     errorResult('No model context for fetching laser metrics'),
 });
@@ -180,6 +188,14 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       },
       async get(path) {
         const message = await client?.get(path);
+        return messageToResult(message);
+      },
+      async put(path, payload) {
+        const message = await client?.put(path, payload);
+        return messageToResult(message);
+      },
+      async mkdir(path) {
+        const message = await client?.mkdir(path);
         return messageToResult(message);
       },
       async getLaserMetrics() {
