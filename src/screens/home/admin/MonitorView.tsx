@@ -4,18 +4,16 @@ import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
 import { flattenRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
+import { MonitorCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
 import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 import { HomeContent } from '@luna/screens/home/HomeContent';
+import * as rgb from '@luna/utils/rgb';
 import { throttle } from '@luna/utils/schedule';
 import { Vec2 } from '@luna/utils/vec2';
 import { Button } from '@heroui/react';
 import { IconRefresh } from '@tabler/icons-react';
 import { Set } from 'immutable';
-import {
-  LIGHTHOUSE_COLOR_CHANNELS,
-  LIGHTHOUSE_COLS,
-  LIGHTHOUSE_FRAME_BYTES,
-} from 'nighthouse/browser';
+import { LIGHTHOUSE_COLS, LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import {
   useCallback,
   useContext,
@@ -24,6 +22,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { Bounded, isBounded } from '@luna/utils/bounded';
 
 export function MonitorView() {
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
@@ -58,6 +57,7 @@ export function MonitorView() {
 
   const [focusedRoom, setSelectedRoom] = useState<number>();
   const [hoveredRoom, setHoveredRoom] = useState<number>();
+  const [criterion, setCriterion] = useState<MonitorCriterion>();
 
   const getLatestMetrics = useCallback(async () => {
     // setMetrics(testMetrics); // TODO: change back from test data to fetched data
@@ -75,7 +75,10 @@ export function MonitorView() {
   }, [getLatestMetrics]);
 
   const roomMetrics = useMemo(
-    () => (metrics?.rooms ?? []) as RoomV2Metrics[],
+    () =>
+      (metrics?.rooms ?? []).filter(
+        room => room.api_version === 2
+      ) as RoomV2Metrics[],
     [metrics?.rooms]
   );
 
@@ -84,40 +87,108 @@ export function MonitorView() {
     [roomMetrics]
   );
 
+  const valueToNumberOrNull = useCallback(
+    (value: number | string | boolean | Bounded<number> | null | undefined) => {
+      if (value === null || value === undefined) {
+        return null;
+      }
+      if (typeof value === 'object' && isBounded(value)) {
+        return value.value;
+      }
+      return +value;
+    },
+    []
+  );
+
+  const criterionValues = useMemo(() => {
+    if (criterion === undefined) return undefined;
+    switch (criterion.type) {
+      case 'room':
+        return flatRoomMetrics.flatMap(room =>
+          [...Array(room.responsive_lamps.total)].map(() =>
+            valueToNumberOrNull(room[criterion.key])
+          )
+        );
+      case 'lamp':
+        return roomMetrics.flatMap(room =>
+          room.lamp_metrics.map(lamp =>
+            valueToNumberOrNull(lamp[criterion.key])
+          )
+        );
+    }
+  }, [criterion, flatRoomMetrics, roomMetrics, valueToNumberOrNull]);
+
+  const normalizedCriterionValues = useMemo(() => {
+    if (criterionValues === undefined) return undefined;
+    if (criterionValues.length === 0) return [];
+    const nonNulls = criterionValues.filter(v => v !== null) as number[];
+    const min = nonNulls.reduce((x, y) => Math.min(x, y));
+    const max = nonNulls.reduce((x, y) => Math.max(x, y));
+    return criterionValues.map(x => (x === null ? 0 : (x - min) / (max - min)));
+  }, [criterionValues]);
+
+  const criterionColormap = useMemo(() => {
+    if (criterion !== undefined) {
+      switch (criterion.type) {
+        case 'room':
+          switch (criterion.key) {
+            case 'board_temperature':
+            case 'core_temperature':
+              return [rgb.BLUE, rgb.RED];
+            case 'responding':
+              return [rgb.GREEN, rgb.RED];
+          }
+          break;
+        case 'lamp':
+          switch (criterion.key) {
+            case 'responding':
+            case 'fuse_tripped':
+              return [rgb.GREEN, rgb.RED];
+          }
+          break;
+      }
+    }
+    return [rgb.BLACK, rgb.RED, rgb.YELLOW, rgb.WHITE];
+  }, [criterion]);
+
   // fill the frame with colors according to the metrics data
   const frame = useMemo(() => {
     const frame = new Uint8Array(LIGHTHOUSE_FRAME_BYTES);
-    // alternate between light and dark color to visualize room borders
-    let parity = false;
-    let i = 0;
-    for (const room of roomMetrics) {
-      if (room.api_version !== 2) continue;
-      const endIdx = i + LIGHTHOUSE_COLOR_CHANNELS * room.lamp_metrics.length;
-      // controller works?
-      if (room.controller_metrics.responding) {
-        let lampIdx = 0;
-        for (; i < endIdx; i += LIGHTHOUSE_COLOR_CHANNELS) {
-          // lamp works?
-          if (room.lamp_metrics[lampIdx].responding) {
-            frame[i + 1] = parity ? 255 : 128; // green
-          } else {
-            // lamp down -> magenta
-            frame[i] = parity ? 255 : 128;
-            frame[i + 2] = parity ? 255 : 128;
-          }
-          lampIdx++;
-        }
-      } else {
-        // controller down
-        for (; i < endIdx; i += 3) {
-          frame[i] = parity ? 255 : 128; // red
-        }
+    let windowIdx = 0;
+
+    const hasActiveCriterion = normalizedCriterionValues !== undefined;
+    if (hasActiveCriterion) {
+      for (const value of normalizedCriterionValues as number[]) {
+        const color = rgb.lerpMultiple(criterionColormap, value);
+        rgb.setAt(windowIdx, color, frame);
+        windowIdx++;
       }
-      parity = !parity;
+    } else {
+      // alternate between light and dark color to visualize room borders
+      let parity = false;
+      const parityDim = (c: rgb.Color) => rgb.scale(c, parity ? 1 : 0.6);
+      for (const room of roomMetrics) {
+        const lampCount = room.lamp_metrics.length;
+        // controller works?
+        if (room.controller_metrics.responding) {
+          for (let lampIdx = 0; lampIdx < lampCount; lampIdx++) {
+            // lamp works?
+            const color = parityDim(
+              room.lamp_metrics[lampIdx].responding ? rgb.GREEN : rgb.MAGENTA
+            );
+            rgb.setAt(windowIdx + lampIdx, color, frame);
+          }
+        } else {
+          // controller down
+          rgb.fillAt(windowIdx, lampCount, parityDim(rgb.RED), frame);
+        }
+        windowIdx += lampCount;
+        parity = !parity;
+      }
     }
 
     return frame;
-  }, [roomMetrics]);
+  }, [criterionColormap, normalizedCriterionValues, roomMetrics]);
 
   const [roomsByWindow, windowsByRoom] = useMemo<[number[], number[][]]>(() => {
     const roomsByWindow: number[] = [];
@@ -207,6 +278,8 @@ export function MonitorView() {
           className={isCompact ? '' : 'flex flex-row justify-end grow-0 w-1/3'}
         >
           <MonitorInspector
+            criterion={criterion}
+            setCriterion={setCriterion}
             flatRoomMetrics={focusedFlatRoomMetrics}
             lampMetrics={focusedLampMetrics}
           />
