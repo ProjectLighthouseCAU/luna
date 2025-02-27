@@ -7,6 +7,7 @@ import { flattenRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV
 import { MonitorFilter } from '@luna/screens/home/admin/helpers/MonitorFilter';
 import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 import { HomeContent } from '@luna/screens/home/HomeContent';
+import * as rgb from '@luna/utils/rgb';
 import { throttle } from '@luna/utils/schedule';
 import { Vec2 } from '@luna/utils/vec2';
 import { Button } from '@heroui/react';
@@ -105,30 +106,25 @@ export function MonitorView() {
     const frame = new Uint8Array(LIGHTHOUSE_FRAME_BYTES);
     // alternate between light and dark color to visualize room borders
     let parity = false;
-    let i = 0;
+    let windowIdx = 0;
+    const parityDim = (c: rgb.Color) => rgb.scale(c, parity ? 1 : 0.6);
     for (const room of roomMetrics) {
       if (room.api_version !== 2) continue;
-      const endIdx = i + LIGHTHOUSE_COLOR_CHANNELS * room.lamp_metrics.length;
+      const lampCount = room.lamp_metrics.length;
       // controller works?
       if (room.controller_metrics.responding) {
-        let lampIdx = 0;
-        for (; i < endIdx; i += LIGHTHOUSE_COLOR_CHANNELS) {
+        for (let lampIdx = 0; lampIdx < lampCount; lampIdx++) {
           // lamp works?
-          if (room.lamp_metrics[lampIdx].responding) {
-            frame[i + 1] = parity ? 255 : 128; // green
-          } else {
-            // lamp down -> magenta
-            frame[i] = parity ? 255 : 128;
-            frame[i + 2] = parity ? 255 : 128;
-          }
-          lampIdx++;
+          const color = parityDim(
+            room.lamp_metrics[lampIdx].responding ? rgb.GREEN : rgb.MAGENTA
+          );
+          rgb.setAt(windowIdx + lampIdx, color, frame);
         }
       } else {
         // controller down
-        for (; i < endIdx; i += 3) {
-          frame[i] = parity ? 255 : 128; // red
-        }
+        rgb.fillAt(windowIdx, lampCount, parityDim(rgb.RED), frame);
       }
+      windowIdx += lampCount;
       parity = !parity;
     }
 

@@ -46,6 +46,18 @@ export function setAt(i: number, color: Color, rgbBuffer: Uint8Array): void {
   rgbBuffer[i * 3 + 2] = color & 0xff;
 }
 
+/// Fills a range with the given value in the given (interleaved) RGB buffer.
+export function fillAt(
+  i: number,
+  length: number,
+  color: Color,
+  rgbBuffer: Uint8Array
+): void {
+  for (let di = 0; di < length; di++) {
+    setAt(i + di, color, rgbBuffer);
+  }
+}
+
 /// Linearly interpolates between two colors.
 export function lerp(lhs: Color, rhs: Color, value: number): Color {
   return color(
@@ -53,4 +65,9 @@ export function lerp(lhs: Color, rhs: Color, value: number): Color {
     (1 - value) * getGreen(lhs) + value * getGreen(rhs),
     (1 - value) * getBlue(lhs) + value * getBlue(rhs)
   );
+}
+
+/// Scales the given color.
+export function scale(c: Color, value: number): Color {
+  return color(value * getRed(c), value * getGreen(c), value * getBlue(c));
 }
