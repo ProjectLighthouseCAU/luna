@@ -13,11 +13,7 @@ import { Vec2 } from '@luna/utils/vec2';
 import { Button } from '@heroui/react';
 import { IconRefresh } from '@tabler/icons-react';
 import { Set } from 'immutable';
-import {
-  LIGHTHOUSE_COLOR_CHANNELS,
-  LIGHTHOUSE_COLS,
-  LIGHTHOUSE_FRAME_BYTES,
-} from 'nighthouse/browser';
+import { LIGHTHOUSE_COLS, LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import {
   useCallback,
   useContext,
