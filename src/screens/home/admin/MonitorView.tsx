@@ -98,34 +98,62 @@ export function MonitorView() {
     }
   }, [filter, flatRoomMetrics, roomMetrics]);
 
+  const filterColormap = useMemo(() => {
+    if (filter !== undefined) {
+      switch (filter.type) {
+        case 'room':
+          switch (filter.key) {
+            case 'board_temperature':
+            case 'core_temperature':
+              return [rgb.BLUE, rgb.RED];
+          }
+      }
+    }
+    return [rgb.BLACK, rgb.RED, rgb.YELLOW, rgb.WHITE];
+  }, [filter]);
+
   // fill the frame with colors according to the metrics data
   const frame = useMemo(() => {
     const frame = new Uint8Array(LIGHTHOUSE_FRAME_BYTES);
-    // alternate between light and dark color to visualize room borders
-    let parity = false;
     let windowIdx = 0;
-    const parityDim = (c: rgb.Color) => rgb.scale(c, parity ? 1 : 0.6);
-    for (const room of roomMetrics) {
-      const lampCount = room.lamp_metrics.length;
-      // controller works?
-      if (room.controller_metrics.responding) {
-        for (let lampIdx = 0; lampIdx < lampCount; lampIdx++) {
-          // lamp works?
-          const color = parityDim(
-            room.lamp_metrics[lampIdx].responding ? rgb.GREEN : rgb.MAGENTA
-          );
-          rgb.setAt(windowIdx + lampIdx, color, frame);
-        }
-      } else {
-        // controller down
-        rgb.fillAt(windowIdx, lampCount, parityDim(rgb.RED), frame);
+
+    const hasValidFilter =
+      filteredValues !== undefined &&
+      filteredValues.length > 0 &&
+      typeof filteredValues[0] === 'number';
+
+    if (hasValidFilter) {
+      for (const value of filteredValues as number[]) {
+        const color = rgb.lerpMultiple(filterColormap, value);
+        rgb.setAt(windowIdx, color, frame);
+        windowIdx++;
       }
-      windowIdx += lampCount;
-      parity = !parity;
+    } else {
+      // alternate between light and dark color to visualize room borders
+      let parity = false;
+      const parityDim = (c: rgb.Color) => rgb.scale(c, parity ? 1 : 0.6);
+      for (const room of roomMetrics) {
+        const lampCount = room.lamp_metrics.length;
+        // controller works?
+        if (room.controller_metrics.responding) {
+          for (let lampIdx = 0; lampIdx < lampCount; lampIdx++) {
+            // lamp works?
+            const color = parityDim(
+              room.lamp_metrics[lampIdx].responding ? rgb.GREEN : rgb.MAGENTA
+            );
+            rgb.setAt(windowIdx + lampIdx, color, frame);
+          }
+        } else {
+          // controller down
+          rgb.fillAt(windowIdx, lampCount, parityDim(rgb.RED), frame);
+        }
+        windowIdx += lampCount;
+        parity = !parity;
+      }
     }
 
     return frame;
-  }, [roomMetrics]);
+  }, [filterColormap, filteredValues, roomMetrics]);
 
   const [roomsByWindow, windowsByRoom] = useMemo<[number[], number[][]]>(() => {
     const roomsByWindow: number[] = [];

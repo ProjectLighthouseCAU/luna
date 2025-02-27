@@ -60,11 +60,29 @@ export function fillAt(
 
 /// Linearly interpolates between two colors.
 export function lerp(lhs: Color, rhs: Color, value: number): Color {
+  const clampedValue = Math.min(1, Math.max(0, value));
   return color(
-    (1 - value) * getRed(lhs) + value * getRed(rhs),
-    (1 - value) * getGreen(lhs) + value * getGreen(rhs),
-    (1 - value) * getBlue(lhs) + value * getBlue(rhs)
+    (1 - clampedValue) * getRed(lhs) + clampedValue * getRed(rhs),
+    (1 - clampedValue) * getGreen(lhs) + clampedValue * getGreen(rhs),
+    (1 - clampedValue) * getBlue(lhs) + clampedValue * getBlue(rhs)
   );
+}
+
+/// Linearly interpolates between multiple colors (e.g. a colormap).
+export function lerpMultiple(colors: Color[], value: number): Color {
+  if (colors.length === 0) {
+    throw new Error('Cannot interpolate between an empty array of colors!');
+  }
+  const position = value * colors.length;
+  const i = Math.floor(position);
+  if (i < 0) {
+    return colors[0];
+  }
+  if (i >= colors.length - 1) {
+    return colors[colors.length - 1];
+  }
+  const remainder = position - i;
+  return lerp(colors[i], colors[i + 1], remainder);
 }
 
 /// Scales the given color.
