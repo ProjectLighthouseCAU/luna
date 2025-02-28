@@ -7,7 +7,7 @@ export interface BooleanChipProps {
 export function BooleanChip({ value }: BooleanChipProps) {
   return (
     <Chip color={value ? 'success' : 'danger'} variant="flat">
-      {value ? 'true' : 'false'}
+      {value ? 'yes' : 'no'}
     </Chip>
   );
 }
