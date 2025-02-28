@@ -66,7 +66,7 @@ export function ObjectInspectorTable<T extends object>({
       classNames={{
         table: 'bg-red',
       }}
-      isStriped
+      removeWrapper
       isCompact
       selectedKeys={[selection as string]}
       selectionMode={selection || onSelect ? 'single' : undefined}
