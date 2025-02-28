@@ -1,6 +1,7 @@
 import { Code, Divider, Switch, Tooltip } from '@heroui/react';
 import { TitledCard } from '@luna/components/TitledCard';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
+import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import {
   IconDeviceGamepad,
   IconDeviceGamepad2,
@@ -11,6 +12,7 @@ import { useCallback } from 'react';
 
 export interface DisplayInspectorInputCardProps {
   username: string;
+  inputState: InputState;
   inputConfig: InputConfig;
   setInputConfig: (inputConfig: InputConfig) => void;
 }

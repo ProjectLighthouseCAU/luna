@@ -10,11 +10,13 @@ import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { displayLayoutId } from '@luna/constants/LayoutId';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
+import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
   const { users } = useContext(ModelContext);
 
+  const [inputState, setInputState] = useState<InputState>({});
   const [inputConfig, setInputConfig] = useState<InputConfig>({
     legacyMode: true,
     mouseEnabled: true,
@@ -79,6 +81,7 @@ export function DisplayView() {
           </div>
           <DisplayInspector
             username={username}
+            inputState={inputState}
             inputConfig={inputConfig}
             setInputConfig={setInputConfig}
           />
