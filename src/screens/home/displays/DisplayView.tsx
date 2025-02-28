@@ -19,6 +19,7 @@ import { displayLayoutId } from '@luna/constants/LayoutId';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import { ClientIdContext } from '@luna/contexts/env/ClientIdContext';
+import { KeyEvent, LegacyKeyEvent } from 'nighthouse/browser';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
@@ -66,18 +67,22 @@ export function DisplayView() {
       }
 
       if (inputConfig.legacyMode) {
-        await model.putLegacyInput(username, {
+        const event: LegacyKeyEvent = {
           src: 0, // TODO: What is this?
           dwn: down,
           key: e.keyCode,
-        });
+        };
+        await model.putLegacyInput(username, event);
+        setInputState(state => ({ ...state, lastKeyEvent: event }));
       } else {
-        await model.putInput(username, {
+        const event: KeyEvent = {
           type: 'key',
           source: clientId,
           down,
           key: e.key,
-        });
+        };
+        await model.putInput(username, event);
+        setInputState(state => ({ ...state, lastKeyEvent: event }));
       }
     },
     [
