@@ -1,5 +1,5 @@
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
-import { LaserMetrics, UserModel } from '@luna/contexts/api/model/types';
+import { UserModel } from '@luna/contexts/api/model/types';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { mergeAsyncIterables } from '@luna/utils/async';
 import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
@@ -60,8 +60,8 @@ export interface ModelContextValue {
   /** Moves a resource to an arbitrary path. */
   move(path: string[], newPath: string[]): Promise<Result<void>>;
 
-  /** Fetches lamp server metrics. */
-  getLaserMetrics(): Promise<Result<LaserMetrics>>;
+  /** Streams a resource. */
+  stream(path: string[]): Promise<AsyncIterable<ServerMessage<unknown>>>;
 }
 
 export const ModelContext = createContext<ModelContextValue>({
@@ -77,8 +77,9 @@ export const ModelContext = createContext<ModelContextValue>({
   mkdir: async () => errorResult('No model context for creating directory'),
   isDirectory: async () => false,
   move: async () => errorResult('No model context for moving resource'),
-  getLaserMetrics: async () =>
-    errorResult('No model context for fetching laser metrics'),
+  stream: async () => {
+    throw new Error('Function not implemented.');
+  },
 });
 
 interface ModelContextProviderProps {
@@ -149,31 +150,32 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   }, [username, tokenValue]);
 
   const getUserStreams = useCallback(
-    async function* () {
-      if (!isLoggedIn || !client) return;
-      try {
-        const users = getOrThrow(await auth.getAllUsers());
-        // Make sure that every user has at least a black frame
-        for (const { username } of users) {
-          yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
-        }
-        const streams = await Promise.all(
-          users.map(async ({ username }) => {
-            const stream = await client.streamModel(username);
-            return (async function* () {
-              for await (const model of stream) {
-                if (model.PAYL instanceof Uint8Array) {
-                  yield { username, frame: model.PAYL };
+    async () =>
+      (async function* () {
+        if (!isLoggedIn || !client) return;
+        try {
+          const users = getOrThrow(await auth.getAllUsers());
+          // Make sure that every user has at least a black frame
+          for (const { username } of users) {
+            yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
+          }
+          const streams = await Promise.all(
+            users.map(async ({ username }) => {
+              const stream = await client.streamModel(username);
+              return (async function* () {
+                for await (const model of stream) {
+                  if (model.PAYL instanceof Uint8Array) {
+                    yield { username, frame: model.PAYL };
+                  }
                 }
-              }
-            })();
-          })
-        );
-        yield* mergeAsyncIterables(streams);
-      } catch (error) {
-        console.error(`Could not get user streams: ${error}`);
-      }
-    },
+              })();
+            })
+          );
+          yield* mergeAsyncIterables(streams);
+        } catch (error) {
+          console.error(`Could not get user streams: ${error}`);
+        }
+      })(),
     [isLoggedIn, client, auth]
   );
 
@@ -241,8 +243,8 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
           return errorResult(error);
         }
       },
-      async getLaserMetrics() {
-        return (await this.get(['metrics', 'laser'])) as Result<LaserMetrics>;
+      async stream(path) {
+        return await client!.stream(path);
       },
     }),
     [client, users]

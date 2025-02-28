@@ -10,19 +10,15 @@ import { HomeContent } from '@luna/screens/home/HomeContent';
 import * as rgb from '@luna/utils/rgb';
 import { throttle } from '@luna/utils/schedule';
 import { Vec2 } from '@luna/utils/vec2';
-import { Button } from '@heroui/react';
-import { IconRefresh } from '@tabler/icons-react';
 import { Set } from 'immutable';
-import { LIGHTHOUSE_COLS, LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+  LIGHTHOUSE_COLS,
+  LIGHTHOUSE_FRAME_BYTES,
+  ServerMessage,
+} from 'nighthouse/browser';
+import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { Bounded, isBounded } from '@luna/utils/bounded';
+import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 
 export function MonitorView() {
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
@@ -59,20 +55,23 @@ export function MonitorView() {
   const [hoveredRoom, setHoveredRoom] = useState<number>();
   const [criterion, setCriterion] = useState<MonitorCriterion>();
 
-  const getLatestMetrics = useCallback(async () => {
-    // setMetrics(testMetrics); // TODO: change back from test data to fetched data
-    const m = await model.getLaserMetrics(); // TODO: stream metrics instead
-    if (m.ok) {
-      setMetrics(m.value);
-    } else {
-      console.log(m.error);
-    }
-  }, [model]);
+  const streamIterable = useCallback(
+    async () => await model.stream(['metrics', 'laser']),
+    [model]
+  );
 
-  // get the metrics on load
-  useEffect(() => {
-    getLatestMetrics();
-  }, [getLatestMetrics]);
+  const streamConsumer = useCallback((response: ServerMessage<unknown>) => {
+    // console.log('got response:', response); // TODO: test this
+    if (response.RNUM !== 200) {
+      return;
+    }
+    const newMetrics: LaserMetrics = response.PAYL as LaserMetrics;
+    setMetrics(newMetrics);
+  }, []);
+
+  const errorHandler = useCallback((error: Error) => console.log(error), []);
+
+  useAsyncIterable(streamIterable, streamConsumer, errorHandler);
 
   const roomMetrics = useMemo(
     () =>
@@ -248,16 +247,7 @@ export function MonitorView() {
 
   // TODO: more appealing UI (maybe tables, inputs or custom stuff?)
   return (
-    <HomeContent
-      title="Monitoring"
-      toolbar={
-        /* TODO: auto-refresh (polling) or streaming metrics */
-        <Button color="secondary" variant="ghost" onPress={getLatestMetrics}>
-          <IconRefresh />
-          Refresh All
-        </Button>
-      }
-    >
+    <HomeContent title="Monitoring">
       <div className="flex flex-col space-y-4 md:flex-row h-full">
         <div
           ref={wrapperRef}

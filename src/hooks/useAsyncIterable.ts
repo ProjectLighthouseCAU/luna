@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 // https://stackoverflow.com/a/68791731
 
 export function useAsyncIterable<T>(
-  iterable: () => AsyncIterable<T>,
+  iterable: () => Promise<AsyncIterable<T>>,
   consumer: (value: T) => any,
   onError?: (error: any) => any
 ) {
@@ -11,7 +11,7 @@ export function useAsyncIterable<T>(
     let isCancelled = false;
     (async () => {
       try {
-        for await (const value of iterable()) {
+        for await (const value of await iterable()) {
           if (isCancelled) {
             break;
           }
