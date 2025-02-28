@@ -35,6 +35,7 @@ const units: { [Property in keyof FlatRoomV2Metrics]?: string } = {
   current: 'A',
   ping_latency_ms: 'ms',
   power: 'W',
+  shunt_voltage: 'V',
   uptime: 's',
   voltage: 'V',
 };
