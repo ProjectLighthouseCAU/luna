@@ -1,25 +1,24 @@
-import { isBounded } from '@luna/utils/bounded';
-import { Chip } from '@heroui/react';
 import { BooleanChip } from '@luna/components/BooleanChip';
+import { isBounded } from '@luna/utils/bounded';
 
-export interface MonitorInspectorValueProps {
+export interface ObjectInspectorValueProps {
   value: any;
   unit?: string;
 }
 
-export function MonitorInspectorValue({
+export function ObjectInspectorValue({
   value,
   unit,
-}: MonitorInspectorValueProps) {
+}: ObjectInspectorValueProps) {
   return (
     <div className="flex flex-row gap-1">
-      <MonitorInspectorRawValue value={value} />
+      <ObjectInspectorRawValue value={value} />
       <div>{unit}</div>
     </div>
   );
 }
 
-function MonitorInspectorRawValue({ value }: { value: any }) {
+function ObjectInspectorRawValue({ value }: { value: any }) {
   if (value === null) {
     return <>null</>;
   }
@@ -37,8 +36,8 @@ function MonitorInspectorRawValue({ value }: { value: any }) {
       if (typeof value === 'object' && isBounded(value)) {
         return (
           <>
-            <MonitorInspectorRawValue value={value.value} /> of{' '}
-            <MonitorInspectorRawValue value={value.total} />
+            <ObjectInspectorRawValue value={value.value} /> of{' '}
+            <ObjectInspectorRawValue value={value.total} />
           </>
         );
       }

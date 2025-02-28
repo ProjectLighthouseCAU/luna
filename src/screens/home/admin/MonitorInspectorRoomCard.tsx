@@ -5,7 +5,7 @@ import {
 import { TitledCard } from '@luna/components/TitledCard';
 import { FlatRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
 import { MonitorRoomCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
-import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
+import { ObjectInspectorValue } from '@luna/components/ObjectInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
@@ -81,5 +81,5 @@ function MonitorInspectorRoomValue<K extends keyof FlatRoomV2Metrics>({
   value: FlatRoomV2Metrics[K];
   prop: K;
 }) {
-  return <MonitorInspectorValue value={value} unit={units[prop]} />;
+  return <ObjectInspectorValue value={value} unit={units[prop]} />;
 }

@@ -5,7 +5,7 @@ import {
   Names,
   ObjectInspectorTable,
 } from '@luna/components/ObjectInspectorTable';
-import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
+import { ObjectInspectorValue } from '@luna/components/ObjectInspectorValue';
 import { IconCheck, IconLamp } from '@tabler/icons-react';
 
 export interface MonitorInspectorLampsCardProps {
@@ -65,5 +65,5 @@ function MonitorInspectorLampValue<K extends keyof LampV2Metrics>({
       }
       break;
   }
-  return <MonitorInspectorValue value={value} />;
+  return <ObjectInspectorValue value={value} />;
 }

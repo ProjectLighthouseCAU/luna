@@ -5,6 +5,7 @@ import {
   TableColumn,
   TableRow,
 } from '@heroui/react';
+import { ObjectInspectorValue } from '@luna/components/ObjectInspectorValue';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { TableBody, TableHeader } from 'react-stately';
 
@@ -15,7 +16,7 @@ export interface ObjectInspectorTableProps<T extends object> {
   names: Names<T>;
   selection?: keyof T;
   onSelect?: (prop?: keyof T) => void;
-  render: <K extends keyof T>(value: T[K], prop: K) => ReactNode;
+  render?: <K extends keyof T>(value: T[K], prop: K) => ReactNode;
 }
 
 export function ObjectInspectorTable<T extends object>({
@@ -23,7 +24,7 @@ export function ObjectInspectorTable<T extends object>({
   names,
   selection,
   onSelect,
-  render,
+  render = (value, _prop) => <ObjectInspectorValue value={value} />,
 }: ObjectInspectorTableProps<T>) {
   const columns = useMemo(
     () =>
