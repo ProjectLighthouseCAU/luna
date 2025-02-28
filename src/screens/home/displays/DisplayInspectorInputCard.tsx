@@ -20,8 +20,9 @@ import {
   LegacyKeyEvent,
   MouseEvent,
 } from 'nighthouse/browser';
-import { ReactNode, useCallback } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { AnimatePresence } from '@luna/utils/motion';
+import { useEventListener } from '@luna/hooks/useEventListener';
 
 export interface DisplayInspectorInputCardProps {
   username: string;
@@ -163,7 +164,7 @@ function MouseEventView({ event }: { event?: MouseEvent }) {
   return event ? (
     <ObjectInspectorTable objects={[event]} names={mouseEventNames} />
   ) : (
-    <EventPlaceholderText>no mouse events yet</EventPlaceholderText>
+    <EventInfoText>no mouse events yet</EventInfoText>
   );
 }
 
@@ -185,7 +186,7 @@ function KeyEventView({ event }: { event?: KeyEvent | LegacyKeyEvent }) {
       <ObjectInspectorTable objects={[event]} names={keyEventNames} />
     )
   ) : (
-    <EventPlaceholderText>no key events yet</EventPlaceholderText>
+    <EventInfoText>no key events yet</EventInfoText>
   );
 }
 
@@ -199,20 +200,43 @@ function ControllerEventView({
 }: {
   event?: GamepadEvent | LegacyControllerEvent;
 }) {
-  return event ? (
-    'dwn' in event ? (
-      <ObjectInspectorTable
-        objects={[event]}
-        names={legacyControllerEventNames}
-      />
-    ) : (
-      <div>TODO</div>
-    )
-  ) : (
-    <EventPlaceholderText>no controller events yet</EventPlaceholderText>
+  const [gamepadCount, setGamepadCount] = useState(0);
+
+  const updateGamepads = useCallback(() => {
+    const newCount =
+      navigator.getGamepads()?.filter(g => g !== null).length ?? 0;
+    console.log('Updated gamepad count:', newCount);
+    setGamepadCount(newCount);
+  }, []);
+
+  useEventListener(window, 'gamepadconnected', updateGamepads);
+  useEventListener(window, 'gamepaddisconnected', updateGamepads);
+
+  useEffect(() => {
+    updateGamepads();
+  }, [updateGamepads]);
+
+  return (
+    <div className="flex flex-col gap-1">
+      <EventInfoText>
+        {gamepadCount} gamepad{gamepadCount === 1 ? '' : 's'} connected
+      </EventInfoText>
+      {event ? (
+        'dwn' in event ? (
+          <ObjectInspectorTable
+            objects={[event]}
+            names={legacyControllerEventNames}
+          />
+        ) : (
+          <div>TODO</div>
+        )
+      ) : (
+        <EventInfoText>no controller events yet</EventInfoText>
+      )}
+    </div>
   );
 }
 
-function EventPlaceholderText({ children }: { children: ReactNode }) {
+function EventInfoText({ children }: { children: ReactNode }) {
   return <div className="italic text-xs opacity-50">{children}</div>;
 }
