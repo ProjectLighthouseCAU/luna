@@ -171,9 +171,11 @@ export function DisplayView() {
       // Check whether gamepad state changed
       const lastEvents: GamepadEvent[] = lastEventsRef.current;
       const didChange = JSON.stringify(lastEvents) !== JSON.stringify(events);
+
       if (didChange) {
         if (inputConfig.legacyMode) {
           // Diff the event lists for the legacy API
+
           for (let i = 0; i < Math.max(lastEvents.length, events.length); i++) {
             const lastEvent = i < lastEvents.length ? lastEvents[i] : undefined;
             const event = i < events.length ? events[i] : undefined;
@@ -195,6 +197,11 @@ export function DisplayView() {
           }
         } else {
           // Just send the state for the new API
+
+          // TODO (API design): Should we provide the controller name since the
+          // buttons might be mapped differently? Or is this guaranteed to be
+          // the same across controller brands?
+
           for (const event of events) {
             await api.putInput(username, event);
           }
