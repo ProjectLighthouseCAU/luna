@@ -21,7 +21,7 @@ import {
   LegacyKeyEvent,
   MouseEvent,
 } from 'nighthouse/browser';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback } from 'react';
 
 export interface DisplayInspectorInputCardProps {
   username: string;
@@ -119,7 +119,10 @@ export function DisplayInspectorInputCard({
           Controller
         </Switch>
         <AnimatedPresence isShown={controllerEnabled}>
-          <ControllerEventView event={inputState.lastControllerEvent} />
+          <ControllerEventView
+            gamepadCount={inputState.gamepadCount}
+            event={inputState.lastControllerEvent}
+          />
         </AnimatedPresence>
       </div>
     </TitledCard>
@@ -195,32 +198,16 @@ const legacyControllerEventNames: Names<LegacyControllerEvent> = {
 };
 
 function ControllerEventView({
+  gamepadCount,
   event,
 }: {
+  gamepadCount?: number;
   event?: GamepadEvent | LegacyControllerEvent;
 }) {
-  const [gamepadCount, setGamepadCount] = useState(0);
-
-  // Unfortunately gamepadconnected and gamepaddisconnected events seem to be
-  // unreliable, so we'll just poll manually
-
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      const count =
-        navigator.getGamepads()?.filter(g => g !== null).length ?? 0;
-      if (count !== gamepadCount) {
-        setGamepadCount(count);
-      }
-    }, 400);
-    return () => {
-      window.clearInterval(interval);
-    };
-  }, [gamepadCount]);
-
   return (
     <div className="flex flex-col gap-1">
       <EventInfoText>
-        {gamepadCount} gamepad{gamepadCount === 1 ? '' : 's'} connected
+        {gamepadCount ?? '?'} gamepad{gamepadCount === 1 ? '' : 's'} connected
       </EventInfoText>
       {event ? (
         'dwn' in event ? (

@@ -8,6 +8,7 @@ import { throttle } from '@luna/utils/schedule';
 import {
   useCallback,
   useContext,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -113,6 +114,20 @@ export function DisplayView() {
   useEventListener(window, 'resize', onResize);
   useEventListener(document, 'keydown', onKeyDown);
   useEventListener(document, 'keyup', onKeyUp);
+
+  // Unfortunately gamepadconnected and gamepaddisconnected events seem to be
+  // unreliable, so we'll just poll manually
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      const count =
+        navigator.getGamepads()?.filter(g => g !== null).length ?? 0;
+      setInputState(state => ({ ...state, gamepadCount: count }));
+    }, 400);
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, []);
 
   const onMouseEvent = useCallback(
     async (pos: Vec2<number>, down: boolean) => {
