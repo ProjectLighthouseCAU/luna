@@ -1,7 +1,10 @@
+import {
+  Names,
+  ObjectInspectorTable,
+} from '@luna/components/ObjectInspectorTable';
 import { TitledCard } from '@luna/components/TitledCard';
 import { FlatRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
 import { MonitorRoomCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
-import { ObjectInspectorTable } from '@luna/components/ObjectInspectorTable';
 import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -12,7 +15,7 @@ export interface MonitorInspectorRoomCardProps {
   metrics?: FlatRoomV2Metrics;
 }
 
-const names: { [Property in keyof FlatRoomV2Metrics]?: string } = {
+const names: Names<FlatRoomV2Metrics> = {
   api_version: 'API version',
   responsive_lamps: 'Lamps (responsive)',
   board_temperature: 'Board temperature (accurate)',
@@ -29,7 +32,7 @@ const names: { [Property in keyof FlatRoomV2Metrics]?: string } = {
   voltage: 'Voltage',
 };
 
-const units: { [Property in keyof FlatRoomV2Metrics]?: string } = {
+const units: Names<FlatRoomV2Metrics> = {
   board_temperature: '°C',
   core_temperature: '°C',
   current: 'A',

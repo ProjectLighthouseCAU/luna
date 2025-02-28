@@ -8,9 +8,11 @@ import {
 import { ReactNode, useCallback, useMemo } from 'react';
 import { TableBody, TableHeader } from 'react-stately';
 
+export type Names<T> = { [Property in keyof T]?: string };
+
 export interface ObjectInspectorTableProps<T extends object> {
   objects: T[];
-  names: { [Property in keyof T]?: string };
+  names: Names<T>;
   selection?: keyof T;
   onSelect?: (prop?: keyof T) => void;
   render: <K extends keyof T>(value: T[K], prop: K) => ReactNode;

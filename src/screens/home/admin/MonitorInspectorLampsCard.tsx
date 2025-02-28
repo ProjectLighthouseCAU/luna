@@ -1,7 +1,10 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import { LampV2Metrics } from '@luna/contexts/api/model/types';
 import { MonitorLampCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
-import { ObjectInspectorTable } from '@luna/components/ObjectInspectorTable';
+import {
+  Names,
+  ObjectInspectorTable,
+} from '@luna/components/ObjectInspectorTable';
 import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconCheck, IconLamp } from '@tabler/icons-react';
 
@@ -11,7 +14,7 @@ export interface MonitorInspectorLampsCardProps {
   metrics: LampV2Metrics[];
 }
 
-const names: { [Property in keyof LampV2Metrics]: string } = {
+const names: Names<LampV2Metrics> = {
   firmware_version: 'Firmware version',
   flashing_status: 'Flashing status',
   fuse_tripped: 'Fuse tripped',
