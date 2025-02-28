@@ -1,4 +1,5 @@
-import { Code, Divider, Switch, Tooltip } from '@heroui/react';
+import { Code, Divider, Kbd, Switch, Tooltip } from '@heroui/react';
+import { BooleanChip } from '@luna/components/BooleanChip';
 import { TitledCard } from '@luna/components/TitledCard';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
@@ -8,7 +9,14 @@ import {
   IconKeyboard,
   IconMouse,
 } from '@tabler/icons-react';
-import { useCallback } from 'react';
+import {
+  GamepadEvent,
+  KeyEvent,
+  LegacyControllerEvent,
+  LegacyKeyEvent,
+  MouseEvent,
+} from 'nighthouse/browser';
+import { ReactNode, useCallback } from 'react';
 
 export interface DisplayInspectorInputCardProps {
   username: string;
@@ -19,6 +27,7 @@ export interface DisplayInspectorInputCardProps {
 
 export function DisplayInspectorInputCard({
   username,
+  inputState,
   inputConfig,
   setInputConfig,
 }: DisplayInspectorInputCardProps) {
@@ -43,6 +52,10 @@ export function DisplayInspectorInputCard({
       setInputConfig({ ...inputConfig, controllerEnabled }),
     [inputConfig, setInputConfig]
   );
+
+  const mouseEnabled = !inputConfig.legacyMode && inputConfig.mouseEnabled;
+  const keyboardEnabled = inputConfig.keyboardEnabled;
+  const controllerEnabled = inputConfig.controllerEnabled;
 
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
@@ -74,27 +87,75 @@ export function DisplayInspectorInputCard({
         <Divider />
         <Switch
           thumbIcon={<IconMouse />}
-          isSelected={!inputConfig.legacyMode && inputConfig.mouseEnabled}
+          isSelected={mouseEnabled}
           isDisabled={inputConfig.legacyMode}
           onValueChange={setMouseEnabled}
         >
           Mouse
         </Switch>
+        {mouseEnabled ? (
+          <MouseEventView event={inputState.lastMouseEvent} />
+        ) : undefined}
         <Switch
           thumbIcon={<IconKeyboard />}
-          isSelected={inputConfig.keyboardEnabled}
+          isSelected={keyboardEnabled}
           onValueChange={setKeyboardEnabled}
         >
           Keyboard
         </Switch>
+        {keyboardEnabled ? (
+          <KeyEventView event={inputState.lastKeyEvent} />
+        ) : undefined}
         <Switch
           thumbIcon={<IconDeviceGamepad />}
-          isSelected={inputConfig.controllerEnabled}
+          isSelected={controllerEnabled}
           onValueChange={setControllerEnabled}
         >
           Controller
         </Switch>
+        {controllerEnabled ? (
+          <ControllerEventView event={inputState.lastControllerEvent} />
+        ) : undefined}
       </div>
     </TitledCard>
   );
+}
+
+function MouseEventView({ event }: { event?: MouseEvent }) {
+  return event ? (
+    <div />
+  ) : (
+    <EventPlaceholderText>no mouse events yet</EventPlaceholderText>
+  );
+}
+
+function KeyEventView({ event }: { event?: KeyEvent | LegacyKeyEvent }) {
+  return event ? (
+    <>
+      <div>
+        Key: <Kbd>{event.key}</Kbd>
+      </div>
+      <div>
+        Down: <BooleanChip value={'dwn' in event ? event.dwn : event.down} />
+      </div>
+    </>
+  ) : (
+    <EventPlaceholderText>no key events yet</EventPlaceholderText>
+  );
+}
+
+function ControllerEventView({
+  event,
+}: {
+  event?: GamepadEvent | LegacyControllerEvent;
+}) {
+  return event ? (
+    <div />
+  ) : (
+    <EventPlaceholderText>no controller events yet</EventPlaceholderText>
+  );
+}
+
+function EventPlaceholderText({ children }: { children: ReactNode }) {
+  return <div className="italic text-xs opacity-50">{children}</div>;
 }
