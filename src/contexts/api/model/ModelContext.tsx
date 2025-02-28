@@ -8,6 +8,8 @@ import {
   connect,
   ConsoleLogHandler,
   DirectoryTree,
+  InputEvent,
+  LegacyInputEvent,
   LeveledLogHandler,
   Lighthouse,
   LIGHTHOUSE_FRAME_BYTES,
@@ -51,6 +53,15 @@ export interface ModelContextValue {
   /** Updates a resource at an arbitrary path. */
   put(path: string[], payload: any): Promise<Result<unknown>>;
 
+  /** Sends a legacy input event for the given user to the given endpoint. */
+  putLegacyInput(
+    user: string,
+    payload: LegacyInputEvent
+  ): Promise<Result<unknown>>;
+
+  /** Sends an input event for the given user to the given endpoint. */
+  putInput(user: string, payload: InputEvent): Promise<Result<unknown>>;
+
   /** Creates a directory at an arbitrary path. */
   mkdir(path: string[]): Promise<Result<unknown>>;
 
@@ -73,6 +84,8 @@ export const ModelContext = createContext<ModelContextValue>({
   get: async () => errorResult('No model context for fetching path'),
   delete: async () => errorResult('No model context for deleting path'),
   put: async () => errorResult('No model context for updating resource'),
+  putLegacyInput: async () => errorResult('No model context for putting input'),
+  putInput: async () => errorResult('No model context for putting input'),
   create: async () => errorResult('No model context for creating resource'),
   mkdir: async () => errorResult('No model context for creating directory'),
   isDirectory: async () => false,
@@ -209,6 +222,12 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       },
       async put(path, payload) {
         return messageToResult(await client?.put(path, payload));
+      },
+      async putLegacyInput(user, payload) {
+        return messageToResult(await client?.putModel(payload, user));
+      },
+      async putInput(user, payload) {
+        return messageToResult(await client?.putInput(payload, user));
       },
       async create(path) {
         return messageToResult(await client?.create(path));
