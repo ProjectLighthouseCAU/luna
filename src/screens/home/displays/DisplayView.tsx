@@ -19,7 +19,8 @@ import { displayLayoutId } from '@luna/constants/LayoutId';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import { ClientIdContext } from '@luna/contexts/env/ClientIdContext';
-import { KeyEvent, LegacyKeyEvent } from 'nighthouse/browser';
+import { KeyEvent, LegacyKeyEvent, MouseEvent } from 'nighthouse/browser';
+import { Vec2 } from '@luna/utils/vec2';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
@@ -108,6 +109,49 @@ export function DisplayView() {
   useEventListener(document, 'keydown', onKeyDown);
   useEventListener(document, 'keyup', onKeyUp);
 
+  const onMouseEvent = useCallback(
+    async (pos: Vec2<number>, down: boolean) => {
+      if (inputConfig.legacyMode || !inputConfig.mouseEnabled) {
+        return;
+      }
+
+      const event: MouseEvent = {
+        type: 'mouse',
+        source: clientId,
+        button: 'left', // TODO
+        down,
+        pos,
+      };
+      await model.putInput(username, event);
+      setInputState(state => ({ ...state, lastMouseEvent: event }));
+    },
+    [
+      clientId,
+      inputConfig.legacyMode,
+      inputConfig.mouseEnabled,
+      model,
+      username,
+    ]
+  );
+
+  const onMouseDown = useCallback(
+    (pos?: Vec2<number>) => {
+      if (pos) {
+        onMouseEvent(pos, true);
+      }
+    },
+    [onMouseEvent]
+  );
+
+  const onMouseUp = useCallback(
+    (pos?: Vec2<number>) => {
+      if (pos) {
+        onMouseEvent(pos, false);
+      }
+    },
+    [onMouseEvent]
+  );
+
   // Make sure to update the size after the model canvas has been added to the DOM
   useLayoutEffect(() => {
     if (userModel) {
@@ -140,6 +184,10 @@ export function DisplayView() {
                 frame={userModel.frame}
                 width={width}
                 className="rounded-xl"
+                onMouseDown={onMouseDown}
+                onMouseUp={onMouseUp}
+                onMouseDrag={onMouseDown}
+                onMouseMove={onMouseUp}
               />
             </motion.div>
           </div>
