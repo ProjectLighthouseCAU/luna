@@ -34,8 +34,8 @@ export function DisplayView() {
   const [inputConfig, setInputConfig] = useState<InputConfig>({
     legacyMode: true,
     mouseEnabled: false,
-    keyboardEnabled: true,
-    controllerEnabled: true,
+    keyboardEnabled: false,
+    controllerEnabled: false,
   });
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
