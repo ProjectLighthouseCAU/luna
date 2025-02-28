@@ -1,7 +1,12 @@
-import { TitledCard } from '@luna/components/TitledCard';
 import { Code, Divider, Switch, Tooltip } from '@heroui/react';
-import { IconDeviceGamepad2 } from '@tabler/icons-react';
+import { TitledCard } from '@luna/components/TitledCard';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
+import {
+  IconDeviceGamepad,
+  IconDeviceGamepad2,
+  IconKeyboard,
+  IconMouse,
+} from '@tabler/icons-react';
 import { useCallback } from 'react';
 
 export interface DisplayInspectorInputCardProps {
@@ -66,18 +71,21 @@ export function DisplayInspectorInputCard({
         </Tooltip>
         <Divider />
         <Switch
+          thumbIcon={<IconMouse />}
           isSelected={inputConfig.mouseEnabled}
           onValueChange={setMouseEnabled}
         >
           Mouse
         </Switch>
         <Switch
+          thumbIcon={<IconKeyboard />}
           isSelected={inputConfig.keyboardEnabled}
           onValueChange={setKeyboardEnabled}
         >
           Keyboard
         </Switch>
         <Switch
+          thumbIcon={<IconDeviceGamepad />}
           isSelected={inputConfig.controllerEnabled}
           onValueChange={setControllerEnabled}
         >
