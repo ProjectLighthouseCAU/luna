@@ -20,7 +20,7 @@ export function DisplayInspector({ username }: DisplayInspectorProps) {
       {isMeOrAdmin ? (
         <>
           <DisplayInspectorApiTokenCard />
-          <DisplayInspectorInputCard />
+          <DisplayInspectorInputCard username={username} />
         </>
       ) : null}
     </div>
