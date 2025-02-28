@@ -1,5 +1,4 @@
 import { Code, Divider, Switch, Tooltip } from '@heroui/react';
-import { motion } from 'framer-motion';
 import {
   Names,
   ObjectInspectorTable,
@@ -7,12 +6,14 @@ import {
 import { TitledCard } from '@luna/components/TitledCard';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
+import { AnimatePresence } from '@luna/utils/motion';
 import {
   IconDeviceGamepad,
   IconDeviceGamepad2,
   IconKeyboard,
   IconMouse,
 } from '@tabler/icons-react';
+import { motion } from 'framer-motion';
 import {
   GamepadEvent,
   KeyEvent,
@@ -21,8 +22,6 @@ import {
   MouseEvent,
 } from 'nighthouse/browser';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import { AnimatePresence } from '@luna/utils/motion';
-import { useEventListener } from '@luna/hooks/useEventListener';
 
 export interface DisplayInspectorInputCardProps {
   username: string;
@@ -202,19 +201,21 @@ function ControllerEventView({
 }) {
   const [gamepadCount, setGamepadCount] = useState(0);
 
-  const updateGamepads = useCallback(() => {
-    const newCount =
-      navigator.getGamepads()?.filter(g => g !== null).length ?? 0;
-    console.log('Updated gamepad count:', newCount);
-    setGamepadCount(newCount);
-  }, []);
-
-  useEventListener(window, 'gamepadconnected', updateGamepads);
-  useEventListener(window, 'gamepaddisconnected', updateGamepads);
+  // Unfortunately gamepadconnected and gamepaddisconnected events seem to be
+  // unreliable, so we'll just poll manually
 
   useEffect(() => {
-    updateGamepads();
-  }, [updateGamepads]);
+    const interval = window.setInterval(() => {
+      const count =
+        navigator.getGamepads()?.filter(g => g !== null).length ?? 0;
+      if (count !== gamepadCount) {
+        setGamepadCount(count);
+      }
+    }, 400);
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [gamepadCount]);
 
   return (
     <div className="flex flex-col gap-1">
