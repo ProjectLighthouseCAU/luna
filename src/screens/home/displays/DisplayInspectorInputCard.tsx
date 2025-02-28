@@ -127,7 +127,7 @@ export function DisplayInspectorInputCard({
 const mouseEventNames: Names<MouseEvent> = {
   button: 'Button',
   down: 'Down',
-  pos: 'Position',
+  pos: 'Pos',
 };
 
 function MouseEventView({ event }: { event?: MouseEvent }) {

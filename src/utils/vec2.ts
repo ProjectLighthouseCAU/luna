@@ -35,3 +35,7 @@ export function dist(lhs: Vec2<number>, rhs: Vec2<number>): number {
 export function areEqual(lhs: Vec2<number>, rhs: Vec2<number>): boolean {
   return lhs.x === rhs.x && lhs.y === rhs.y;
 }
+
+export function isInstance(value: any): value is Vec2<unknown> {
+  return 'x' in value && 'y' in value;
+}
