@@ -17,6 +17,7 @@ import { motion } from 'framer-motion';
 import {
   GamepadEvent,
   KeyEvent,
+  LegacyControllerEvent,
   LegacyKeyEvent,
   MouseEvent,
 } from 'nighthouse/browser';
@@ -175,6 +176,7 @@ export function DisplayView() {
       if (didChange) {
         if (inputConfig.legacyMode) {
           // Diff the event lists for the legacy API
+          const legacyEvents: LegacyControllerEvent[] = [];
 
           for (let i = 0; i < Math.max(lastEvents.length, events.length); i++) {
             const lastEvent = i < lastEvents.length ? lastEvents[i] : undefined;
@@ -187,13 +189,22 @@ export function DisplayView() {
               const lastButton = lastEvent?.buttons[buttonIdx];
               const button = event?.buttons[buttonIdx];
               if (JSON.stringify(lastButton) !== JSON.stringify(button)) {
-                await api.putLegacyInput(username, {
+                const legacyEvent: LegacyControllerEvent = {
                   src: 1 + i,
                   btn: buttonIdx,
                   dwn: button?.pressed ?? false,
-                });
+                };
+                await api.putLegacyInput(username, legacyEvent);
+                legacyEvents.push(legacyEvent);
               }
             }
+          }
+
+          if (legacyEvents.length > 0) {
+            setInputState(state => ({
+              ...state,
+              lastControllerEvents: legacyEvents,
+            }));
           }
         } else {
           // Just send the state for the new API
@@ -205,9 +216,10 @@ export function DisplayView() {
           for (const event of events) {
             await api.putInput(username, event);
           }
+
+          setInputState(state => ({ ...state, lastControllerEvents: events }));
         }
         lastEventsRef.current = events;
-        setInputState(state => ({ ...state, lastControllerEvents: events }));
       }
     }, 100);
 
