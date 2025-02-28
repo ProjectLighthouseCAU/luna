@@ -14,17 +14,17 @@ export function ResourcesView() {
     () => 'column'
   );
 
-  const model = useContext(ModelContext);
+  const { api } = useContext(ModelContext);
   const [tree, setTree] = useState<DirectoryTree>();
 
   const refreshListing = useCallback(async () => {
-    const result = await model.list([]);
+    const result = await api.list([]);
     if (result.ok) {
       setTree(result.value);
     } else {
       console.log(result.error);
     }
-  }, [model]);
+  }, [api]);
 
   useEffect(() => {
     refreshListing();

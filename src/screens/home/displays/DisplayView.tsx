@@ -30,10 +30,9 @@ export function DisplayView() {
 
   const { clientId } = useContext(ClientIdContext);
 
-  const model = useContext(ModelContext);
-  const { users } = model;
+  const { users, api } = useContext(ModelContext);
 
-  const [inputState, setInputState] = useState<InputState>({});
+  const [inputState, setInputState] = useState<InputState>({ gamepadCount: 0 });
   const [inputConfig, setInputConfig] = useLocalStorage<InputConfig>(
     LocalStorageKey.DisplayInputConfig,
     () => ({
@@ -75,11 +74,11 @@ export function DisplayView() {
 
       if (inputConfig.legacyMode) {
         const event: LegacyKeyEvent = {
-          src: 0, // TODO: What is this?
+          src: 0,
           dwn: down,
           key: e.keyCode,
         };
-        await model.putLegacyInput(username, event);
+        await api.putLegacyInput(username, event);
         setInputState(state => ({ ...state, lastKeyEvent: event }));
       } else {
         const event: KeyEvent = {
@@ -88,7 +87,7 @@ export function DisplayView() {
           down,
           key: e.key,
         };
-        await model.putInput(username, event);
+        await api.putInput(username, event);
         setInputState(state => ({ ...state, lastKeyEvent: event }));
       }
     },
@@ -96,7 +95,7 @@ export function DisplayView() {
       clientId,
       inputConfig.keyboardEnabled,
       inputConfig.legacyMode,
-      model,
+      api,
       username,
     ]
   );
@@ -124,6 +123,7 @@ export function DisplayView() {
         navigator.getGamepads()?.filter(g => g !== null).length ?? 0;
       setInputState(state => ({ ...state, gamepadCount: count }));
     }, 400);
+
     return () => {
       window.clearInterval(interval);
     };
@@ -142,16 +142,10 @@ export function DisplayView() {
         down,
         pos,
       };
-      await model.putInput(username, event);
+      await api.putInput(username, event);
       setInputState(state => ({ ...state, lastMouseEvent: event }));
     },
-    [
-      clientId,
-      inputConfig.legacyMode,
-      inputConfig.mouseEnabled,
-      model,
-      username,
-    ]
+    [clientId, inputConfig.legacyMode, inputConfig.mouseEnabled, api, username]
   );
 
   const onMouseDown = useCallback(

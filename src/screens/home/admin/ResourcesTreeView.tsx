@@ -41,7 +41,7 @@ export function ResourcesTreeView({
   layout,
   refreshListing,
 }: ResourcesTreeViewProps) {
-  const model = useContext(ModelContext);
+  const { api } = useContext(ModelContext);
 
   // TODO: Use a set here and let the user expand multiple nodes (but only in
   // list view, in column view this doesn't make sense and shouldn't be allowed)
@@ -81,18 +81,18 @@ export function ResourcesTreeView({
 
   const createFolder = useCallback(
     async (name: string) => {
-      await model.mkdir([...path, name]);
+      await api.mkdir([...path, name]);
       await refreshListing();
     },
-    [model, path, refreshListing]
+    [api, path, refreshListing]
   );
 
   const createResource = useCallback(
     async (name: string) => {
-      await model.create([...path, name]);
+      await api.create([...path, name]);
       await refreshListing();
     },
-    [model, path, refreshListing]
+    [api, path, refreshListing]
   );
 
   const additionalElements = useMemo(
@@ -212,7 +212,7 @@ function ResourcesTreeButton({
   setExpanded: (name?: string) => void;
   refreshListing: () => Promise<void>;
 }) {
-  const model = useContext(ModelContext);
+  const { api } = useContext(ModelContext);
 
   const [isDeleting, setDeleting] = useState(false);
   const [isRenaming, setRenaming] = useState(false);
@@ -235,7 +235,7 @@ function ResourcesTreeButton({
   const openRenameModal = useCallback(() => setRenaming(true), []);
 
   const downloadPath = useCallback(async () => {
-    const result = await model.get(path);
+    const result = await api.get(path);
     if (result.ok) {
       const json = JSON.stringify(result.value, null, 2);
       const blob = new Blob([json], { type: 'application/json' });
@@ -248,22 +248,22 @@ function ResourcesTreeButton({
     } else {
       console.log(result.error);
     }
-  }, [model, name, path]);
+  }, [api, name, path]);
 
   const deletePath = useCallback(async () => {
-    await model.delete(path);
+    await api.delete(path);
     await refreshListing();
     if (isExpanded) {
       setExpanded(undefined);
     }
-  }, [isExpanded, model, path, refreshListing, setExpanded]);
+  }, [isExpanded, api, path, refreshListing, setExpanded]);
 
   const renamePath = useCallback(
     async (newName: string) => {
       if (isResource) {
         const newPath = [...path.slice(0, -1), newName];
         console.log('Moving to', newPath);
-        await model.move(path, newPath);
+        await api.move(path, newPath);
         await refreshListing();
         if (isExpanded) {
           setExpanded(newName);
@@ -271,7 +271,7 @@ function ResourcesTreeButton({
       }
       setRenaming(false);
     },
-    [isResource, path, model, refreshListing, isExpanded, setExpanded]
+    [isResource, path, api, refreshListing, isExpanded, setExpanded]
   );
 
   return (

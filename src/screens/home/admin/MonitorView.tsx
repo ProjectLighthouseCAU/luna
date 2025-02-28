@@ -52,7 +52,7 @@ export function MonitorView() {
       ? maxSize.width
       : maxSize.height * DISPLAY_ASPECT_RATIO;
 
-  const model = useContext(ModelContext);
+  const { api } = useContext(ModelContext);
   const [metrics, setMetrics] = useState<LaserMetrics>();
 
   const [focusedRoom, setSelectedRoom] = useState<number>();
@@ -61,13 +61,13 @@ export function MonitorView() {
 
   const getLatestMetrics = useCallback(async () => {
     // setMetrics(testMetrics); // TODO: change back from test data to fetched data
-    const m = await model.getLaserMetrics(); // TODO: stream metrics instead
+    const m = await api.getLaserMetrics(); // TODO: stream metrics instead
     if (m.ok) {
       setMetrics(m.value);
     } else {
       console.log(m.error);
     }
-  }, [model]);
+  }, [api]);
 
   // get the metrics on load
   useEffect(() => {
@@ -169,7 +169,7 @@ export function MonitorView() {
       const parityDim = (c: rgb.Color) => rgb.scale(c, parity ? 1 : 0.6);
       for (const room of roomMetrics) {
         const lampCount = room.lamp_metrics.length;
-        // controller works?
+        // api works?
         if (room.controller_metrics.responding) {
           for (let lampIdx = 0; lampIdx < lampCount; lampIdx++) {
             // lamp works?
@@ -179,7 +179,7 @@ export function MonitorView() {
             rgb.setAt(windowIdx + lampIdx, color, frame);
           }
         } else {
-          // controller down
+          // api down
           rgb.fillAt(windowIdx, lampCount, parityDim(rgb.RED), frame);
         }
         windowIdx += lampCount;

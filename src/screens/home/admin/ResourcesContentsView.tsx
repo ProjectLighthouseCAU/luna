@@ -7,7 +7,7 @@ export interface ResourcesContentsViewProps {
 }
 
 export function ResourcesContentsView({ path }: ResourcesContentsViewProps) {
-  const model = useContext(ModelContext);
+  const { api } = useContext(ModelContext);
 
   const [valueWrapper, setValue] = useState<{
     value: any;
@@ -19,14 +19,14 @@ export function ResourcesContentsView({ path }: ResourcesContentsViewProps) {
 
   useEffect(() => {
     (async () => {
-      const result = await model.get(path);
+      const result = await api.get(path);
       if (result.ok) {
         setValue({ value: result.value, userEdited: false });
       } else {
         setError(`${result.error}`);
       }
     })();
-  }, [model, path]);
+  }, [api, path]);
 
   const onChange = useCallback(async () => {
     const pre = preRef.current;
@@ -36,11 +36,11 @@ export function ResourcesContentsView({ path }: ResourcesContentsViewProps) {
     try {
       const parsedValue = JSON.parse(pre.innerText);
       setValue({ value: parsedValue, userEdited: true });
-      await model.put(path, parsedValue);
+      await api.put(path, parsedValue);
     } catch {
       // Swallow parse errors
     }
-  }, [model, path]);
+  }, [api, path]);
 
   useEffect(() => {
     const pre = preRef.current;

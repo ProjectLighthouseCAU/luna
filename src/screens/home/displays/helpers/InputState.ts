@@ -7,8 +7,8 @@ import {
 } from 'nighthouse/browser';
 
 export interface InputState {
-  gamepadCount?: number;
+  gamepadCount: number;
   lastMouseEvent?: MouseEvent;
   lastKeyEvent?: KeyEvent | LegacyKeyEvent;
-  lastControllerEvent?: GamepadEvent | LegacyControllerEvent;
+  lastControllerEvents?: GamepadEvent[] | LegacyControllerEvent[];
 }

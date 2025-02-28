@@ -121,7 +121,7 @@ export function DisplayInspectorInputCard({
         <AnimatedPresence isShown={controllerEnabled}>
           <ControllerEventView
             gamepadCount={inputState.gamepadCount}
-            event={inputState.lastControllerEvent}
+            events={inputState.lastControllerEvents}
           />
         </AnimatedPresence>
       </div>
@@ -199,20 +199,20 @@ const legacyControllerEventNames: Names<LegacyControllerEvent> = {
 
 function ControllerEventView({
   gamepadCount,
-  event,
+  events = [],
 }: {
   gamepadCount?: number;
-  event?: GamepadEvent | LegacyControllerEvent;
+  events?: GamepadEvent[] | LegacyControllerEvent[];
 }) {
   return (
     <div className="flex flex-col gap-1">
       <EventInfoText>
         {gamepadCount ?? '?'} gamepad{gamepadCount === 1 ? '' : 's'} connected
       </EventInfoText>
-      {event ? (
-        'dwn' in event ? (
+      {events.length > 0 ? (
+        'dwn' in events[0] ? (
           <ObjectInspectorTable
-            objects={[event]}
+            objects={events as LegacyControllerEvent[]}
             names={legacyControllerEventNames}
           />
         ) : (
