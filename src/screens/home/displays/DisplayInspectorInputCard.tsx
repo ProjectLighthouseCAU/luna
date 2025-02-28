@@ -1,5 +1,8 @@
-import { Code, Divider, Kbd, Switch, Tooltip } from '@heroui/react';
-import { BooleanChip } from '@luna/components/BooleanChip';
+import { Code, Divider, Switch, Tooltip } from '@heroui/react';
+import {
+  Names,
+  ObjectInspectorTable,
+} from '@luna/components/ObjectInspectorTable';
 import { TitledCard } from '@luna/components/TitledCard';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
@@ -129,16 +132,23 @@ function MouseEventView({ event }: { event?: MouseEvent }) {
   );
 }
 
+const keyEventNames: Names<KeyEvent> = {
+  key: 'Key',
+  down: 'Down',
+};
+
+const legacyKeyEventNames: Names<LegacyKeyEvent> = {
+  key: 'Key',
+  dwn: 'Down',
+};
+
 function KeyEventView({ event }: { event?: KeyEvent | LegacyKeyEvent }) {
   return event ? (
-    <>
-      <div>
-        Key: <Kbd>{event.key}</Kbd>
-      </div>
-      <div>
-        Down: <BooleanChip value={'dwn' in event ? event.dwn : event.down} />
-      </div>
-    </>
+    'dwn' in event ? (
+      <ObjectInspectorTable objects={[event]} names={legacyKeyEventNames} />
+    ) : (
+      <ObjectInspectorTable objects={[event]} names={keyEventNames} />
+    )
   ) : (
     <EventPlaceholderText>no key events yet</EventPlaceholderText>
   );
