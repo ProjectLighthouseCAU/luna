@@ -1,4 +1,4 @@
-import { BooleanChip } from '@luna/components/BooleanChip';
+import { BooleanCheck } from '@luna/components/BooleanCheck';
 import { isBounded } from '@luna/utils/bounded';
 
 export interface ObjectInspectorValueProps {
@@ -31,7 +31,7 @@ function ObjectInspectorRawValue({ value }: { value: any }) {
     case 'number':
       return <>{Number.isInteger(value) ? value : value.toFixed(4)}</>;
     case 'boolean':
-      return <BooleanChip value={value} />;
+      return <BooleanCheck value={value} />;
     default:
       if (typeof value === 'object' && isBounded(value)) {
         return (
