@@ -124,9 +124,15 @@ export function DisplayInspectorInputCard({
   );
 }
 
+const mouseEventNames: Names<MouseEvent> = {
+  button: 'Button',
+  down: 'Down',
+  pos: 'Position',
+};
+
 function MouseEventView({ event }: { event?: MouseEvent }) {
   return event ? (
-    <div />
+    <ObjectInspectorTable objects={[event]} names={mouseEventNames} />
   ) : (
     <EventPlaceholderText>no mouse events yet</EventPlaceholderText>
   );
@@ -160,7 +166,7 @@ function ControllerEventView({
   event?: GamepadEvent | LegacyControllerEvent;
 }) {
   return event ? (
-    <div />
+    <div>TODO</div>
   ) : (
     <EventPlaceholderText>no controller events yet</EventPlaceholderText>
   );
