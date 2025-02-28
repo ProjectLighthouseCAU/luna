@@ -8,44 +8,42 @@ import {
 import { ReactNode, useCallback, useMemo } from 'react';
 import { TableBody, TableHeader } from 'react-stately';
 
-// TODO: Generalize this to a generic component for data tables?
-
-export interface MonitorInspectorTableProps<T> {
-  metrics: T[];
+export interface ObjectInspectorTableProps<T extends object> {
+  objects: T[];
   names: { [Property in keyof T]?: string };
   selection?: keyof T;
   onSelect?: (prop?: keyof T) => void;
   render: <K extends keyof T>(value: T[K], prop: K) => ReactNode;
 }
 
-export function MonitorInspectorTable<T extends object>({
-  metrics,
+export function ObjectInspectorTable<T extends object>({
+  objects,
   names,
   selection,
   onSelect,
   render,
-}: MonitorInspectorTableProps<T>) {
+}: ObjectInspectorTableProps<T>) {
   const columns = useMemo(
     () =>
-      [...Array(metrics.length + 1).keys()].map(i => ({
+      [...Array(objects.length + 1).keys()].map(i => ({
         key: `${i}`,
       })),
-    [metrics.length]
+    [objects.length]
   );
 
   const rows = useMemo(
     () =>
-      metrics.length > 0
+      objects.length > 0
         ? (Object.keys(names) as (keyof T)[]).map(prop => ({
             key: prop as string,
             prop,
-            values: [names[prop], ...metrics.map(v => v[prop])] as [
+            values: [names[prop], ...objects.map(v => v[prop])] as [
               string,
               ...T[keyof T][],
             ],
           }))
         : [],
-    [metrics, names]
+    [objects, names]
   );
 
   const onSelectionChange = useCallback(

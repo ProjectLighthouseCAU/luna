@@ -1,7 +1,7 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import { FlatRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
 import { MonitorRoomCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
-import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
+import { ObjectInspectorTable } from '@luna/components/ObjectInspectorTable';
 import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -53,8 +53,8 @@ export function MonitorInspectorRoomCard({
   return (
     <TitledCard icon={<IconDoor />} title={`Room ${metrics?.room ?? ''}`}>
       {metrics ? (
-        <MonitorInspectorTable
-          metrics={renderedMetrics}
+        <ObjectInspectorTable
+          objects={renderedMetrics}
           names={names}
           selection={criterion?.key}
           onSelect={key =>

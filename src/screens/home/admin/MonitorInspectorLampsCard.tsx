@@ -1,7 +1,7 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import { LampV2Metrics } from '@luna/contexts/api/model/types';
 import { MonitorLampCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
-import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
+import { ObjectInspectorTable } from '@luna/components/ObjectInspectorTable';
 import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
 import { IconCheck, IconLamp } from '@tabler/icons-react';
 
@@ -29,8 +29,8 @@ export function MonitorInspectorLampsCard({
   return (
     <TitledCard icon={<IconLamp />} title="Lamps">
       {metrics.length > 0 ? (
-        <MonitorInspectorTable
-          metrics={metrics}
+        <ObjectInspectorTable
+          objects={metrics}
           names={names}
           selection={criterion?.key}
           onSelect={key =>
