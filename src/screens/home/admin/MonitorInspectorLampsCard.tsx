@@ -1,8 +1,11 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import { LampV2Metrics } from '@luna/contexts/api/model/types';
 import { MonitorLampCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
-import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
-import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
+import {
+  Names,
+  ObjectInspectorTable,
+} from '@luna/components/ObjectInspectorTable';
+import { ObjectInspectorValue } from '@luna/components/ObjectInspectorValue';
 import { IconCheck, IconLamp } from '@tabler/icons-react';
 
 export interface MonitorInspectorLampsCardProps {
@@ -11,7 +14,7 @@ export interface MonitorInspectorLampsCardProps {
   metrics: LampV2Metrics[];
 }
 
-const names: { [Property in keyof LampV2Metrics]: string } = {
+const names: Names<LampV2Metrics> = {
   firmware_version: 'Firmware version',
   flashing_status: 'Flashing status',
   fuse_tripped: 'Fuse tripped',
@@ -29,8 +32,8 @@ export function MonitorInspectorLampsCard({
   return (
     <TitledCard icon={<IconLamp />} title="Lamps">
       {metrics.length > 0 ? (
-        <MonitorInspectorTable
-          metrics={metrics}
+        <ObjectInspectorTable
+          objects={metrics}
           names={names}
           selection={criterion?.key}
           onSelect={key =>
@@ -62,5 +65,5 @@ function MonitorInspectorLampValue<K extends keyof LampV2Metrics>({
       }
       break;
   }
-  return <MonitorInspectorValue value={value} />;
+  return <ObjectInspectorValue value={value} />;
 }

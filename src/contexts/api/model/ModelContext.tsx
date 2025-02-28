@@ -8,6 +8,8 @@ import {
   connect,
   ConsoleLogHandler,
   DirectoryTree,
+  InputEvent,
+  LegacyInputEvent,
   LeveledLogHandler,
   Lighthouse,
   LIGHTHOUSE_FRAME_BYTES,
@@ -32,10 +34,7 @@ export interface Users {
   readonly active: Set<string>;
 }
 
-export interface ModelContextValue {
-  /** The user models, active users etc. */
-  readonly users: Users;
-
+export interface ModelAPI {
   /** Lists an arbitrary path. */
   list(path: string[]): Promise<Result<DirectoryTree>>;
 
@@ -51,6 +50,15 @@ export interface ModelContextValue {
   /** Updates a resource at an arbitrary path. */
   put(path: string[], payload: any): Promise<Result<unknown>>;
 
+  /** Sends a legacy input event for the given user to the given endpoint. */
+  putLegacyInput(
+    user: string,
+    payload: LegacyInputEvent
+  ): Promise<Result<unknown>>;
+
+  /** Sends an input event for the given user to the given endpoint. */
+  putInput(user: string, payload: InputEvent): Promise<Result<unknown>>;
+
   /** Creates a directory at an arbitrary path. */
   mkdir(path: string[]): Promise<Result<unknown>>;
 
@@ -64,21 +72,34 @@ export interface ModelContextValue {
   getLaserMetrics(): Promise<Result<LaserMetrics>>;
 }
 
+export interface ModelContextValue {
+  /** The user models, active users etc. */
+  readonly users: Users;
+
+  /** A facility interact with the model server API. */
+  readonly api: ModelAPI;
+}
+
 export const ModelContext = createContext<ModelContextValue>({
   users: {
     models: Map(),
     active: Set(),
   },
-  list: async () => errorResult('No model context for listing path'),
-  get: async () => errorResult('No model context for fetching path'),
-  delete: async () => errorResult('No model context for deleting path'),
-  put: async () => errorResult('No model context for updating resource'),
-  create: async () => errorResult('No model context for creating resource'),
-  mkdir: async () => errorResult('No model context for creating directory'),
-  isDirectory: async () => false,
-  move: async () => errorResult('No model context for moving resource'),
-  getLaserMetrics: async () =>
-    errorResult('No model context for fetching laser metrics'),
+  api: {
+    list: async () => errorResult('No model context for listing path'),
+    get: async () => errorResult('No model context for fetching path'),
+    delete: async () => errorResult('No model context for deleting path'),
+    put: async () => errorResult('No model context for updating resource'),
+    putLegacyInput: async () =>
+      errorResult('No model context for putting input'),
+    putInput: async () => errorResult('No model context for putting input'),
+    create: async () => errorResult('No model context for creating resource'),
+    mkdir: async () => errorResult('No model context for creating directory'),
+    isDirectory: async () => false,
+    move: async () => errorResult('No model context for moving resource'),
+    getLaserMetrics: async () =>
+      errorResult('No model context for fetching laser metrics'),
+  },
 });
 
 interface ModelContextProviderProps {
@@ -195,9 +216,8 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
 
   useAsyncIterable(getUserStreams, consumeUserStreams);
 
-  const value: ModelContextValue = useMemo(
+  const api: ModelAPI = useMemo(
     () => ({
-      users,
       async list(path) {
         return messageToResult(await client?.list(path));
       },
@@ -209,6 +229,12 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       },
       async put(path, payload) {
         return messageToResult(await client?.put(path, payload));
+      },
+      async putLegacyInput(user, payload) {
+        return messageToResult(await client?.putModel(payload, user));
+      },
+      async putInput(user, payload) {
+        return messageToResult(await client?.putInput(payload, user));
       },
       async create(path) {
         return messageToResult(await client?.create(path));
@@ -245,7 +271,15 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
         return (await this.get(['metrics', 'laser'])) as Result<LaserMetrics>;
       },
     }),
-    [client, users]
+    [client]
+  );
+
+  const value: ModelContextValue = useMemo(
+    () => ({
+      users,
+      api,
+    }),
+    [users, api]
   );
 
   return (

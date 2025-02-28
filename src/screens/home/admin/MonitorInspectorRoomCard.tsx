@@ -1,8 +1,11 @@
+import {
+  Names,
+  ObjectInspectorTable,
+} from '@luna/components/ObjectInspectorTable';
 import { TitledCard } from '@luna/components/TitledCard';
 import { FlatRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
 import { MonitorRoomCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
-import { MonitorInspectorTable } from '@luna/screens/home/admin/MonitorInspectorTable';
-import { MonitorInspectorValue } from '@luna/screens/home/admin/MonitorInspectorValue';
+import { ObjectInspectorValue } from '@luna/components/ObjectInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
@@ -12,7 +15,7 @@ export interface MonitorInspectorRoomCardProps {
   metrics?: FlatRoomV2Metrics;
 }
 
-const names: { [Property in keyof FlatRoomV2Metrics]?: string } = {
+const names: Names<FlatRoomV2Metrics> = {
   api_version: 'API version',
   responsive_lamps: 'Lamps (responsive)',
   board_temperature: 'Board temperature (accurate)',
@@ -29,7 +32,7 @@ const names: { [Property in keyof FlatRoomV2Metrics]?: string } = {
   voltage: 'Voltage',
 };
 
-const units: { [Property in keyof FlatRoomV2Metrics]?: string } = {
+const units: Names<FlatRoomV2Metrics> = {
   board_temperature: '°C',
   core_temperature: '°C',
   current: 'A',
@@ -53,8 +56,8 @@ export function MonitorInspectorRoomCard({
   return (
     <TitledCard icon={<IconDoor />} title={`Room ${metrics?.room ?? ''}`}>
       {metrics ? (
-        <MonitorInspectorTable
-          metrics={renderedMetrics}
+        <ObjectInspectorTable
+          objects={renderedMetrics}
           names={names}
           selection={criterion?.key}
           onSelect={key =>
@@ -78,5 +81,5 @@ function MonitorInspectorRoomValue<K extends keyof FlatRoomV2Metrics>({
   value: FlatRoomV2Metrics[K];
   prop: K;
 }) {
-  return <MonitorInspectorValue value={value} unit={units[prop]} />;
+  return <ObjectInspectorValue value={value} unit={units[prop]} />;
 }
