@@ -33,7 +33,7 @@ export function DisplayView() {
   const [inputState, setInputState] = useState<InputState>({});
   const [inputConfig, setInputConfig] = useState<InputConfig>({
     legacyMode: true,
-    mouseEnabled: true,
+    mouseEnabled: false,
     keyboardEnabled: true,
     controllerEnabled: true,
   });
