@@ -189,13 +189,25 @@ function KeyEventView({ event }: { event?: KeyEvent | LegacyKeyEvent }) {
   );
 }
 
+const legacyControllerEventNames: Names<LegacyControllerEvent> = {
+  btn: 'Button',
+  dwn: 'Down',
+};
+
 function ControllerEventView({
   event,
 }: {
   event?: GamepadEvent | LegacyControllerEvent;
 }) {
   return event ? (
-    <div>TODO</div>
+    'dwn' in event ? (
+      <ObjectInspectorTable
+        objects={[event]}
+        names={legacyControllerEventNames}
+      />
+    ) : (
+      <div>TODO</div>
+    )
   ) : (
     <EventPlaceholderText>no controller events yet</EventPlaceholderText>
   );
