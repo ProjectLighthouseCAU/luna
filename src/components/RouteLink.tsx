@@ -1,12 +1,9 @@
 import { Button } from '@heroui/react';
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
-import { ElementType, ReactNode, useCallback, useState } from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { AnimatePresence as AnimatePresenceFM, motion } from 'framer-motion';
-
-// Workaround for https://github.com/framer/motion/issues/1509
-// See https://github.com/withastro/astro/issues/8195#issuecomment-2613930022
-const AnimatePresence = AnimatePresenceFM as ElementType;
+import { motion } from 'framer-motion';
+import { AnimatePresence } from '@luna/utils/motion';
 
 interface RouteLinkParams {
   icon: ReactNode;

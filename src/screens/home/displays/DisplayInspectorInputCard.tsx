@@ -1,4 +1,5 @@
 import { Code, Divider, Switch, Tooltip } from '@heroui/react';
+import { motion } from 'framer-motion';
 import {
   Names,
   ObjectInspectorTable,
@@ -20,6 +21,7 @@ import {
   MouseEvent,
 } from 'nighthouse/browser';
 import { ReactNode, useCallback } from 'react';
+import { AnimatePresence } from '@luna/utils/motion';
 
 export interface DisplayInspectorInputCardProps {
   username: string;
@@ -96,9 +98,9 @@ export function DisplayInspectorInputCard({
         >
           Mouse
         </Switch>
-        {mouseEnabled ? (
+        <AnimatedPresence isShown={mouseEnabled}>
           <MouseEventView event={inputState.lastMouseEvent} />
-        ) : undefined}
+        </AnimatedPresence>
         <Switch
           thumbIcon={<IconKeyboard />}
           isSelected={keyboardEnabled}
@@ -106,9 +108,9 @@ export function DisplayInspectorInputCard({
         >
           Keyboard
         </Switch>
-        {keyboardEnabled ? (
+        <AnimatedPresence isShown={keyboardEnabled}>
           <KeyEventView event={inputState.lastKeyEvent} />
-        ) : undefined}
+        </AnimatedPresence>
         <Switch
           thumbIcon={<IconDeviceGamepad />}
           isSelected={controllerEnabled}
@@ -116,11 +118,38 @@ export function DisplayInspectorInputCard({
         >
           Controller
         </Switch>
-        {controllerEnabled ? (
+        <AnimatedPresence isShown={controllerEnabled}>
           <ControllerEventView event={inputState.lastControllerEvent} />
-        ) : undefined}
+        </AnimatedPresence>
       </div>
     </TitledCard>
+  );
+}
+
+function AnimatedPresence({
+  isShown,
+  children,
+}: {
+  isShown: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <AnimatePresence initial={isShown}>
+      {isShown ? (
+        <motion.div
+          initial="collapsed"
+          animate="open"
+          exit="collapsed"
+          variants={{
+            open: { opacity: 1, height: 'auto' },
+            collapsed: { opacity: 0, height: 0 },
+          }}
+          transition={{ duration: 0.2 }}
+        >
+          {children}
+        </motion.div>
+      ) : undefined}
+    </AnimatePresence>
   );
 }
 
