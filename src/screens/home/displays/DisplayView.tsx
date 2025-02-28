@@ -9,10 +9,18 @@ import { useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { displayLayoutId } from '@luna/constants/LayoutId';
+import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
   const { users } = useContext(ModelContext);
+
+  const [inputConfig, setInputConfig] = useState<InputConfig>({
+    legacyMode: true,
+    mouseEnabled: true,
+    keyboardEnabled: true,
+    controllerEnabled: true,
+  });
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -69,7 +77,11 @@ export function DisplayView() {
               />
             </motion.div>
           </div>
-          <DisplayInspector username={username} />
+          <DisplayInspector
+            username={username}
+            inputConfig={inputConfig}
+            setInputConfig={setInputConfig}
+          />
         </div>
       ) : (
         // TODO: Improve error message, perhaps add a link back to /displays?

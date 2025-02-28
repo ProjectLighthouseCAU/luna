@@ -1,14 +1,42 @@
 import { TitledCard } from '@luna/components/TitledCard';
 import { Code, Divider, Switch, Tooltip } from '@heroui/react';
 import { IconDeviceGamepad2 } from '@tabler/icons-react';
+import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
+import { useCallback } from 'react';
 
 export interface DisplayInspectorInputCardProps {
   username: string;
+  inputConfig: InputConfig;
+  setInputConfig: (inputConfig: InputConfig) => void;
 }
 
 export function DisplayInspectorInputCard({
   username,
+  inputConfig,
+  setInputConfig,
 }: DisplayInspectorInputCardProps) {
+  const setLegacyMode = useCallback(
+    (legacyMode: boolean) => setInputConfig({ ...inputConfig, legacyMode }),
+    [inputConfig, setInputConfig]
+  );
+
+  const setMouseEnabled = useCallback(
+    (mouseEnabled: boolean) => setInputConfig({ ...inputConfig, mouseEnabled }),
+    [inputConfig, setInputConfig]
+  );
+
+  const setKeyboardEnabled = useCallback(
+    (keyboardEnabled: boolean) =>
+      setInputConfig({ ...inputConfig, keyboardEnabled }),
+    [inputConfig, setInputConfig]
+  );
+
+  const setControllerEnabled = useCallback(
+    (controllerEnabled: boolean) =>
+      setInputConfig({ ...inputConfig, controllerEnabled }),
+    [inputConfig, setInputConfig]
+  );
+
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
       <div className="flex flex-col space-y-2">
@@ -29,12 +57,32 @@ export function DisplayInspectorInputCard({
           }
           classNames={{ content: 'w-60' }}
         >
-          <Switch>Legacy Mode</Switch>
+          <Switch
+            isSelected={inputConfig.legacyMode}
+            onValueChange={setLegacyMode}
+          >
+            Legacy Mode
+          </Switch>
         </Tooltip>
         <Divider />
-        <Switch isDisabled={true}>Mouse</Switch>
-        <Switch isDisabled={true}>Keyboard</Switch>
-        <Switch isDisabled={true}>Controller</Switch>
+        <Switch
+          isSelected={inputConfig.mouseEnabled}
+          onValueChange={setMouseEnabled}
+        >
+          Mouse
+        </Switch>
+        <Switch
+          isSelected={inputConfig.keyboardEnabled}
+          onValueChange={setKeyboardEnabled}
+        >
+          Keyboard
+        </Switch>
+        <Switch
+          isSelected={inputConfig.controllerEnabled}
+          onValueChange={setControllerEnabled}
+        >
+          Controller
+        </Switch>
       </div>
     </TitledCard>
   );
