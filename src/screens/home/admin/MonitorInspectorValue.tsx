@@ -1,5 +1,6 @@
 import { isBounded } from '@luna/utils/bounded';
 import { Chip } from '@heroui/react';
+import { BooleanChip } from '@luna/components/BooleanChip';
 
 export interface MonitorInspectorValueProps {
   value: any;
@@ -31,11 +32,7 @@ function MonitorInspectorRawValue({ value }: { value: any }) {
     case 'number':
       return <>{Number.isInteger(value) ? value : value.toFixed(4)}</>;
     case 'boolean':
-      return (
-        <Chip color={value ? 'success' : 'danger'} variant="flat">
-          {value ? 'true' : 'false'}
-        </Chip>
-      );
+      return <BooleanChip value={value} />;
     default:
       if (typeof value === 'object' && isBounded(value)) {
         return (
