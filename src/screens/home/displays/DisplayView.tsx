@@ -56,8 +56,8 @@ export function DisplayView() {
 
   const onKeyEvent = useCallback(
     async (e: KeyboardEvent, down: boolean) => {
-      // Ignore keyboard events on input events (e.g. the search bar)
-      if (e.target instanceof HTMLInputElement) {
+      // Ignore keyboard events on text fields (e.g. the search bar)
+      if (e.target instanceof HTMLInputElement && e.target.type === 'text') {
         return;
       }
 
