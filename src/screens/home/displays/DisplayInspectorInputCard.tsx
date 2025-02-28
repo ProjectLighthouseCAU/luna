@@ -74,7 +74,8 @@ export function DisplayInspectorInputCard({
         <Divider />
         <Switch
           thumbIcon={<IconMouse />}
-          isSelected={inputConfig.mouseEnabled}
+          isSelected={!inputConfig.legacyMode && inputConfig.mouseEnabled}
+          isDisabled={inputConfig.legacyMode}
           onValueChange={setMouseEnabled}
         >
           Mouse
