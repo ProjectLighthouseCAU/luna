@@ -1,10 +1,25 @@
 import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
+import { displayLayoutId } from '@luna/constants/LayoutId';
+import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
+import { ClientIdContext } from '@luna/contexts/env/ClientIdContext';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
+import { useInitRef } from '@luna/hooks/useInitRef';
+import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
+import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
+import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import { throttle } from '@luna/utils/schedule';
+import { Vec2 } from '@luna/utils/vec2';
+import { motion } from 'framer-motion';
+import {
+  GamepadEvent,
+  KeyEvent,
+  LegacyKeyEvent,
+  MouseEvent,
+} from 'nighthouse/browser';
 import {
   useCallback,
   useContext,
@@ -15,15 +30,6 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { displayLayoutId } from '@luna/constants/LayoutId';
-import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
-import { InputState } from '@luna/screens/home/displays/helpers/InputState';
-import { ClientIdContext } from '@luna/contexts/env/ClientIdContext';
-import { KeyEvent, LegacyKeyEvent, MouseEvent } from 'nighthouse/browser';
-import { Vec2 } from '@luna/utils/vec2';
-import { useLocalStorage } from '@luna/hooks/useLocalStorage';
-import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
@@ -129,6 +135,87 @@ export function DisplayView() {
     };
   }, []);
 
+  const lastEventsRef = useInitRef<GamepadEvent[]>(() => []);
+
+  const hasGamepads = useMemo(
+    () => inputState.gamepadCount > 0,
+    [inputState.gamepadCount]
+  );
+
+  useEffect(() => {
+    if (!hasGamepads) {
+      return;
+    }
+
+    console.log('Reregistering gamepad polling loop');
+
+    const interval = window.setInterval(async () => {
+      // Compute new state in the form of events
+      const gamepads = navigator.getGamepads();
+      const events: GamepadEvent[] = [];
+      for (let i = 0; i < gamepads.length; i++) {
+        const gamepad = gamepads[i];
+        const event: GamepadEvent = {
+          type: 'gamepad',
+          source: `${clientId}:${i}`,
+          buttons:
+            gamepad?.buttons.map(b => ({
+              pressed: b.pressed,
+              value: b.value,
+            })) ?? [],
+          axes: gamepad?.axes.map(a => a) ?? [],
+        };
+        events.push(event);
+      }
+
+      // Check whether gamepad state changed
+      const lastEvents: GamepadEvent[] = lastEventsRef.current;
+      const didChange = JSON.stringify(lastEvents) !== JSON.stringify(events);
+      if (didChange) {
+        if (inputConfig.legacyMode) {
+          // Diff the event lists for the legacy API
+          for (let i = 0; i < Math.max(lastEvents.length, events.length); i++) {
+            const lastEvent = i < lastEvents.length ? lastEvents[i] : undefined;
+            const event = i < events.length ? events[i] : undefined;
+            const buttons = Math.max(
+              lastEvent?.buttons.length ?? 0,
+              event?.buttons.length ?? 0
+            );
+            for (let buttonIdx = 0; buttonIdx < buttons; buttonIdx++) {
+              const lastButton = lastEvent?.buttons[buttonIdx];
+              const button = event?.buttons[buttonIdx];
+              if (JSON.stringify(lastButton) !== JSON.stringify(button)) {
+                await api.putLegacyInput(username, {
+                  src: 1 + i,
+                  btn: buttonIdx,
+                  dwn: button?.pressed ?? false,
+                });
+              }
+            }
+          }
+        } else {
+          // Just send the state for the new API
+          for (const event of events) {
+            await api.putInput(username, event);
+          }
+        }
+        lastEventsRef.current = events;
+        setInputState(state => ({ ...state, lastControllerEvents: events }));
+      }
+    }, 100);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [
+    clientId,
+    inputConfig.legacyMode,
+    lastEventsRef,
+    api,
+    username,
+    hasGamepads,
+  ]);
+
   const onMouseEvent = useCallback(
     async (pos: Vec2<number>, down: boolean) => {
       if (inputConfig.legacyMode || !inputConfig.mouseEnabled) {
@@ -166,7 +253,7 @@ export function DisplayView() {
     [onMouseEvent]
   );
 
-  // Make sure to update the size after the model canvas has been added to the DOM
+  // Make sure to update the size after the api canvas has been added to the DOM
   useLayoutEffect(() => {
     if (userModel) {
       onResize();
@@ -214,7 +301,7 @@ export function DisplayView() {
         </div>
       ) : (
         // TODO: Improve error message, perhaps add a link back to /displays?
-        <p>No model found!</p>
+        <p>No api found!</p>
       )}
     </HomeContent>
   );
