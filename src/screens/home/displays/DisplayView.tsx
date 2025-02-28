@@ -21,6 +21,8 @@ import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import { ClientIdContext } from '@luna/contexts/env/ClientIdContext';
 import { KeyEvent, LegacyKeyEvent, MouseEvent } from 'nighthouse/browser';
 import { Vec2 } from '@luna/utils/vec2';
+import { useLocalStorage } from '@luna/hooks/useLocalStorage';
+import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 
 export function DisplayView() {
   const { username } = useParams() as { username: string };
@@ -31,12 +33,15 @@ export function DisplayView() {
   const { users } = model;
 
   const [inputState, setInputState] = useState<InputState>({});
-  const [inputConfig, setInputConfig] = useState<InputConfig>({
-    legacyMode: true,
-    mouseEnabled: false,
-    keyboardEnabled: false,
-    controllerEnabled: false,
-  });
+  const [inputConfig, setInputConfig] = useLocalStorage<InputConfig>(
+    LocalStorageKey.DisplayInputConfig,
+    () => ({
+      legacyMode: true,
+      mouseEnabled: false,
+      keyboardEnabled: false,
+      controllerEnabled: false,
+    })
+  );
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
   const wrapperRef = useRef<HTMLDivElement | null>(null);
