@@ -66,6 +66,7 @@ export function DisplayInspectorInputCard({
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
       <div className="flex flex-col space-y-2">
         <Tooltip
+          placement="left"
           content={
             <div className="flex flex-col gap-2">
               <span>
