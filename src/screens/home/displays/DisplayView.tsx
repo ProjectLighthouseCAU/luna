@@ -56,9 +56,15 @@ export function DisplayView() {
 
   const onKeyEvent = useCallback(
     async (e: KeyboardEvent, down: boolean) => {
+      // Ignore keyboard events on input events (e.g. the search bar)
+      if (e.target instanceof HTMLInputElement) {
+        return;
+      }
+
       if (!inputConfig.keyboardEnabled) {
         return;
       }
+
       if (inputConfig.legacyMode) {
         await model.putLegacyInput(username, {
           src: 0, // TODO: What is this?
