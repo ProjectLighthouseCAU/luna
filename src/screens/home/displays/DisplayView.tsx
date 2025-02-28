@@ -209,9 +209,9 @@ export function DisplayView() {
         } else {
           // Just send the state for the new API
 
-          // TODO (API design): Should we provide the controller name since the
-          // buttons might be mapped differently? Or is this guaranteed to be
-          // the same across controller brands?
+          // TODO (API design): Should we provide the controller name? The
+          // gamepad API seems to remap to a standard layout in most cases, but
+          // maybe this isn't guaranteed: https://w3c.github.io/gamepad/#remapping
 
           for (const event of events) {
             await api.putInput(username, event);
