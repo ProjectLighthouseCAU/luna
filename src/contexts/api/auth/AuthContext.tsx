@@ -200,6 +200,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         try {
           await apiRef.current.logout.logoutCreate();
           setApiUser(undefined);
+          setApiToken(undefined);
           return okResult(undefined);
         } catch (error) {
           return errorResult(`Logout failed: ${await formatError(error)}`);
