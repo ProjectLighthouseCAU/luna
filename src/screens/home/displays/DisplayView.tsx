@@ -144,17 +144,15 @@ export function DisplayView() {
 
   const lastGamepadStatesRef = useInitRef<GamepadState[]>(() => []);
 
-  const hasGamepads = useMemo(
-    () => inputState.gamepadCount > 0,
-    [inputState.gamepadCount]
+  const gamepadsActive = useMemo(
+    () => inputState.gamepadCount > 0 && inputConfig.controllerEnabled,
+    [inputConfig.controllerEnabled, inputState.gamepadCount]
   );
 
   useEffect(() => {
-    if (!hasGamepads) {
+    if (!gamepadsActive) {
       return;
     }
-
-    console.log('Reregistering gamepad polling loop');
 
     const interval = window.setInterval(async () => {
       // Compute new state in the form of events
@@ -209,10 +207,12 @@ export function DisplayView() {
 
         lastGamepadStatesRef.current = states;
       }
-    }, 100);
+    }, 10);
+    console.log('Registered gamepad polling loop', interval);
 
     return () => {
       window.clearInterval(interval);
+      console.log('Unregistered gamepad polling loop', interval);
     };
   }, [
     clientId,
@@ -220,7 +220,7 @@ export function DisplayView() {
     lastGamepadStatesRef,
     api,
     username,
-    hasGamepads,
+    gamepadsActive,
   ]);
 
   const onMouseEvent = useCallback(
