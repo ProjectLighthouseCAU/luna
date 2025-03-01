@@ -1,5 +1,3 @@
-// TODO: Add a generic useStream too
-
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { emptyUserModel, UserModel } from '@luna/contexts/api/model/types';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
