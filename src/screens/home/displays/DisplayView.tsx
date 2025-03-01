@@ -11,6 +11,12 @@ import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
+import {
+  captureGamepadStates,
+  diffGamepadStates,
+  GamepadButtonChange,
+  GamepadState,
+} from '@luna/utils/gamepad';
 import { throttle } from '@luna/utils/schedule';
 import { Vec2 } from '@luna/utils/vec2';
 import { motion } from 'framer-motion';
@@ -136,11 +142,6 @@ export function DisplayView() {
     };
   }, []);
 
-  interface GamepadState {
-    buttons: { pressed: boolean; value: number }[];
-    axes: number[];
-  }
-
   const lastGamepadStatesRef = useInitRef<GamepadState[]>(() => []);
 
   const hasGamepads = useMemo(
@@ -157,77 +158,43 @@ export function DisplayView() {
 
     const interval = window.setInterval(async () => {
       // Compute new state in the form of events
-      const gamepads = navigator.getGamepads();
-      const states: GamepadState[] = [];
-      for (let i = 0; i < gamepads.length; i++) {
-        const gamepad = gamepads[i];
-        const state: GamepadState = {
-          buttons:
-            gamepad?.buttons.map(b => ({
-              pressed: b.pressed,
-              value: b.value,
-            })) ?? [],
-          axes: gamepad?.axes.map(a => a) ?? [],
-        };
-        states.push(state);
-      }
+      const states = captureGamepadStates();
 
       // Check whether gamepad state changed
       const lastStates: GamepadState[] = lastGamepadStatesRef.current;
-      const didChange = JSON.stringify(lastStates) !== JSON.stringify(states);
+      const changes = diffGamepadStates(lastStates, states);
 
-      if (didChange) {
+      if (changes.length > 0) {
         if (inputConfig.legacyMode) {
-          // Diff the states for the legacy API
-          const legacyEvents: LegacyControllerEvent[] = [];
-          const totalGamepadCount = Math.max(lastStates.length, states.length);
-
-          for (let i = 0; i < totalGamepadCount; i++) {
-            const lastState = i < lastStates.length ? lastStates[i] : undefined;
-            const state = i < states.length ? states[i] : undefined;
-            const buttons = Math.max(
-              lastState?.buttons.length ?? 0,
-              state?.buttons.length ?? 0
-            );
-            for (let buttonIdx = 0; buttonIdx < buttons; buttonIdx++) {
-              const lastButton = lastState?.buttons[buttonIdx];
-              const button = state?.buttons[buttonIdx];
-              if (JSON.stringify(lastButton) !== JSON.stringify(button)) {
-                const legacyEvent: LegacyControllerEvent = {
-                  src: 1 + i,
-                  btn: buttonIdx,
-                  dwn: button?.pressed ?? false,
-                };
-                await api.putLegacyInput(username, legacyEvent);
-                legacyEvents.push(legacyEvent);
-              }
-            }
-          }
-
-          if (legacyEvents.length > 0) {
-            setInputState(state => ({
-              ...state,
-              lastControllerEvents: legacyEvents,
+          // Convert and send events to the legacy API
+          const legacyEvents: LegacyControllerEvent[] = changes
+            .filter(change => change.control === 'button')
+            .map(change => ({
+              src: 1 + change.source,
+              btn: change.index,
+              // Unfortunately, our build chain's TS compiler isn't smart enough
+              // to prove this without a cast, while VSCode interestingly is
+              dwn: (change as GamepadButtonChange).down,
             }));
+
+          for (const event of legacyEvents) {
+            await api.putLegacyInput(username, event);
           }
+
+          setInputState(state => ({
+            ...state,
+            lastControllerEvents: legacyEvents,
+          }));
         } else {
-          // Just send the state for the new API
+          // Convert and send events to the new input API
+          const events: GamepadEvent[] = changes.map(change => ({
+            ...change,
+            type: 'gamepad',
+            source: `${clientId}:${change.source}`,
+          }));
 
-          // TODO (API design): Should we provide the controller name? The
-          // gamepad API seems to remap to a standard layout in most cases, but
-          // maybe this isn't guaranteed: https://w3c.github.io/gamepad/#remapping
-
-          const events: GamepadEvent[] = [];
-
-          for (let i = 0; i < states.length; i++) {
-            const state = states[i];
-            const event: GamepadEvent = {
-              type: 'gamepad',
-              source: `${clientId}:${i}`,
-              ...state,
-            };
+          for (const event of events) {
             await api.putInput(username, event);
-            events.push(event);
           }
 
           setInputState(state => ({
@@ -235,6 +202,7 @@ export function DisplayView() {
             lastControllerEvents: events,
           }));
         }
+
         lastGamepadStatesRef.current = states;
       }
     }, 100);
