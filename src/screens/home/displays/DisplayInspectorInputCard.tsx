@@ -198,6 +198,13 @@ const legacyControllerEventNames: Names<LegacyControllerEvent> = {
   dwn: 'Down',
 };
 
+const gamepadEventNames: Names<GamepadEvent> = {
+  control: 'Control',
+  index: 'Index',
+  down: 'Down',
+  value: 'Value',
+};
+
 function ControllerEventView({
   gamepadCount,
   event,
@@ -217,7 +224,7 @@ function ControllerEventView({
             names={legacyControllerEventNames}
           />
         ) : (
-          <div>TODO</div>
+          <ObjectInspectorTable objects={[event]} names={gamepadEventNames} />
         )
       ) : (
         <EventInfoText>no controller events yet</EventInfoText>
