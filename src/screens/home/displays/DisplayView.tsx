@@ -136,7 +136,12 @@ export function DisplayView() {
     };
   }, []);
 
-  const lastEventsRef = useInitRef<GamepadEvent[]>(() => []);
+  interface GamepadState {
+    buttons: { pressed: boolean; value: number }[];
+    axes: number[];
+  }
+
+  const lastGamepadStatesRef = useInitRef<GamepadState[]>(() => []);
 
   const hasGamepads = useMemo(
     () => inputState.gamepadCount > 0,
@@ -153,12 +158,10 @@ export function DisplayView() {
     const interval = window.setInterval(async () => {
       // Compute new state in the form of events
       const gamepads = navigator.getGamepads();
-      const events: GamepadEvent[] = [];
+      const states: GamepadState[] = [];
       for (let i = 0; i < gamepads.length; i++) {
         const gamepad = gamepads[i];
-        const event: GamepadEvent = {
-          type: 'gamepad',
-          source: `${clientId}:${i}`,
+        const state: GamepadState = {
           buttons:
             gamepad?.buttons.map(b => ({
               pressed: b.pressed,
@@ -166,28 +169,29 @@ export function DisplayView() {
             })) ?? [],
           axes: gamepad?.axes.map(a => a) ?? [],
         };
-        events.push(event);
+        states.push(state);
       }
 
       // Check whether gamepad state changed
-      const lastEvents: GamepadEvent[] = lastEventsRef.current;
-      const didChange = JSON.stringify(lastEvents) !== JSON.stringify(events);
+      const lastStates: GamepadState[] = lastGamepadStatesRef.current;
+      const didChange = JSON.stringify(lastStates) !== JSON.stringify(states);
 
       if (didChange) {
         if (inputConfig.legacyMode) {
-          // Diff the event lists for the legacy API
+          // Diff the states for the legacy API
           const legacyEvents: LegacyControllerEvent[] = [];
+          const totalGamepadCount = Math.max(lastStates.length, states.length);
 
-          for (let i = 0; i < Math.max(lastEvents.length, events.length); i++) {
-            const lastEvent = i < lastEvents.length ? lastEvents[i] : undefined;
-            const event = i < events.length ? events[i] : undefined;
+          for (let i = 0; i < totalGamepadCount; i++) {
+            const lastState = i < lastStates.length ? lastStates[i] : undefined;
+            const state = i < states.length ? states[i] : undefined;
             const buttons = Math.max(
-              lastEvent?.buttons.length ?? 0,
-              event?.buttons.length ?? 0
+              lastState?.buttons.length ?? 0,
+              state?.buttons.length ?? 0
             );
             for (let buttonIdx = 0; buttonIdx < buttons; buttonIdx++) {
-              const lastButton = lastEvent?.buttons[buttonIdx];
-              const button = event?.buttons[buttonIdx];
+              const lastButton = lastState?.buttons[buttonIdx];
+              const button = state?.buttons[buttonIdx];
               if (JSON.stringify(lastButton) !== JSON.stringify(button)) {
                 const legacyEvent: LegacyControllerEvent = {
                   src: 1 + i,
@@ -213,13 +217,25 @@ export function DisplayView() {
           // gamepad API seems to remap to a standard layout in most cases, but
           // maybe this isn't guaranteed: https://w3c.github.io/gamepad/#remapping
 
-          for (const event of events) {
+          const events: GamepadEvent[] = [];
+
+          for (let i = 0; i < states.length; i++) {
+            const state = states[i];
+            const event: GamepadEvent = {
+              type: 'gamepad',
+              source: `${clientId}:${i}`,
+              ...state,
+            };
             await api.putInput(username, event);
+            events.push(event);
           }
 
-          setInputState(state => ({ ...state, lastControllerEvents: events }));
+          setInputState(state => ({
+            ...state,
+            lastControllerEvents: events,
+          }));
         }
-        lastEventsRef.current = events;
+        lastGamepadStatesRef.current = states;
       }
     }, 100);
 
@@ -229,7 +245,7 @@ export function DisplayView() {
   }, [
     clientId,
     inputConfig.legacyMode,
-    lastEventsRef,
+    lastGamepadStatesRef,
     api,
     username,
     hasGamepads,
