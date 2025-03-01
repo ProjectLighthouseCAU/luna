@@ -20,12 +20,15 @@ export function useAsyncIterable<T>(
               cancelHandler = () => resolve({ done: true, value: undefined });
             }),
           ]);
-          if (result.value !== undefined) {
-            consumer(result.value);
-          }
           if (result.done) {
             break;
           }
+          // Make sure not to call the consumer when we're done, in the raced
+          // cancellation case we'd get `undefined`, but if the async iterable
+          // ends naturally this will be its return value, e.g. an array in a
+          // mergeAsyncIterable result. For details, see
+          // https://stackoverflow.com/questions/50585456/how-can-i-interleave-merge-async-iterables/50586391#comment140164278_50586391.
+          consumer(result.value);
         }
       } catch (error) {
         if (onError) {
