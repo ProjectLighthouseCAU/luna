@@ -31,6 +31,7 @@ export interface RoomV2Metrics {
 
 export interface ControllerV2Metrics {
   responding: boolean;
+  pings_without_response: number;
   ping_latency_ms: number;
   firmware_version: number;
   uptime: number;

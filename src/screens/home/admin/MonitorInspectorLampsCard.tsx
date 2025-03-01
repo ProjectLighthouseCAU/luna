@@ -15,13 +15,13 @@ export interface MonitorInspectorLampsCardProps {
 }
 
 const names: Names<LampV2Metrics> = {
-  firmware_version: 'Firmware version',
-  flashing_status: 'Flashing status',
-  fuse_tripped: 'Fuse tripped',
   responding: 'Responding',
-  temperature: 'Temperature',
-  timeout: 'Timeout',
+  firmware_version: 'Firmware version',
   uptime: 'Uptime',
+  timeout: 'Timeout',
+  temperature: 'Temperature (not accurate)',
+  fuse_tripped: 'Fuse tripped',
+  flashing_status: 'Flashing status',
 };
 
 export function MonitorInspectorLampsCard({

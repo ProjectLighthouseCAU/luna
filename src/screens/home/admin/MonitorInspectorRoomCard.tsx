@@ -16,20 +16,21 @@ export interface MonitorInspectorRoomCardProps {
 }
 
 const names: Names<FlatRoomV2Metrics> = {
-  api_version: 'API version',
+  responding: 'Responding',
+  pings_without_response: 'Pings without response',
+  ping_latency_ms: 'Ping/latency',
   responsive_lamps: 'Lamps (responsive)',
+  api_version: 'API version',
+  firmware_version: 'Firmware version',
+  uptime: 'Uptime',
+  frames: 'Frames received (total)',
+  fps: 'FPS',
   board_temperature: 'Board temperature (accurate)',
   core_temperature: 'Core temperature (not accurate)',
-  current: 'Current',
-  firmware_version: 'Firmware version',
-  fps: 'FPS',
-  frames: 'Frames received (total)',
-  ping_latency_ms: 'Ping/latency',
-  power: 'Power',
-  responding: 'Responding',
-  shunt_voltage: 'Shunt voltage',
-  uptime: 'Uptime',
   voltage: 'Voltage',
+  shunt_voltage: 'Shunt voltage',
+  current: 'Current',
+  power: 'Power',
 };
 
 const units: Names<FlatRoomV2Metrics> = {
