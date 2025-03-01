@@ -1,4 +1,4 @@
-import { UserModel } from '@luna/contexts/api/model/types';
+import { emptyUserModel, UserModel } from '@luna/contexts/api/model/types';
 import { DisplayCard } from '@luna/components/DisplayCard';
 import { InView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
@@ -6,7 +6,7 @@ import { Map } from 'immutable';
 import { motion } from 'framer-motion';
 import { displayLayoutId } from '@luna/constants/LayoutId';
 import { ModelContext, Users } from '@luna/contexts/api/model/ModelContext';
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import {
   catchAsyncIterable,
@@ -26,7 +26,6 @@ export function DisplayGrid({
   displayWidth,
 }: DisplayGridProps) {
   const { api } = useContext(ModelContext);
-  const [userModels, setUserModels] = useState<Map<string, UserModel>>(Map());
 
   // Filter the models case-insensitively by the search query
   const filteredUsers = useMemo(
@@ -35,6 +34,10 @@ export function DisplayGrid({
         username.toLowerCase().includes(searchQuery.toLowerCase())
       ),
     [searchQuery, users.all]
+  );
+
+  const [userModels, setUserModels] = useState<Map<string, UserModel>>(() =>
+    Map(filteredUsers.map(user => [user, emptyUserModel()]))
   );
 
   // Stream (only) the filtered users
@@ -65,6 +68,14 @@ export function DisplayGrid({
   );
 
   useAsyncIterable(streamUserModels, consumeUserModel);
+
+  useEffect(() => {
+    for (const user of filteredUsers) {
+      if (!userModels.has(user)) {
+        setUserModels(userModels => userModels.set(user, emptyUserModel()));
+      }
+    }
+  }, [filteredUsers, userModels]);
 
   // Disable animations automatically if there are too many displays for
   // performance reasons. Unfortunately we can't seem to change the layoutId
