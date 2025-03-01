@@ -181,10 +181,12 @@ export function DisplayView() {
             await api.putLegacyInput(username, event);
           }
 
-          setInputState(state => ({
-            ...state,
-            lastControllerEvents: legacyEvents,
-          }));
+          if (legacyEvents.length > 0) {
+            setInputState(state => ({
+              ...state,
+              lastControllerEvents: legacyEvents,
+            }));
+          }
         } else {
           // Convert and send events to the new input API
           const events: GamepadEvent[] = changes.map(change => ({
@@ -197,10 +199,12 @@ export function DisplayView() {
             await api.putInput(username, event);
           }
 
-          setInputState(state => ({
-            ...state,
-            lastControllerEvents: events,
-          }));
+          if (events.length > 0) {
+            setInputState(state => ({
+              ...state,
+              lastControllerEvents: events,
+            }));
+          }
         }
 
         lastGamepadStatesRef.current = states;
