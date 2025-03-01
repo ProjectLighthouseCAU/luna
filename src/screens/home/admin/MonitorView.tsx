@@ -272,6 +272,7 @@ export function MonitorView() {
               focusedWindows={focusedWindows}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
+              cursor="pointer"
             />
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Set } from 'immutable';
 import {
   LIGHTHOUSE_COLOR_CHANNELS,
@@ -22,6 +22,7 @@ export interface DisplayProps {
   strictBoundsChecking?: boolean;
   highlightedWindows?: Set<number>;
   focusedWindows?: Set<number>;
+  cursor?: string;
   onMouseDown?: (p: Vec2<number>) => void;
   onMouseUp?: (p: Vec2<number>) => void;
   onMouseDrag?: (p: Vec2<number>) => void;
@@ -40,6 +41,7 @@ export function Display({
   strictBoundsChecking = false,
   highlightedWindows = Set(),
   focusedWindows = Set(),
+  cursor,
   onMouseDown = () => {},
   onMouseUp = () => {},
   onMouseDrag = () => {},
@@ -195,7 +197,6 @@ export function Display({
       onMouseMove(undefined);
     };
 
-    canvas.style.cursor = 'crosshair';
     canvas.addEventListener('mousedown', onMouseDownHandler);
     canvas.addEventListener('mousemove', onMouseMoveHandler);
     canvas.addEventListener('mouseup', onMouseUpHandler);
@@ -226,6 +227,18 @@ export function Display({
     highlightedWindows,
     focusedWindows,
   ]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return;
+    }
+    if (cursor !== undefined) {
+      canvas.style.cursor = cursor;
+    } else {
+      canvas.style.removeProperty('cursor');
+    }
+  }, [cursor]);
 
   return <canvas ref={canvasRef} className={className} />;
 }

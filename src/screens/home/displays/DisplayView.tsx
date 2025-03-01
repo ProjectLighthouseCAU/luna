@@ -214,9 +214,11 @@ export function DisplayView() {
     };
   }, [clientId, inputConfig.legacyMode, api, username, gamepadsActive]);
 
+  const mouseActive = !inputConfig.legacyMode && inputConfig.mouseEnabled;
+
   const onMouseEvent = useCallback(
     async (pos: Vec2<number>, down: boolean) => {
-      if (inputConfig.legacyMode || !inputConfig.mouseEnabled) {
+      if (!mouseActive) {
         return;
       }
 
@@ -230,7 +232,7 @@ export function DisplayView() {
       await api.putInput(username, event);
       setInputState(state => ({ ...state, lastMouseEvent: event }));
     },
-    [clientId, inputConfig.legacyMode, inputConfig.mouseEnabled, api, username]
+    [mouseActive, clientId, api, username]
   );
 
   const onMouseDown = useCallback(
@@ -283,6 +285,7 @@ export function DisplayView() {
                 frame={userModel.frame}
                 width={width}
                 className="rounded-xl"
+                cursor={mouseActive ? 'crosshair' : undefined}
                 onMouseDown={onMouseDown}
                 onMouseUp={onMouseUp}
                 onMouseDrag={onMouseDown}
