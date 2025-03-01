@@ -8,7 +8,6 @@ export function useAsyncIterable<T>(
   onError?: (error: any) => any
 ) {
   useEffect(() => {
-    let isCancelled = false;
     let cancelHandler: (() => void) | undefined = undefined;
     (async () => {
       const iterator = iterable()[Symbol.asyncIterator]();
@@ -21,11 +20,9 @@ export function useAsyncIterable<T>(
               cancelHandler = () => resolve({ done: true, value: undefined });
             }),
           ]);
-          if (isCancelled) {
-            console.log('Cancelled');
-            break;
+          if (result.value !== undefined) {
+            consumer(result.value);
           }
-          consumer(result.value);
           if (result.done) {
             break;
           }
@@ -42,7 +39,6 @@ export function useAsyncIterable<T>(
     })();
     return () => {
       console.log('Cancelling');
-      isCancelled = true;
       cancelHandler?.();
     };
   }, [iterable, consumer, onError]);
