@@ -8,7 +8,6 @@ import { displayLayoutId } from '@luna/constants/LayoutId';
 import { ModelContext, Users } from '@luna/contexts/api/model/ModelContext';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
-import * as assert from '@luna/utils/assert';
 import {
   catchAsyncIterable,
   mapAsyncIterable,
@@ -45,11 +44,8 @@ export function DisplayGrid({
       filteredUsers.map(user =>
         catchAsyncIterable(
           mapAsyncIterable(api.streamModel(user), userModel => ({
-            user: assert.notNullish(user, `User in DisplayGrid stream`),
-            userModel: assert.notNullish(
-              userModel,
-              `Model of ${user} in DisplayGrid stream`
-            ),
+            user,
+            userModel,
           })),
           error => {
             console.warn(
@@ -63,15 +59,7 @@ export function DisplayGrid({
 
   const consumeUserModel = useCallback(
     ({ user, userModel }: { user: string; userModel: UserModel }) => {
-      setUserModels(userModels =>
-        userModels.set(
-          assert.notNullish(user, `User ${user} in DisplayGrid consumer`),
-          assert.notNullish(
-            userModel,
-            `Model of ${user} in DisplayGrid consumer`
-          )
-        )
-      );
+      setUserModels(userModels => userModels.set(user, userModel));
     },
     []
   );
