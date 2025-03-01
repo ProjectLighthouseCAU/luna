@@ -142,8 +142,6 @@ export function DisplayView() {
     };
   }, []);
 
-  const lastGamepadStatesRef = useInitRef<GamepadState[]>(() => []);
-
   const gamepadsActive = useMemo(
     () => inputState.gamepadCount > 0 && inputConfig.controllerEnabled,
     [inputConfig.controllerEnabled, inputState.gamepadCount]
@@ -154,12 +152,13 @@ export function DisplayView() {
       return;
     }
 
+    let lastStates: GamepadState[] = [];
+
     const interval = window.setInterval(async () => {
       // Compute new state in the form of events
       const states = captureGamepadStates();
 
       // Check whether gamepad state changed
-      const lastStates: GamepadState[] = lastGamepadStatesRef.current;
       const changes = diffGamepadStates(lastStates, states);
 
       if (changes.length > 0) {
@@ -205,7 +204,7 @@ export function DisplayView() {
           }
         }
 
-        lastGamepadStatesRef.current = states;
+        lastStates = states;
       }
     }, 10);
     console.log('Registered gamepad polling loop', interval);
@@ -214,14 +213,7 @@ export function DisplayView() {
       window.clearInterval(interval);
       console.log('Unregistered gamepad polling loop', interval);
     };
-  }, [
-    clientId,
-    inputConfig.legacyMode,
-    lastGamepadStatesRef,
-    api,
-    username,
-    gamepadsActive,
-  ]);
+  }, [clientId, inputConfig.legacyMode, api, username, gamepadsActive]);
 
   const onMouseEvent = useCallback(
     async (pos: Vec2<number>, down: boolean) => {
