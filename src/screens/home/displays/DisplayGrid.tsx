@@ -70,11 +70,10 @@ export function DisplayGrid({
   useAsyncIterable(streamUserModels, consumeUserModel);
 
   useEffect(() => {
-    for (const user of filteredUsers) {
-      if (!userModels.has(user)) {
-        setUserModels(userModels => userModels.set(user, emptyUserModel()));
-      }
-    }
+    const missingUsers = filteredUsers.filter(user => !userModels.has(user));
+    setUserModels(userModels =>
+      userModels.merge(missingUsers.map(user => [user, emptyUserModel()]))
+    );
   }, [filteredUsers, userModels]);
 
   // Disable animations automatically if there are too many displays for
