@@ -1,5 +1,5 @@
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
-import { LaserMetrics } from '@luna/contexts/api/model/types';
+import { LaserMetrics, UserModel } from '@luna/contexts/api/model/types';
 import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
 import { Set } from 'immutable';
 import {
@@ -36,6 +36,12 @@ export interface ModelAPI {
 
   /** Fetches an arbitrary path. */
   get(path: string[]): Promise<Result<unknown>>;
+
+  /** Streams the resource at an arbitrary path. */
+  stream(path: string[]): AsyncIterable<unknown>;
+
+  /** Streams the model of the given user. */
+  streamModel(user: string): AsyncIterable<UserModel>;
 
   /** Deletes a resource at an arbitrary path. */
   delete(path: string[]): Promise<Result<unknown>>;
@@ -84,6 +90,8 @@ export const ModelContext = createContext<ModelContextValue>({
   api: {
     list: async () => errorResult('No model context for listing path'),
     get: async () => errorResult('No model context for fetching path'),
+    async *stream() {},
+    async *streamModel() {},
     delete: async () => errorResult('No model context for deleting path'),
     put: async () => errorResult('No model context for updating resource'),
     putLegacyInput: async () =>
@@ -187,6 +195,29 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       },
       async get(path) {
         return messageToResult(await client?.get(path));
+      },
+      async *stream(path) {
+        if (client) {
+          for await (const message of client.stream(path)) {
+            const result = messageToResult(message);
+            if (result.ok) {
+              yield result.value;
+            } else {
+              console.error(
+                `Got error in stream of ${JSON.stringify(path)}: ${result.error}`
+              );
+            }
+          }
+        }
+      },
+      async *streamModel(user) {
+        for await (const value of this.stream(['user', user, 'model'])) {
+          if (typeof value === 'object' && value instanceof Uint8Array) {
+            yield {
+              frame: value,
+            };
+          }
+        }
       },
       async delete(path) {
         return messageToResult(await client?.delete(path));

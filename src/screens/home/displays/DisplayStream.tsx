@@ -1,6 +1,6 @@
-import { UserModel } from '@luna/api/model/types';
 import { Display, DisplayProps } from '@luna/components/Display';
-import { ModelContext } from '@luna/contexts/ModelContext';
+import { ModelContext } from '@luna/contexts/api/model/ModelContext';
+import { UserModel } from '@luna/contexts/api/model/types';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import { LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import { useCallback, useContext, useLayoutEffect, useState } from 'react';
@@ -17,7 +17,7 @@ export function DisplayStream({
   layoutOnModelUpdate,
   ...displayProps
 }: DisplayStreamProps) {
-  const model = useContext(ModelContext);
+  const { api } = useContext(ModelContext);
 
   const [userModel, setUserModel] = useState<UserModel>({
     frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES),
@@ -25,8 +25,8 @@ export function DisplayStream({
 
   const streamUserModel = useCallback(() => {
     console.log(`Streaming ${username}`);
-    return model.streamModel(username);
-  }, [model, username]);
+    return api.streamModel(username);
+  }, [api, username]);
 
   const consumeUserModel = useCallback(
     (userModel: UserModel) => {

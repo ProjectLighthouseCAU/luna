@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Map } from 'immutable';
 import { motion } from 'framer-motion';
 import { displayLayoutId } from '@luna/constants/LayoutId';
-import { ModelContext, Users } from '@luna/contexts/ModelContext';
+import { ModelContext, Users } from '@luna/contexts/api/model/ModelContext';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
 import {
@@ -25,7 +25,7 @@ export function DisplayGrid({
   searchQuery,
   displayWidth,
 }: DisplayGridProps) {
-  const model = useContext(ModelContext);
+  const { api } = useContext(ModelContext);
   const [userModels, setUserModels] = useState<Map<string, UserModel>>(Map());
 
   // Filter the models case-insensitively by the search query
@@ -43,7 +43,7 @@ export function DisplayGrid({
     return mergeAsyncIterables(
       filteredUsers.map(user =>
         catchAsyncIterable(
-          mapAsyncIterable(model.streamModel(user), userModel => ({
+          mapAsyncIterable(api.streamModel(user), userModel => ({
             user,
             userModel,
           })),
@@ -55,7 +55,7 @@ export function DisplayGrid({
         )
       )
     );
-  }, [filteredUsers, model]);
+  }, [api, filteredUsers]);
 
   const consumeUserModel = useCallback(
     ({ user, userModel }: { user: string; userModel: UserModel }) => {
