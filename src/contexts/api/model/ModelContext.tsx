@@ -1,9 +1,7 @@
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
-import { LaserMetrics, UserModel } from '@luna/contexts/api/model/types';
-import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
-import { mergeAsyncIterables } from '@luna/utils/async';
+import { LaserMetrics } from '@luna/contexts/api/model/types';
 import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
-import { Map, Set } from 'immutable';
+import { Set } from 'immutable';
 import {
   connect,
   ConsoleLogHandler,
@@ -12,14 +10,12 @@ import {
   LegacyInputEvent,
   LeveledLogHandler,
   Lighthouse,
-  LIGHTHOUSE_FRAME_BYTES,
   LogLevel,
   ServerMessage,
 } from 'nighthouse/browser';
 import {
   createContext,
   ReactNode,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -27,8 +23,8 @@ import {
 } from 'react';
 
 export interface Users {
-  /** The user models by username. */
-  readonly models: Map<string, UserModel>;
+  /** The usernames of all users. */
+  readonly all: Set<string>;
 
   /** The usernames of active users. */
   readonly active: Set<string>;
@@ -82,7 +78,7 @@ export interface ModelContextValue {
 
 export const ModelContext = createContext<ModelContextValue>({
   users: {
-    models: Map(),
+    all: Set(),
     active: Set(),
   },
   api: {
@@ -127,7 +123,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
 
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [users, setUsers] = useState<Users>({
-    models: Map(),
+    all: Set(),
     active: Set(),
   });
 
@@ -169,52 +165,20 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     };
   }, [username, tokenValue]);
 
-  const getUserStreams = useCallback(
-    async function* () {
-      if (!isLoggedIn || !client) return;
+  useEffect(() => {
+    if (!isLoggedIn) {
+      return;
+    }
+    (async () => {
       try {
         const users = getOrThrow(await auth.getAllUsers());
-        // Make sure that every user has at least a black frame
-        for (const { username } of users) {
-          yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
-        }
-        const streams = await Promise.all(
-          users.map(async ({ username }) => {
-            const stream = await client.streamModel(username);
-            return (async function* () {
-              for await (const model of stream) {
-                if (model.PAYL instanceof Uint8Array) {
-                  yield { username, frame: model.PAYL };
-                }
-              }
-            })();
-          })
-        );
-        yield* mergeAsyncIterables(streams);
+        const all = Set(users.map(user => user.username));
+        setUsers(({ active }) => ({ all, active }));
       } catch (error) {
-        console.error(`Could not get user streams: ${error}`);
+        console.error(`Could not get users: ${error}`);
       }
-    },
-    [isLoggedIn, client, auth]
-  );
-
-  // NOTE: It is important that we use `useCallback` for the consumption callback
-  // since otherwise every rerender will create a new function, triggering a change
-  // is the `useEffect` that `useAsyncIterable` uses internally, which reregisters
-  // a new iterator on every render. This seems to cause some kind of cyclic dependency
-  // that freezes the application.
-
-  const consumeUserStreams = useCallback(
-    async ({ username, ...userModel }: { username: string } & UserModel) => {
-      setUsers(({ models, active }) => ({
-        models: models.set(username, userModel),
-        active: models.has(username) ? active.add(username) : active,
-      }));
-    },
-    []
-  );
-
-  useAsyncIterable(getUserStreams, consumeUserStreams);
+    })();
+  }, [auth, isLoggedIn]);
 
   const api: ModelAPI = useMemo(
     () => ({

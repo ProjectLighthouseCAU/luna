@@ -16,6 +16,7 @@ import {
   GamepadButtonChange,
   GamepadState,
 } from '@luna/utils/gamepad';
+import { DisplayStream } from '@luna/screens/home/displays/DisplayStream';
 import { throttle } from '@luna/utils/schedule';
 import { Vec2 } from '@luna/utils/vec2';
 import { motion } from 'framer-motion';
@@ -57,7 +58,6 @@ export function DisplayView() {
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const userModel = users.models.get(username);
 
   const onResize = useMemo(
     () =>
@@ -281,8 +281,8 @@ export function DisplayView() {
               layoutId={displayLayoutId(username)}
               key={displayLayoutId(username)}
             >
-              <Display
-                frame={userModel.frame}
+              <DisplayStream
+                username={username}
                 width={width}
                 className="rounded-xl"
                 cursor={mouseActive ? 'crosshair' : undefined}
@@ -290,6 +290,7 @@ export function DisplayView() {
                 onMouseUp={onMouseUp}
                 onMouseDrag={onMouseDown}
                 onMouseMove={onMouseUp}
+                layoutOnModelUpdate={onResize}
               />
             </motion.div>
           </div>
