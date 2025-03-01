@@ -1,11 +1,10 @@
-import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
+import { Display, DISPLAY_ASPECT_RATIO } from '@luna/components/Display';
 import { displayLayoutId } from '@luna/constants/LayoutId';
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { ClientIdContext } from '@luna/contexts/env/ClientIdContext';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
-import { useInitRef } from '@luna/hooks/useInitRef';
 import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
