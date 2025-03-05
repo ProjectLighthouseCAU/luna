@@ -21,6 +21,7 @@ import { motion } from 'framer-motion';
 import {
   GamepadEvent,
   KeyEvent,
+  KeyModifiers,
   LegacyControllerEvent,
   LegacyKeyEvent,
   MouseEvent,
@@ -194,25 +195,31 @@ function KeyEventView({ event }: { event?: KeyEvent | LegacyKeyEvent }) {
       <div className="flex flex-col items-center gap-1">
         <ObjectInspectorTable objects={[event]} names={keyEventNames} />
         <Divider />
-        <div className="flex flex-row gap-2">
-          <ModifierView down={event.shiftKey}>
-            <IconArrowBigUp />
-          </ModifierView>
-          <ModifierView down={event.ctrlKey}>
-            <IconChevronUp />
-          </ModifierView>
-          <ModifierView down={event.altKey}>
-            <IconAlt />
-          </ModifierView>
-          <ModifierView down={event.metaKey}>
-            <IconCommand />
-          </ModifierView>
-        </div>
+        <KeyModifiersView modifiers={event.modifiers} />
         <Divider />
       </div>
     )
   ) : (
     <EventInfoText>no key events yet</EventInfoText>
+  );
+}
+
+function KeyModifiersView({ modifiers }: { modifiers: KeyModifiers }) {
+  return (
+    <div className="flex flex-row gap-2">
+      <ModifierView down={modifiers.shift}>
+        <IconArrowBigUp />
+      </ModifierView>
+      <ModifierView down={modifiers.ctrl}>
+        <IconChevronUp />
+      </ModifierView>
+      <ModifierView down={modifiers.alt}>
+        <IconAlt />
+      </ModifierView>
+      <ModifierView down={modifiers.meta}>
+        <IconCommand />
+      </ModifierView>
+    </div>
   );
 }
 
