@@ -8,6 +8,10 @@ import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import { AnimatePresence } from '@luna/utils/motion';
 import {
+  IconAlt,
+  IconArrowBigUp,
+  IconChevronUp,
+  IconCommand,
   IconDeviceGamepad,
   IconDeviceGamepad2,
   IconKeyboard,
@@ -64,7 +68,7 @@ export function DisplayInspectorInputCard({
 
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-2 md:w-[200px]">
         <Tooltip
           placement="left"
           content={
@@ -187,11 +191,39 @@ function KeyEventView({ event }: { event?: KeyEvent | LegacyKeyEvent }) {
     'dwn' in event ? (
       <ObjectInspectorTable objects={[event]} names={legacyKeyEventNames} />
     ) : (
-      <ObjectInspectorTable objects={[event]} names={keyEventNames} />
+      <div className="flex flex-col items-center gap-1">
+        <ObjectInspectorTable objects={[event]} names={keyEventNames} />
+        <Divider />
+        <div className="flex flex-row gap-2">
+          <ModifierView down={event.shiftKey}>
+            <IconArrowBigUp />
+          </ModifierView>
+          <ModifierView down={event.ctrlKey}>
+            <IconChevronUp />
+          </ModifierView>
+          <ModifierView down={event.altKey}>
+            <IconAlt />
+          </ModifierView>
+          <ModifierView down={event.metaKey}>
+            <IconCommand />
+          </ModifierView>
+        </div>
+        <Divider />
+      </div>
     )
   ) : (
     <EventInfoText>no key events yet</EventInfoText>
   );
+}
+
+function ModifierView({
+  down,
+  children,
+}: {
+  down: boolean;
+  children: ReactNode;
+}) {
+  return <div className={down ? '' : 'opacity-50'}>{children}</div>;
 }
 
 const legacyControllerEventNames: Names<LegacyControllerEvent> = {
