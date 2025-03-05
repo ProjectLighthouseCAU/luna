@@ -99,10 +99,12 @@ export function DisplayView() {
           down,
           repeat: e.repeat,
           code: e.code,
-          altKey: e.altKey,
-          ctrlKey: e.ctrlKey,
-          metaKey: e.metaKey,
-          shiftKey: e.shiftKey,
+          modifiers: {
+            alt: e.altKey,
+            ctrl: e.ctrlKey,
+            meta: e.metaKey,
+            shift: e.shiftKey,
+          },
         };
         await api.putInput(username, event);
         setInputState(state => ({ ...state, lastKeyEvent: event }));
