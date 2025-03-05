@@ -74,7 +74,11 @@ export function ObjectInspectorTable<T extends object>({
       aria-label="Lamp monitoring values"
     >
       <TableHeader columns={columns}>
-        {column => <TableColumn key={column.key}>{column.key}</TableColumn>}
+        {column => (
+          <TableColumn key={column.key} minWidth={0} maxWidth={0} align="end">
+            {column.key}
+          </TableColumn>
+        )}
       </TableHeader>
       <TableBody items={rows}>
         {item => (
