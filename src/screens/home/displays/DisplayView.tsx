@@ -97,7 +97,12 @@ export function DisplayView() {
           type: 'key',
           source: clientId,
           down,
-          key: e.key,
+          repeat: e.repeat,
+          code: e.code,
+          altKey: e.altKey,
+          ctrlKey: e.ctrlKey,
+          metaKey: e.metaKey,
+          shiftKey: e.shiftKey,
         };
         await api.putInput(username, event);
         setInputState(state => ({ ...state, lastKeyEvent: event }));
