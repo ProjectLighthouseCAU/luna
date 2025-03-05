@@ -8,6 +8,10 @@ import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import { AnimatePresence } from '@luna/utils/motion';
 import {
+  IconAlt,
+  IconArrowBigUp,
+  IconChevronUp,
+  IconCommand,
   IconDeviceGamepad,
   IconDeviceGamepad2,
   IconKeyboard,
@@ -17,6 +21,7 @@ import { motion } from 'framer-motion';
 import {
   GamepadEvent,
   KeyEvent,
+  KeyModifiers,
   LegacyControllerEvent,
   LegacyKeyEvent,
   MouseEvent,
@@ -64,7 +69,7 @@ export function DisplayInspectorInputCard({
 
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-2 md:w-[200px]">
         <Tooltip
           placement="left"
           content={
@@ -172,8 +177,9 @@ function MouseEventView({ event }: { event?: MouseEvent }) {
 }
 
 const keyEventNames: Names<KeyEvent> = {
-  key: 'Key',
   down: 'Down',
+  repeat: 'Repeat',
+  code: 'Code',
 };
 
 const legacyKeyEventNames: Names<LegacyKeyEvent> = {
@@ -186,11 +192,45 @@ function KeyEventView({ event }: { event?: KeyEvent | LegacyKeyEvent }) {
     'dwn' in event ? (
       <ObjectInspectorTable objects={[event]} names={legacyKeyEventNames} />
     ) : (
-      <ObjectInspectorTable objects={[event]} names={keyEventNames} />
+      <div className="flex flex-col items-center gap-1">
+        <ObjectInspectorTable objects={[event]} names={keyEventNames} />
+        <Divider />
+        <KeyModifiersView modifiers={event.modifiers} />
+        <Divider />
+      </div>
     )
   ) : (
     <EventInfoText>no key events yet</EventInfoText>
   );
+}
+
+function KeyModifiersView({ modifiers }: { modifiers: KeyModifiers }) {
+  return (
+    <div className="flex flex-row gap-2">
+      <ModifierView down={modifiers.shift}>
+        <IconArrowBigUp />
+      </ModifierView>
+      <ModifierView down={modifiers.ctrl}>
+        <IconChevronUp />
+      </ModifierView>
+      <ModifierView down={modifiers.alt}>
+        <IconAlt />
+      </ModifierView>
+      <ModifierView down={modifiers.meta}>
+        <IconCommand />
+      </ModifierView>
+    </div>
+  );
+}
+
+function ModifierView({
+  down,
+  children,
+}: {
+  down: boolean;
+  children: ReactNode;
+}) {
+  return <div className={down ? '' : 'opacity-50'}>{children}</div>;
 }
 
 const legacyControllerEventNames: Names<LegacyControllerEvent> = {

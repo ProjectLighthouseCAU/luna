@@ -22,7 +22,9 @@ export function useBreakpoint(): Breakpoint {
     return Breakpoint.Md;
   } else if (width < Breakpoint.Xl) {
     return Breakpoint.Lg;
-  } else {
+  } else if (width < Breakpoint.TwoXl) {
     return Breakpoint.Xl;
+  } else {
+    return Breakpoint.TwoXl;
   }
 }

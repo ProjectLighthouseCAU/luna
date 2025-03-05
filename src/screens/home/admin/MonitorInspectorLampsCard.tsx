@@ -7,11 +7,13 @@ import {
 } from '@luna/components/ObjectInspectorTable';
 import { ObjectInspectorValue } from '@luna/components/ObjectInspectorValue';
 import { IconCheck, IconLamp } from '@tabler/icons-react';
+import { TimeInterval } from '@luna/components/TimeInterval';
 
 export interface MonitorInspectorLampsCardProps {
   criterion?: MonitorLampCriterion;
   setCriterion: (criterion?: MonitorLampCriterion) => void;
   metrics: LampV2Metrics[];
+  padLampCount: number;
 }
 
 const names: Names<LampV2Metrics> = {
@@ -19,7 +21,7 @@ const names: Names<LampV2Metrics> = {
   firmware_version: 'Firmware version',
   uptime: 'Uptime',
   timeout: 'Timeout',
-  temperature: 'Temperature (not accurate)',
+  temperature: 'Temperature (inaccurate)',
   fuse_tripped: 'Fuse tripped',
   flashing_status: 'Flashing status',
 };
@@ -28,13 +30,19 @@ export function MonitorInspectorLampsCard({
   criterion,
   setCriterion,
   metrics,
+  padLampCount,
 }: MonitorInspectorLampsCardProps) {
+  const paddedMetrics: (LampV2Metrics | null)[] = [...metrics];
+  while (paddedMetrics.length < padLampCount) {
+    paddedMetrics.push(null);
+  }
   return (
     <TitledCard icon={<IconLamp />} title="Lamps">
       {metrics.length > 0 ? (
         <ObjectInspectorTable
-          objects={metrics}
+          objects={paddedMetrics}
           names={names}
+          labelWidth={150}
           selection={criterion?.key}
           onSelect={key =>
             setCriterion(key ? { type: 'lamp', key } : undefined)
@@ -64,6 +72,8 @@ function MonitorInspectorLampValue<K extends keyof LampV2Metrics>({
           return <IconCheck />;
       }
       break;
+    case 'uptime':
+      return <TimeInterval seconds={value as number} layout="vertical" />;
   }
   return <ObjectInspectorValue value={value} />;
 }

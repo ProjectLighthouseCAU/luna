@@ -8,6 +8,7 @@ import { MonitorRoomCriterion } from '@luna/screens/home/admin/helpers/MonitorCr
 import { ObjectInspectorValue } from '@luna/components/ObjectInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
 import { useMemo } from 'react';
+import { TimeInterval } from '@luna/components/TimeInterval';
 
 export interface MonitorInspectorRoomCardProps {
   criterion?: MonitorRoomCriterion;
@@ -82,5 +83,9 @@ function MonitorInspectorRoomValue<K extends keyof FlatRoomV2Metrics>({
   value: FlatRoomV2Metrics[K];
   prop: K;
 }) {
+  switch (prop) {
+    case 'uptime':
+      return <TimeInterval seconds={value as number} />;
+  }
   return <ObjectInspectorValue value={value} unit={units[prop]} />;
 }
