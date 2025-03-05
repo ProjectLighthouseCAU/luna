@@ -63,6 +63,7 @@ export function ObjectInspectorTable<T extends object>({
   return (
     <Table
       hideHeader
+      layout="fixed"
       classNames={{
         table: 'bg-red',
       }}
