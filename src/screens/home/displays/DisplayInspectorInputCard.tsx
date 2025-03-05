@@ -172,8 +172,9 @@ function MouseEventView({ event }: { event?: MouseEvent }) {
 }
 
 const keyEventNames: Names<KeyEvent> = {
-  key: 'Key',
   down: 'Down',
+  repeat: 'Repeat',
+  code: 'Code',
 };
 
 const legacyKeyEventNames: Names<LegacyKeyEvent> = {
