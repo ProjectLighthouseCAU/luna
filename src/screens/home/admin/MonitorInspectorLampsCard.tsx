@@ -7,6 +7,7 @@ import {
 } from '@luna/components/ObjectInspectorTable';
 import { ObjectInspectorValue } from '@luna/components/ObjectInspectorValue';
 import { IconCheck, IconLamp } from '@tabler/icons-react';
+import { TimeInterval } from '@luna/components/TimeInterval';
 
 export interface MonitorInspectorLampsCardProps {
   criterion?: MonitorLampCriterion;
@@ -19,7 +20,7 @@ const names: Names<LampV2Metrics> = {
   firmware_version: 'Firmware version',
   uptime: 'Uptime',
   timeout: 'Timeout',
-  temperature: 'Temperature (not accurate)',
+  temperature: 'Temperature (inaccurate)',
   fuse_tripped: 'Fuse tripped',
   flashing_status: 'Flashing status',
 };
@@ -64,6 +65,8 @@ function MonitorInspectorLampValue<K extends keyof LampV2Metrics>({
           return <IconCheck />;
       }
       break;
+    case 'uptime':
+      return <TimeInterval seconds={value as number} layout="vertical" />;
   }
   return <ObjectInspectorValue value={value} />;
 }

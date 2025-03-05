@@ -18,7 +18,7 @@ export function MonitorInspector({
   lampMetrics,
 }: MonitorInspectorProps) {
   return (
-    <div className="flex flex-col space-y-3">
+    <div className="flex flex-col space-y-3 2xl:w-[600px]">
       <MonitorInspectorRoomCard
         criterion={criterion?.type === 'room' ? criterion : undefined}
         setCriterion={setCriterion}
