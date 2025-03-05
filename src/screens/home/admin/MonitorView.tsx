@@ -278,7 +278,7 @@ export function MonitorView() {
         </div>
         <div
           className={
-            isColumnLayout ? '' : 'flex flex-row justify-end grow-0 w-1/3'
+            isColumnLayout ? '' : 'flex flex-row justify-end grow-0 2xl:w-[45%]'
           }
         >
           <MonitorInspector
@@ -286,6 +286,7 @@ export function MonitorView() {
             setCriterion={setCriterion}
             flatRoomMetrics={focusedFlatRoomMetrics}
             lampMetrics={focusedLampMetrics}
+            padLampCount={isColumnLayout ? 0 : 6}
           />
         </div>
       </div>

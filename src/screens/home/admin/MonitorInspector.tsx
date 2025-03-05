@@ -9,6 +9,7 @@ export interface MonitorInspectorProps {
   setCriterion: (criterion?: MonitorCriterion) => void;
   flatRoomMetrics?: FlatRoomV2Metrics;
   lampMetrics?: LampV2Metrics[];
+  padLampCount: number;
 }
 
 export function MonitorInspector({
@@ -16,9 +17,10 @@ export function MonitorInspector({
   setCriterion,
   flatRoomMetrics,
   lampMetrics,
+  padLampCount,
 }: MonitorInspectorProps) {
   return (
-    <div className="flex flex-col space-y-3 2xl:w-[600px]">
+    <div className="flex flex-col space-y-3">
       <MonitorInspectorRoomCard
         criterion={criterion?.type === 'room' ? criterion : undefined}
         setCriterion={setCriterion}
@@ -28,6 +30,7 @@ export function MonitorInspector({
         criterion={criterion?.type === 'lamp' ? criterion : undefined}
         setCriterion={setCriterion}
         metrics={lampMetrics ?? []}
+        padLampCount={padLampCount}
       />
     </div>
   );

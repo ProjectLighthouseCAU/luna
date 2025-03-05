@@ -12,8 +12,9 @@ import { TableBody, TableHeader } from 'react-stately';
 export type Names<T> = { [Property in keyof T]?: string };
 
 export interface ObjectInspectorTableProps<T extends object> {
-  objects: T[];
+  objects: (T | null)[];
   names: Names<T>;
+  labelWidth?: number;
   selection?: keyof T;
   onSelect?: (prop?: keyof T) => void;
   render?: <K extends keyof T>(value: T[K], prop: K) => ReactNode;
@@ -22,6 +23,7 @@ export interface ObjectInspectorTableProps<T extends object> {
 export function ObjectInspectorTable<T extends object>({
   objects,
   names,
+  labelWidth,
   selection,
   onSelect,
   render = (value, _prop) => <ObjectInspectorValue value={value} />,
@@ -40,10 +42,10 @@ export function ObjectInspectorTable<T extends object>({
         ? (Object.keys(names) as (keyof T)[]).map(prop => ({
             key: prop as string,
             prop,
-            values: [names[prop], ...objects.map(v => v[prop])] as [
-              string,
-              ...T[keyof T][],
-            ],
+            values: [
+              names[prop],
+              ...objects.map(v => (v === null ? undefined : v[prop])),
+            ] as [string, ...T[keyof T][]],
           }))
         : [],
     [objects, names]
@@ -76,7 +78,7 @@ export function ObjectInspectorTable<T extends object>({
     >
       <TableHeader columns={columns}>
         {column => (
-          <TableColumn key={column.key} minWidth={0} maxWidth={0} align="end">
+          <TableColumn key={column.key} align="end">
             {column.key}
           </TableColumn>
         )}
@@ -87,10 +89,12 @@ export function ObjectInspectorTable<T extends object>({
             {columnKey => {
               const i = parseInt(columnKey as string);
               return (
-                <TableCell key={i}>
+                <TableCell key={i} width={i === 0 ? labelWidth : undefined}>
                   {i === 0
                     ? item.values[0]
-                    : render(item.values[i] as T[keyof T], item.prop)}
+                    : item.values[i] !== undefined
+                      ? render(item.values[i] as T[keyof T], item.prop)
+                      : undefined}
                 </TableCell>
               );
             }}

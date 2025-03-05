@@ -13,6 +13,7 @@ export interface MonitorInspectorLampsCardProps {
   criterion?: MonitorLampCriterion;
   setCriterion: (criterion?: MonitorLampCriterion) => void;
   metrics: LampV2Metrics[];
+  padLampCount: number;
 }
 
 const names: Names<LampV2Metrics> = {
@@ -29,13 +30,19 @@ export function MonitorInspectorLampsCard({
   criterion,
   setCriterion,
   metrics,
+  padLampCount,
 }: MonitorInspectorLampsCardProps) {
+  const paddedMetrics: (LampV2Metrics | null)[] = [...metrics];
+  while (paddedMetrics.length < padLampCount) {
+    paddedMetrics.push(null);
+  }
   return (
     <TitledCard icon={<IconLamp />} title="Lamps">
       {metrics.length > 0 ? (
         <ObjectInspectorTable
-          objects={metrics}
+          objects={paddedMetrics}
           names={names}
+          labelWidth={150}
           selection={criterion?.key}
           onSelect={key =>
             setCriterion(key ? { type: 'lamp', key } : undefined)
