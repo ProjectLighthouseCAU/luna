@@ -7,7 +7,6 @@ import {
 } from 'nighthouse/browser';
 import { Vec2 } from '@luna/utils/vec2';
 import * as vec2 from '@luna/utils/vec2';
-import { useEventListener } from '@luna/hooks/useEventListener';
 
 export const DISPLAY_ASPECT_RATIO = 0.8634;
 
