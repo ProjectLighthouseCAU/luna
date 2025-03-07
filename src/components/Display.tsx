@@ -7,6 +7,7 @@ import {
 } from 'nighthouse/browser';
 import { Vec2 } from '@luna/utils/vec2';
 import * as vec2 from '@luna/utils/vec2';
+import { useEventListener } from '@luna/hooks/useEventListener';
 
 export const DISPLAY_ASPECT_RATIO = 0.8634;
 
@@ -29,6 +30,7 @@ export interface DisplayProps {
   highlightedWindows?: Set<number>;
   focusedWindows?: Set<number>;
   cursor?: string;
+  isPointerLockable?: boolean;
   onMouseDown?: (m: DisplayMouse) => void;
   onMouseUp?: (m: DisplayMouse) => void;
   onMouseDrag?: (m: DisplayMouse) => void;
@@ -48,6 +50,7 @@ export function Display({
   highlightedWindows = Set(),
   focusedWindows = Set(),
   cursor,
+  isPointerLockable,
   onMouseDown = () => {},
   onMouseUp = () => {},
   onMouseDrag = () => {},
@@ -266,6 +269,22 @@ export function Display({
       canvas.style.removeProperty('cursor');
     }
   }, [cursor]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return;
+    }
+    const listener = async () => {
+      if (isPointerLockable) {
+        await canvas.requestPointerLock();
+      }
+    };
+    canvas.addEventListener('click', listener);
+    return () => {
+      canvas.removeEventListener('click', listener);
+    };
+  }, [isPointerLockable]);
 
   return <canvas ref={canvasRef} className={className} />;
 }

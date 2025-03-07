@@ -53,6 +53,7 @@ export function DisplayView() {
     () => ({
       legacyMode: true,
       mouseEnabled: false,
+      pointerLockable: false,
       keyboardEnabled: false,
       controllerEnabled: false,
     })
@@ -301,6 +302,7 @@ export function DisplayView() {
                 width={width}
                 className="rounded-xl"
                 cursor={mouseActive ? 'crosshair' : undefined}
+                isPointerLockable={inputConfig.pointerLockable}
                 onMouseDown={onMouseDown}
                 onMouseUp={onMouseUp}
                 onMouseDrag={onMouseDown}
