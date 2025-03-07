@@ -302,7 +302,7 @@ export function DisplayView() {
                 width={width}
                 className="rounded-xl"
                 cursor={mouseActive ? 'crosshair' : undefined}
-                isPointerLockable={inputConfig.pointerLockable}
+                isPointerLockable={mouseActive && inputConfig.pointerLockable}
                 onMouseDown={onMouseDown}
                 onMouseUp={onMouseUp}
                 onMouseDrag={onMouseDown}
