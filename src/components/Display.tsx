@@ -168,24 +168,27 @@ export function Display({
       return { pos: windowCoords, movement: windowVec };
     };
 
-    const clampToNormalizedRange = (x: number) =>
-      Math.min(0.99999, Math.max(0, x));
+    const clampToWindowRange = ({ x, y }: Vec2<number>) => ({
+      x: Math.min(LIGHTHOUSE_COLS - 0.99999, Math.max(0, x)),
+      y: Math.min(LIGHTHOUSE_ROWS - 0.99999, Math.max(0, y)),
+    });
 
     const relativeMouseToWindowVec = (mouseVec: Vec2<number>) => {
       return {
         x:
-          clampToNormalizedRange(
-            mouseVec.x / (width - 2 * bezelWidth - gutterWidth)
-          ) * LIGHTHOUSE_COLS,
-        y: clampToNormalizedRange(mouseVec.y / height) * LIGHTHOUSE_ROWS,
+          (mouseVec.x / (width - 2 * bezelWidth - gutterWidth)) *
+          LIGHTHOUSE_COLS,
+        y: (mouseVec.y / height) * LIGHTHOUSE_ROWS,
       };
     };
 
     const mouseToWindowCoords = (mouseCoords: Vec2<number>) => {
-      return relativeMouseToWindowVec({
-        x: mouseCoords.x - bezelWidth - gutterWidth,
-        y: mouseCoords.y + windowHeight / 2,
-      });
+      return clampToWindowRange(
+        relativeMouseToWindowVec({
+          x: mouseCoords.x - bezelWidth - gutterWidth,
+          y: mouseCoords.y + windowHeight / 2,
+        })
+      );
     };
 
     const onMouseDownHandler = (event: MouseEvent) => {
