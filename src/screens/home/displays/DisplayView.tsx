@@ -1,4 +1,8 @@
-import { Display, DISPLAY_ASPECT_RATIO } from '@luna/components/Display';
+import {
+  Display,
+  DISPLAY_ASPECT_RATIO,
+  DisplayMouse as DisplayMouseState,
+} from '@luna/components/Display';
 import { displayLayoutId } from '@luna/constants/LayoutId';
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
@@ -17,7 +21,6 @@ import {
   GamepadState,
 } from '@luna/utils/gamepad';
 import { throttle } from '@luna/utils/schedule';
-import { Vec2 } from '@luna/utils/vec2';
 import { motion } from 'framer-motion';
 import {
   GamepadEvent,
@@ -228,7 +231,7 @@ export function DisplayView() {
   const mouseActive = !inputConfig.legacyMode && inputConfig.mouseEnabled;
 
   const onMouseEvent = useCallback(
-    async (pos: Vec2<number>, down: boolean) => {
+    async (mouse: DisplayMouseState, down: boolean) => {
       if (!mouseActive) {
         return;
       }
@@ -237,8 +240,9 @@ export function DisplayView() {
         type: 'mouse',
         source: clientId,
         button: 'left', // TODO
+        pointerLocked: document.pointerLockElement !== null,
         down,
-        pos,
+        ...mouse,
       };
       await api.putInput(username, event);
       setInputState(state => ({ ...state, lastMouseEvent: event }));
@@ -247,18 +251,18 @@ export function DisplayView() {
   );
 
   const onMouseDown = useCallback(
-    (pos?: Vec2<number>) => {
-      if (pos) {
-        onMouseEvent(pos, true);
+    (mouse?: DisplayMouseState) => {
+      if (mouse) {
+        onMouseEvent(mouse, true);
       }
     },
     [onMouseEvent]
   );
 
   const onMouseUp = useCallback(
-    (pos?: Vec2<number>) => {
-      if (pos) {
-        onMouseEvent(pos, false);
+    (mouse?: DisplayMouseState) => {
+      if (mouse) {
+        onMouseEvent(mouse, false);
       }
     },
     [onMouseEvent]
