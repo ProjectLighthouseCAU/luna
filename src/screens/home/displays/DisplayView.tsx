@@ -168,6 +168,12 @@ export function DisplayView() {
       const changes = diffGamepadStates(lastStates, states);
 
       if (changes.length > 0) {
+        // NOTE: It is important that we assign lastStates before any await
+        // points to avoid having later iterations of the polling loop
+        // interleave and potentially firing duplicate events, see
+        // https://github.com/ProjectLighthouseCAU/luna/issues/89
+        lastStates = states;
+
         if (inputConfig.legacyMode) {
           // Convert and send events to the legacy API
           const legacyEvents: LegacyControllerEvent[] = changes
@@ -209,8 +215,6 @@ export function DisplayView() {
             }));
           }
         }
-
-        lastStates = states;
       }
     }, 10);
     console.log('Registered gamepad polling loop', interval);
