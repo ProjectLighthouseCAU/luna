@@ -51,7 +51,7 @@ export function DisplayView() {
   const [inputConfig, setInputConfig] = useLocalStorage<InputConfig>(
     LocalStorageKey.DisplayInputConfig,
     () => ({
-      legacyMode: true,
+      legacyMode: false,
       mouseEnabled: false,
       pointerLockable: false,
       keyboardEnabled: false,
