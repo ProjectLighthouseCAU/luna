@@ -210,8 +210,12 @@ export function Display({
     const onMouseMoveHandler = (event: MouseEvent) => {
       const mouse = eventToWindowMouse(event);
 
-      // don't emit drag events if coords haven't changed
-      if (prevCoords && vec2.areEqual(prevCoords, mouse.pos)) {
+      // don't emit drag events if coords haven't changed (unless the pointer is locked)
+      if (
+        document.pointerLockElement === null &&
+        prevCoords &&
+        vec2.areEqual(prevCoords, mouse.pos)
+      ) {
         return;
       }
 
