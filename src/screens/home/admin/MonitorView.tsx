@@ -250,7 +250,7 @@ export function MonitorView() {
     [flatRoomMetrics, roomMetrics, focusedRoom]
   );
 
-  const isColumnLayout = breakpoint < Breakpoint.TwoXl;
+  const isColumnLayout = breakpoint < Breakpoint.Xl;
 
   return (
     <HomeContent
@@ -263,7 +263,7 @@ export function MonitorView() {
         </Button>
       }
     >
-      <div className="flex flex-col space-y-4 2xl:flex-row h-full">
+      <div className="flex flex-col space-y-4 xl:flex-row h-full">
         <div
           ref={wrapperRef}
           className="grow flex flex-row justify-center h-full"
@@ -282,7 +282,7 @@ export function MonitorView() {
         </div>
         <div
           className={
-            isColumnLayout ? '' : 'flex flex-row justify-end grow-0 2xl:w-[45%]'
+            isColumnLayout ? '' : 'flex flex-row justify-end grow-0 xl:w-[45%]'
           }
         >
           <MonitorInspector
