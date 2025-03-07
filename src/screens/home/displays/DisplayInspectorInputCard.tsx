@@ -166,6 +166,7 @@ const mouseEventNames: Names<MouseEvent> = {
   button: 'Button',
   down: 'Down',
   pos: 'Pos',
+  movement: 'Movement',
 };
 
 function MouseEventView({ event }: { event?: MouseEvent }) {
