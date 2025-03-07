@@ -10,6 +10,12 @@ import * as vec2 from '@luna/utils/vec2';
 
 export const DISPLAY_ASPECT_RATIO = 0.8634;
 
+/** A mouse state (position/movement) in lighthouse window coordinates. */
+export interface DisplayMouse {
+  pos: Vec2<number>;
+  movement: Vec2<number>;
+}
+
 export interface DisplayProps {
   frame: Uint8Array;
   width?: number;
@@ -23,10 +29,11 @@ export interface DisplayProps {
   highlightedWindows?: Set<number>;
   focusedWindows?: Set<number>;
   cursor?: string;
-  onMouseDown?: (p: Vec2<number>) => void;
-  onMouseUp?: (p: Vec2<number>) => void;
-  onMouseDrag?: (p: Vec2<number>) => void;
-  onMouseMove?: (p?: Vec2<number>) => void;
+  isPointerLockable?: boolean;
+  onMouseDown?: (m: DisplayMouse) => void;
+  onMouseUp?: (m: DisplayMouse) => void;
+  onMouseDrag?: (m: DisplayMouse) => void;
+  onMouseMove?: (m?: DisplayMouse) => void;
 }
 
 export function Display({
@@ -42,6 +49,7 @@ export function Display({
   highlightedWindows = Set(),
   focusedWindows = Set(),
   cursor,
+  isPointerLockable,
   onMouseDown = () => {},
   onMouseUp = () => {},
   onMouseDrag = () => {},
@@ -127,69 +135,97 @@ export function Display({
       }
     }
 
-    const eventToMouseCoords = (event: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
+    const relativePixelPosToMouseVec = (eventVec: Vec2<number>) => {
       // Note that we need to normalize/rescale here to obtain logical
       // coordinates on high-DPI displays. See https://stackoverflow.com/a/33063222
+      const rect = canvas.getBoundingClientRect();
       return {
-        x:
-          ((event.clientX - rect.left) / (rect.right - rect.left)) *
-          canvas.width,
-        y:
-          ((event.clientY - rect.top) / (rect.bottom - rect.top)) *
-          canvas.height,
+        x: (eventVec.x / (rect.right - rect.left)) * canvas.width,
+        y: (eventVec.y / (rect.bottom - rect.top)) * canvas.height,
       };
     };
 
-    const clampToNormalizedRange = (x: number) =>
-      Math.min(0.99999, Math.max(0, x));
+    const eventToMouseCoords = (event: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      return relativePixelPosToMouseVec({
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      });
+    };
 
-    const mouseToWindowCoords = (mouseCoords: Vec2<number>) => {
+    const eventToMouseVec = (event: MouseEvent) => {
+      return relativePixelPosToMouseVec({
+        x: event.movementX,
+        y: event.movementY,
+      });
+    };
+
+    const eventToWindowMouse = (event: MouseEvent) => {
+      const mouseCoords = eventToMouseCoords(event);
+      const mouseVec = eventToMouseVec(event);
+      const windowCoords = mouseToWindowCoords(mouseCoords);
+      const windowVec = relativeMouseToWindowVec(mouseVec);
+      return { pos: windowCoords, movement: windowVec };
+    };
+
+    const clampToWindowRange = ({ x, y }: Vec2<number>) => ({
+      x: Math.min(LIGHTHOUSE_COLS - 0.99999, Math.max(0, x)),
+      y: Math.min(LIGHTHOUSE_ROWS - 0.99999, Math.max(0, y)),
+    });
+
+    const relativeMouseToWindowVec = (mouseVec: Vec2<number>) => {
       return {
         x:
-          clampToNormalizedRange(
-            (mouseCoords.x - bezelWidth - gutterWidth) /
-              (width - 2 * bezelWidth - gutterWidth)
-          ) * LIGHTHOUSE_COLS,
-        y:
-          clampToNormalizedRange((mouseCoords.y + windowHeight / 2) / height) *
-          LIGHTHOUSE_ROWS,
+          (mouseVec.x / (width - 2 * bezelWidth - gutterWidth)) *
+          LIGHTHOUSE_COLS,
+        y: (mouseVec.y / height) * LIGHTHOUSE_ROWS,
       };
+    };
+
+    const mouseToWindowCoords = (mouseCoords: Vec2<number>) => {
+      return clampToWindowRange(
+        relativeMouseToWindowVec({
+          x: mouseCoords.x - bezelWidth - gutterWidth,
+          y: mouseCoords.y + windowHeight / 2,
+        })
+      );
     };
 
     const onMouseDownHandler = (event: MouseEvent) => {
       setDrag(true);
 
-      const mouseCoords = eventToMouseCoords(event);
-      const windowCoords = mouseToWindowCoords(mouseCoords);
+      const mouse = eventToWindowMouse(event);
 
-      setPrevCoords(windowCoords); // for consecutive drag
-      onMouseDown(windowCoords);
+      setPrevCoords(mouse.pos); // for consecutive drag
+      onMouseDown(mouse);
     };
 
     const onMouseUpHandler = (event: MouseEvent) => {
       setDrag(false);
 
-      const mouseCoords = eventToMouseCoords(event);
-      const windowCoords = mouseToWindowCoords(mouseCoords);
+      const mouse = eventToWindowMouse(event);
 
-      setPrevCoords(windowCoords); // for consecutive drag
-      onMouseUp(windowCoords);
+      setPrevCoords(mouse.pos); // for consecutive drag
+      onMouseUp(mouse);
     };
 
     const onMouseMoveHandler = (event: MouseEvent) => {
-      const mouseCoords = eventToMouseCoords(event);
-      const windowCoords = mouseToWindowCoords(mouseCoords);
-      // don't emit drag events if coords haven't changed
-      if (prevCoords && vec2.areEqual(prevCoords, windowCoords)) {
+      const mouse = eventToWindowMouse(event);
+
+      // don't emit drag events if coords haven't changed (unless the pointer is locked)
+      if (
+        document.pointerLockElement === null &&
+        prevCoords &&
+        vec2.areEqual(prevCoords, mouse.pos)
+      ) {
         return;
       }
 
-      setPrevCoords(windowCoords);
+      setPrevCoords(mouse.pos);
       if (drag) {
-        onMouseDrag(windowCoords);
+        onMouseDrag(mouse);
       } else {
-        onMouseMove(windowCoords);
+        onMouseMove(mouse);
       }
     };
 
@@ -239,6 +275,22 @@ export function Display({
       canvas.style.removeProperty('cursor');
     }
   }, [cursor]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return;
+    }
+    const listener = async () => {
+      if (isPointerLockable) {
+        await canvas.requestPointerLock();
+      }
+    };
+    canvas.addEventListener('click', listener);
+    return () => {
+      canvas.removeEventListener('click', listener);
+    };
+  }, [isPointerLockable]);
 
   return <canvas ref={canvasRef} className={className} />;
 }

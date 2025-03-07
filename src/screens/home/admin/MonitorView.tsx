@@ -1,4 +1,8 @@
-import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
+import {
+  DISPLAY_ASPECT_RATIO,
+  Display,
+  DisplayMouse,
+} from '@luna/components/Display';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
@@ -218,12 +222,12 @@ export function MonitorView() {
 
   // set the selected window index on click
   const onMouseDown = useCallback(
-    (p: Vec2<number>) => setSelectedRoom(roomForPosition(p)),
+    (mouse: DisplayMouse) => setSelectedRoom(roomForPosition(mouse.pos)),
     [roomForPosition]
   );
 
   const onMouseMove = useCallback(
-    (p?: Vec2<number>) => setHoveredRoom(roomForPosition(p)),
+    (mouse?: DisplayMouse) => setHoveredRoom(roomForPosition(mouse?.pos)),
     [roomForPosition]
   );
 
