@@ -89,3 +89,11 @@ Now go to `about:config` in Firefox and set `devtools.debugger.remote-enabled` a
 > For a more extensive description of these flags, see [the extension's README](https://github.com/firefox-devtools/vscode-firefox-debug#attach).
 
 Finally, launch Firefox with the `-start-debugger-server` argument, make sure that the dev server is running (if not, launch it with `npm start`) and start the debug session.
+
+## Regenerating API types
+
+To regenerate the auth API types from the Swagger definition, run
+
+```sh
+npm run regenerate-api-types
+```

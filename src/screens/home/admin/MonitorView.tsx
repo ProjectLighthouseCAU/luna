@@ -1,4 +1,8 @@
-import { DISPLAY_ASPECT_RATIO, Display } from '@luna/components/Display';
+import {
+  DISPLAY_ASPECT_RATIO,
+  Display,
+  DisplayMouse,
+} from '@luna/components/Display';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
@@ -218,12 +222,12 @@ export function MonitorView() {
 
   // set the selected window index on click
   const onMouseDown = useCallback(
-    (p: Vec2<number>) => setSelectedRoom(roomForPosition(p)),
+    (mouse: DisplayMouse) => setSelectedRoom(roomForPosition(mouse.pos)),
     [roomForPosition]
   );
 
   const onMouseMove = useCallback(
-    (p?: Vec2<number>) => setHoveredRoom(roomForPosition(p)),
+    (mouse?: DisplayMouse) => setHoveredRoom(roomForPosition(mouse?.pos)),
     [roomForPosition]
   );
 
@@ -246,7 +250,7 @@ export function MonitorView() {
     [flatRoomMetrics, roomMetrics, focusedRoom]
   );
 
-  const isColumnLayout = breakpoint < Breakpoint.TwoXl;
+  const isColumnLayout = breakpoint < Breakpoint.Xl;
 
   return (
     <HomeContent
@@ -259,7 +263,7 @@ export function MonitorView() {
         </Button>
       }
     >
-      <div className="flex flex-col space-y-4 2xl:flex-row h-full">
+      <div className="flex flex-col space-y-4 xl:flex-row h-full">
         <div
           ref={wrapperRef}
           className="grow flex flex-row justify-center h-full"
@@ -278,7 +282,7 @@ export function MonitorView() {
         </div>
         <div
           className={
-            isColumnLayout ? '' : 'flex flex-row justify-end grow-0 2xl:w-[45%]'
+            isColumnLayout ? '' : 'flex flex-row justify-end grow-0 xl:w-[45%]'
           }
         >
           <MonitorInspector

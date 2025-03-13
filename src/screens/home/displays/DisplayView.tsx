@@ -1,4 +1,7 @@
-import { DISPLAY_ASPECT_RATIO } from '@luna/components/Display';
+import {
+  DISPLAY_ASPECT_RATIO,
+  DisplayMouse as DisplayMouseState,
+} from '@luna/components/Display';
 import { displayLayoutId } from '@luna/constants/LayoutId';
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
@@ -18,7 +21,6 @@ import {
   GamepadState,
 } from '@luna/utils/gamepad';
 import { throttle } from '@luna/utils/schedule';
-import { Vec2 } from '@luna/utils/vec2';
 import { motion } from 'framer-motion';
 import {
   GamepadEvent,
@@ -48,8 +50,9 @@ export function DisplayView() {
   const [inputConfig, setInputConfig] = useLocalStorage<InputConfig>(
     LocalStorageKey.DisplayInputConfig,
     () => ({
-      legacyMode: true,
+      legacyMode: false,
       mouseEnabled: false,
+      pointerLockable: false,
       keyboardEnabled: false,
       controllerEnabled: false,
     })
@@ -167,6 +170,12 @@ export function DisplayView() {
       const changes = diffGamepadStates(lastStates, states);
 
       if (changes.length > 0) {
+        // NOTE: It is important that we assign lastStates before any await
+        // points to avoid having later iterations of the polling loop
+        // interleave and potentially firing duplicate events, see
+        // https://github.com/ProjectLighthouseCAU/luna/issues/89
+        lastStates = states;
+
         if (inputConfig.legacyMode) {
           // Convert and send events to the legacy API
           const legacyEvents: LegacyControllerEvent[] = changes
@@ -208,8 +217,6 @@ export function DisplayView() {
             }));
           }
         }
-
-        lastStates = states;
       }
     }, 10);
     console.log('Registered gamepad polling loop', interval);
@@ -223,7 +230,7 @@ export function DisplayView() {
   const mouseActive = !inputConfig.legacyMode && inputConfig.mouseEnabled;
 
   const onMouseEvent = useCallback(
-    async (pos: Vec2<number>, down: boolean) => {
+    async (mouse: DisplayMouseState, down: boolean) => {
       if (!mouseActive) {
         return;
       }
@@ -232,8 +239,9 @@ export function DisplayView() {
         type: 'mouse',
         source: clientId,
         button: 'left', // TODO
+        pointerLocked: document.pointerLockElement !== null,
         down,
-        pos,
+        ...mouse,
       };
       await api.putInput(username, event);
       setInputState(state => ({ ...state, lastMouseEvent: event }));
@@ -242,18 +250,18 @@ export function DisplayView() {
   );
 
   const onMouseDown = useCallback(
-    (pos?: Vec2<number>) => {
-      if (pos) {
-        onMouseEvent(pos, true);
+    (mouse?: DisplayMouseState) => {
+      if (mouse) {
+        onMouseEvent(mouse, true);
       }
     },
     [onMouseEvent]
   );
 
   const onMouseUp = useCallback(
-    (pos?: Vec2<number>) => {
-      if (pos) {
-        onMouseEvent(pos, false);
+    (mouse?: DisplayMouseState) => {
+      if (mouse) {
+        onMouseEvent(mouse, false);
       }
     },
     [onMouseEvent]
@@ -284,6 +292,7 @@ export function DisplayView() {
               width={width}
               className="rounded-xl"
               cursor={mouseActive ? 'crosshair' : undefined}
+              isPointerLockable={mouseActive && inputConfig.pointerLockable}
               onMouseDown={onMouseDown}
               onMouseUp={onMouseUp}
               onMouseDrag={onMouseDown}

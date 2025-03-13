@@ -44,7 +44,7 @@ function ObjectInspectorRawValue({
     case 'object':
       if (vec2.isInstance(value)) {
         return (
-          <div className="flex flex-col">
+          <div className="flex flex-col items-start">
             <span>
               x: <ObjectInspectorRawValue value={value.x} precision={2} />
             </span>

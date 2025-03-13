@@ -1,4 +1,4 @@
-import { Code, Divider, Switch, Tooltip } from '@heroui/react';
+import { Checkbox, Code, Divider, Switch, Tooltip } from '@heroui/react';
 import {
   Names,
   ObjectInspectorTable,
@@ -43,6 +43,12 @@ export function DisplayInspectorInputCard({
 }: DisplayInspectorInputCardProps) {
   const setLegacyMode = useCallback(
     (legacyMode: boolean) => setInputConfig({ ...inputConfig, legacyMode }),
+    [inputConfig, setInputConfig]
+  );
+
+  const setPointerLockable = useCallback(
+    (pointerLockable: boolean) =>
+      setInputConfig({ ...inputConfig, pointerLockable }),
     [inputConfig, setInputConfig]
   );
 
@@ -105,7 +111,11 @@ export function DisplayInspectorInputCard({
           Mouse
         </Switch>
         <AnimatedPresence isShown={mouseEnabled}>
-          <MouseEventView event={inputState.lastMouseEvent} />
+          <MouseEventView
+            event={inputState.lastMouseEvent}
+            isPointerLockable={inputConfig.pointerLockable}
+            setPointerLockable={setPointerLockable}
+          />
         </AnimatedPresence>
         <Switch
           thumbIcon={<IconKeyboard />}
@@ -166,13 +176,45 @@ const mouseEventNames: Names<MouseEvent> = {
   button: 'Button',
   down: 'Down',
   pos: 'Pos',
+  movement: 'Movement',
 };
 
-function MouseEventView({ event }: { event?: MouseEvent }) {
-  return event ? (
-    <ObjectInspectorTable objects={[event]} names={mouseEventNames} />
-  ) : (
-    <EventInfoText>no mouse events yet</EventInfoText>
+function MouseEventView({
+  event,
+  isPointerLockable,
+  setPointerLockable,
+}: {
+  event?: MouseEvent;
+  isPointerLockable: boolean;
+  setPointerLockable: (locked: boolean) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      {event ? (
+        <ObjectInspectorTable objects={[event]} names={mouseEventNames} />
+      ) : (
+        <EventInfoText>no mouse events yet</EventInfoText>
+      )}
+      <Divider />
+      <Tooltip
+        placement="left"
+        content={
+          <>
+            Enabling this will lock the pointer when clicking the lighthouse
+            canvas. Pressing escape will unlock the pointer again.
+          </>
+        }
+        classNames={{ content: 'w-60' }}
+      >
+        <Checkbox
+          isSelected={isPointerLockable}
+          onValueChange={setPointerLockable}
+        >
+          <span className="text-sm">Enable Pointer Lock</span>
+        </Checkbox>
+      </Tooltip>
+      <Divider />
+    </div>
   );
 }
 

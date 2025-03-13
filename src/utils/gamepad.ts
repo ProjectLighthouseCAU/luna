@@ -1,3 +1,5 @@
+import { Vec2 } from '@luna/utils/vec2';
+
 /** A snapshot of a gamepad's state. */
 export interface GamepadState {
   /** The button states on the gamepad. */
@@ -23,14 +25,23 @@ export interface GamepadButtonChange extends BaseGamepadChange<'button'> {
   value: number;
 }
 
-/** A change of an axis on a gamepad. */
+/** A change of a 1D axis on a gamepad. */
 export interface GamepadAxisChange extends BaseGamepadChange<'axis'> {
   /** The value of the axis (-1.0 to 1.0). */
   value: number;
 }
 
+/** A change of a 2D axis on a gamepad. */
+export interface GamepadAxis2DChange extends BaseGamepadChange<'axis2d'> {
+  /** The 2D value of the axis. */
+  value: Vec2<number>;
+}
+
 /** A change on the gamepad. */
-export type GamepadChange = GamepadButtonChange | GamepadAxisChange;
+export type GamepadChange =
+  | GamepadButtonChange
+  | GamepadAxisChange
+  | GamepadAxis2DChange;
 
 /** Captures the states of the connected gamepads. */
 export function captureGamepadStates(): GamepadState[] {
@@ -87,15 +98,44 @@ export function diffGamepadStates(
       }
     }
 
-    // Diff axes
-    for (let axisIdx = 0; axisIdx < axisCount; axisIdx++) {
+    // Diff 2D axes/sticks
+    const stickCount = 2; // As per https://www.w3.org/TR/gamepad/#dfn-standard-gamepad
+    const stickDims = 2; // Must be 2D, we'll spell it out here for clarity
+    for (let stickIdx = 0; stickIdx < stickCount; stickIdx++) {
+      let changed = false;
+      let axis2d: number[] = [];
+      for (let dimIdx = 0; dimIdx < stickDims; dimIdx++) {
+        const axisIdx = stickIdx * stickDims + dimIdx;
+        const lastAxis = lastState?.axes[axisIdx];
+        const axis = state?.axes[axisIdx];
+        if (lastAxis !== axis) {
+          changed = true;
+        }
+        axis2d.push(axis ?? 0);
+      }
+      if (changed) {
+        changes.push({
+          source: i,
+          control: 'axis2d',
+          index: stickIdx,
+          value: {
+            x: axis2d[0],
+            y: axis2d[1],
+          },
+        });
+      }
+    }
+
+    // Diff any further 1D axes
+    const axisOffset = stickCount * stickDims;
+    for (let axisIdx = axisOffset; axisIdx < axisCount; axisIdx++) {
       const lastAxis = lastState?.axes[axisIdx];
       const axis = state?.axes[axisIdx];
       if (lastAxis !== axis) {
         changes.push({
           source: i,
           control: 'axis',
-          index: axisIdx,
+          index: axisIdx - axisOffset,
           value: axis ?? 0,
         });
       }
