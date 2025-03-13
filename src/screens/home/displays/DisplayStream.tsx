@@ -7,8 +7,6 @@ export interface DisplayStreamProps extends Omit<DisplayProps, 'frame'> {
   layoutOnModelUpdate?: () => void;
 }
 
-// TODO: Use this in DisplayGrid too
-
 export function DisplayStream({
   username,
   layoutOnModelUpdate,
