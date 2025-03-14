@@ -27,7 +27,7 @@ export function TimeInterval({
       className={`flex ${layout === 'horizontal' ? 'flex-row gap-1' : 'items-start flex-col'}`}
     >
       {components.map((c, i) => (
-        <div>
+        <div key={c.split(' ').at(-1)}>
           {c}
           {i !== components.length - 1 ? ',' : undefined}
         </div>
