@@ -33,6 +33,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -61,19 +62,27 @@ export function DisplayView() {
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
+  const updateMaxSize = useCallback(() => {
+    const wrapper = wrapperRef.current;
+    if (wrapper) {
+      setMaxSize({
+        width: wrapper.clientWidth,
+        height: wrapper.clientHeight,
+      });
+    }
+  }, []);
+
   const onResize = useMemo(
     () =>
       throttle(() => {
-        const wrapper = wrapperRef.current;
-        if (wrapper) {
-          setMaxSize({
-            width: wrapper.clientWidth,
-            height: wrapper.clientHeight,
-          });
-        }
+        updateMaxSize();
       }, 50),
-    []
+    [updateMaxSize]
   );
+
+  useLayoutEffect(() => {
+    updateMaxSize();
+  }, [updateMaxSize]);
 
   const onKeyEvent = useCallback(
     async (e: KeyboardEvent, down: boolean) => {
