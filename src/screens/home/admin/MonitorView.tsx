@@ -3,7 +3,6 @@ import {
   Display,
   DisplayMouse,
 } from '@luna/components/Display';
-import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
@@ -14,19 +13,11 @@ import { HomeContent } from '@luna/screens/home/HomeContent';
 import * as rgb from '@luna/utils/rgb';
 import { throttle } from '@luna/utils/schedule';
 import { Vec2 } from '@luna/utils/vec2';
-import { Button } from '@heroui/react';
-import { IconRefresh } from '@tabler/icons-react';
 import { Set } from 'immutable';
 import { LIGHTHOUSE_COLS, LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Bounded, isBounded } from '@luna/utils/bounded';
+import { useStream } from '@luna/hooks/useStream';
 
 export function MonitorView() {
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
@@ -56,27 +47,11 @@ export function MonitorView() {
       ? maxSize.width
       : maxSize.height * DISPLAY_ASPECT_RATIO;
 
-  const { api } = useContext(ModelContext);
-  const [metrics, setMetrics] = useState<LaserMetrics>();
+  const metrics = useStream<LaserMetrics>(['metrics', 'laser']);
 
   const [focusedRoom, setSelectedRoom] = useState<number>();
   const [hoveredRoom, setHoveredRoom] = useState<number>();
   const [criterion, setCriterion] = useState<MonitorCriterion>();
-
-  const getLatestMetrics = useCallback(async () => {
-    // setMetrics(testMetrics); // TODO: change back from test data to fetched data
-    const m = await api.getLaserMetrics(); // TODO: stream metrics instead
-    if (m.ok) {
-      setMetrics(m.value);
-    } else {
-      console.log(m.error);
-    }
-  }, [api]);
-
-  // get the metrics on load
-  useEffect(() => {
-    getLatestMetrics();
-  }, [getLatestMetrics]);
 
   const roomMetrics = useMemo(
     () =>
@@ -253,16 +228,7 @@ export function MonitorView() {
   const isColumnLayout = breakpoint < Breakpoint.Xl;
 
   return (
-    <HomeContent
-      title="Monitoring"
-      toolbar={
-        /* TODO: auto-refresh (polling) or streaming metrics */
-        <Button color="secondary" variant="ghost" onPress={getLatestMetrics}>
-          <IconRefresh />
-          Refresh All
-        </Button>
-      }
-    >
+    <HomeContent title="Monitoring">
       <div className="flex flex-col space-y-4 xl:flex-row h-full">
         <div
           ref={wrapperRef}

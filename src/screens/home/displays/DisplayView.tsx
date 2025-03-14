@@ -1,5 +1,4 @@
 import {
-  Display,
   DISPLAY_ASPECT_RATIO,
   DisplayMouse as DisplayMouseState,
 } from '@luna/components/Display';
@@ -12,6 +11,7 @@ import { useEventListener } from '@luna/hooks/useEventListener';
 import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
+import { DisplayStream } from '@luna/screens/home/displays/DisplayStream';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import {
@@ -33,7 +33,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -45,7 +44,7 @@ export function DisplayView() {
 
   const { clientId } = useContext(ClientIdContext);
 
-  const { users, api } = useContext(ModelContext);
+  const { api } = useContext(ModelContext);
 
   const [inputState, setInputState] = useState<InputState>({ gamepadCount: 0 });
   const [inputConfig, setInputConfig] = useLocalStorage<InputConfig>(
@@ -61,7 +60,6 @@ export function DisplayView() {
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const userModel = users.models.get(username);
 
   const onResize = useMemo(
     () =>
@@ -269,13 +267,6 @@ export function DisplayView() {
     [onMouseEvent]
   );
 
-  // Make sure to update the size after the api canvas has been added to the DOM
-  useLayoutEffect(() => {
-    if (userModel) {
-      onResize();
-    }
-  }, [onResize, userModel]);
-
   const breakpoint = useBreakpoint();
   const isCompact = breakpoint <= Breakpoint.Sm;
 
@@ -286,41 +277,37 @@ export function DisplayView() {
 
   return (
     <HomeContent title={`${username}'s Display`}>
-      {userModel ? (
-        <div className="flex flex-col space-y-4 md:flex-row h-full">
-          <div
-            ref={wrapperRef}
-            className="grow flex flex-row justify-center h-full"
+      <div className="flex flex-col space-y-4 md:flex-row h-full">
+        <div
+          ref={wrapperRef}
+          className="grow flex flex-row justify-center h-full"
+        >
+          <motion.div
+            className={isCompact ? '' : 'absolute'}
+            layoutId={displayLayoutId(username)}
+            key={displayLayoutId(username)}
           >
-            <motion.div
-              className={isCompact ? '' : 'absolute'}
-              layoutId={displayLayoutId(username)}
-              key={displayLayoutId(username)}
-            >
-              <Display
-                frame={userModel.frame}
-                width={width}
-                className="rounded-xl"
-                cursor={mouseActive ? 'crosshair' : undefined}
-                isPointerLockable={mouseActive && inputConfig.pointerLockable}
-                onMouseDown={onMouseDown}
-                onMouseUp={onMouseUp}
-                onMouseDrag={onMouseDown}
-                onMouseMove={onMouseUp}
-              />
-            </motion.div>
-          </div>
-          <DisplayInspector
-            username={username}
-            inputState={inputState}
-            inputConfig={inputConfig}
-            setInputConfig={setInputConfig}
-          />
+            <DisplayStream
+              username={username}
+              width={width}
+              className="rounded-xl"
+              cursor={mouseActive ? 'crosshair' : undefined}
+              isPointerLockable={mouseActive && inputConfig.pointerLockable}
+              onMouseDown={onMouseDown}
+              onMouseUp={onMouseUp}
+              onMouseDrag={onMouseDown}
+              onMouseMove={onMouseUp}
+              layoutOnModelUpdate={onResize}
+            />
+          </motion.div>
         </div>
-      ) : (
-        // TODO: Improve error message, perhaps add a link back to /displays?
-        <p>No api found!</p>
-      )}
+        <DisplayInspector
+          username={username}
+          inputState={inputState}
+          inputConfig={inputConfig}
+          setInputConfig={setInputConfig}
+        />
+      </div>
     </HomeContent>
   );
 }

@@ -8,14 +8,27 @@ export function useAsyncIterable<T>(
   onError?: (error: any) => any
 ) {
   useEffect(() => {
-    let isCancelled = false;
+    let cancelHandler: (() => void) | undefined = undefined;
     (async () => {
+      const iterator = iterable()[Symbol.asyncIterator]();
       try {
-        for await (const value of iterable()) {
-          if (isCancelled) {
+        while (true) {
+          const result = await Promise.race([
+            iterator.next(),
+            // eslint-disable-next-line no-loop-func
+            new Promise<{ done: true; value: undefined }>(resolve => {
+              cancelHandler = () => resolve({ done: true, value: undefined });
+            }),
+          ]);
+          if (result.done) {
             break;
           }
-          consumer(value);
+          // Make sure not to call the consumer when we're done, in the raced
+          // cancellation case we'd get `undefined`, but if the async iterable
+          // ends naturally this will be its return value, e.g. an array in a
+          // mergeAsyncIterable result. For details, see
+          // https://stackoverflow.com/questions/50585456/how-can-i-interleave-merge-async-iterables/50586391#comment140164278_50586391.
+          consumer(result.value);
         }
       } catch (error) {
         if (onError) {
@@ -23,10 +36,13 @@ export function useAsyncIterable<T>(
         } else {
           throw error;
         }
+      } finally {
+        await iterator.return?.();
       }
     })();
     return () => {
-      isCancelled = true;
+      console.log('Cancelling');
+      cancelHandler?.();
     };
   }, [iterable, consumer, onError]);
 }

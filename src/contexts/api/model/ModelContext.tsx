@@ -1,9 +1,7 @@
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { LaserMetrics, UserModel } from '@luna/contexts/api/model/types';
-import { useAsyncIterable } from '@luna/hooks/useAsyncIterable';
-import { mergeAsyncIterables } from '@luna/utils/async';
 import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
-import { Map, Set } from 'immutable';
+import { Set } from 'immutable';
 import {
   connect,
   ConsoleLogHandler,
@@ -12,14 +10,12 @@ import {
   LegacyInputEvent,
   LeveledLogHandler,
   Lighthouse,
-  LIGHTHOUSE_FRAME_BYTES,
   LogLevel,
   ServerMessage,
 } from 'nighthouse/browser';
 import {
   createContext,
   ReactNode,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -27,8 +23,8 @@ import {
 } from 'react';
 
 export interface Users {
-  /** The user models by username. */
-  readonly models: Map<string, UserModel>;
+  /** The usernames of all users. */
+  readonly all: Set<string>;
 
   /** The usernames of active users. */
   readonly active: Set<string>;
@@ -40,6 +36,12 @@ export interface ModelAPI {
 
   /** Fetches an arbitrary path. */
   get(path: string[]): Promise<Result<unknown>>;
+
+  /** Streams the resource at an arbitrary path. */
+  stream(path: string[]): AsyncIterable<unknown>;
+
+  /** Streams the model of the given user. */
+  streamModel(user: string): AsyncIterable<UserModel>;
 
   /** Deletes a resource at an arbitrary path. */
   delete(path: string[]): Promise<Result<unknown>>;
@@ -82,12 +84,14 @@ export interface ModelContextValue {
 
 export const ModelContext = createContext<ModelContextValue>({
   users: {
-    models: Map(),
+    all: Set(),
     active: Set(),
   },
   api: {
     list: async () => errorResult('No model context for listing path'),
     get: async () => errorResult('No model context for fetching path'),
+    async *stream() {},
+    async *streamModel() {},
     delete: async () => errorResult('No model context for deleting path'),
     put: async () => errorResult('No model context for updating resource'),
     putLegacyInput: async () =>
@@ -127,7 +131,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
 
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [users, setUsers] = useState<Users>({
-    models: Map(),
+    all: Set(),
     active: Set(),
   });
 
@@ -169,52 +173,20 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     };
   }, [username, tokenValue]);
 
-  const getUserStreams = useCallback(
-    async function* () {
-      if (!isLoggedIn || !client) return;
+  useEffect(() => {
+    if (!isLoggedIn) {
+      return;
+    }
+    (async () => {
       try {
         const users = getOrThrow(await auth.getAllUsers());
-        // Make sure that every user has at least a black frame
-        for (const { username } of users) {
-          yield { username, frame: new Uint8Array(LIGHTHOUSE_FRAME_BYTES) };
-        }
-        const streams = await Promise.all(
-          users.map(async ({ username }) => {
-            const stream = await client.streamModel(username);
-            return (async function* () {
-              for await (const model of stream) {
-                if (model.PAYL instanceof Uint8Array) {
-                  yield { username, frame: model.PAYL };
-                }
-              }
-            })();
-          })
-        );
-        yield* mergeAsyncIterables(streams);
+        const all = Set(users.map(user => user.username));
+        setUsers(({ active }) => ({ all, active }));
       } catch (error) {
-        console.error(`Could not get user streams: ${error}`);
+        console.error(`Could not get users: ${error}`);
       }
-    },
-    [isLoggedIn, client, auth]
-  );
-
-  // NOTE: It is important that we use `useCallback` for the consumption callback
-  // since otherwise every rerender will create a new function, triggering a change
-  // is the `useEffect` that `useAsyncIterable` uses internally, which reregisters
-  // a new iterator on every render. This seems to cause some kind of cyclic dependency
-  // that freezes the application.
-
-  const consumeUserStreams = useCallback(
-    async ({ username, ...userModel }: { username: string } & UserModel) => {
-      setUsers(({ models, active }) => ({
-        models: models.set(username, userModel),
-        active: models.has(username) ? active.add(username) : active,
-      }));
-    },
-    []
-  );
-
-  useAsyncIterable(getUserStreams, consumeUserStreams);
+    })();
+  }, [auth, isLoggedIn]);
 
   const api: ModelAPI = useMemo(
     () => ({
@@ -223,6 +195,29 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       },
       async get(path) {
         return messageToResult(await client?.get(path));
+      },
+      async *stream(path) {
+        if (client) {
+          for await (const message of client.stream(path)) {
+            const result = messageToResult(message);
+            if (result.ok) {
+              yield result.value;
+            } else {
+              console.error(
+                `Got error in stream of ${JSON.stringify(path)}: ${result.error}`
+              );
+            }
+          }
+        }
+      },
+      async *streamModel(user) {
+        for await (const value of this.stream(['user', user, 'model'])) {
+          if (typeof value === 'object' && value instanceof Uint8Array) {
+            yield {
+              frame: value,
+            };
+          }
+        }
       },
       async delete(path) {
         return messageToResult(await client?.delete(path));
