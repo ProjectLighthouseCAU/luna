@@ -6,16 +6,22 @@ import { IconMenu2 } from '@tabler/icons-react';
 import React, {
   ReactNode,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useState,
 } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import { QuickSwitcherModal } from '@luna/modals/QuickSwitcherModal';
 
 export function HomeScreen() {
   const location = useLocation();
   const breakpoint = useBreakpoint();
+
   const isCompact = breakpoint <= Breakpoint.Sm;
+
   const [isExpanded, setExpanded] = useState(false);
+  const [isQuickSwitcherOpen, setQuickSwitcherOpen] = useState(false);
+
   const [title, setTitle] = useState('');
   const [toolbar, setToolbar] = useState<ReactNode>();
 
@@ -24,6 +30,19 @@ export function HomeScreen() {
   useLayoutEffect(() => {
     setExpanded(false);
   }, [location]);
+
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.code === 'KeyK') {
+        setQuickSwitcherOpen(isOpen => !isOpen);
+        e.preventDefault();
+      }
+    };
+    document.addEventListener('keydown', listener);
+    return () => {
+      document.removeEventListener('keydown', listener);
+    };
+  }, []);
 
   const toggleExpanded = useCallback(() => setExpanded(e => !e), []);
 
@@ -55,6 +74,10 @@ export function HomeScreen() {
           <Outlet context={outletContext} />
         </div>
       </div>
+      <QuickSwitcherModal
+        isOpen={isQuickSwitcherOpen}
+        setOpen={setQuickSwitcherOpen}
+      />
     </div>
   );
 }

@@ -1,12 +1,14 @@
 import { useDebounce } from '@luna/hooks/useDebounce';
-import { Input } from '@heroui/react';
+import { Input, Tooltip } from '@heroui/react';
 import { IconSearch } from '@tabler/icons-react';
-import { useCallback, useState } from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 
 export interface SearchBarProps {
   placeholder?: string;
   fullWidth?: boolean;
   className?: string;
+  tooltip?: ReactNode;
+  tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
   setQuery: (query: string) => void;
 }
 
@@ -14,6 +16,8 @@ export function SearchBar({
   placeholder,
   fullWidth,
   className = '',
+  tooltip,
+  tooltipPlacement,
   setQuery,
 }: SearchBarProps) {
   const [value, setValue] = useState('');
@@ -30,8 +34,7 @@ export function SearchBar({
 
   const clearQuery = useCallback(() => onValueChange(''), [onValueChange]);
 
-  return (
-    // TODO: Pass fullWidth directly to <Input> once https://github.com/nextui-org/nextui/pull/3768 is released
+  const input = (
     <div className={`${fullWidth ? '' : 'max-w-60'} ${className}`}>
       <Input
         startContent={<IconSearch />}
@@ -41,5 +44,15 @@ export function SearchBar({
         onClear={clearQuery}
       />
     </div>
+  );
+
+  return (
+    <Tooltip
+      content={tooltip}
+      placement={tooltipPlacement}
+      isDisabled={tooltip === undefined}
+    >
+      {input}
+    </Tooltip>
   );
 }
