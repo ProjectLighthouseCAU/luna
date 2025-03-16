@@ -35,14 +35,15 @@ export function SearchBar({
   const clearQuery = useCallback(() => onValueChange(''), [onValueChange]);
 
   const input = (
-    <Input
-      startContent={<IconSearch />}
-      placeholder={placeholder}
-      value={value}
-      fullWidth
-      onValueChange={onValueChange}
-      onClear={clearQuery}
-    />
+    <div className={`${fullWidth ? '' : 'max-w-60'} ${className}`}>
+      <Input
+        startContent={<IconSearch />}
+        placeholder={placeholder}
+        value={value}
+        onValueChange={onValueChange}
+        onClear={clearQuery}
+      />
+    </div>
   );
 
   return (
