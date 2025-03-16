@@ -42,10 +42,6 @@ export function QuickSwitcherModal({
   const selectedKey =
     filteredRoutes.length > 0 ? filteredRoutes[0].key : undefined;
 
-  const close = useCallback(() => {
-    setOpen(false);
-  }, [setOpen]);
-
   useEffect(() => {
     if (!isOpen) {
       setQuery('');
@@ -73,7 +69,7 @@ export function QuickSwitcherModal({
               <div className="flex flex-col gap-2 p-2" aria-label="Results">
                 {filteredRoutes.map(route =>
                   route ? (
-                    <NavLink to={route.path} key={route.key} onClick={close}>
+                    <NavLink to={route.path} key={route.key} onClick={onClose}>
                       <div
                         className={`flex flex-row p-2 gap-2 items-center rounded-md ${route.key === selectedKey ? 'bg-primary' : ''}`}
                       >
