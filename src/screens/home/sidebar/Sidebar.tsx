@@ -2,7 +2,6 @@ import { ColorSchemeButton } from '@luna/components/ColorSchemeButton';
 import { SearchBar } from '@luna/components/SearchBar';
 import { UserSnippet } from '@luna/components/UserSnippet';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
-import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { SearchContext } from '@luna/contexts/filter/SearchContext';
 import { SidebarRoutes } from '@luna/screens/home/sidebar/SidebarRoutes';
 import {
@@ -25,7 +24,6 @@ export interface SidebarProps {
 
 export function Sidebar({ isCompact }: SidebarProps) {
   const auth = useContext(AuthContext);
-  const model = useContext(ModelContext);
   const { query, setQuery } = useContext(SearchContext);
   const navigate = useNavigate();
 
@@ -51,12 +49,7 @@ export function Sidebar({ isCompact }: SidebarProps) {
         setQuery={setQuery}
       />
       <ScrollShadow className="grow">
-        <SidebarRoutes
-          isCompact={isCompact}
-          searchQuery={query}
-          user={auth.user ?? undefined}
-          allUsernames={[...model.users.all]}
-        />
+        <SidebarRoutes isCompact={isCompact} searchQuery={query} />
       </ScrollShadow>
       <Divider />
       {auth.user ? <UserSnippet user={auth.user} token={auth.token} /> : null}
