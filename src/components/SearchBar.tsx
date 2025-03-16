@@ -45,11 +45,13 @@ export function SearchBar({
     />
   );
 
-  return tooltip ? (
-    <Tooltip content={tooltip} placement={tooltipPlacement}>
+  return (
+    <Tooltip
+      content={tooltip}
+      placement={tooltipPlacement}
+      isDisabled={tooltip === undefined}
+    >
       {input}
     </Tooltip>
-  ) : (
-    input
   );
 }

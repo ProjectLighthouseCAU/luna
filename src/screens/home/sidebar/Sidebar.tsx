@@ -13,7 +13,7 @@ import {
   ModalHeader,
   ScrollShadow,
 } from '@heroui/react';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export interface SidebarProps {
@@ -27,6 +27,8 @@ export function Sidebar({ isCompact }: SidebarProps) {
   const auth = useContext(AuthContext);
   const { query, setQuery } = useContext(SearchContext);
   const navigate = useNavigate();
+
+  const [showQuickSwitcherTip, setShowQuickSwitcherTip] = useState(true);
 
   const [logoutErrorMessage, setLogoutErrorMessage] = useState<string | null>(
     null
@@ -42,6 +44,12 @@ export function Sidebar({ isCompact }: SidebarProps) {
     navigate('/');
   }, [auth, navigate]);
 
+  useEffect(() => {
+    if (query || isCompact) {
+      setShowQuickSwitcherTip(false);
+    }
+  }, [isCompact, query]);
+
   return (
     <div className="flex flex-col space-y-2 h-full">
       <SearchBar
@@ -49,14 +57,16 @@ export function Sidebar({ isCompact }: SidebarProps) {
         fullWidth
         setQuery={setQuery}
         tooltip={
-          <div className="flex flex-col gap-2">
-            <span>
-              Tip: You can also search quickly using the quick switcher.
-            </span>
-            <span>
-              Press <Kbd>Cmd/Ctrl</Kbd> + <Kbd>K</Kbd> to open it.
-            </span>
-          </div>
+          showQuickSwitcherTip ? (
+            <div className="flex flex-col gap-2">
+              <span>
+                Tip: You can also search quickly using the quick switcher.
+              </span>
+              <span>
+                Press <Kbd>Cmd/Ctrl</Kbd> + <Kbd>K</Kbd> to open it.
+              </span>
+            </div>
+          ) : undefined
         }
         tooltipPlacement="right"
       />
