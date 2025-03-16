@@ -1,4 +1,10 @@
-import { Input, Modal, ModalContent } from '@heroui/react';
+import {
+  Input,
+  Listbox,
+  ListboxItem,
+  Modal,
+  ModalContent,
+} from '@heroui/react';
 import { useVisibleRoutes, VisibleRoute } from '@luna/hooks/useVisibleRoutes';
 import { useMemo, useState } from 'react';
 
@@ -24,8 +30,12 @@ export function QuickSwitcherModal({
     const lowerQuery = query.toLowerCase();
     return flatRoutes
       .filter(route => route.name.toLowerCase().includes(lowerQuery))
+      .map(route => ({ ...route, key: JSON.stringify(route.path) }))
       .slice(0, 8);
   }, [flatRoutes, query]);
+
+  const selectedKey =
+    filteredRoutes.length > 0 ? filteredRoutes[0].key : undefined;
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
@@ -39,16 +49,25 @@ export function QuickSwitcherModal({
               onValueChange={setQuery}
             />
             {query ? (
-              <div className="p-3">
-                {filteredRoutes.map(route => (
-                  <div
-                    key={JSON.stringify(route.path)}
-                    className="flex flex-row gap-1"
+              <Listbox
+                className="p-2"
+                items={filteredRoutes}
+                aria-label="Results"
+              >
+                {route => (
+                  <ListboxItem
+                    key={route.key}
+                    startContent={route.icon}
+                    aria-label={route.name}
                   >
-                    {route.icon} {route.name}
-                  </div>
-                ))}
-              </div>
+                    <div
+                      className={route.key === selectedKey ? 'font-bold' : ''}
+                    >
+                      {route.name}
+                    </div>
+                  </ListboxItem>
+                )}
+              </Listbox>
             ) : null}
           </div>
         )}
