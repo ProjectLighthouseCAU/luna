@@ -13,10 +13,15 @@ function flatten(
   routes: VisibleRoute[],
   parentNames: string[] = []
 ): (VisibleRoute & { parentNames: string[] })[] {
-  return routes.flatMap(route => [
-    { ...route, parentNames },
-    ...flatten(route.children, [...parentNames, route.name]),
-  ]);
+  return (
+    routes
+      .flatMap(route => [
+        { ...route, parentNames },
+        ...flatten(route.children, [...parentNames, route.name]),
+      ])
+      // Prioritize longer paths
+      .sort((a, b) => b.path.length - a.path.length)
+  );
 }
 
 export function QuickSwitcherModal({
