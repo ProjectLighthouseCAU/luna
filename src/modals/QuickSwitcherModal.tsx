@@ -46,7 +46,7 @@ export function QuickSwitcherModal({
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={setOpen}>
+    <Modal isOpen={isOpen} onOpenChange={setOpen} placement="top">
       <ModalContent>
         {onClose => (
           <div className="flex flex-col">
