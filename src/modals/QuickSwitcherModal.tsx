@@ -6,7 +6,8 @@ import {
   ModalContent,
 } from '@heroui/react';
 import { useVisibleRoutes, VisibleRoute } from '@luna/hooks/useVisibleRoutes';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 export interface QuickSwitcherModalProps {
   isOpen: boolean;
@@ -38,6 +39,16 @@ export function QuickSwitcherModal({
   const selectedKey =
     filteredRoutes.length > 0 ? filteredRoutes[0].key : undefined;
 
+  const close = useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setQuery('');
+    }
+  }, [isOpen]);
+
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
       <ModalContent>
@@ -58,14 +69,16 @@ export function QuickSwitcherModal({
             {filteredRoutes.length > 0 ? (
               <div className="flex flex-col gap-2 p-2" aria-label="Results">
                 {filteredRoutes.map(route => (
-                  <div className="flex flex-row gap-2">
-                    {route.icon}
-                    <div
-                      className={route.key === selectedKey ? 'font-bold' : ''}
-                    >
-                      {route.name}
+                  <NavLink to={route.path} key={route.key} onClick={close}>
+                    <div className="flex flex-row gap-2">
+                      {route.icon}
+                      <div
+                        className={route.key === selectedKey ? 'font-bold' : ''}
+                      >
+                        {route.name}
+                      </div>
                     </div>
-                  </div>
+                  </NavLink>
                 ))}
               </div>
             ) : null}
