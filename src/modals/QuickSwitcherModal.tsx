@@ -1,8 +1,8 @@
 import { Input, Modal, ModalContent, Skeleton } from '@heroui/react';
 import { useVisibleRoutes, VisibleRoute } from '@luna/hooks/useVisibleRoutes';
 import { IconChevronRight } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 export interface QuickSwitcherModalProps {
   isOpen: boolean;
@@ -24,6 +24,7 @@ export function QuickSwitcherModal({
   setOpen,
 }: QuickSwitcherModalProps) {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
 
   const visibleRoutes = useVisibleRoutes({});
   const flatRoutes = useMemo(() => flatten(visibleRoutes), [visibleRoutes]);
@@ -39,8 +40,8 @@ export function QuickSwitcherModal({
       .slice(0, maxResults);
   }, [flatRoutes, query]);
 
-  const selectedKey =
-    filteredRoutes.length > 0 ? filteredRoutes[0].key : undefined;
+  const selectedRoute =
+    filteredRoutes.length > 0 ? filteredRoutes[0] : undefined;
 
   useEffect(() => {
     if (!isOpen) {
@@ -52,7 +53,16 @@ export function QuickSwitcherModal({
     <Modal isOpen={isOpen} onOpenChange={setOpen} placement="top">
       <ModalContent>
         {onClose => (
-          <div className="flex flex-col">
+          <form
+            className="flex flex-col"
+            onSubmit={e => {
+              if (selectedRoute) {
+                navigate(selectedRoute.path);
+                onClose();
+              }
+              e.preventDefault();
+            }}
+          >
             <Input
               autoFocus
               variant="faded"
@@ -71,7 +81,7 @@ export function QuickSwitcherModal({
                   route ? (
                     <NavLink to={route.path} key={route.key} onClick={onClose}>
                       <div
-                        className={`flex flex-row p-2 gap-2 items-center rounded-md ${route.key === selectedKey ? 'bg-primary' : ''}`}
+                        className={`flex flex-row p-2 gap-2 items-center rounded-md ${route.key === selectedRoute?.key ? 'bg-primary' : ''}`}
                       >
                         {route.icon}
                         <div className="flex flex-row items-center">
@@ -83,7 +93,9 @@ export function QuickSwitcherModal({
                           ))}
                           <div
                             className={
-                              route.key === selectedKey ? 'font-bold' : ''
+                              route.key === selectedRoute?.key
+                                ? 'font-bold'
+                                : ''
                             }
                           >
                             {route.name}
@@ -97,7 +109,7 @@ export function QuickSwitcherModal({
                 )}
               </div>
             ) : null}
-          </div>
+          </form>
         )}
       </ModalContent>
     </Modal>
