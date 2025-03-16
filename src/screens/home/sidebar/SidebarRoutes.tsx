@@ -21,6 +21,8 @@ export interface SidebarRoutesProps {
   allUsernames: string[];
 }
 
+// TODO: Migrate to useVisibleRoutes
+
 export const SidebarRoutes = memo(
   ({ isCompact, searchQuery, user, allUsernames }: SidebarRoutesProps) => {
     return (
