@@ -4,6 +4,7 @@ import {
   ListboxItem,
   Modal,
   ModalContent,
+  Skeleton,
 } from '@heroui/react';
 import { useVisibleRoutes, VisibleRoute } from '@luna/hooks/useVisibleRoutes';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -27,13 +28,15 @@ export function QuickSwitcherModal({
   const visibleRoutes = useVisibleRoutes({});
   const flatRoutes = useMemo(() => flatten(visibleRoutes), [visibleRoutes]);
 
+  const maxResults = 8;
+
   const filteredRoutes = useMemo(() => {
     if (!query) return [];
     const lowerQuery = query.toLowerCase();
     return flatRoutes
       .filter(route => route.name.toLowerCase().includes(lowerQuery))
       .map(route => ({ ...route, key: JSON.stringify(route.path) }))
-      .slice(0, 8);
+      .slice(0, maxResults);
   }, [flatRoutes, query]);
 
   const selectedKey =
@@ -44,7 +47,7 @@ export function QuickSwitcherModal({
   }, [setOpen]);
 
   useEffect(() => {
-    if (isOpen) {
+    if (!isOpen) {
       setQuery('');
     }
   }, [isOpen]);
@@ -68,18 +71,26 @@ export function QuickSwitcherModal({
             />
             {filteredRoutes.length > 0 ? (
               <div className="flex flex-col gap-2 p-2" aria-label="Results">
-                {filteredRoutes.map(route => (
-                  <NavLink to={route.path} key={route.key} onClick={close}>
-                    <div className="flex flex-row gap-2">
-                      {route.icon}
+                {filteredRoutes.map(route =>
+                  route ? (
+                    <NavLink to={route.path} key={route.key} onClick={close}>
                       <div
-                        className={route.key === selectedKey ? 'font-bold' : ''}
+                        className={`flex flex-row gap-2 p-2 rounded-md ${route.key === selectedKey ? 'bg-primary' : ''}`}
                       >
-                        {route.name}
+                        {route.icon}
+                        <div
+                          className={
+                            route.key === selectedKey ? 'font-bold' : ''
+                          }
+                        >
+                          {route.name}
+                        </div>
                       </div>
-                    </div>
-                  </NavLink>
-                ))}
+                    </NavLink>
+                  ) : (
+                    <Skeleton className="h-12" />
+                  )
+                )}
               </div>
             ) : null}
           </div>
