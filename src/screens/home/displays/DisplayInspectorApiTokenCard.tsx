@@ -1,4 +1,4 @@
-import { ApiTokenModal } from '@luna/components/ApiTokenModal';
+import { ApiTokenModal } from '@luna/modals/ApiTokenModal';
 import { TitledCard } from '@luna/components/TitledCard';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { Button, Tooltip, useDisclosure } from '@heroui/react';
