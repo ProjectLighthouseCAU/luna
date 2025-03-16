@@ -1,4 +1,4 @@
-import { Modal, ModalContent } from '@heroui/react';
+import { Input, Modal, ModalContent } from '@heroui/react';
 
 export interface QuickSwitcherModalProps {
   isOpen: boolean;
@@ -11,7 +11,13 @@ export function QuickSwitcherModal({
 }: QuickSwitcherModalProps) {
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
-      <ModalContent>{onClose => <>TODO</>}</ModalContent>
+      <ModalContent>
+        {onClose => (
+          <div className="flex flex-col">
+            <Input autoFocus placeholder="Where do you want to go?" />
+          </div>
+        )}
+      </ModalContent>
     </Modal>
   );
 }
