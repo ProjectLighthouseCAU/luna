@@ -1,5 +1,6 @@
 import { Input, Modal, ModalContent, Skeleton } from '@heroui/react';
 import { useVisibleRoutes, VisibleRoute } from '@luna/hooks/useVisibleRoutes';
+import { IconChevronRight } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -8,8 +9,14 @@ export interface QuickSwitcherModalProps {
   setOpen: (show: boolean) => void;
 }
 
-function flatten(routes: VisibleRoute[]): VisibleRoute[] {
-  return routes.flatMap(route => [route, ...flatten(route.children)]);
+function flatten(
+  routes: VisibleRoute[],
+  parentNames: string[] = []
+): (VisibleRoute & { parentNames: string[] })[] {
+  return routes.flatMap(route => [
+    { ...route, parentNames },
+    ...flatten(route.children, [...parentNames, route.name]),
+  ]);
 }
 
 export function QuickSwitcherModal({
@@ -68,15 +75,23 @@ export function QuickSwitcherModal({
                   route ? (
                     <NavLink to={route.path} key={route.key} onClick={close}>
                       <div
-                        className={`flex flex-row gap-2 p-2 rounded-md ${route.key === selectedKey ? 'bg-primary' : ''}`}
+                        className={`flex flex-row p-2 gap-2 items-center rounded-md ${route.key === selectedKey ? 'bg-primary' : ''}`}
                       >
                         {route.icon}
-                        <div
-                          className={
-                            route.key === selectedKey ? 'font-bold' : ''
-                          }
-                        >
-                          {route.name}
+                        <div className="flex flex-row items-center">
+                          {route.parentNames.map(name => (
+                            <div key={name} className="flex flex-row">
+                              {name}
+                              <IconChevronRight />
+                            </div>
+                          ))}
+                          <div
+                            className={
+                              route.key === selectedKey ? 'font-bold' : ''
+                            }
+                          >
+                            {route.name}
+                          </div>
                         </div>
                       </div>
                     </NavLink>
