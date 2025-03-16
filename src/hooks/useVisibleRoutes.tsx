@@ -114,8 +114,10 @@ export function useVisibleRoutes({
     [allUsernames, searchQuery, showUserDisplays, user?.username]
   );
 
-  return useMemo<VisibleRoute[]>(
+  const routes = useMemo<VisibleRoute[]>(
     () => [...(isAdmin ? adminRoutes : []), ...userRoutes],
     [adminRoutes, isAdmin, userRoutes]
   );
+
+  return routes;
 }
