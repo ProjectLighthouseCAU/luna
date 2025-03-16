@@ -93,8 +93,18 @@ export function useVisibleRoutes({
         name: 'Displays',
         path: '/displays',
         icon: <IconBuildingLighthouse />,
-        children:
-          showUserDisplays || searchQuery
+        children: [
+          ...(user?.username
+            ? [
+                {
+                  name: `${user.username} (me)`,
+                  icon: <IconBuildingLighthouse />,
+                  path: `/displays/${user.username}`,
+                  children: [],
+                },
+              ]
+            : []),
+          ...(showUserDisplays || searchQuery
             ? allUsernames
                 .filter(
                   username =>
@@ -108,7 +118,8 @@ export function useVisibleRoutes({
                   icon: <IconBuildingLighthouse />,
                   children: [],
                 }))
-            : [],
+            : []),
+        ],
       },
     ],
     [allUsernames, searchQuery, showUserDisplays, user?.username]
