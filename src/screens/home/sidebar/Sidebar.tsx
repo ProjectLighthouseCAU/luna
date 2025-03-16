@@ -6,6 +6,7 @@ import { SearchContext } from '@luna/contexts/filter/SearchContext';
 import { SidebarRoutes } from '@luna/screens/home/sidebar/SidebarRoutes';
 import {
   Divider,
+  Kbd,
   Modal,
   ModalBody,
   ModalContent,
@@ -47,6 +48,17 @@ export function Sidebar({ isCompact }: SidebarProps) {
         placeholder="Search displays..."
         fullWidth
         setQuery={setQuery}
+        tooltip={
+          <div className="flex flex-col gap-2">
+            <span>
+              Tip: You can also search quickly using the quick switcher.
+            </span>
+            <span>
+              Press <Kbd>Cmd/Ctrl</Kbd> + <Kbd>K</Kbd> to open it.
+            </span>
+          </div>
+        }
+        tooltipPlacement="right"
       />
       <ScrollShadow className="grow">
         <SidebarRoutes isCompact={isCompact} searchQuery={query} />

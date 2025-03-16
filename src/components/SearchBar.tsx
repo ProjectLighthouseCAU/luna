@@ -1,12 +1,14 @@
 import { useDebounce } from '@luna/hooks/useDebounce';
-import { Input } from '@heroui/react';
+import { Input, Tooltip } from '@heroui/react';
 import { IconSearch } from '@tabler/icons-react';
-import { useCallback, useState } from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 
 export interface SearchBarProps {
   placeholder?: string;
   fullWidth?: boolean;
   className?: string;
+  tooltip?: ReactNode;
+  tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
   setQuery: (query: string) => void;
 }
 
@@ -14,6 +16,8 @@ export function SearchBar({
   placeholder,
   fullWidth,
   className = '',
+  tooltip,
+  tooltipPlacement,
   setQuery,
 }: SearchBarProps) {
   const [value, setValue] = useState('');
@@ -30,7 +34,7 @@ export function SearchBar({
 
   const clearQuery = useCallback(() => onValueChange(''), [onValueChange]);
 
-  return (
+  const input = (
     <Input
       startContent={<IconSearch />}
       placeholder={placeholder}
@@ -39,5 +43,13 @@ export function SearchBar({
       onValueChange={onValueChange}
       onClear={clearQuery}
     />
+  );
+
+  return tooltip ? (
+    <Tooltip content={tooltip} placement={tooltipPlacement}>
+      {input}
+    </Tooltip>
+  ) : (
+    input
   );
 }
