@@ -1,5 +1,5 @@
 import { Token } from '@luna/contexts/api/auth/types';
-import { ApiTokenModal } from '@luna/components/ApiTokenModal';
+import { ApiTokenModal } from '@luna/modals/ApiTokenModal';
 import { Button, Tooltip, useDisclosure } from '@heroui/react';
 import { IconKey } from '@tabler/icons-react';
 

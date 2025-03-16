@@ -1,8 +1,8 @@
 import { User } from '@luna/contexts/api/auth/types';
-import { UserAddModal } from '@luna/components/UserAddModal';
-import { UserDeleteModal } from '@luna/components/UserDeleteModal';
-import { UserDetailsModal } from '@luna/components/UserDetailsModal';
-import { UserEditModal } from '@luna/components/UserEditModal';
+import { UserAddModal } from '@luna/modals/UserAddModal';
+import { UserDeleteModal } from '@luna/modals/UserDeleteModal';
+import { UserDetailsModal } from '@luna/modals/UserDetailsModal';
+import { UserEditModal } from '@luna/modals/UserEditModal';
 import { SearchBar } from '@luna/components/SearchBar';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { HomeContent } from '@luna/screens/home/HomeContent';
