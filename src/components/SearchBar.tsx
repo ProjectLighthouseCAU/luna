@@ -31,15 +31,13 @@ export function SearchBar({
   const clearQuery = useCallback(() => onValueChange(''), [onValueChange]);
 
   return (
-    // TODO: Pass fullWidth directly to <Input> once https://github.com/nextui-org/nextui/pull/3768 is released
-    <div className={`${fullWidth ? '' : 'max-w-60'} ${className}`}>
-      <Input
-        startContent={<IconSearch />}
-        placeholder={placeholder}
-        value={value}
-        onValueChange={onValueChange}
-        onClear={clearQuery}
-      />
-    </div>
+    <Input
+      startContent={<IconSearch />}
+      placeholder={placeholder}
+      value={value}
+      fullWidth
+      onValueChange={onValueChange}
+      onClear={clearQuery}
+    />
   );
 }
