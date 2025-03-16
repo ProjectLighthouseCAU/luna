@@ -26,7 +26,7 @@ function SidebarVisibleRoutes({ routes }: { routes: VisibleRoute[] }) {
             <div ref={ref}>
               <RouteLink
                 icon={route.icon}
-                name={truncate(route.name, 14)}
+                name={truncate(route.name, 18)}
                 path={route.path}
                 isSkeleton={!inView}
               >
