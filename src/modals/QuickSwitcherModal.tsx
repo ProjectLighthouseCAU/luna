@@ -27,6 +27,7 @@ export function QuickSwitcherModal({
   const flatRoutes = useMemo(() => flatten(visibleRoutes), [visibleRoutes]);
 
   const filteredRoutes = useMemo(() => {
+    if (!query) return [];
     const lowerQuery = query.toLowerCase();
     return flatRoutes
       .filter(route => route.name.toLowerCase().includes(lowerQuery))
@@ -44,30 +45,29 @@ export function QuickSwitcherModal({
           <div className="flex flex-col">
             <Input
               autoFocus
+              variant="faded"
               placeholder="Where do you want to go?"
               value={query}
               onValueChange={setQuery}
+              classNames={{
+                // Remove focus ring: https://dev.to/janjitsu/remove-ring-border-from-nextui-input-component-11h1
+                inputWrapper:
+                  'group-data-[focus-visible=true]:ring-0 group-data-[focus-visible=true]:ring-offset-0',
+              }}
             />
-            {query ? (
-              <Listbox
-                className="p-2"
-                items={filteredRoutes}
-                aria-label="Results"
-              >
-                {route => (
-                  <ListboxItem
-                    key={route.key}
-                    startContent={route.icon}
-                    aria-label={route.name}
-                  >
+            {filteredRoutes.length > 0 ? (
+              <div className="flex flex-col gap-2 p-2" aria-label="Results">
+                {filteredRoutes.map(route => (
+                  <div className="flex flex-row gap-2">
+                    {route.icon}
                     <div
                       className={route.key === selectedKey ? 'font-bold' : ''}
                     >
                       {route.name}
                     </div>
-                  </ListboxItem>
-                )}
-              </Listbox>
+                  </div>
+                ))}
+              </div>
             ) : null}
           </div>
         )}
