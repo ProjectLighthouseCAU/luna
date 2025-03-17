@@ -17,6 +17,7 @@ export interface VisibleRoute {
   name: string;
   path: string;
   icon: ReactNode;
+  isLazyLoaded: boolean;
   children: VisibleRoute[];
 }
 
@@ -42,41 +43,48 @@ export function useVisibleRoutes({
         name: 'Admin',
         path: '/admin',
         icon: <IconTower />,
+        isLazyLoaded: false,
         children: [
           {
             name: 'Resources',
             path: '/admin/resources',
             icon: <IconFolder />,
+            isLazyLoaded: false,
             children: [],
           },
           {
             name: 'Monitoring',
             path: '/admin/monitoring',
             icon: <IconHeartRateMonitor />,
+            isLazyLoaded: false,
             children: [],
           },
           {
             name: 'Users',
             path: '/admin/users',
             icon: <IconUsers />,
+            isLazyLoaded: false,
             children: [],
           },
           {
             name: 'Roles',
             path: '/admin/roles',
             icon: <IconCategory />,
+            isLazyLoaded: false,
             children: [],
           },
           {
             name: 'Registration Keys',
             path: '/admin/registration-keys',
             icon: <IconKey />,
+            isLazyLoaded: false,
             children: [],
           },
           {
             name: 'Settings',
             path: '/admin/settings',
             icon: <IconSettings />,
+            isLazyLoaded: false,
             children: [],
           },
         ],
@@ -93,6 +101,7 @@ export function useVisibleRoutes({
         name: 'Displays',
         path: '/displays',
         icon: <IconBuildingLighthouse />,
+        isLazyLoaded: false,
         children: [
           ...(user?.username
             ? [
@@ -100,6 +109,7 @@ export function useVisibleRoutes({
                   name: `${user.username} (me)`,
                   icon: <IconBuildingLighthouse />,
                   path: `/displays/${user.username}`,
+                  isLazyLoaded: false,
                   children: [],
                 },
               ]
@@ -116,6 +126,7 @@ export function useVisibleRoutes({
                   name: username,
                   path: `/displays/${username}`,
                   icon: <IconBuildingLighthouse />,
+                  isLazyLoaded: true,
                   children: [],
                 }))
             : []),
