@@ -74,9 +74,13 @@ export function QuickSwitcherModal({
           setSelectedIndex(i => (i + 1) % filteredRoutes.length);
           e.preventDefault();
           break;
+        case 'Escape':
+          setOpen(false);
+          e.preventDefault();
+          break;
       }
     },
-    [filteredRoutes.length]
+    [filteredRoutes.length, setOpen]
   );
 
   const onUpdateQuery = useCallback((newQuery: string) => {
