@@ -21,23 +21,31 @@ function SidebarVisibleRoutes({ routes }: { routes: VisibleRoute[] }) {
   return (
     <>
       {routes.map(route => (
-        <InView key={route.name}>
-          {({ inView, ref }) => (
-            <div ref={ref}>
-              <RouteLink
-                icon={route.icon}
-                name={truncate(route.name, 18)}
-                path={route.path}
-                isSkeleton={!inView}
-              >
-                {route.children.length > 0 ? (
-                  <SidebarVisibleRoutes routes={route.children} />
-                ) : null}
-              </RouteLink>
-            </div>
-          )}
-        </InView>
+        <SidebarVisibleRoute key={route.name} route={route} />
       ))}
     </>
+  );
+}
+
+function SidebarVisibleRoute({ route }: { route: VisibleRoute }) {
+  const routeLink = (inView: boolean) => (
+    <RouteLink
+      icon={route.icon}
+      name={truncate(route.name, 18)}
+      path={route.path}
+      isSkeleton={!inView}
+    >
+      {route.children.length > 0 ? (
+        <SidebarVisibleRoutes routes={route.children} />
+      ) : null}
+    </RouteLink>
+  );
+
+  return route.isLazyLoaded ? (
+    <InView>
+      {({ inView, ref }) => <div ref={ref}>{routeLink(inView)}</div>}
+    </InView>
+  ) : (
+    routeLink(true)
   );
 }
