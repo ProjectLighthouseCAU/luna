@@ -44,7 +44,14 @@ export function HomeScreen() {
     };
   }, []);
 
-  const toggleExpanded = useCallback(() => setExpanded(e => !e), []);
+  const toggleExpanded = useCallback(() => {
+    if (isCompact && !isExpanded) {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 50);
+    }
+    setExpanded(e => !e);
+  }, [isCompact, isExpanded]);
 
   return (
     <div className={`flex ${isCompact ? 'flex-col h-full' : 'flex-row'}`}>
