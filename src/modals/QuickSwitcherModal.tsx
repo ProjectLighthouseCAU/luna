@@ -1,7 +1,13 @@
 import { Input, Modal, ModalContent, Skeleton } from '@heroui/react';
 import { useVisibleRoutes, VisibleRoute } from '@luna/hooks/useVisibleRoutes';
 import { IconChevronRight } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 export interface QuickSwitcherModalProps {
@@ -45,14 +51,38 @@ export function QuickSwitcherModal({
       .slice(0, maxResults);
   }, [flatRoutes, query]);
 
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const selectedRoute =
-    filteredRoutes.length > 0 ? filteredRoutes[0] : undefined;
+    filteredRoutes.length > 0 ? filteredRoutes[selectedIndex] : undefined;
 
   useEffect(() => {
     if (!isOpen) {
       setQuery('');
     }
   }, [isOpen]);
+
+  const onKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
+    e => {
+      switch (e.code) {
+        case 'ArrowUp':
+          setSelectedIndex(
+            i => (i - 1 + filteredRoutes.length) % filteredRoutes.length
+          );
+          e.preventDefault();
+          break;
+        case 'ArrowDown':
+          setSelectedIndex(i => (i + 1) % filteredRoutes.length);
+          e.preventDefault();
+          break;
+      }
+    },
+    [filteredRoutes.length]
+  );
+
+  const onUpdateQuery = useCallback((newQuery: string) => {
+    setSelectedIndex(0);
+    setQuery(newQuery);
+  }, []);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen} placement="top">
@@ -73,7 +103,8 @@ export function QuickSwitcherModal({
               variant="faded"
               placeholder="Where do you want to go?"
               value={query}
-              onValueChange={setQuery}
+              onValueChange={onUpdateQuery}
+              onKeyDown={onKeyDown}
               classNames={{
                 // Remove focus ring: https://dev.to/janjitsu/remove-ring-border-from-nextui-input-component-11h1
                 inputWrapper:
