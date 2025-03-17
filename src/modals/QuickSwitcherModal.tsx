@@ -121,7 +121,7 @@ export function QuickSwitcherModal({
                   route ? (
                     <NavLink to={route.path} key={route.key} onClick={onClose}>
                       <div
-                        className={`flex flex-row p-2 gap-2 items-center rounded-md ${route.key === selectedRoute?.key ? 'bg-primary' : ''}`}
+                        className={`flex flex-row p-2 gap-2 items-center rounded-md ${route.key === selectedRoute?.key ? 'bg-primary text-white' : ''}`}
                       >
                         {route.icon}
                         <div className="flex flex-row items-center">
