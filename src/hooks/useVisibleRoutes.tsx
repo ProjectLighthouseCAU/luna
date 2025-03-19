@@ -12,6 +12,7 @@ import {
   IconUsers,
 } from '@tabler/icons-react';
 import { ReactNode, useContext, useMemo } from 'react';
+import { Set } from 'immutable';
 
 export interface VisibleRoute {
   name: string;
@@ -95,6 +96,25 @@ export function useVisibleRoutes({
 
   const allUsernames = useJsonMemo([...users.all]);
 
+  const pinnedUsers = useMemo(
+    () => [
+      ...(user?.username
+        ? [
+            {
+              username: user.username,
+              label: 'me',
+            },
+          ]
+        : []),
+    ],
+    [user?.username]
+  );
+
+  const pinnedUsernames = useMemo(
+    () => Set(pinnedUsers.map(u => u.username)),
+    [pinnedUsers]
+  );
+
   const userRoutes = useMemo(
     () => [
       {
@@ -103,22 +123,18 @@ export function useVisibleRoutes({
         icon: <IconBuildingLighthouse />,
         isLazyLoaded: false,
         children: [
-          ...(user?.username
-            ? [
-                {
-                  name: `${user.username} (me)`,
-                  icon: <IconBuildingLighthouse />,
-                  path: `/displays/${user.username}`,
-                  isLazyLoaded: false,
-                  children: [],
-                },
-              ]
-            : []),
+          ...pinnedUsers.map(pinned => ({
+            name: `${pinned.username} (${pinned.label})`,
+            icon: <IconBuildingLighthouse />,
+            path: `/displays/${pinned.username}`,
+            isLazyLoaded: false,
+            children: [],
+          })),
           ...(showUserDisplays || searchQuery
             ? allUsernames
                 .filter(
                   username =>
-                    username !== user?.username &&
+                    !pinnedUsernames.contains(username) &&
                     username.toLowerCase().includes(searchQuery.toLowerCase())
                 )
                 .sort()
@@ -133,7 +149,7 @@ export function useVisibleRoutes({
         ],
       },
     ],
-    [allUsernames, searchQuery, showUserDisplays, user?.username]
+    [allUsernames, pinnedUsernames, pinnedUsers, searchQuery, showUserDisplays]
   );
 
   const routes = useMemo<VisibleRoute[]>(
