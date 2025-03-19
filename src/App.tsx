@@ -7,6 +7,7 @@ import { router } from '@luna/routes';
 import { HeroUIProvider } from '@heroui/react';
 import { RouterProvider } from 'react-router-dom';
 import { ClientIdContextProvider } from '@luna/contexts/env/ClientIdContext';
+import { UserPinsContextProvider } from '@luna/contexts/displays/UserPinsContext';
 
 const clientId = crypto.randomUUID();
 
@@ -18,9 +19,11 @@ export function App() {
           <WindowDimensionsContextProvider>
             <AuthContextProvider>
               <ModelContextProvider>
-                <SearchContextProvider>
-                  <RouterProvider router={router} />
-                </SearchContextProvider>
+                <UserPinsContextProvider>
+                  <SearchContextProvider>
+                    <RouterProvider router={router} />
+                  </SearchContextProvider>
+                </UserPinsContextProvider>
               </ModelContextProvider>
             </AuthContextProvider>
           </WindowDimensionsContextProvider>
