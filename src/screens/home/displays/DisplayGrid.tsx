@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { displayLayoutId } from '@luna/constants/LayoutId';
 import { Users } from '@luna/contexts/api/model/ModelContext';
 import { useMemo } from 'react';
+import { Divider } from '@heroui/react';
+import { DisplayPin, usePinnedDisplays } from '@luna/hooks/usePinnedDisplays';
 
 export interface DisplayGridProps {
   users: Users;
@@ -17,13 +19,17 @@ export function DisplayGrid({
   searchQuery,
   displayWidth,
 }: DisplayGridProps) {
+  const pinnedDisplays = usePinnedDisplays();
+
   // Filter the models case-insensitively by the search query
   const filteredUsers = useMemo(
     () =>
-      users.all.filter(username =>
-        username.toLowerCase().includes(searchQuery.toLowerCase())
+      users.all.filter(
+        username =>
+          !pinnedDisplays.has(username) &&
+          username.toLowerCase().includes(searchQuery.toLowerCase())
       ),
-    [searchQuery, users.all]
+    [pinnedDisplays, searchQuery, users.all]
   );
 
   // Disable animations automatically if there are too many displays for
@@ -34,28 +40,60 @@ export function DisplayGrid({
 
   return (
     <div className="flex flex-wrap gap-4 justify-center">
+      {[...pinnedDisplays.entries()].map(([username, pin]) => (
+        <DisplayLink
+          key={username}
+          username={username}
+          animationsEnabled={animationsEnabled}
+          displayWidth={displayWidth}
+          pin={pin}
+        />
+      ))}
+      <Divider />
       {[...filteredUsers]
         .sort((u1, u2) => u1.localeCompare(u2))
         .map(username => (
-          <Link to={username} key={username}>
-            <InView>
-              {({ inView, ref }) => (
-                <motion.div
-                  ref={ref}
-                  {...(animationsEnabled
-                    ? { layoutId: displayLayoutId(username) }
-                    : {})}
-                >
-                  <DisplayCard
-                    username={username}
-                    displayWidth={displayWidth}
-                    isSkeleton={!inView}
-                  />
-                </motion.div>
-              )}
-            </InView>
-          </Link>
+          <DisplayLink
+            key={username}
+            username={username}
+            animationsEnabled={animationsEnabled}
+            displayWidth={displayWidth}
+          />
         ))}
     </div>
+  );
+}
+
+function DisplayLink({
+  username,
+  animationsEnabled,
+  displayWidth,
+  pin,
+}: {
+  username: string;
+  animationsEnabled: boolean;
+  displayWidth: number;
+  pin?: DisplayPin;
+}) {
+  return (
+    <Link to={username}>
+      <InView>
+        {({ inView, ref }) => (
+          <motion.div
+            ref={ref}
+            {...(animationsEnabled
+              ? { layoutId: displayLayoutId(username) }
+              : {})}
+          >
+            <DisplayCard
+              username={username}
+              displayWidth={displayWidth}
+              pin={pin}
+              isSkeleton={!inView}
+            />
+          </motion.div>
+        )}
+      </InView>
+    </Link>
   );
 }

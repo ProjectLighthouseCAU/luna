@@ -1,5 +1,9 @@
 import { Input, Modal, ModalContent, Skeleton } from '@heroui/react';
-import { useVisibleRoutes, VisibleRoute } from '@luna/hooks/useVisibleRoutes';
+import {
+  useVisibleRoutes,
+  VisibleRoute,
+  VisibleRouteItem,
+} from '@luna/hooks/useVisibleRoutes';
 import { IconChevronRight } from '@tabler/icons-react';
 import {
   KeyboardEventHandler,
@@ -15,16 +19,23 @@ export interface QuickSwitcherModalProps {
   setOpen: (show: boolean) => void;
 }
 
-function flatten(
-  routes: VisibleRoute[],
+function flattenRoutes(
+  routeItems: VisibleRouteItem[],
   parentNames: string[] = []
 ): (VisibleRoute & { parentNames: string[] })[] {
   return (
-    routes
-      .flatMap(route => [
-        { ...route, parentNames },
-        ...flatten(route.children, [...parentNames, route.name]),
-      ])
+    routeItems
+      .flatMap(item =>
+        item.type === 'route'
+          ? [
+              { ...item, parentNames },
+              ...flattenRoutes(item.children ?? [], [
+                ...parentNames,
+                item.name,
+              ]),
+            ]
+          : []
+      )
       // Prioritize longer paths
       .sort((a, b) => b.path.length - a.path.length)
   );
@@ -37,8 +48,11 @@ export function QuickSwitcherModal({
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
-  const visibleRoutes = useVisibleRoutes({});
-  const flatRoutes = useMemo(() => flatten(visibleRoutes), [visibleRoutes]);
+  const visibleRouteItems = useVisibleRoutes({});
+  const flatRoutes = useMemo(
+    () => flattenRoutes(visibleRouteItems),
+    [visibleRouteItems]
+  );
 
   const maxResults = 8;
 
@@ -121,26 +135,31 @@ export function QuickSwitcherModal({
                   route ? (
                     <NavLink to={route.path} key={route.key} onClick={onClose}>
                       <div
-                        className={`flex flex-row p-2 gap-2 items-center rounded-md ${route.key === selectedRoute?.key ? 'bg-primary text-white' : ''}`}
+                        className={`flex flex-row justify-between p-2 gap-2 items-center rounded-md ${route.key === selectedRoute?.key ? 'bg-primary text-white' : ''}`}
                       >
-                        {route.icon}
-                        <div className="flex flex-row items-center">
-                          {route.parentNames.map(name => (
-                            <div key={name} className="flex flex-row">
-                              {name}
-                              <IconChevronRight />
+                        <div className={`flex flex-row gap-2 items-center`}>
+                          {route.icon}
+                          <div className="flex flex-row items-center">
+                            {route.parentNames.map(name => (
+                              <div key={name} className="flex flex-row">
+                                {name}
+                                <IconChevronRight />
+                              </div>
+                            ))}
+                            <div
+                              className={
+                                route.key === selectedRoute?.key
+                                  ? 'font-bold'
+                                  : ''
+                              }
+                            >
+                              {route.name}
                             </div>
-                          ))}
-                          <div
-                            className={
-                              route.key === selectedRoute?.key
-                                ? 'font-bold'
-                                : ''
-                            }
-                          >
-                            {route.name}
                           </div>
                         </div>
+                        {route.label?.({
+                          isActive: route.key === selectedRoute?.key,
+                        })}
                       </div>
                     </NavLink>
                   ) : (

@@ -1,6 +1,8 @@
+import { DisplayPinLabel } from '@luna/components/DisplayPinLabel';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { useJsonMemo } from '@luna/hooks/useJsonMemo';
+import { usePinnedDisplays } from '@luna/hooks/usePinnedDisplays';
 import {
   IconBuildingLighthouse,
   IconCategory,
@@ -13,13 +15,26 @@ import {
 } from '@tabler/icons-react';
 import { ReactNode, useContext, useMemo } from 'react';
 
-export interface VisibleRoute {
+interface LabelParams {
+  isActive: boolean;
+}
+
+interface BaseVisibleItem<Type extends string> {
+  type: Type;
   name: string;
+}
+
+export interface VisibleRoute extends BaseVisibleItem<'route'> {
   path: string;
   icon: ReactNode;
-  isLazyLoaded: boolean;
-  children: VisibleRoute[];
+  label?: (params: LabelParams) => ReactNode;
+  isLazyLoaded?: boolean;
+  children?: VisibleRouteItem[];
 }
+
+export interface VisibleDivider extends BaseVisibleItem<'divider'> {}
+
+export type VisibleRouteItem = VisibleRoute | VisibleDivider;
 
 export function useVisibleRoutes({
   showUserDisplays = true,
@@ -37,55 +52,49 @@ export function useVisibleRoutes({
     [user?.roles]
   );
 
-  const adminRoutes = useMemo(
+  const adminRouteItems = useMemo<VisibleRouteItem[]>(
     () => [
       {
+        type: 'route',
         name: 'Admin',
         path: '/admin',
         icon: <IconTower />,
-        isLazyLoaded: false,
         children: [
           {
+            type: 'route',
             name: 'Resources',
             path: '/admin/resources',
             icon: <IconFolder />,
-            isLazyLoaded: false,
-            children: [],
           },
           {
+            type: 'route',
             name: 'Monitoring',
             path: '/admin/monitoring',
             icon: <IconHeartRateMonitor />,
-            isLazyLoaded: false,
-            children: [],
           },
           {
+            type: 'route',
             name: 'Users',
             path: '/admin/users',
             icon: <IconUsers />,
-            isLazyLoaded: false,
-            children: [],
           },
           {
+            type: 'route',
             name: 'Roles',
             path: '/admin/roles',
             icon: <IconCategory />,
-            isLazyLoaded: false,
-            children: [],
           },
           {
+            type: 'route',
             name: 'Registration Keys',
             path: '/admin/registration-keys',
             icon: <IconKey />,
-            isLazyLoaded: false,
-            children: [],
           },
           {
+            type: 'route',
             name: 'Settings',
             path: '/admin/settings',
             icon: <IconSettings />,
-            isLazyLoaded: false,
-            children: [],
           },
         ],
       },
@@ -93,53 +102,68 @@ export function useVisibleRoutes({
     []
   );
 
+  const pinnedDisplays = usePinnedDisplays();
+
   const allUsernames = useJsonMemo([...users.all]);
 
-  const userRoutes = useMemo(
+  const remainingUsernames = useMemo(
+    () =>
+      allUsernames
+        .filter(
+          username =>
+            !pinnedDisplays.has(username) &&
+            username.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .sort(),
+    [allUsernames, pinnedDisplays, searchQuery]
+  );
+
+  const userRouteItems = useMemo<VisibleRouteItem[]>(
     () => [
       {
+        type: 'route',
         name: 'Displays',
         path: '/displays',
         icon: <IconBuildingLighthouse />,
-        isLazyLoaded: false,
         children: [
-          ...(user?.username
-            ? [
-                {
-                  name: `${user.username} (me)`,
-                  icon: <IconBuildingLighthouse />,
-                  path: `/displays/${user.username}`,
-                  isLazyLoaded: false,
-                  children: [],
-                },
-              ]
-            : []),
+          ...pinnedDisplays.entrySeq().map(([username, pin]) => ({
+            type: 'route' as const,
+            name: username,
+            icon: <IconBuildingLighthouse />,
+            label: ({ isActive }: LabelParams) => (
+              <DisplayPinLabel isActive={isActive} pin={pin} />
+            ),
+            path: `/displays/${username}`,
+          })),
           ...(showUserDisplays || searchQuery
-            ? allUsernames
-                .filter(
-                  username =>
-                    username !== user?.username &&
-                    username.toLowerCase().includes(searchQuery.toLowerCase())
-                )
-                .sort()
-                .map<VisibleRoute>(username => ({
+            ? [
+                ...(pinnedDisplays.size > 0 && remainingUsernames.length > 0
+                  ? [
+                      {
+                        type: 'divider' as const,
+                        name: 'Pinned Users Divider',
+                      },
+                    ]
+                  : []),
+                ...remainingUsernames.map<VisibleRouteItem>(username => ({
+                  type: 'route',
                   name: username,
                   path: `/displays/${username}`,
                   icon: <IconBuildingLighthouse />,
                   isLazyLoaded: true,
-                  children: [],
-                }))
+                })),
+              ]
             : []),
         ],
       },
     ],
-    [allUsernames, searchQuery, showUserDisplays, user?.username]
+    [pinnedDisplays, remainingUsernames, searchQuery, showUserDisplays]
   );
 
-  const routes = useMemo<VisibleRoute[]>(
-    () => [...(isAdmin ? adminRoutes : []), ...userRoutes],
-    [adminRoutes, isAdmin, userRoutes]
+  const routeItems = useMemo<VisibleRouteItem[]>(
+    () => [...(isAdmin ? adminRouteItems : []), ...userRouteItems],
+    [adminRouteItems, isAdmin, userRouteItems]
   );
 
-  return routes;
+  return routeItems;
 }
