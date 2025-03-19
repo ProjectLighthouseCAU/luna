@@ -1,10 +1,14 @@
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { useStream } from '@luna/hooks/useStream';
-import { useContext, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
+
+const metaPath = ['live'];
 
 export function useLiveUser() {
-  const livePath = useStream<string[]>(['live']);
   const { users } = useContext(ModelContext);
+  const { api } = useContext(ModelContext);
+
+  const livePath = useStream<string[]>(metaPath);
 
   const liveUsername = useMemo(
     () =>
@@ -18,5 +22,14 @@ export function useLiveUser() {
     [livePath, users.all]
   );
 
-  return { liveUsername };
+  const setLiveUsername = useCallback(
+    (username: string) => {
+      (async () => {
+        await api.put(metaPath, ['user', username, 'model']);
+      })();
+    },
+    [api]
+  );
+
+  return { liveUsername, setLiveUsername };
 }

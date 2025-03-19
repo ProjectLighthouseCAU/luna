@@ -1,7 +1,7 @@
 import { DisplayContextMenu } from '@luna/components/DisplayContextMenu';
 import { DisplayPinLabel } from '@luna/components/DisplayPinLabel';
-import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
+import { useAdminStatus } from '@luna/hooks/useAdminStatus';
 import { useJsonMemo } from '@luna/hooks/useJsonMemo';
 import { usePinnedDisplays } from '@luna/hooks/usePinnedDisplays';
 import {
@@ -56,13 +56,7 @@ export function useVisibleRoutes({
   searchQuery?: string;
 }) {
   const { users } = useContext(ModelContext);
-  const auth = useContext(AuthContext);
-
-  const user = useMemo(() => auth.user, [auth.user]);
-  const isAdmin = useMemo(
-    () => user?.roles.find(role => role.name === 'admin') !== undefined,
-    [user?.roles]
-  );
+  const { isAdmin } = useAdminStatus();
 
   const adminRouteItems = useMemo<VisibleRouteItem[]>(
     () => [
