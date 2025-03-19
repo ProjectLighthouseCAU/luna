@@ -1,4 +1,5 @@
 import { Input, Modal, ModalContent } from '@heroui/react';
+import { ContextMenu } from '@luna/components/ContextMenu';
 import {
   useVisibleRoutes,
   VisibleRoute,
@@ -132,35 +133,37 @@ export function QuickSwitcherModal({
             {filteredRoutes.length > 0 ? (
               <div className="flex flex-col gap-2 p-2" aria-label="Results">
                 {filteredRoutes.map(route => (
-                  <NavLink to={route.path} key={route.key} onClick={onClose}>
-                    <div
-                      className={`flex flex-row justify-between p-2 gap-2 items-center rounded-md ${route.key === selectedRoute?.key ? 'bg-primary text-white' : ''}`}
-                    >
-                      <div className={`flex flex-row gap-2 items-center`}>
-                        {route.icon}
-                        <div className="flex flex-row items-center">
-                          {route.parentNames.map(name => (
-                            <div key={name} className="flex flex-row">
-                              {name}
-                              <IconChevronRight />
+                  <ContextMenu menu={route.contextMenu} key={route.key}>
+                    <NavLink to={route.path} onClick={onClose}>
+                      <div
+                        className={`flex flex-row justify-between p-2 gap-2 items-center rounded-md ${route.key === selectedRoute?.key ? 'bg-primary text-white' : ''}`}
+                      >
+                        <div className={`flex flex-row gap-2 items-center`}>
+                          {route.icon}
+                          <div className="flex flex-row items-center">
+                            {route.parentNames.map(name => (
+                              <div key={name} className="flex flex-row">
+                                {name}
+                                <IconChevronRight />
+                              </div>
+                            ))}
+                            <div
+                              className={
+                                route.key === selectedRoute?.key
+                                  ? 'font-bold'
+                                  : ''
+                              }
+                            >
+                              {route.name}
                             </div>
-                          ))}
-                          <div
-                            className={
-                              route.key === selectedRoute?.key
-                                ? 'font-bold'
-                                : ''
-                            }
-                          >
-                            {route.name}
                           </div>
                         </div>
+                        {route.label?.({
+                          isActive: route.key === selectedRoute?.key,
+                        })}
                       </div>
-                      {route.label?.({
-                        isActive: route.key === selectedRoute?.key,
-                      })}
-                    </div>
-                  </NavLink>
+                    </NavLink>
+                  </ContextMenu>
                 ))}
               </div>
             ) : null}
