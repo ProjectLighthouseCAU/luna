@@ -1,5 +1,6 @@
 import { DisplayRouteLabel } from '@luna/components/DisplayRouteLabel';
 import { DisplayPin } from '@luna/hooks/usePinnedDisplays';
+import { IconPin } from '@tabler/icons-react';
 
 export function DisplayPinLabel({
   isActive = false,
@@ -20,6 +21,7 @@ export function DisplayPinLabel({
           live
         </DisplayRouteLabel>
       ) : undefined}
+      {pin.userPinned ? <IconPin /> : undefined}
     </div>
   );
 }
