@@ -14,6 +14,7 @@ import {
   IconFolder,
   IconHeartRateMonitor,
   IconKey,
+  IconPin,
   IconSettings,
   IconTower,
   IconUsers,
@@ -65,7 +66,7 @@ function displayRoute(
             );
           }}
         >
-          {isPinned ? 'Unpin' : 'Pin'}
+          {isPinned ? 'Unpin' : 'Pin'} {username}
         </DropdownItem>
       </DropdownMenu>
     ),
