@@ -1,6 +1,8 @@
+import { DisplayRouteLabel } from '@luna/components/DisplayRouteLabel';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { useJsonMemo } from '@luna/hooks/useJsonMemo';
+import { DisplayPin, usePinnedDisplays } from '@luna/hooks/usePinnedDisplays';
 import {
   IconBuildingLighthouse,
   IconCategory,
@@ -12,9 +14,6 @@ import {
   IconUsers,
 } from '@tabler/icons-react';
 import { ReactNode, useContext, useMemo } from 'react';
-import { Set } from 'immutable';
-import { DisplayRouteLabel } from '@luna/components/DisplayRouteLabel';
-import { useLiveUser } from '@luna/hooks/useLiveUser';
 
 interface LabelParams {
   isActive: boolean;
@@ -103,55 +102,25 @@ export function useVisibleRoutes({
     []
   );
 
-  const allUsernames = useJsonMemo([...users.all]);
-
-  const { liveUsername } = useLiveUser();
-
-  const pinnedUsers = useMemo(
-    () => [
-      ...(user?.username
-        ? [
-            {
-              username: user.username,
-              label: ({ isActive }: LabelParams) => (
-                <DisplayRouteLabel isActive={isActive} color="secondary">
-                  me
-                </DisplayRouteLabel>
-              ),
-            },
-          ]
-        : []),
-      ...(liveUsername
-        ? [
-            {
-              username: liveUsername,
-              label: ({ isActive }: LabelParams) => (
-                <DisplayRouteLabel isActive={isActive} color="danger">
-                  live
-                </DisplayRouteLabel>
-              ),
-            },
-          ]
-        : []),
-    ],
-    [liveUsername, user?.username]
-  );
+  const pinnedDisplays = usePinnedDisplays();
 
   const pinnedUsernames = useMemo(
-    () => Set(pinnedUsers.map(u => u.username)),
-    [pinnedUsers]
+    () => [...pinnedDisplays.keys()].sort(),
+    [pinnedDisplays]
   );
+
+  const allUsernames = useJsonMemo([...users.all]);
 
   const remainingUsernames = useMemo(
     () =>
       allUsernames
         .filter(
           username =>
-            !pinnedUsernames.contains(username) &&
+            !pinnedDisplays.has(username) &&
             username.toLowerCase().includes(searchQuery.toLowerCase())
         )
         .sort(),
-    [allUsernames, pinnedUsernames, searchQuery]
+    [allUsernames, pinnedDisplays, searchQuery]
   );
 
   const userRouteItems = useMemo<VisibleRouteItem[]>(
@@ -162,16 +131,21 @@ export function useVisibleRoutes({
         path: '/displays',
         icon: <IconBuildingLighthouse />,
         children: [
-          ...pinnedUsers.map(pinned => ({
+          ...pinnedUsernames.map(username => ({
             type: 'route' as const,
-            name: pinned.username,
+            name: username,
             icon: <IconBuildingLighthouse />,
-            label: pinned.label,
-            path: `/displays/${pinned.username}`,
+            label: ({ isActive }: LabelParams) => (
+              <DisplayPinLabel
+                isActive={isActive}
+                pin={pinnedDisplays.get(username) ?? {}}
+              />
+            ),
+            path: `/displays/${username}`,
           })),
           ...(showUserDisplays || searchQuery
             ? [
-                ...(pinnedUsers.length > 0 && remainingUsernames.length > 0
+                ...(pinnedDisplays.size > 0 && remainingUsernames.length > 0
                   ? [
                       {
                         type: 'divider' as const,
@@ -191,7 +165,13 @@ export function useVisibleRoutes({
         ],
       },
     ],
-    [pinnedUsers, remainingUsernames, searchQuery, showUserDisplays]
+    [
+      pinnedDisplays,
+      pinnedUsernames,
+      remainingUsernames,
+      searchQuery,
+      showUserDisplays,
+    ]
   );
 
   const routeItems = useMemo<VisibleRouteItem[]>(
@@ -200,4 +180,27 @@ export function useVisibleRoutes({
   );
 
   return routeItems;
+}
+
+function DisplayPinLabel({
+  isActive,
+  pin,
+}: {
+  isActive: boolean;
+  pin: DisplayPin;
+}) {
+  return (
+    <div className="flex flex-row gap-2">
+      {pin.me ? (
+        <DisplayRouteLabel isActive={isActive} color="secondary">
+          me
+        </DisplayRouteLabel>
+      ) : undefined}
+      {pin.live ? (
+        <DisplayRouteLabel isActive={isActive} color="danger">
+          live
+        </DisplayRouteLabel>
+      ) : undefined}
+    </div>
+  );
 }
