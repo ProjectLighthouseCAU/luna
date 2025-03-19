@@ -1,8 +1,8 @@
-import { DisplayRouteLabel } from '@luna/components/DisplayRouteLabel';
+import { DisplayPinLabel } from '@luna/components/DisplayPinLabel';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { useJsonMemo } from '@luna/hooks/useJsonMemo';
-import { DisplayPin, usePinnedDisplays } from '@luna/hooks/usePinnedDisplays';
+import { usePinnedDisplays } from '@luna/hooks/usePinnedDisplays';
 import {
   IconBuildingLighthouse,
   IconCategory,
@@ -166,27 +166,4 @@ export function useVisibleRoutes({
   );
 
   return routeItems;
-}
-
-function DisplayPinLabel({
-  isActive,
-  pin,
-}: {
-  isActive: boolean;
-  pin: DisplayPin;
-}) {
-  return (
-    <div className="flex flex-row gap-2">
-      {pin.me ? (
-        <DisplayRouteLabel isActive={isActive} color="secondary">
-          me
-        </DisplayRouteLabel>
-      ) : undefined}
-      {pin.live ? (
-        <DisplayRouteLabel isActive={isActive} color="danger">
-          live
-        </DisplayRouteLabel>
-      ) : undefined}
-    </div>
-  );
 }
