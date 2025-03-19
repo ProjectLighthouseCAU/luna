@@ -1,11 +1,7 @@
-import { DropdownItem, DropdownMenu } from '@heroui/react';
+import { DisplayContextMenu } from '@luna/components/DisplayContextMenu';
 import { DisplayPinLabel } from '@luna/components/DisplayPinLabel';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
-import {
-  UserPinsContext,
-  UserPinsContextValue,
-} from '@luna/contexts/displays/UserPinsContext';
 import { useJsonMemo } from '@luna/hooks/useJsonMemo';
 import { usePinnedDisplays } from '@luna/hooks/usePinnedDisplays';
 import {
@@ -42,33 +38,13 @@ export interface VisibleDivider extends BaseVisibleItem<'divider'> {}
 
 export type VisibleRouteItem = VisibleRoute | VisibleDivider;
 
-function displayRoute(
-  username: string,
-  { pinnedUsernames, setPinnedUsernames }: UserPinsContextValue
-): VisibleRoute {
-  const isPinned = pinnedUsernames.contains(username);
-
+function displayRoute(username: string): VisibleRoute {
   return {
     type: 'route',
     name: username,
     path: `/displays/${username}`,
     icon: <IconBuildingLighthouse />,
-    contextMenu: (
-      <DropdownMenu>
-        <DropdownItem
-          key="pin"
-          onPress={() => {
-            setPinnedUsernames(
-              isPinned
-                ? pinnedUsernames.remove(username)
-                : pinnedUsernames.add(username)
-            );
-          }}
-        >
-          {isPinned ? 'Unpin' : 'Pin'} {username}
-        </DropdownItem>
-      </DropdownMenu>
-    ),
+    contextMenu: <DisplayContextMenu username={username} />,
   };
 }
 
@@ -80,7 +56,6 @@ export function useVisibleRoutes({
   searchQuery?: string;
 }) {
   const { users } = useContext(ModelContext);
-  const userPins = useContext(UserPinsContext);
   const auth = useContext(AuthContext);
 
   const user = useMemo(() => auth.user, [auth.user]);
@@ -164,7 +139,7 @@ export function useVisibleRoutes({
         icon: <IconBuildingLighthouse />,
         children: [
           ...pinnedDisplays.entrySeq().map(([username, pin]) => ({
-            ...displayRoute(username, userPins),
+            ...displayRoute(username),
             label: ({ isActive }: LabelParams) => (
               <DisplayPinLabel isActive={isActive} pin={pin} />
             ),
@@ -180,7 +155,7 @@ export function useVisibleRoutes({
                     ]
                   : []),
                 ...remainingUsernames.map<VisibleRouteItem>(username => ({
-                  ...displayRoute(username, userPins),
+                  ...displayRoute(username),
                   isLazyLoaded: true,
                 })),
               ]
@@ -188,13 +163,7 @@ export function useVisibleRoutes({
         ],
       },
     ],
-    [
-      pinnedDisplays,
-      remainingUsernames,
-      searchQuery,
-      showUserDisplays,
-      userPins,
-    ]
+    [pinnedDisplays, remainingUsernames, searchQuery, showUserDisplays]
   );
 
   const routeItems = useMemo<VisibleRouteItem[]>(
