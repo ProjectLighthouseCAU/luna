@@ -4,6 +4,8 @@ import React, { memo } from 'react';
 import { DisplayStream } from '@luna/screens/home/displays/DisplayStream';
 import { DisplayPin } from '@luna/hooks/usePinnedDisplays';
 import { DisplayPinLabel } from '@luna/components/DisplayPinLabel';
+import { ContextMenu } from '@luna/components/ContextMenu';
+import { DisplayContextMenu } from '@luna/components/DisplayContextMenu';
 
 interface DisplayCardProps {
   username: string;
@@ -23,21 +25,23 @@ export const DisplayCard = memo(
   }: DisplayCardProps) => {
     const displayHeight = displayWidth / DISPLAY_ASPECT_RATIO;
 
-    return (
+    return isSkeleton ? (
       <Card className={className}>
-        {isSkeleton ? (
-          <div style={{ width: displayWidth, height: displayHeight }} />
-        ) : (
-          <DisplayStream username={username} width={displayWidth} />
-        )}
-        <CardFooter
-          className="flex flex-row gap-2 truncate"
-          style={{ width: displayWidth }}
-        >
-          {username}
-          {pin && !isSkeleton ? <DisplayPinLabel pin={pin} /> : undefined}
-        </CardFooter>
+        <div style={{ width: displayWidth, height: displayHeight }} />
       </Card>
+    ) : (
+      <ContextMenu menu={<DisplayContextMenu username={username} />}>
+        <Card className={className}>
+          <DisplayStream username={username} width={displayWidth} />
+          <CardFooter
+            className="flex flex-row gap-2 truncate"
+            style={{ width: displayWidth }}
+          >
+            {username}
+            {pin && !isSkeleton ? <DisplayPinLabel pin={pin} /> : undefined}
+          </CardFooter>
+        </Card>
+      </ContextMenu>
     );
   },
   (prevProps, newProps) =>

@@ -1,12 +1,12 @@
+import { Divider } from '@heroui/react';
 import { DisplayCard } from '@luna/components/DisplayCard';
-import { InView } from 'react-intersection-observer';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { displayLayoutId } from '@luna/constants/LayoutId';
 import { Users } from '@luna/contexts/api/model/ModelContext';
-import { useMemo } from 'react';
-import { Divider } from '@heroui/react';
 import { DisplayPin, usePinnedDisplays } from '@luna/hooks/usePinnedDisplays';
+import { motion } from 'framer-motion';
+import { useMemo } from 'react';
+import { InView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 
 export interface DisplayGridProps {
   users: Users;
