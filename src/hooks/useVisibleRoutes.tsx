@@ -14,7 +14,6 @@ import {
   IconFolder,
   IconHeartRateMonitor,
   IconKey,
-  IconPin,
   IconSettings,
   IconTower,
   IconUsers,
