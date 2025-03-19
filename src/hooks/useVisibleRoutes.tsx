@@ -13,12 +13,17 @@ import {
 } from '@tabler/icons-react';
 import { ReactNode, useContext, useMemo } from 'react';
 import { Set } from 'immutable';
+import { Chip } from '@heroui/react';
+
+interface LabelParams {
+  isActive: boolean;
+}
 
 export interface VisibleRoute {
   name: string;
   path: string;
   icon: ReactNode;
-  label?: ReactNode;
+  label?: (params: LabelParams) => ReactNode;
   isLazyLoaded?: boolean;
   children?: VisibleRoute[];
 }
@@ -90,7 +95,20 @@ export function useVisibleRoutes({
         ? [
             {
               username: user.username,
-              label: 'me',
+              label: ({ isActive }: LabelParams) => (
+                <Chip
+                  classNames={{
+                    base: isActive ? 'border-white' : 'border-secondary',
+                    content: `uppercase font-bold ${
+                      isActive ? 'text-white' : 'text-secondary'
+                    }`,
+                  }}
+                  variant="bordered"
+                  size="sm"
+                >
+                  me
+                </Chip>
+              ),
             },
           ]
         : []),

@@ -143,7 +143,9 @@ export function QuickSwitcherModal({
                             </div>
                           </div>
                         </div>
-                        {route.label}
+                        {route.label?.({
+                          isActive: route.key === selectedRoute?.key,
+                        })}
                       </div>
                     </NavLink>
                   ) : (

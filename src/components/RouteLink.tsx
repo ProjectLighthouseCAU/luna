@@ -15,7 +15,7 @@ interface RouteLinkParams {
   icon: ReactNode;
   name: string;
   path: string;
-  label?: ReactNode;
+  label?: (params: { isActive: boolean }) => ReactNode;
   isSkeleton?: boolean;
   children?: ReactNode;
 }
@@ -55,7 +55,7 @@ export function RouteLink({
               {icon}
               {name}
             </div>
-            {label ??
+            {label?.({ isActive }) ??
               (children ? (
                 // Intentionally not using a button for the chevron to avoid
                 // https://github.com/ProjectLighthouseCAU/luna/issues/45
