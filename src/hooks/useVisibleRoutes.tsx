@@ -104,11 +104,6 @@ export function useVisibleRoutes({
 
   const pinnedDisplays = usePinnedDisplays();
 
-  const pinnedUsernames = useMemo(
-    () => [...pinnedDisplays.keys()].sort(),
-    [pinnedDisplays]
-  );
-
   const allUsernames = useJsonMemo([...users.all]);
 
   const remainingUsernames = useMemo(
@@ -131,18 +126,18 @@ export function useVisibleRoutes({
         path: '/displays',
         icon: <IconBuildingLighthouse />,
         children: [
-          ...pinnedUsernames.map(username => ({
-            type: 'route' as const,
-            name: username,
-            icon: <IconBuildingLighthouse />,
-            label: ({ isActive }: LabelParams) => (
-              <DisplayPinLabel
-                isActive={isActive}
-                pin={pinnedDisplays.get(username) ?? {}}
-              />
-            ),
-            path: `/displays/${username}`,
-          })),
+          ...pinnedDisplays
+            .entrySeq()
+            .sortBy(([_, pin]) => `${pin.me ? 0 : 1}${pin.live ? 0 : 1}`)
+            .map(([username, pin]) => ({
+              type: 'route' as const,
+              name: username,
+              icon: <IconBuildingLighthouse />,
+              label: ({ isActive }: LabelParams) => (
+                <DisplayPinLabel isActive={isActive} pin={pin} />
+              ),
+              path: `/displays/${username}`,
+            })),
           ...(showUserDisplays || searchQuery
             ? [
                 ...(pinnedDisplays.size > 0 && remainingUsernames.length > 0
@@ -165,13 +160,7 @@ export function useVisibleRoutes({
         ],
       },
     ],
-    [
-      pinnedDisplays,
-      pinnedUsernames,
-      remainingUsernames,
-      searchQuery,
-      showUserDisplays,
-    ]
+    [pinnedDisplays, remainingUsernames, searchQuery, showUserDisplays]
   );
 
   const routeItems = useMemo<VisibleRouteItem[]>(
