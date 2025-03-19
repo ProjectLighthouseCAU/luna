@@ -14,6 +14,7 @@ import {
 import { ReactNode, useContext, useMemo } from 'react';
 import { Set } from 'immutable';
 import { DisplayRouteLabel } from '@luna/components/DisplayRouteLabel';
+import { useLiveUser } from '@luna/hooks/useLiveUser';
 
 interface LabelParams {
   isActive: boolean;
@@ -89,6 +90,8 @@ export function useVisibleRoutes({
 
   const allUsernames = useJsonMemo([...users.all]);
 
+  const { liveUsername } = useLiveUser();
+
   const pinnedUsers = useMemo(
     () => [
       ...(user?.username
@@ -103,8 +106,20 @@ export function useVisibleRoutes({
             },
           ]
         : []),
+      ...(liveUsername
+        ? [
+            {
+              username: liveUsername,
+              label: ({ isActive }: LabelParams) => (
+                <DisplayRouteLabel isActive={isActive} color="danger">
+                  live
+                </DisplayRouteLabel>
+              ),
+            },
+          ]
+        : []),
     ],
-    [user?.username]
+    [liveUsername, user?.username]
   );
 
   const pinnedUsernames = useMemo(
