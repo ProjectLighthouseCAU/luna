@@ -28,6 +28,7 @@ export interface VisibleRoute extends BaseVisibleItem<'route'> {
   path: string;
   icon: ReactNode;
   label?: (params: LabelParams) => ReactNode;
+  contextMenu?: ReactNode;
   isLazyLoaded?: boolean;
   children?: VisibleRouteItem[];
 }
