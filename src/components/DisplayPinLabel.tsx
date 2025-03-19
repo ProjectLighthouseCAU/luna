@@ -2,10 +2,10 @@ import { DisplayRouteLabel } from '@luna/components/DisplayRouteLabel';
 import { DisplayPin } from '@luna/hooks/usePinnedDisplays';
 
 export function DisplayPinLabel({
-  isActive,
+  isActive = false,
   pin,
 }: {
-  isActive: boolean;
+  isActive?: boolean;
   pin: DisplayPin;
 }) {
   return (

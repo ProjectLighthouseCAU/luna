@@ -6,7 +6,7 @@ import { displayLayoutId } from '@luna/constants/LayoutId';
 import { Users } from '@luna/contexts/api/model/ModelContext';
 import { useMemo } from 'react';
 import { Divider } from '@heroui/react';
-import { usePinnedDisplays } from '@luna/hooks/usePinnedDisplays';
+import { DisplayPin, usePinnedDisplays } from '@luna/hooks/usePinnedDisplays';
 
 export interface DisplayGridProps {
   users: Users;
@@ -40,12 +40,13 @@ export function DisplayGrid({
 
   return (
     <div className="flex flex-wrap gap-4 justify-center">
-      {[...pinnedDisplays.keys()].map(username => (
+      {[...pinnedDisplays.entries()].map(([username, pin]) => (
         <DisplayLink
           key={username}
           username={username}
           animationsEnabled={animationsEnabled}
           displayWidth={displayWidth}
+          pin={pin}
         />
       ))}
       <Divider />
@@ -67,10 +68,12 @@ function DisplayLink({
   username,
   animationsEnabled,
   displayWidth,
+  pin,
 }: {
   username: string;
   animationsEnabled: boolean;
   displayWidth: number;
+  pin?: DisplayPin;
 }) {
   return (
     <Link to={username}>
@@ -85,6 +88,7 @@ function DisplayLink({
             <DisplayCard
               username={username}
               displayWidth={displayWidth}
+              pin={pin}
               isSkeleton={!inView}
             />
           </motion.div>
