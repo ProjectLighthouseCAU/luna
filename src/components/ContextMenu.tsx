@@ -2,7 +2,7 @@ import { Dropdown, DropdownTrigger } from '@heroui/react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
 export interface ContextMenuProps {
-  menu: ReactNode;
+  menu?: ReactNode;
   children: ReactNode;
 }
 
@@ -25,7 +25,7 @@ export function ContextMenu({ menu, children }: ContextMenuProps) {
     };
   }, []);
 
-  return (
+  return menu ? (
     <div ref={divRef}>
       {children}
       <Dropdown isOpen={isShown} onOpenChange={setShown}>
@@ -36,5 +36,7 @@ export function ContextMenu({ menu, children }: ContextMenuProps) {
         {menu}
       </Dropdown>
     </div>
+  ) : (
+    <>{children}</>
   );
 }

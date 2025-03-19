@@ -58,6 +58,7 @@ function SidebarVisibleRoute({ route }: { route: VisibleRoute }) {
       icon={route.icon}
       name={truncate(route.name, 18)}
       label={route.label}
+      contextMenu={route.contextMenu}
       path={route.path}
       isSkeleton={!inView}
     >

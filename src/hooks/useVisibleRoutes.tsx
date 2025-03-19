@@ -1,3 +1,4 @@
+import { DisplayContextMenu } from '@luna/components/DisplayContextMenu';
 import { DisplayPinLabel } from '@luna/components/DisplayPinLabel';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
@@ -28,6 +29,7 @@ export interface VisibleRoute extends BaseVisibleItem<'route'> {
   path: string;
   icon: ReactNode;
   label?: (params: LabelParams) => ReactNode;
+  contextMenu?: ReactNode;
   isLazyLoaded?: boolean;
   children?: VisibleRouteItem[];
 }
@@ -35,6 +37,16 @@ export interface VisibleRoute extends BaseVisibleItem<'route'> {
 export interface VisibleDivider extends BaseVisibleItem<'divider'> {}
 
 export type VisibleRouteItem = VisibleRoute | VisibleDivider;
+
+function displayRoute(username: string): VisibleRoute {
+  return {
+    type: 'route',
+    name: username,
+    path: `/displays/${username}`,
+    icon: <IconBuildingLighthouse />,
+    contextMenu: <DisplayContextMenu username={username} />,
+  };
+}
 
 export function useVisibleRoutes({
   showUserDisplays = true,
@@ -127,13 +139,10 @@ export function useVisibleRoutes({
         icon: <IconBuildingLighthouse />,
         children: [
           ...pinnedDisplays.entrySeq().map(([username, pin]) => ({
-            type: 'route' as const,
-            name: username,
-            icon: <IconBuildingLighthouse />,
+            ...displayRoute(username),
             label: ({ isActive }: LabelParams) => (
               <DisplayPinLabel isActive={isActive} pin={pin} />
             ),
-            path: `/displays/${username}`,
           })),
           ...(showUserDisplays || searchQuery
             ? [
@@ -146,10 +155,7 @@ export function useVisibleRoutes({
                     ]
                   : []),
                 ...remainingUsernames.map<VisibleRouteItem>(username => ({
-                  type: 'route',
-                  name: username,
-                  path: `/displays/${username}`,
-                  icon: <IconBuildingLighthouse />,
+                  ...displayRoute(username),
                   isLazyLoaded: true,
                 })),
               ]

@@ -2,7 +2,7 @@ import { ColorSchemeButton } from '@luna/components/ColorSchemeButton';
 import { SearchBar } from '@luna/components/SearchBar';
 import { UserSnippet } from '@luna/components/UserSnippet';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
-import { SearchContext } from '@luna/contexts/filter/SearchContext';
+import { SearchContext } from '@luna/contexts/displays/SearchContext';
 import { SidebarRoutes } from '@luna/screens/home/sidebar/SidebarRoutes';
 import {
   Divider,
