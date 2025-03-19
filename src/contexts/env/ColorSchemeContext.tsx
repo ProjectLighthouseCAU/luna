@@ -10,7 +10,7 @@ import {
   useState,
 } from 'react';
 
-interface ColorScheme {
+export interface ColorScheme {
   readonly isDark: boolean;
 }
 

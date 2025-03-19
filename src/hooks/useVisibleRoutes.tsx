@@ -13,7 +13,7 @@ import {
 } from '@tabler/icons-react';
 import { ReactNode, useContext, useMemo } from 'react';
 import { Set } from 'immutable';
-import { Chip } from '@heroui/react';
+import { DisplayRouteLabel } from '@luna/components/DisplayRouteLabel';
 
 interface LabelParams {
   isActive: boolean;
@@ -96,18 +96,9 @@ export function useVisibleRoutes({
             {
               username: user.username,
               label: ({ isActive }: LabelParams) => (
-                <Chip
-                  classNames={{
-                    base: isActive ? 'border-white' : 'border-secondary',
-                    content: `uppercase font-bold ${
-                      isActive ? 'text-white' : 'text-secondary'
-                    }`,
-                  }}
-                  variant="bordered"
-                  size="sm"
-                >
+                <DisplayRouteLabel isActive={isActive} color="secondary">
                   me
-                </Chip>
+                </DisplayRouteLabel>
               ),
             },
           ]
