@@ -3,21 +3,21 @@ import {
   Display,
   DisplayMouse,
 } from '@luna/components/Display';
-import { LaserMetrics, RoomV2Metrics } from '@luna/contexts/api/model/types';
+import { RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useEventListener } from '@luna/hooks/useEventListener';
+import { useLaserMetrics } from '@luna/hooks/useLaserMetrics';
 import { flattenRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
 import { MonitorCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
 import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 import { HomeContent } from '@luna/screens/home/HomeContent';
+import { Bounded, isBounded } from '@luna/utils/bounded';
 import * as rgb from '@luna/utils/rgb';
 import { throttle } from '@luna/utils/schedule';
 import { Vec2 } from '@luna/utils/vec2';
 import { Set } from 'immutable';
 import { LIGHTHOUSE_COLS, LIGHTHOUSE_FRAME_BYTES } from 'nighthouse/browser';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Bounded, isBounded } from '@luna/utils/bounded';
-import { useStream } from '@luna/hooks/useStream';
 
 export function MonitorView() {
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
@@ -47,7 +47,7 @@ export function MonitorView() {
       ? maxSize.width
       : maxSize.height * DISPLAY_ASPECT_RATIO;
 
-  const metrics = useStream<LaserMetrics>(['metrics', 'laser']);
+  const metrics = useLaserMetrics();
 
   const [focusedRoom, setSelectedRoom] = useState<number>();
   const [hoveredRoom, setHoveredRoom] = useState<number>();

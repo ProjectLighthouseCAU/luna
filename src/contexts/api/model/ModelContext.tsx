@@ -1,5 +1,5 @@
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
-import { LaserMetrics, UserModel } from '@luna/contexts/api/model/types';
+import { UserModel } from '@luna/contexts/api/model/types';
 import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
 import { Set } from 'immutable';
 import {
@@ -69,9 +69,6 @@ export interface ModelAPI {
 
   /** Moves a resource to an arbitrary path. */
   move(path: string[], newPath: string[]): Promise<Result<void>>;
-
-  /** Fetches lamp server metrics. */
-  getLaserMetrics(): Promise<Result<LaserMetrics>>;
 }
 
 export interface ModelContextValue {
@@ -101,8 +98,6 @@ export const ModelContext = createContext<ModelContextValue>({
     mkdir: async () => errorResult('No model context for creating directory'),
     isDirectory: async () => false,
     move: async () => errorResult('No model context for moving resource'),
-    getLaserMetrics: async () =>
-      errorResult('No model context for fetching laser metrics'),
   },
 });
 
@@ -261,9 +256,6 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
         } catch (error) {
           return errorResult(error);
         }
-      },
-      async getLaserMetrics() {
-        return (await this.get(['metrics', 'laser'])) as Result<LaserMetrics>;
       },
     }),
     [client]
