@@ -35,7 +35,7 @@ function SidebarVisibleRoute({ route }: { route: VisibleRoute }) {
       path={route.path}
       isSkeleton={!inView}
     >
-      {route.children.length > 0 ? (
+      {route.children && route.children.length > 0 ? (
         <SidebarVisibleRoutes routes={route.children} />
       ) : null}
     </RouteLink>

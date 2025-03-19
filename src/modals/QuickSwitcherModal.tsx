@@ -23,7 +23,7 @@ function flatten(
     routes
       .flatMap(route => [
         { ...route, parentNames },
-        ...flatten(route.children, [...parentNames, route.name]),
+        ...flatten(route.children ?? [], [...parentNames, route.name]),
       ])
       // Prioritize longer paths
       .sort((a, b) => b.path.length - a.path.length)
