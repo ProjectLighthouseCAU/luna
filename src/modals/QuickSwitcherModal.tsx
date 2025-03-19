@@ -121,26 +121,29 @@ export function QuickSwitcherModal({
                   route ? (
                     <NavLink to={route.path} key={route.key} onClick={onClose}>
                       <div
-                        className={`flex flex-row p-2 gap-2 items-center rounded-md ${route.key === selectedRoute?.key ? 'bg-primary text-white' : ''}`}
+                        className={`flex flex-row justify-between p-2 gap-2 items-center rounded-md ${route.key === selectedRoute?.key ? 'bg-primary text-white' : ''}`}
                       >
-                        {route.icon}
-                        <div className="flex flex-row items-center">
-                          {route.parentNames.map(name => (
-                            <div key={name} className="flex flex-row">
-                              {name}
-                              <IconChevronRight />
+                        <div className={`flex flex-row gap-2 items-center`}>
+                          {route.icon}
+                          <div className="flex flex-row items-center">
+                            {route.parentNames.map(name => (
+                              <div key={name} className="flex flex-row">
+                                {name}
+                                <IconChevronRight />
+                              </div>
+                            ))}
+                            <div
+                              className={
+                                route.key === selectedRoute?.key
+                                  ? 'font-bold'
+                                  : ''
+                              }
+                            >
+                              {route.name}
                             </div>
-                          ))}
-                          <div
-                            className={
-                              route.key === selectedRoute?.key
-                                ? 'font-bold'
-                                : ''
-                            }
-                          >
-                            {route.name}
                           </div>
                         </div>
+                        {route.label}
                       </div>
                     </NavLink>
                   ) : (

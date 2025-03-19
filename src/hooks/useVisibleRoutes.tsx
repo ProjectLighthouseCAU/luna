@@ -18,6 +18,7 @@ export interface VisibleRoute {
   name: string;
   path: string;
   icon: ReactNode;
+  label?: ReactNode;
   isLazyLoaded?: boolean;
   children?: VisibleRoute[];
 }
@@ -110,8 +111,9 @@ export function useVisibleRoutes({
         icon: <IconBuildingLighthouse />,
         children: [
           ...pinnedUsers.map(pinned => ({
-            name: `${pinned.username} (${pinned.label})`,
+            name: pinned.username,
             icon: <IconBuildingLighthouse />,
+            label: pinned.label,
             path: `/displays/${pinned.username}`,
           })),
           ...(showUserDisplays || searchQuery

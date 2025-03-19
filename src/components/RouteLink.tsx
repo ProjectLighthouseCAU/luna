@@ -15,6 +15,7 @@ interface RouteLinkParams {
   icon: ReactNode;
   name: string;
   path: string;
+  label?: ReactNode;
   isSkeleton?: boolean;
   children?: ReactNode;
 }
@@ -23,6 +24,7 @@ export function RouteLink({
   icon,
   name,
   path,
+  label,
   isSkeleton = false,
   children,
 }: RouteLinkParams) {
@@ -53,16 +55,17 @@ export function RouteLink({
               {icon}
               {name}
             </div>
-            {children ? (
-              // Intentionally not using a button for the chevron to avoid
-              // https://github.com/ProjectLighthouseCAU/luna/issues/45
-              <div
-                className={`p-0.5 rounded-md ${isActive || colorScheme.isDark ? 'hover:bg-[rgba(255,255,255,0.2)]' : 'hover:bg-[rgba(128,128,128,0.2)]'} active:opacity-80`}
-                onClick={onPressChevron}
-              >
-                {isExpanded ? <IconChevronDown /> : <IconChevronRight />}
-              </div>
-            ) : null}
+            {label ??
+              (children ? (
+                // Intentionally not using a button for the chevron to avoid
+                // https://github.com/ProjectLighthouseCAU/luna/issues/45
+                <div
+                  className={`p-0.5 rounded-md ${isActive || colorScheme.isDark ? 'hover:bg-[rgba(255,255,255,0.2)]' : 'hover:bg-[rgba(128,128,128,0.2)]'} active:opacity-80`}
+                  onClick={onPressChevron}
+                >
+                  {isExpanded ? <IconChevronDown /> : <IconChevronRight />}
+                </div>
+              ) : null)}
           </>
         )}
       </NavLink>
