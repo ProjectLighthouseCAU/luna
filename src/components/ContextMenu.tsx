@@ -15,18 +15,42 @@ export function ContextMenu({ menu, children }: ContextMenuProps) {
     if (div === null) {
       return;
     }
-    const listener = (e: MouseEvent) => {
+    const onContextMenu = (e: MouseEvent) => {
       e.preventDefault();
       setShown(isShown => !isShown);
     };
-    div.addEventListener('contextmenu', listener);
+
+    const longTouchDelayMs = 800;
+    let longTouchTimer: number | null = null;
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e !== null) {
+        longTouchTimer = window.setTimeout(() => {
+          setShown(true);
+        }, longTouchDelayMs);
+      }
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (longTouchTimer !== null) {
+        window.clearTimeout(longTouchTimer);
+        longTouchTimer = null;
+      }
+    };
+
+    div.addEventListener('contextmenu', onContextMenu);
+    div.addEventListener('touchstart', onTouchStart);
+    div.addEventListener('touchend', onTouchEnd);
+
     return () => {
-      div.removeEventListener('contextmenu', listener);
+      div.removeEventListener('contextmenu', onContextMenu);
+      div.removeEventListener('touchstart', onTouchStart);
+      div.removeEventListener('touchend', onTouchEnd);
     };
   }, []);
 
   return menu ? (
-    <div ref={divRef}>
+    <div ref={divRef} className="no-webkit-callout">
       {children}
       <Dropdown isOpen={isShown} onOpenChange={setShown}>
         <DropdownTrigger>

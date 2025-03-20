@@ -31,3 +31,8 @@ a:active {
   top: 5em;
   z-index: 20;
 }
+
+.no-webkit-callout {
+  /* Disables popover-style context menus on iOS, which we need for our own long-press context menu implementation. */
+  -webkit-touch-callout: none;
+}
