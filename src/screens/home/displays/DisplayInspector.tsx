@@ -27,10 +27,10 @@ export function DisplayInspector({
 
   return (
     <div className="flex flex-col space-y-3">
+      <DisplayInspectorActionsCard />
       {/* <DisplayInspectorOptionsCard isEditable={isMeOrAdmin} /> */}
       {isMeOrAdmin ? (
         <>
-          <DisplayInspectorActionsCard />
           <DisplayInspectorApiTokenCard />
           <DisplayInspectorInputCard
             username={username}
