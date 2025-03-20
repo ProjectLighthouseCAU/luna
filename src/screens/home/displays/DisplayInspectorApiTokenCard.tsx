@@ -17,19 +17,17 @@ export function DisplayInspectorApiTokenCard() {
 
   return (
     <TitledCard icon={<IconKey />} title="API Token">
-      <div className="flex flex-row items-center space-x-1">
-        <Tooltip content="Show the token">
-          <Button size="md" onPress={onOpen}>
-            Reveal
-          </Button>
-        </Tooltip>
+      <div className="flex flex-row justify-center items-center space-x-1">
+        <Button className="grow" size="sm" onPress={onOpen}>
+          Reveal Token
+        </Button>
         <ApiTokenModal
           token={token}
           isOpen={isOpen}
           onOpenChange={onOpenChange}
         />
         <Tooltip content="Copy the token">
-          <Button isIconOnly size="md" onPress={copyToClipboard}>
+          <Button isIconOnly size="sm" onPress={copyToClipboard}>
             <IconClipboard />
           </Button>
         </Tooltip>
