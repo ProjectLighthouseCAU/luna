@@ -24,7 +24,6 @@ export function ContextMenu({ menu, children }: ContextMenuProps) {
     let longTouchTimer: number | null = null;
 
     const onTouchStart = (e: TouchEvent) => {
-      e.preventDefault();
       if (e !== null) {
         longTouchTimer = window.setTimeout(() => {
           setShown(true);
@@ -51,7 +50,7 @@ export function ContextMenu({ menu, children }: ContextMenuProps) {
   }, []);
 
   return menu ? (
-    <div ref={divRef}>
+    <div ref={divRef} className="no-webkit-callout">
       {children}
       <Dropdown isOpen={isShown} onOpenChange={setShown}>
         <DropdownTrigger>
