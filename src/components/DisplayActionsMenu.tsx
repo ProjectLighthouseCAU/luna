@@ -40,7 +40,7 @@ export function DisplayActionsMenu({
     () => [
       {
         key: 'pin',
-        label: isPinned ? 'Unpin' : 'Pin',
+        label: `${isPinned ? 'Unpin' : 'Pin'} ${username}`,
         onPress: togglePinned,
       },
       ...(isAdmin
