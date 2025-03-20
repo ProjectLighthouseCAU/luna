@@ -1,4 +1,6 @@
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
+import { useAdminStatus } from '@luna/hooks/useAdminStatus';
+import { DisplayInspectorActionsCard } from '@luna/screens/home/displays/DisplayInspectorActionsCard';
 import { DisplayInspectorApiTokenCard } from '@luna/screens/home/displays/DisplayInspectorApiTokenCard';
 import { DisplayInspectorInputCard } from '@luna/screens/home/displays/DisplayInspectorInputCard';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
@@ -20,12 +22,12 @@ export function DisplayInspector({
   setInputConfig,
 }: DisplayInspectorProps) {
   const { user: me } = useContext(AuthContext);
-  const isMeOrAdmin =
-    username === me?.username ||
-    me?.roles.find(role => role.name === 'admin') !== undefined;
+  const { isAdmin } = useAdminStatus();
+  const isMeOrAdmin = username === me?.username || isAdmin;
 
   return (
     <div className="flex flex-col space-y-3">
+      <DisplayInspectorActionsCard username={username} />
       {/* <DisplayInspectorOptionsCard isEditable={isMeOrAdmin} /> */}
       {isMeOrAdmin ? (
         <>
