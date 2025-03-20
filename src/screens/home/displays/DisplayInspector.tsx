@@ -1,4 +1,5 @@
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
+import { DisplayInspectorActionsCard } from '@luna/screens/home/displays/DisplayInspectorActionsCard';
 import { DisplayInspectorApiTokenCard } from '@luna/screens/home/displays/DisplayInspectorApiTokenCard';
 import { DisplayInspectorInputCard } from '@luna/screens/home/displays/DisplayInspectorInputCard';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
@@ -29,6 +30,7 @@ export function DisplayInspector({
       {/* <DisplayInspectorOptionsCard isEditable={isMeOrAdmin} /> */}
       {isMeOrAdmin ? (
         <>
+          <DisplayInspectorActionsCard />
           <DisplayInspectorApiTokenCard />
           <DisplayInspectorInputCard
             username={username}
