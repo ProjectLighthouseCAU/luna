@@ -5,9 +5,10 @@ import { IconKey } from '@tabler/icons-react';
 
 export interface ApiTokenButtonProps {
   token: Token | null;
+  cycleToken: () => void;
 }
 
-export function ApiTokenButton({ token }: ApiTokenButtonProps) {
+export function ApiTokenButton({ token, cycleToken }: ApiTokenButtonProps) {
   const { onOpen, isOpen, onOpenChange } = useDisclosure();
   return (
     <>
@@ -18,6 +19,7 @@ export function ApiTokenButton({ token }: ApiTokenButtonProps) {
       </Tooltip>
       <ApiTokenModal
         token={token}
+        cycleToken={cycleToken}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
       />

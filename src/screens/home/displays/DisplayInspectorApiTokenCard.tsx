@@ -23,6 +23,7 @@ export function DisplayInspectorApiTokenCard() {
         </Button>
         <ApiTokenModal
           token={token}
+          cycleToken={cycleToken}
           isOpen={isOpen}
           onOpenChange={onOpenChange}
         />
