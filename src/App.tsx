@@ -8,8 +8,9 @@ import { HeroUIProvider } from '@heroui/react';
 import { RouterProvider } from 'react-router-dom';
 import { ClientIdContextProvider } from '@luna/contexts/env/ClientIdContext';
 import { UserPinsContextProvider } from '@luna/contexts/displays/UserPinsContext';
+import { randomUUID } from '@luna/utils/uuid';
 
-const clientId = crypto.randomUUID();
+const clientId = randomUUID();
 
 export function App() {
   return (
