@@ -2,11 +2,11 @@ import { ApiTokenModal } from '@luna/modals/ApiTokenModal';
 import { TitledCard } from '@luna/components/TitledCard';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { Button, Tooltip, useDisclosure } from '@heroui/react';
-import { IconClipboard, IconKey } from '@tabler/icons-react';
+import { IconClipboard, IconKey, IconRefresh } from '@tabler/icons-react';
 import { useCallback, useContext } from 'react';
 
 export function DisplayInspectorApiTokenCard() {
-  const { token } = useContext(AuthContext);
+  const { token, cycleToken } = useContext(AuthContext);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const copyToClipboard = useCallback(() => {
@@ -23,12 +23,18 @@ export function DisplayInspectorApiTokenCard() {
         </Button>
         <ApiTokenModal
           token={token}
+          cycleToken={cycleToken}
           isOpen={isOpen}
           onOpenChange={onOpenChange}
         />
         <Tooltip content="Copy the token">
           <Button isIconOnly size="sm" onPress={copyToClipboard}>
             <IconClipboard />
+          </Button>
+        </Tooltip>
+        <Tooltip content="Generates a new token">
+          <Button isIconOnly size="sm" onPress={cycleToken}>
+            <IconRefresh />
           </Button>
         </Tooltip>
       </div>

@@ -74,7 +74,13 @@ export function Sidebar({ isCompact }: SidebarProps) {
         <SidebarRoutes isCompact={isCompact} searchQuery={query} />
       </ScrollShadow>
       <Divider />
-      {auth.user ? <UserSnippet user={auth.user} token={auth.token} /> : null}
+      {auth.user ? (
+        <UserSnippet
+          user={auth.user}
+          token={auth.token}
+          cycleToken={auth.cycleToken}
+        />
+      ) : null}
       <div className="flex flex-row justify-between items-center">
         <Link onClick={logOut} to="#" className="text-danger">
           Sign out
