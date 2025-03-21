@@ -17,7 +17,7 @@ export function DisplayInspectorApiTokenCard({
   const auth = useContext(AuthContext);
   const { users } = useContext(ModelContext);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [token, setToken] = useState<Token | null>(null);
+  const [token, setToken] = useState<Token | null>(); // undefined means loading, null means unavailable
 
   const userId = users.all.get(username)?.id;
 
