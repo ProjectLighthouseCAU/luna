@@ -1,5 +1,4 @@
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
-import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { SearchContext } from '@luna/contexts/displays/SearchContext';
 import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
@@ -9,7 +8,6 @@ import { useContext } from 'react';
 
 export function DisplaysView() {
   const { query } = useContext(SearchContext);
-  const { users } = useContext(ModelContext);
 
   const minDisplayWidth = 64;
   const maxDisplayWidth = 512;
@@ -31,11 +29,7 @@ export function DisplaysView() {
       }
     >
       <div className="flex flex-col items-center">
-        <DisplayGrid
-          users={users}
-          searchQuery={query}
-          displayWidth={displayWidth}
-        />
+        <DisplayGrid searchQuery={query} displayWidth={displayWidth} />
       </div>
     </HomeContent>
   );

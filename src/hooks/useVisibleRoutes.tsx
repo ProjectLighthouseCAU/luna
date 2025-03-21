@@ -1,9 +1,7 @@
 import { DisplayContextMenu } from '@luna/components/DisplayContextMenu';
 import { DisplayPinLabel } from '@luna/components/DisplayPinLabel';
-import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { useAdminStatus } from '@luna/hooks/useAdminStatus';
-import { useJsonMemo } from '@luna/hooks/useJsonMemo';
-import { usePinnedDisplays } from '@luna/hooks/usePinnedDisplays';
+import { useFilteredDisplays } from '@luna/hooks/useFilteredDisplays';
 import {
   IconBuildingLighthouse,
   IconCategory,
@@ -14,7 +12,7 @@ import {
   IconTower,
   IconUsers,
 } from '@tabler/icons-react';
-import { ReactNode, useContext, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 
 interface LabelParams {
   isActive: boolean;
@@ -55,7 +53,6 @@ export function useVisibleRoutes({
   showUserDisplays?: boolean;
   searchQuery?: string;
 }) {
-  const { users } = useContext(ModelContext);
   const { isAdmin } = useAdminStatus();
 
   const adminRouteItems = useMemo<VisibleRouteItem[]>(
@@ -108,19 +105,9 @@ export function useVisibleRoutes({
     []
   );
 
-  const pinnedDisplays = usePinnedDisplays();
-
-  const allUsernames = useJsonMemo([...users.all.keySeq().sort()]);
-
-  const remainingUsernames = useMemo(
-    () =>
-      allUsernames.filter(
-        username =>
-          !pinnedDisplays.has(username) &&
-          username.toLowerCase().includes(searchQuery.toLowerCase())
-      ),
-    [allUsernames, pinnedDisplays, searchQuery]
-  );
+  const { pinnedDisplays, filteredUsernames } = useFilteredDisplays({
+    searchQuery,
+  });
 
   const userRouteItems = useMemo<VisibleRouteItem[]>(
     () => [
@@ -138,7 +125,7 @@ export function useVisibleRoutes({
           })),
           ...(showUserDisplays || searchQuery
             ? [
-                ...(pinnedDisplays.size > 0 && remainingUsernames.length > 0
+                ...(pinnedDisplays.size > 0 && filteredUsernames.length > 0
                   ? [
                       {
                         type: 'divider' as const,
@@ -146,7 +133,7 @@ export function useVisibleRoutes({
                       },
                     ]
                   : []),
-                ...remainingUsernames.map<VisibleRouteItem>(username => ({
+                ...filteredUsernames.map<VisibleRouteItem>(username => ({
                   ...displayRoute(username),
                   isLazyLoaded: true,
                 })),
@@ -155,7 +142,7 @@ export function useVisibleRoutes({
         ],
       },
     ],
-    [pinnedDisplays, remainingUsernames, searchQuery, showUserDisplays]
+    [pinnedDisplays, filteredUsernames, searchQuery, showUserDisplays]
   );
 
   const routeItems = useMemo<VisibleRouteItem[]>(
