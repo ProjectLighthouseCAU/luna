@@ -51,43 +51,57 @@ export interface AuthContextValue {
 
   /** Fetches all users. */
   getAllUsers(pagination?: Pagination): Promise<Result<User[]>>;
+
   /** Gets a user by id */
   getUserById(id: number): Promise<Result<User>>;
+
   /** Creates a new user */
   createUser(payload: CreateOrUpdateUserPayload): Promise<Result<void>>;
+
   /** Updates an existing user */
   updateUser(
     id: number,
     payload: CreateOrUpdateUserPayload
   ): Promise<Result<void>>;
+
   /** Deletes a user */
   deleteUser(id: number): Promise<Result<void>>;
+
   /** Fetches all roles */
   getAllRoles(): Promise<Result<Role[]>>;
+
   /** Gets a role by id */
   getRoleById(id: number): Promise<Result<Role>>;
+
   /** Creates a new role */
   createRole(payload: CreateOrUpdateRolePayload): Promise<Result<void>>;
+
   /** Updates an existing role */
   updateRole(
     id: number,
     payload: CreateOrUpdateRolePayload
   ): Promise<Result<void>>;
+
   /** Deletes a role */
   deleteRole(id: number): Promise<Result<void>>;
+
   /** Fetches all registration keys */
   getAllRegistrationKeys(): Promise<Result<RegistrationKey[]>>;
+
   /** Gets a registration key by id */
   getRegistrationKeyById(id: number): Promise<Result<RegistrationKey>>;
+
   /** Creates a new registration key */
   createRegistrationKey(
     payload: CreateOrUpdateRegistrationKeyPayload
   ): Promise<Result<void>>;
+
   /** Updates an existing registration key */
   updateRegistrationKey(
     id: number,
     payload: CreateOrUpdateRegistrationKeyPayload
   ): Promise<Result<void>>;
+
   /** Deletes a registration key */
   deleteRegistrationKey(id: number): Promise<Result<void>>;
 }
