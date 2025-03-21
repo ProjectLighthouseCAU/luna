@@ -60,7 +60,12 @@ export function DisplayInspectorApiTokenCard({
           onOpenChange={onOpenChange}
         />
         <Tooltip content="Copy the token">
-          <Button isIconOnly size="sm" onPress={copyToClipboard}>
+          <Button
+            isIconOnly
+            size="sm"
+            onPress={copyToClipboard}
+            isDisabled={!token}
+          >
             <IconClipboard />
           </Button>
         </Tooltip>
