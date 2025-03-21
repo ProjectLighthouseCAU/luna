@@ -16,7 +16,7 @@ export function useLiveUser() {
       livePath.length === 3 &&
       livePath[0] === 'user' &&
       livePath[2] === 'model' &&
-      users.all.contains(livePath[1])
+      users.all.has(livePath[1])
         ? livePath[1]
         : undefined,
     [livePath, users.all]

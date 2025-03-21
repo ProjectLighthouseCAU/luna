@@ -1,7 +1,8 @@
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
+import { User } from '@luna/contexts/api/auth/types';
 import { UserModel } from '@luna/contexts/api/model/types';
 import { errorResult, getOrThrow, okResult, Result } from '@luna/utils/result';
-import { Set } from 'immutable';
+import { Map, Set } from 'immutable';
 import {
   connect,
   ConsoleLogHandler,
@@ -23,8 +24,8 @@ import {
 } from 'react';
 
 export interface Users {
-  /** The usernames of all users. */
-  readonly all: Set<string>;
+  /** All users. */
+  readonly all: Map<string, User>;
 
   /** The usernames of active users. */
   readonly active: Set<string>;
@@ -81,7 +82,7 @@ export interface ModelContextValue {
 
 export const ModelContext = createContext<ModelContextValue>({
   users: {
-    all: Set(),
+    all: Map(),
     active: Set(),
   },
   api: {
@@ -126,7 +127,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
 
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [users, setUsers] = useState<Users>({
-    all: Set(),
+    all: Map(),
     active: Set(),
   });
 
@@ -175,7 +176,7 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
     (async () => {
       try {
         const users = getOrThrow(await auth.getAllUsers());
-        const all = Set(users.map(user => user.username));
+        const all = Map(users.map(user => [user.username, user]));
         setUsers(({ active }) => ({ all, active }));
       } catch (error) {
         console.error(`Could not get users: ${error}`);

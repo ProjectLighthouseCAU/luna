@@ -24,7 +24,7 @@ export function DisplayGrid({
   // Filter the models case-insensitively by the search query
   const filteredUsers = useMemo(
     () =>
-      users.all.filter(
+      [...users.all.keys()].filter(
         username =>
           !pinnedDisplays.has(username) &&
           username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -36,7 +36,7 @@ export function DisplayGrid({
   // performance reasons. Unfortunately we can't seem to change the layoutId
   // after the component has mounted, so even if a user filters down the view
   // the displays might not animate: https://github.com/framer/motion/issues/2075
-  const animationsEnabled = filteredUsers.size <= 360;
+  const animationsEnabled = filteredUsers.length <= 360;
 
   return (
     <div className="flex flex-wrap gap-4 justify-center">

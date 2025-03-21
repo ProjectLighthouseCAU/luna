@@ -110,17 +110,15 @@ export function useVisibleRoutes({
 
   const pinnedDisplays = usePinnedDisplays();
 
-  const allUsernames = useJsonMemo([...users.all]);
+  const allUsernames = useJsonMemo([...users.all.keySeq().sort()]);
 
   const remainingUsernames = useMemo(
     () =>
-      allUsernames
-        .filter(
-          username =>
-            !pinnedDisplays.has(username) &&
-            username.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        .sort(),
+      allUsernames.filter(
+        username =>
+          !pinnedDisplays.has(username) &&
+          username.toLowerCase().includes(searchQuery.toLowerCase())
+      ),
     [allUsernames, pinnedDisplays, searchQuery]
   );
 
