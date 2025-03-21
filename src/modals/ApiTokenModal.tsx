@@ -11,6 +11,7 @@ import {
 import { IconRefresh } from '@tabler/icons-react';
 
 export interface ApiTokenModalProps {
+  username?: string;
   token: Token | null;
   cycleToken: () => void;
   isOpen: boolean;
@@ -18,6 +19,7 @@ export interface ApiTokenModalProps {
 }
 
 export function ApiTokenModal({
+  username,
   token,
   cycleToken,
   isOpen,
@@ -28,13 +30,15 @@ export function ApiTokenModal({
       <ModalContent>
         {onClose => (
           <>
-            <ModalHeader>API Token</ModalHeader>
+            <ModalHeader>
+              {username ? `API Token for ${username}` : 'Your API Token'}
+            </ModalHeader>
             <ModalBody className="p-4">
               {token ? (
                 <>
                   {token.expiresAt ? (
                     <p>
-                      {`Your token is valid through ${token.expiresAt.toLocaleString()}.`}
+                      {`The token is valid through ${token.expiresAt.toLocaleString()}.`}
                     </p>
                   ) : null}
                   <Snippet symbol="">{token.value}</Snippet>

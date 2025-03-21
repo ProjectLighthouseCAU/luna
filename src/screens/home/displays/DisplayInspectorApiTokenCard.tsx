@@ -33,15 +33,16 @@ export function DisplayInspectorApiTokenCard({
 
   useEffect(() => {
     (async () => {
-      if (!userId) {
-        return;
+      if (userId) {
+        const result = await auth.getToken(userId);
+        if (result.ok) {
+          setToken(result.value);
+          return;
+        } else {
+          console.warn(`Could not fetch token: ${result.error}`);
+        }
       }
-      const result = await auth.getToken(userId);
-      if (!result.ok) {
-        console.warn(`Could not fetch token: ${result.error}`);
-        return;
-      }
-      setToken(result.value);
+      setToken(null);
     })();
   }, [auth, userId]);
 
@@ -52,6 +53,7 @@ export function DisplayInspectorApiTokenCard({
           Reveal Token
         </Button>
         <ApiTokenModal
+          username={username}
           token={token}
           cycleToken={cycleToken}
           isOpen={isOpen}
