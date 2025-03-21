@@ -122,6 +122,16 @@ function messageToResult<T>(message: ServerMessage<T> | undefined): Result<T> {
   }
 }
 
+async function catchToResult<T>(
+  action: () => Promise<ServerMessage<T>> | undefined
+): Promise<Result<T>> {
+  try {
+    return messageToResult(await action());
+  } catch (error) {
+    return errorResult(error);
+  }
+}
+
 export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const auth = useContext(AuthContext);
 
@@ -187,10 +197,10 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
   const api: ModelAPI = useMemo(
     () => ({
       async list(path) {
-        return messageToResult(await client?.list(path));
+        return catchToResult(() => client?.list(path));
       },
       async get(path) {
-        return messageToResult(await client?.get(path));
+        return catchToResult(() => client?.get(path));
       },
       async *stream(path) {
         if (client) {
@@ -216,22 +226,22 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
         }
       },
       async delete(path) {
-        return messageToResult(await client?.delete(path));
+        return catchToResult(() => client?.delete(path));
       },
       async put(path, payload) {
-        return messageToResult(await client?.put(path, payload));
+        return catchToResult(() => client?.put(path, payload));
       },
       async putLegacyInput(user, payload) {
-        return messageToResult(await client?.putModel(payload, user));
+        return catchToResult(() => client?.putModel(payload, user));
       },
       async putInput(user, payload) {
-        return messageToResult(await client?.putInput(payload, user));
+        return catchToResult(() => client?.putInput(payload, user));
       },
       async create(path) {
-        return messageToResult(await client?.create(path));
+        return catchToResult(() => client?.create(path));
       },
       async mkdir(path) {
-        return messageToResult(await client?.mkdir(path));
+        return catchToResult(() => client?.mkdir(path));
       },
       async isDirectory(path) {
         try {
