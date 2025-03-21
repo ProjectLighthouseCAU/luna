@@ -11,13 +11,15 @@ import {
 import { IconRefresh } from '@tabler/icons-react';
 
 export interface ApiTokenModalProps {
-  token: Token | null;
+  username?: string;
+  token: Token | null | undefined;
   cycleToken: () => void;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }
 
 export function ApiTokenModal({
+  username,
   token,
   cycleToken,
   isOpen,
@@ -28,16 +30,20 @@ export function ApiTokenModal({
       <ModalContent>
         {onClose => (
           <>
-            <ModalHeader>API Token</ModalHeader>
+            <ModalHeader>
+              {username ? `API Token for ${username}` : 'Your API Token'}
+            </ModalHeader>
             <ModalBody className="p-4">
-              {token ? (
+              {token !== undefined ? (
                 <>
-                  {token.expiresAt ? (
+                  {token?.expiresAt ? (
                     <p>
-                      {`Your token is valid through ${token.expiresAt.toLocaleString()}.`}
+                      {`The token is valid through ${token.expiresAt.toLocaleString()}.`}
                     </p>
                   ) : null}
-                  <Snippet symbol="">{token.value}</Snippet>
+                  <Snippet symbol="" disableCopy={token === null}>
+                    {token?.value ?? 'No token available'}
+                  </Snippet>
                   <Button onPress={cycleToken} variant="bordered">
                     <IconRefresh />
                     Generate New Token
