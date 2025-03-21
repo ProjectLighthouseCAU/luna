@@ -43,8 +43,11 @@ export interface AuthContextValue {
   /** Deauthenticates. Returns whether this succeeded. */
   logOut(): Promise<Result<void>>;
 
-  /** Invalidates the current token and creates a new one. */
-  cycleToken(): Promise<Result<void>>;
+  /** Fetches the token for the given user. */
+  getToken(id: number): Promise<Result<Token>>;
+
+  /** Invalidates the current token of the given (or current if none is provided) user and creates a new one. */
+  cycleToken(id?: number): Promise<Result<void>>;
 
   /** Fetches all users. */
   getAllUsers(pagination?: Pagination): Promise<Result<User[]>>;
@@ -96,6 +99,7 @@ export const AuthContext = createContext<AuthContextValue>({
   signUp: async () => errorResult('No auth context for signing up'),
   logIn: async () => errorResult('No auth context for logging in'),
   logOut: async () => errorResult('No auth context for logging out'),
+  getToken: async () => errorResult('No auth context for fetching token'),
   cycleToken: async () => errorResult('No auth context for cycling token'),
   getAllUsers: async () => errorResult('No auth context for fetching users'),
   getUserById: async () => errorResult('No auth context for fetching user'),
@@ -214,12 +218,26 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         }
       },
 
-      async cycleToken() {
+      async getToken(id) {
         try {
-          if (!apiUser?.id) {
+          if (!id) {
+            return errorResult('Cannot fetch token without a user');
+          }
+          const result = await apiRef.current.users.apiTokenDetail(id);
+          return okResult(convert.tokenFromApi(result.data));
+        } catch (error) {
+          return errorResult(
+            `Fetching token failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async cycleToken(id = apiUser?.id) {
+        try {
+          if (!id) {
             return errorResult('Cannot cycle token without a user');
           }
-          await apiRef.current.users.apiTokenDelete(apiUser.id);
+          await apiRef.current.users.apiTokenDelete(id);
           await updateToken();
           return okResult(undefined);
         } catch (error) {
