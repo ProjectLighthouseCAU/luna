@@ -3,12 +3,23 @@ import { TitledCard } from '@luna/components/TitledCard';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { Button, Tooltip, useDisclosure } from '@heroui/react';
 import { IconClipboard, IconKey, IconRefresh } from '@tabler/icons-react';
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { ModelContext } from '@luna/contexts/api/model/ModelContext';
+import { Token } from '@luna/contexts/api/auth/types';
 
-export function DisplayInspectorApiTokenCard() {
+export interface DisplayInspectorApiTokenCardProps {
+  username: string;
+}
+
+export function DisplayInspectorApiTokenCard({
+  username,
+}: DisplayInspectorApiTokenCardProps) {
   const auth = useContext(AuthContext);
-  const { token } = auth;
+  const { users } = useContext(ModelContext);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [token, setToken] = useState<Token | null>(null);
+
+  const userId = users.all.get(username)?.id;
 
   const copyToClipboard = useCallback(() => {
     if (token) {
@@ -17,8 +28,22 @@ export function DisplayInspectorApiTokenCard() {
   }, [token]);
 
   const cycleToken = useCallback(async () => {
-    await auth.cycleToken();
-  }, [auth]);
+    await auth.cycleToken(userId);
+  }, [auth, userId]);
+
+  useEffect(() => {
+    (async () => {
+      if (!userId) {
+        return;
+      }
+      const result = await auth.getToken(userId);
+      if (!result.ok) {
+        console.warn(`Could not fetch token: ${result.error}`);
+        return;
+      }
+      setToken(result.value);
+    })();
+  }, [auth, userId]);
 
   return (
     <TitledCard icon={<IconKey />} title="API Token">

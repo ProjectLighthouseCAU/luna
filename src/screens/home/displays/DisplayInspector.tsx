@@ -31,7 +31,7 @@ export function DisplayInspector({
       {/* <DisplayInspectorOptionsCard isEditable={isMeOrAdmin} /> */}
       {isMeOrAdmin ? (
         <>
-          <DisplayInspectorApiTokenCard />
+          <DisplayInspectorApiTokenCard username={username} />
           <DisplayInspectorInputCard
             username={username}
             inputState={inputState}
