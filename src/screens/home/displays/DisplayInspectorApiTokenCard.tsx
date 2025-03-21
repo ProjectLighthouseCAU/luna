@@ -6,7 +6,8 @@ import { IconClipboard, IconKey, IconRefresh } from '@tabler/icons-react';
 import { useCallback, useContext } from 'react';
 
 export function DisplayInspectorApiTokenCard() {
-  const { token, cycleToken } = useContext(AuthContext);
+  const auth = useContext(AuthContext);
+  const { token } = auth;
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const copyToClipboard = useCallback(() => {
@@ -14,6 +15,10 @@ export function DisplayInspectorApiTokenCard() {
       navigator.clipboard.writeText(token.value);
     }
   }, [token]);
+
+  const cycleToken = useCallback(async () => {
+    await auth.cycleToken();
+  }, [auth]);
 
   return (
     <TitledCard icon={<IconKey />} title="API Token">

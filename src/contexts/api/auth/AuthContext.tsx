@@ -43,48 +43,65 @@ export interface AuthContextValue {
   /** Deauthenticates. Returns whether this succeeded. */
   logOut(): Promise<Result<void>>;
 
-  /** Invalidates the current token and creates a new one. */
-  cycleToken(): Promise<Result<void>>;
+  /** Fetches the token for the given user. */
+  getToken(id: number): Promise<Result<Token>>;
+
+  /** Invalidates the current token of the given (or current if none is provided) user and creates a new one. */
+  cycleToken(id?: number): Promise<Result<void>>;
 
   /** Fetches all users. */
   getAllUsers(pagination?: Pagination): Promise<Result<User[]>>;
+
   /** Gets a user by id */
   getUserById(id: number): Promise<Result<User>>;
+
   /** Creates a new user */
   createUser(payload: CreateOrUpdateUserPayload): Promise<Result<void>>;
+
   /** Updates an existing user */
   updateUser(
     id: number,
     payload: CreateOrUpdateUserPayload
   ): Promise<Result<void>>;
+
   /** Deletes a user */
   deleteUser(id: number): Promise<Result<void>>;
+
   /** Fetches all roles */
   getAllRoles(): Promise<Result<Role[]>>;
+
   /** Gets a role by id */
   getRoleById(id: number): Promise<Result<Role>>;
+
   /** Creates a new role */
   createRole(payload: CreateOrUpdateRolePayload): Promise<Result<void>>;
+
   /** Updates an existing role */
   updateRole(
     id: number,
     payload: CreateOrUpdateRolePayload
   ): Promise<Result<void>>;
+
   /** Deletes a role */
   deleteRole(id: number): Promise<Result<void>>;
+
   /** Fetches all registration keys */
   getAllRegistrationKeys(): Promise<Result<RegistrationKey[]>>;
+
   /** Gets a registration key by id */
   getRegistrationKeyById(id: number): Promise<Result<RegistrationKey>>;
+
   /** Creates a new registration key */
   createRegistrationKey(
     payload: CreateOrUpdateRegistrationKeyPayload
   ): Promise<Result<void>>;
+
   /** Updates an existing registration key */
   updateRegistrationKey(
     id: number,
     payload: CreateOrUpdateRegistrationKeyPayload
   ): Promise<Result<void>>;
+
   /** Deletes a registration key */
   deleteRegistrationKey(id: number): Promise<Result<void>>;
 }
@@ -96,6 +113,7 @@ export const AuthContext = createContext<AuthContextValue>({
   signUp: async () => errorResult('No auth context for signing up'),
   logIn: async () => errorResult('No auth context for logging in'),
   logOut: async () => errorResult('No auth context for logging out'),
+  getToken: async () => errorResult('No auth context for fetching token'),
   cycleToken: async () => errorResult('No auth context for cycling token'),
   getAllUsers: async () => errorResult('No auth context for fetching users'),
   getUserById: async () => errorResult('No auth context for fetching user'),
@@ -214,12 +232,26 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         }
       },
 
-      async cycleToken() {
+      async getToken(id) {
         try {
-          if (!apiUser?.id) {
+          if (!id) {
+            return errorResult('Cannot fetch token without a user');
+          }
+          const result = await apiRef.current.users.apiTokenDetail(id);
+          return okResult(convert.tokenFromApi(result.data));
+        } catch (error) {
+          return errorResult(
+            `Fetching token failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async cycleToken(id = apiUser?.id) {
+        try {
+          if (!id) {
             return errorResult('Cannot cycle token without a user');
           }
-          await apiRef.current.users.apiTokenDelete(apiUser.id);
+          await apiRef.current.users.apiTokenDelete(id);
           await updateToken();
           return okResult(undefined);
         } catch (error) {
