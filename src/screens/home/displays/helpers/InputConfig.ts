@@ -4,4 +4,5 @@ export interface InputConfig {
   mouseEnabled: boolean;
   keyboardEnabled: boolean;
   gamepadEnabled: boolean;
+  midiEnabled: boolean;
 }

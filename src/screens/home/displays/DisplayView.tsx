@@ -12,6 +12,7 @@ import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { DisplayStream } from '@luna/screens/home/displays/DisplayStream';
+import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapabilities';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import {
@@ -27,6 +28,7 @@ import {
   KeyEvent,
   LegacyControllerEvent,
   LegacyKeyEvent,
+  MIDIEvent,
   MouseEvent,
 } from 'nighthouse/browser';
 import {
@@ -47,7 +49,10 @@ export function DisplayView() {
 
   const { api } = useContext(ModelContext);
 
-  const [inputState, setInputState] = useState<InputState>({ gamepadCount: 0 });
+  const [inputState, setInputState] = useState<InputState>({
+    gamepadCount: 0,
+    midiInputCount: 0,
+  });
   const [inputConfig, setInputConfig] = useLocalStorage<InputConfig>(
     LocalStorageKey.DisplayInputConfig,
     () => ({
@@ -56,7 +61,17 @@ export function DisplayView() {
       pointerLockable: false,
       keyboardEnabled: false,
       gamepadEnabled: false,
+      midiEnabled: false,
     })
+  );
+
+  const inputCapabilities = useMemo<InputCapabilities>(
+    () => ({
+      gamepadSupported: typeof (navigator as any).getGamepads !== 'undefined',
+      midiSupported:
+        typeof (navigator as any).requestMIDIAccess !== 'undefined',
+    }),
+    []
   );
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
@@ -83,6 +98,8 @@ export function DisplayView() {
   useLayoutEffect(() => {
     updateMaxSize();
   }, [updateMaxSize]);
+
+  // MARK: Keyboard input
 
   const onKeyEvent = useCallback(
     async (e: KeyboardEvent, down: boolean) => {
@@ -144,10 +161,15 @@ export function DisplayView() {
   useEventListener(document, 'keydown', onKeyDown);
   useEventListener(document, 'keyup', onKeyUp);
 
-  // Unfortunately gamepadconnected and gamepaddisconnected events seem to be
-  // unreliable, so we'll just poll manually
+  // MARK: Gamepad input
 
   useEffect(() => {
+    if (!inputCapabilities.gamepadSupported) {
+      return;
+    }
+
+    // Unfortunately gamepadconnected and gamepaddisconnected events seem to be
+    // unreliable, so we'll just poll manually
     const interval = window.setInterval(() => {
       const count =
         navigator.getGamepads()?.filter(g => g !== null).length ?? 0;
@@ -157,11 +179,18 @@ export function DisplayView() {
     return () => {
       window.clearInterval(interval);
     };
-  }, []);
+  }, [inputCapabilities.gamepadSupported]);
 
   const gamepadsActive = useMemo(
-    () => inputState.gamepadCount > 0 && inputConfig.gamepadEnabled,
-    [inputConfig.gamepadEnabled, inputState.gamepadCount]
+    () =>
+      inputCapabilities.gamepadSupported &&
+      inputConfig.gamepadEnabled &&
+      inputState.gamepadCount > 0,
+    [
+      inputCapabilities.gamepadSupported,
+      inputConfig.gamepadEnabled,
+      inputState.gamepadCount,
+    ]
   );
 
   useEffect(() => {
@@ -236,6 +265,78 @@ export function DisplayView() {
     };
   }, [clientId, inputConfig.legacyMode, api, username, gamepadsActive]);
 
+  // MARK: MIDI input
+
+  // We need to ignore this for now since TypeScript's DOM lib doesn't seem to
+  // have the Web MIDI types yet.
+  // @ts-ignore
+  const [midiAccess, setMIDIAccess] = useState<MIDIAccess>();
+
+  useEffect(() => {
+    (async () => {
+      if (!inputCapabilities.midiSupported || !inputConfig.midiEnabled) {
+        setMIDIAccess(undefined);
+        return;
+      }
+
+      try {
+        // @ts-ignore
+        setMIDIAccess(await navigator.requestMIDIAccess());
+      } catch (error) {
+        console.warn(`Web MIDI failed to activate: ${error}`);
+      }
+    })();
+  }, [inputCapabilities.midiSupported, inputConfig.midiEnabled]);
+
+  useEffect(() => {
+    if (!midiAccess?.inputs.size) {
+      return;
+    }
+
+    setInputState(state => ({
+      ...state,
+      midiInputCount: midiAccess.inputs.size,
+    }));
+  }, [midiAccess?.inputs.size]);
+
+  useEffect(() => {
+    if (!midiAccess) {
+      return;
+    }
+
+    // @ts-ignore
+    const listeners: [MIDIInput, (e: MIDIMessageEvent) => Promise<void>][] = [];
+
+    for (const [key, input] of midiAccess.inputs.entries()) {
+      // @ts-ignore
+      const listener = async (e: MIDIMessageEvent) => {
+        if (!e.data) {
+          return;
+        }
+
+        const event: MIDIEvent = {
+          type: 'midi',
+          source: `${clientId}:${key}`,
+          data: e.data,
+        };
+
+        await api.putInput(username, event);
+        setInputState(state => ({ ...state, lastMIDIEvent: event }));
+      };
+
+      input.addEventListener('midimessage', listener);
+      listeners.push([input, listener]);
+    }
+
+    return () => {
+      for (const [input, listener] of listeners) {
+        input.removeEventListener('midimessage', listener);
+      }
+    };
+  }, [api, clientId, midiAccess, username]);
+
+  // MARK: Mouse input
+
   const mouseActive = !inputConfig.legacyMode && inputConfig.mouseEnabled;
 
   const onMouseEvent = useCallback(
@@ -276,6 +377,10 @@ export function DisplayView() {
     [onMouseEvent]
   );
 
+  // MARK: MIDI input
+
+  useEffect(() => {}, []);
+
   const breakpoint = useBreakpoint();
   const isCompact = breakpoint <= Breakpoint.Sm;
 
@@ -315,6 +420,7 @@ export function DisplayView() {
           inputState={inputState}
           inputConfig={inputConfig}
           setInputConfig={setInputConfig}
+          inputCapabilities={inputCapabilities}
         />
       </div>
     </HomeContent>

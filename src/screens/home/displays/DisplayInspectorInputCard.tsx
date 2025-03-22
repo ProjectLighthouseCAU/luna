@@ -4,9 +4,11 @@ import {
   ObjectInspectorTable,
 } from '@luna/components/ObjectInspectorTable';
 import { TitledCard } from '@luna/components/TitledCard';
+import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapabilities';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import { AnimatePresence } from '@luna/utils/motion';
+import { pluralize } from '@luna/utils/string';
 import {
   IconAlt,
   IconArrowBigUp,
@@ -16,6 +18,7 @@ import {
   IconDeviceGamepad2,
   IconKeyboard,
   IconMouse,
+  IconPiano,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import {
@@ -24,6 +27,7 @@ import {
   KeyModifiers,
   LegacyControllerEvent,
   LegacyKeyEvent,
+  MIDIEvent,
   MouseEvent,
 } from 'nighthouse/browser';
 import { ReactNode, useCallback } from 'react';
@@ -33,6 +37,7 @@ export interface DisplayInspectorInputCardProps {
   inputState: InputState;
   inputConfig: InputConfig;
   setInputConfig: (inputConfig: InputConfig) => void;
+  inputCapabilities: InputCapabilities;
 }
 
 export function DisplayInspectorInputCard({
@@ -40,6 +45,7 @@ export function DisplayInspectorInputCard({
   inputState,
   inputConfig,
   setInputConfig,
+  inputCapabilities,
 }: DisplayInspectorInputCardProps) {
   const setLegacyMode = useCallback(
     (legacyMode: boolean) => setInputConfig({ ...inputConfig, legacyMode }),
@@ -69,9 +75,20 @@ export function DisplayInspectorInputCard({
     [inputConfig, setInputConfig]
   );
 
-  const mouseEnabled = !inputConfig.legacyMode && inputConfig.mouseEnabled;
+  const setMIDIEnabled = useCallback(
+    (midiEnabled: boolean) => setInputConfig({ ...inputConfig, midiEnabled }),
+    [inputConfig, setInputConfig]
+  );
+
+  const mouseSupported = !inputConfig.legacyMode;
+  const gamepadSupported = inputCapabilities.gamepadSupported;
+  const midiSupported =
+    !inputConfig.legacyMode && inputCapabilities.midiSupported;
+
+  const mouseEnabled = mouseSupported && inputConfig.mouseEnabled;
   const keyboardEnabled = inputConfig.keyboardEnabled;
-  const gamepadEnabled = inputConfig.gamepadEnabled;
+  const gamepadEnabled = gamepadSupported && inputConfig.gamepadEnabled;
+  const midiEnabled = midiSupported && inputConfig.midiEnabled;
 
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
@@ -107,7 +124,7 @@ export function DisplayInspectorInputCard({
           size="sm"
           thumbIcon={<IconMouse />}
           isSelected={mouseEnabled}
-          isDisabled={inputConfig.legacyMode}
+          isDisabled={!mouseSupported}
           onValueChange={setMouseEnabled}
         >
           Mouse
@@ -134,14 +151,30 @@ export function DisplayInspectorInputCard({
           size="sm"
           thumbIcon={<IconDeviceGamepad />}
           isSelected={gamepadEnabled}
+          isDisabled={!gamepadSupported}
           onValueChange={setGamepadEnabled}
         >
           Gamepad
         </Switch>
         <AnimatedPresence isShown={gamepadEnabled}>
-          <ControllerEventView
+          <GamepadEventView
             gamepadCount={inputState.gamepadCount}
             event={inputState.lastControllerEvents?.at(-1)}
+          />
+        </AnimatedPresence>
+        <Switch
+          size="sm"
+          thumbIcon={<IconPiano />}
+          isSelected={midiEnabled}
+          isDisabled={!midiSupported}
+          onValueChange={setMIDIEnabled}
+        >
+          MIDI
+        </Switch>
+        <AnimatedPresence isShown={midiEnabled}>
+          <MIDIEventView
+            midiInputCount={inputState.midiInputCount}
+            event={inputState.lastMIDIEvent}
           />
         </AnimatedPresence>
       </div>
@@ -291,7 +324,7 @@ const gamepadEventNames: Names<GamepadEvent> = {
   value: 'Value',
 };
 
-function ControllerEventView({
+function GamepadEventView({
   gamepadCount,
   event,
 }: {
@@ -301,7 +334,7 @@ function ControllerEventView({
   return (
     <div className="flex flex-col gap-1">
       <EventInfoText>
-        {gamepadCount ?? '?'} gamepad{gamepadCount === 1 ? '' : 's'} connected
+        {gamepadCount ?? '?'} {pluralize('gamepad', gamepadCount)} connected
       </EventInfoText>
       {event ? (
         'dwn' in event ? (
@@ -314,6 +347,32 @@ function ControllerEventView({
         )
       ) : (
         <EventInfoText>no gamepad events yet</EventInfoText>
+      )}
+    </div>
+  );
+}
+
+const midiEventNames: Names<MIDIEvent> = {
+  data: 'Data',
+};
+
+function MIDIEventView({
+  midiInputCount,
+  event,
+}: {
+  midiInputCount: number;
+  event?: MIDIEvent;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <EventInfoText>
+        {midiInputCount ?? '?'} MIDI {pluralize('input', midiInputCount)}{' '}
+        connected
+      </EventInfoText>
+      {event ? (
+        <ObjectInspectorTable objects={[event]} names={midiEventNames} />
+      ) : (
+        <EventInfoText>no MIDI events yet</EventInfoText>
       )}
     </div>
   );

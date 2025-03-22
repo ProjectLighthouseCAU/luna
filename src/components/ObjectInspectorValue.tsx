@@ -60,6 +60,10 @@ function ObjectInspectorRawValue({
             <ObjectInspectorRawValue value={value.total} />
           </>
         );
+      } else if (value instanceof Uint8Array) {
+        return (
+          <>{[...value].map(v => v.toString(16).toUpperCase()).join(' ')}</>
+        );
       }
       return <>{JSON.stringify(value)}</>;
     default:

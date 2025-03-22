@@ -3,6 +3,7 @@ import { useAdminStatus } from '@luna/hooks/useAdminStatus';
 import { DisplayInspectorActionsCard } from '@luna/screens/home/displays/DisplayInspectorActionsCard';
 import { DisplayInspectorApiTokenCard } from '@luna/screens/home/displays/DisplayInspectorApiTokenCard';
 import { DisplayInspectorInputCard } from '@luna/screens/home/displays/DisplayInspectorInputCard';
+import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapabilities';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 // import { DisplayInspectorOptionsCard } from '@luna/screens/home/displays/DisplayInspectorOptionsCard';
@@ -13,6 +14,7 @@ export interface DisplayInspectorProps {
   inputState: InputState;
   inputConfig: InputConfig;
   setInputConfig: (inputConfig: InputConfig) => void;
+  inputCapabilities: InputCapabilities;
 }
 
 export function DisplayInspector({
@@ -20,6 +22,7 @@ export function DisplayInspector({
   inputState,
   inputConfig,
   setInputConfig,
+  inputCapabilities,
 }: DisplayInspectorProps) {
   const { user: me } = useContext(AuthContext);
   const { isAdmin } = useAdminStatus();
@@ -37,6 +40,7 @@ export function DisplayInspector({
             inputState={inputState}
             inputConfig={inputConfig}
             setInputConfig={setInputConfig}
+            inputCapabilities={inputCapabilities}
           />
         </>
       ) : null}
