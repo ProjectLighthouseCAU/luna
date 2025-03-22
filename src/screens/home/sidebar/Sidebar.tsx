@@ -50,6 +50,8 @@ export function Sidebar({ isCompact }: SidebarProps) {
     }
   }, [isCompact, query]);
 
+  const cycleToken = useCallback(async () => await auth.cycleToken(), [auth]);
+
   return (
     <div className="flex flex-col space-y-2 h-full">
       <SearchBar
@@ -78,7 +80,7 @@ export function Sidebar({ isCompact }: SidebarProps) {
         <UserSnippet
           user={auth.user}
           token={auth.token}
-          cycleToken={auth.cycleToken}
+          cycleToken={cycleToken}
         />
       ) : null}
       <div className="flex flex-row justify-between items-center">
