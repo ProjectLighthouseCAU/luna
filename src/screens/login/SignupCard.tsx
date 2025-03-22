@@ -191,7 +191,7 @@ export function SignupCard({ showLogin }: SignupCardProps) {
       <Divider />
       <CardFooter className="flex justify-between">
         <div className="text-foreground-400">Already have an account?</div>
-        <Button onClick={logIn} size="sm" variant="flat">
+        <Button onPress={logIn} size="sm" variant="flat">
           Log in
         </Button>
       </CardFooter>
