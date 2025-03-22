@@ -428,11 +428,11 @@ function MIDIEventView({
 }
 
 function OrientationEventView() {
-  return <EventInfoText>no events yet</EventInfoText>;
+  return <EventInfoText>no orientation events yet</EventInfoText>;
 }
 
 function MotionEventView() {
-  return <EventInfoText>no events yet</EventInfoText>;
+  return <EventInfoText>no motion events yet</EventInfoText>;
 }
 
 function EventInfoText({ children }: { children: ReactNode }) {
