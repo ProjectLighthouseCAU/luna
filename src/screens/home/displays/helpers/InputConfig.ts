@@ -3,5 +3,5 @@ export interface InputConfig {
   pointerLockable: boolean;
   mouseEnabled: boolean;
   keyboardEnabled: boolean;
-  controllerEnabled: boolean;
+  gamepadEnabled: boolean;
 }

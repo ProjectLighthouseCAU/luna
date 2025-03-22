@@ -63,15 +63,15 @@ export function DisplayInspectorInputCard({
     [inputConfig, setInputConfig]
   );
 
-  const setControllerEnabled = useCallback(
-    (controllerEnabled: boolean) =>
-      setInputConfig({ ...inputConfig, controllerEnabled }),
+  const setGamepadEnabled = useCallback(
+    (gamepadEnabled: boolean) =>
+      setInputConfig({ ...inputConfig, gamepadEnabled }),
     [inputConfig, setInputConfig]
   );
 
   const mouseEnabled = !inputConfig.legacyMode && inputConfig.mouseEnabled;
   const keyboardEnabled = inputConfig.keyboardEnabled;
-  const controllerEnabled = inputConfig.controllerEnabled;
+  const gamepadEnabled = inputConfig.gamepadEnabled;
 
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
@@ -133,12 +133,12 @@ export function DisplayInspectorInputCard({
         <Switch
           size="sm"
           thumbIcon={<IconDeviceGamepad />}
-          isSelected={controllerEnabled}
-          onValueChange={setControllerEnabled}
+          isSelected={gamepadEnabled}
+          onValueChange={setGamepadEnabled}
         >
-          Game Controller
+          Gamepad
         </Switch>
-        <AnimatedPresence isShown={controllerEnabled}>
+        <AnimatedPresence isShown={gamepadEnabled}>
           <ControllerEventView
             gamepadCount={inputState.gamepadCount}
             event={inputState.lastControllerEvents?.at(-1)}
@@ -301,8 +301,7 @@ function ControllerEventView({
   return (
     <div className="flex flex-col gap-1">
       <EventInfoText>
-        {gamepadCount ?? '?'} controller{gamepadCount === 1 ? '' : 's'}{' '}
-        connected
+        {gamepadCount ?? '?'} gamepad{gamepadCount === 1 ? '' : 's'} connected
       </EventInfoText>
       {event ? (
         'dwn' in event ? (
@@ -314,7 +313,7 @@ function ControllerEventView({
           <ObjectInspectorTable objects={[event]} names={gamepadEventNames} />
         )
       ) : (
-        <EventInfoText>no controller events yet</EventInfoText>
+        <EventInfoText>no gamepad events yet</EventInfoText>
       )}
     </div>
   );
