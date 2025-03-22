@@ -8,6 +8,7 @@ import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapa
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import { AnimatePresence } from '@luna/utils/motion';
+import { pluralize } from '@luna/utils/string';
 import {
   IconAlt,
   IconArrowBigUp,
@@ -333,7 +334,7 @@ function GamepadEventView({
   return (
     <div className="flex flex-col gap-1">
       <EventInfoText>
-        {gamepadCount ?? '?'} gamepad{gamepadCount === 1 ? '' : 's'} connected
+        {gamepadCount ?? '?'} {pluralize('gamepad', gamepadCount)} connected
       </EventInfoText>
       {event ? (
         'dwn' in event ? (
@@ -365,7 +366,7 @@ function MIDIEventView({
   return (
     <div className="flex flex-col gap-1">
       <EventInfoText>
-        {midiInputCount ?? '?'} MIDI input{midiInputCount === 1 ? '' : 's'}{' '}
+        {midiInputCount ?? '?'} MIDI {pluralize('input', midiInputCount)}{' '}
         connected
       </EventInfoText>
       {event ? (
