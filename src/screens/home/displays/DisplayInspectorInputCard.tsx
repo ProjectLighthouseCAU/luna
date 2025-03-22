@@ -301,7 +301,8 @@ function ControllerEventView({
   return (
     <div className="flex flex-col gap-1">
       <EventInfoText>
-        {gamepadCount ?? '?'} gamepad{gamepadCount === 1 ? '' : 's'} connected
+        {gamepadCount ?? '?'} controller{gamepadCount === 1 ? '' : 's'}{' '}
+        connected
       </EventInfoText>
       {event ? (
         'dwn' in event ? (
