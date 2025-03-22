@@ -85,6 +85,8 @@ export function DisplayView() {
     updateMaxSize();
   }, [updateMaxSize]);
 
+  // MARK: Keyboard input
+
   const onKeyEvent = useCallback(
     async (e: KeyboardEvent, down: boolean) => {
       // Ignore keyboard events on text fields (e.g. the search bar)
@@ -144,6 +146,8 @@ export function DisplayView() {
   useEventListener(window, 'resize', onResize);
   useEventListener(document, 'keydown', onKeyDown);
   useEventListener(document, 'keyup', onKeyUp);
+
+  // MARK: Gamepad input
 
   // Unfortunately gamepadconnected and gamepaddisconnected events seem to be
   // unreliable, so we'll just poll manually
@@ -236,6 +240,8 @@ export function DisplayView() {
       console.log('Unregistered gamepad polling loop', interval);
     };
   }, [clientId, inputConfig.legacyMode, api, username, gamepadsActive]);
+
+  // MARK: Mouse input
 
   const mouseActive = !inputConfig.legacyMode && inputConfig.mouseEnabled;
 
