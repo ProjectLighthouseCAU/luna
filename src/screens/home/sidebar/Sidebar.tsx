@@ -110,7 +110,8 @@ export function Sidebar({ isCompact }: SidebarProps) {
                   >
                     file a bug on GitHub
                   </a>{' '}
-                  and try clearing your cookies!
+                  and try clearing your cookies! If that doesn't help, try
+                  reloading the site.
                 </p>
               </ModalBody>
             </>
