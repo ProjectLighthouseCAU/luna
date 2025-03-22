@@ -77,11 +77,15 @@ export function DisplayInspectorInputCard({
   );
 
   const mouseSupported = !inputConfig.legacyMode;
-  const midiSupported = !inputConfig.legacyMode; // TODO: Check browser MIDI support?
+  const gamepadSupported =
+    typeof (navigator as any).getGamepads !== 'undefined';
+  const midiSupported =
+    !inputConfig.legacyMode &&
+    typeof (navigator as any).requestMIDIAccess !== 'undefined';
 
   const mouseEnabled = mouseSupported && inputConfig.mouseEnabled;
   const keyboardEnabled = inputConfig.keyboardEnabled;
-  const gamepadEnabled = inputConfig.gamepadEnabled;
+  const gamepadEnabled = gamepadSupported && inputConfig.gamepadEnabled;
   const midiEnabled = midiSupported && inputConfig.midiEnabled;
 
   return (
@@ -145,6 +149,7 @@ export function DisplayInspectorInputCard({
           size="sm"
           thumbIcon={<IconDeviceGamepad />}
           isSelected={gamepadEnabled}
+          isDisabled={!gamepadSupported}
           onValueChange={setGamepadEnabled}
         >
           Gamepad
@@ -159,6 +164,7 @@ export function DisplayInspectorInputCard({
           size="sm"
           thumbIcon={<IconPiano />}
           isSelected={midiEnabled}
+          isDisabled={!midiSupported}
           onValueChange={setMIDIEnabled}
         >
           MIDI

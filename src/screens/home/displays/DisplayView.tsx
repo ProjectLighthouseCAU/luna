@@ -283,6 +283,10 @@ export function DisplayView() {
     [onMouseEvent]
   );
 
+  // MARK: MIDI input
+
+  useEffect(() => {}, []);
+
   const breakpoint = useBreakpoint();
   const isCompact = breakpoint <= Breakpoint.Sm;
 
