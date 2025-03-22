@@ -16,6 +16,7 @@ import {
   IconDeviceGamepad2,
   IconKeyboard,
   IconMouse,
+  IconPiano,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import {
@@ -69,9 +70,18 @@ export function DisplayInspectorInputCard({
     [inputConfig, setInputConfig]
   );
 
-  const mouseEnabled = !inputConfig.legacyMode && inputConfig.mouseEnabled;
+  const setMIDIEnabled = useCallback(
+    (midiEnabled: boolean) => setInputConfig({ ...inputConfig, midiEnabled }),
+    [inputConfig, setInputConfig]
+  );
+
+  const mouseSupported = !inputConfig.legacyMode;
+  const midiSupported = !inputConfig.legacyMode; // TODO: Check browser MIDI support?
+
+  const mouseEnabled = mouseSupported && inputConfig.mouseEnabled;
   const keyboardEnabled = inputConfig.keyboardEnabled;
   const gamepadEnabled = inputConfig.gamepadEnabled;
+  const midiEnabled = midiSupported && inputConfig.midiEnabled;
 
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
@@ -107,7 +117,7 @@ export function DisplayInspectorInputCard({
           size="sm"
           thumbIcon={<IconMouse />}
           isSelected={mouseEnabled}
-          isDisabled={inputConfig.legacyMode}
+          isDisabled={!mouseSupported}
           onValueChange={setMouseEnabled}
         >
           Mouse
@@ -144,6 +154,14 @@ export function DisplayInspectorInputCard({
             event={inputState.lastControllerEvents?.at(-1)}
           />
         </AnimatedPresence>
+        <Switch
+          size="sm"
+          thumbIcon={<IconPiano />}
+          isSelected={midiEnabled}
+          onValueChange={setMIDIEnabled}
+        >
+          MIDI
+        </Switch>
       </div>
     </TitledCard>
   );

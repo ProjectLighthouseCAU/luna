@@ -56,6 +56,7 @@ export function DisplayView() {
       pointerLockable: false,
       keyboardEnabled: false,
       gamepadEnabled: false,
+      midiEnabled: false,
     })
   );
 
