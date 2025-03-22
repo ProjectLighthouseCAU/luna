@@ -29,7 +29,9 @@ import {
   LegacyControllerEvent,
   LegacyKeyEvent,
   MIDIEvent,
+  MotionEvent,
   MouseEvent,
+  OrientationEvent,
 } from 'nighthouse/browser';
 import {
   useCallback,
@@ -62,6 +64,8 @@ export function DisplayView() {
       keyboardEnabled: false,
       gamepadEnabled: false,
       midiEnabled: false,
+      orientationEnabled: false,
+      motionEnabled: false,
     })
   );
 
@@ -70,6 +74,8 @@ export function DisplayView() {
       gamepadSupported: typeof (navigator as any).getGamepads !== 'undefined',
       midiSupported:
         typeof (navigator as any).requestMIDIAccess !== 'undefined',
+      orientationSupported: typeof DeviceOrientationEvent !== 'undefined',
+      motionSupported: typeof DeviceMotionEvent !== 'undefined',
     }),
     []
   );
@@ -334,6 +340,118 @@ export function DisplayView() {
       }
     };
   }, [api, clientId, midiAccess, username]);
+
+  // MARK: Orientation input
+
+  useEffect(() => {
+    (async () => {
+      if (
+        !inputCapabilities.orientationSupported ||
+        !inputConfig.orientationEnabled
+      ) {
+        return;
+      }
+
+      if (
+        'requestPermission' in DeviceOrientationEvent &&
+        typeof DeviceOrientationEvent.requestPermission === 'function'
+      ) {
+        if ((await DeviceOrientationEvent.requestPermission()) !== 'granted') {
+          return;
+        }
+      }
+
+      const listener = async (e: DeviceOrientationEvent) => {
+        const event: OrientationEvent = {
+          type: 'orientation',
+          source: clientId,
+          absolute: e.absolute,
+          // TODO: Fix this
+          alpha: e.alpha ?? 0,
+          beta: e.beta ?? 0,
+          gamma: e.gamma ?? 0,
+        };
+
+        await api.putInput(username, event);
+        setInputState(state => ({ ...state, lastOrientationEvent: event }));
+      };
+
+      window.addEventListener('deviceorientation', listener);
+      return () => {
+        window.removeEventListener('deviceorientation', listener);
+      };
+    })();
+  }, [
+    api,
+    clientId,
+    inputCapabilities.orientationSupported,
+    inputConfig.orientationEnabled,
+    username,
+  ]);
+
+  // MARK: Motion input
+
+  useEffect(() => {
+    (async () => {
+      if (!inputCapabilities.motionSupported || !inputConfig.motionEnabled) {
+        return;
+      }
+
+      if (
+        'requestPermission' in DeviceMotionEvent &&
+        typeof DeviceMotionEvent.requestPermission === 'function'
+      ) {
+        if ((await DeviceMotionEvent.requestPermission()) !== 'granted') {
+          return;
+        }
+      }
+
+      const listener = async (e: DeviceMotionEvent) => {
+        const event: MotionEvent = {
+          type: 'motion',
+          source: clientId,
+          acceleration: e.acceleration
+            ? {
+                x: e.acceleration.x,
+                y: e.acceleration.y,
+                z: e.acceleration.z,
+              }
+            : null,
+          accelerationIncludingGravity: e.accelerationIncludingGravity
+            ? {
+                x: e.accelerationIncludingGravity.x,
+                y: e.accelerationIncludingGravity.y,
+                z: e.accelerationIncludingGravity.z,
+              }
+            : null,
+          rotationRate: e.rotationRate
+            ? {
+                alpha: e.rotationRate.alpha,
+                beta: e.rotationRate.beta,
+                gamma: e.rotationRate.gamma,
+              }
+            : null,
+          interval: e.interval,
+        };
+
+        await api.putInput(username, event);
+        setInputState(state => ({ ...state, lastMotionEvent: event }));
+      };
+
+      window.addEventListener('devicemotion', listener);
+      return () => {
+        window.removeEventListener('devicemotion', listener);
+      };
+    })();
+  }, [
+    api,
+    clientId,
+    inputCapabilities.motionSupported,
+    inputCapabilities.orientationSupported,
+    inputConfig.motionEnabled,
+    inputConfig.orientationEnabled,
+    username,
+  ]);
 
   // MARK: Mouse input
 

@@ -12,10 +12,12 @@ import { pluralize } from '@luna/utils/string';
 import {
   IconAlt,
   IconArrowBigUp,
+  IconChevronsRight,
   IconChevronUp,
   IconCommand,
   IconDeviceGamepad,
   IconDeviceGamepad2,
+  IconGeometry,
   IconKeyboard,
   IconMouse,
   IconPiano,
@@ -28,7 +30,9 @@ import {
   LegacyControllerEvent,
   LegacyKeyEvent,
   MIDIEvent,
+  MotionEvent,
   MouseEvent,
+  OrientationEvent,
 } from 'nighthouse/browser';
 import { ReactNode, useCallback } from 'react';
 
@@ -80,15 +84,34 @@ export function DisplayInspectorInputCard({
     [inputConfig, setInputConfig]
   );
 
+  const setOrientationEnabled = useCallback(
+    (orientationEnabled: boolean) =>
+      setInputConfig({ ...inputConfig, orientationEnabled }),
+    [inputConfig, setInputConfig]
+  );
+
+  const setMotionEnabled = useCallback(
+    (motionEnabled: boolean) =>
+      setInputConfig({ ...inputConfig, motionEnabled }),
+    [inputConfig, setInputConfig]
+  );
+
   const mouseSupported = !inputConfig.legacyMode;
   const gamepadSupported = inputCapabilities.gamepadSupported;
   const midiSupported =
     !inputConfig.legacyMode && inputCapabilities.midiSupported;
+  const orientationSupported =
+    !inputConfig.legacyMode && inputCapabilities.orientationSupported;
+  const motionSupported =
+    !inputConfig.legacyMode && inputCapabilities.motionSupported;
 
   const mouseEnabled = mouseSupported && inputConfig.mouseEnabled;
   const keyboardEnabled = inputConfig.keyboardEnabled;
   const gamepadEnabled = gamepadSupported && inputConfig.gamepadEnabled;
   const midiEnabled = midiSupported && inputConfig.midiEnabled;
+  const orientationEnabled =
+    orientationSupported && inputConfig.orientationEnabled;
+  const motionEnabled = motionSupported && inputConfig.motionEnabled;
 
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
@@ -176,6 +199,34 @@ export function DisplayInspectorInputCard({
             midiInputCount={inputState.midiInputCount}
             event={inputState.lastMIDIEvent}
           />
+        </AnimatedPresence>
+        <Tooltip placement="left" content="Only supported on mobile">
+          <Switch
+            size="sm"
+            thumbIcon={<IconGeometry />}
+            isSelected={orientationEnabled}
+            isDisabled={!orientationSupported}
+            onValueChange={setOrientationEnabled}
+          >
+            Orientation
+          </Switch>
+        </Tooltip>
+        <AnimatedPresence isShown={orientationEnabled}>
+          <OrientationEventView />
+        </AnimatedPresence>
+        <Tooltip placement="left" content="Only supported on mobile">
+          <Switch
+            size="sm"
+            thumbIcon={<IconChevronsRight />}
+            isSelected={motionEnabled}
+            isDisabled={!motionSupported}
+            onValueChange={setMotionEnabled}
+          >
+            Motion
+          </Switch>
+        </Tooltip>
+        <AnimatedPresence isShown={motionEnabled}>
+          <MotionEventView />
         </AnimatedPresence>
       </div>
     </TitledCard>
@@ -375,6 +426,36 @@ function MIDIEventView({
         <EventInfoText>no MIDI events yet</EventInfoText>
       )}
     </div>
+  );
+}
+
+const orientationEventNames: Names<OrientationEvent> = {
+  absolute: 'Absolute',
+  alpha: 'Alpha',
+  beta: 'Beta',
+  gamma: 'Gamma',
+};
+
+function OrientationEventView({ event }: { event?: OrientationEvent }) {
+  return event ? (
+    <ObjectInspectorTable objects={[event]} names={orientationEventNames} />
+  ) : (
+    <EventInfoText>no orientation events yet</EventInfoText>
+  );
+}
+
+const motionEventNames: Names<MotionEvent> = {
+  acceleration: 'Acceleration',
+  accelerationIncludingGravity: 'Acceleration (incl. Gravity)',
+  interval: 'Interval',
+  rotationRate: 'Rotation rate',
+};
+
+function MotionEventView({ event }: { event?: MotionEvent }) {
+  return event ? (
+    <ObjectInspectorTable objects={[event]} names={motionEventNames} />
+  ) : (
+    <EventInfoText>no motion events yet</EventInfoText>
   );
 }
 
