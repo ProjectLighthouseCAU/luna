@@ -63,15 +63,15 @@ export function DisplayInspectorInputCard({
     [inputConfig, setInputConfig]
   );
 
-  const setControllerEnabled = useCallback(
-    (controllerEnabled: boolean) =>
-      setInputConfig({ ...inputConfig, controllerEnabled }),
+  const setGamepadEnabled = useCallback(
+    (gamepadEnabled: boolean) =>
+      setInputConfig({ ...inputConfig, gamepadEnabled }),
     [inputConfig, setInputConfig]
   );
 
   const mouseEnabled = !inputConfig.legacyMode && inputConfig.mouseEnabled;
   const keyboardEnabled = inputConfig.keyboardEnabled;
-  const controllerEnabled = inputConfig.controllerEnabled;
+  const gamepadEnabled = inputConfig.gamepadEnabled;
 
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
@@ -95,6 +95,7 @@ export function DisplayInspectorInputCard({
           classNames={{ content: 'w-60' }}
         >
           <Switch
+            size="sm"
             isSelected={inputConfig.legacyMode}
             onValueChange={setLegacyMode}
           >
@@ -103,6 +104,7 @@ export function DisplayInspectorInputCard({
         </Tooltip>
         <Divider />
         <Switch
+          size="sm"
           thumbIcon={<IconMouse />}
           isSelected={mouseEnabled}
           isDisabled={inputConfig.legacyMode}
@@ -118,6 +120,7 @@ export function DisplayInspectorInputCard({
           />
         </AnimatedPresence>
         <Switch
+          size="sm"
           thumbIcon={<IconKeyboard />}
           isSelected={keyboardEnabled}
           onValueChange={setKeyboardEnabled}
@@ -128,13 +131,14 @@ export function DisplayInspectorInputCard({
           <KeyEventView event={inputState.lastKeyEvent} />
         </AnimatedPresence>
         <Switch
+          size="sm"
           thumbIcon={<IconDeviceGamepad />}
-          isSelected={controllerEnabled}
-          onValueChange={setControllerEnabled}
+          isSelected={gamepadEnabled}
+          onValueChange={setGamepadEnabled}
         >
-          Controller
+          Gamepad
         </Switch>
-        <AnimatedPresence isShown={controllerEnabled}>
+        <AnimatedPresence isShown={gamepadEnabled}>
           <ControllerEventView
             gamepadCount={inputState.gamepadCount}
             event={inputState.lastControllerEvents?.at(-1)}
@@ -309,7 +313,7 @@ function ControllerEventView({
           <ObjectInspectorTable objects={[event]} names={gamepadEventNames} />
         )
       ) : (
-        <EventInfoText>no controller events yet</EventInfoText>
+        <EventInfoText>no gamepad events yet</EventInfoText>
       )}
     </div>
   );

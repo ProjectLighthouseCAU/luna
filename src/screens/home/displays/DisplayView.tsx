@@ -55,7 +55,7 @@ export function DisplayView() {
       mouseEnabled: false,
       pointerLockable: false,
       keyboardEnabled: false,
-      controllerEnabled: false,
+      gamepadEnabled: false,
     })
   );
 
@@ -160,8 +160,8 @@ export function DisplayView() {
   }, []);
 
   const gamepadsActive = useMemo(
-    () => inputState.gamepadCount > 0 && inputConfig.controllerEnabled,
-    [inputConfig.controllerEnabled, inputState.gamepadCount]
+    () => inputState.gamepadCount > 0 && inputConfig.gamepadEnabled,
+    [inputConfig.gamepadEnabled, inputState.gamepadCount]
   );
 
   useEffect(() => {
