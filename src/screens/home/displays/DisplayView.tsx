@@ -62,6 +62,8 @@ export function DisplayView() {
       keyboardEnabled: false,
       gamepadEnabled: false,
       midiEnabled: false,
+      orientationEnabled: false,
+      motionEnabled: false,
     })
   );
 
@@ -70,6 +72,8 @@ export function DisplayView() {
       gamepadSupported: typeof (navigator as any).getGamepads !== 'undefined',
       midiSupported:
         typeof (navigator as any).requestMIDIAccess !== 'undefined',
+      orientationSupported: typeof DeviceOrientationEvent !== 'undefined',
+      motionSupported: typeof DeviceMotionEvent !== 'undefined',
     }),
     []
   );

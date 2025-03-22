@@ -12,10 +12,12 @@ import { pluralize } from '@luna/utils/string';
 import {
   IconAlt,
   IconArrowBigUp,
+  IconChevronsRight,
   IconChevronUp,
   IconCommand,
   IconDeviceGamepad,
   IconDeviceGamepad2,
+  IconGeometry,
   IconKeyboard,
   IconMouse,
   IconPiano,
@@ -84,11 +86,18 @@ export function DisplayInspectorInputCard({
   const gamepadSupported = inputCapabilities.gamepadSupported;
   const midiSupported =
     !inputConfig.legacyMode && inputCapabilities.midiSupported;
+  const orientationSupported =
+    !inputConfig.legacyMode && inputCapabilities.orientationSupported;
+  const motionSupported =
+    !inputConfig.legacyMode && inputCapabilities.motionSupported;
 
   const mouseEnabled = mouseSupported && inputConfig.mouseEnabled;
   const keyboardEnabled = inputConfig.keyboardEnabled;
   const gamepadEnabled = gamepadSupported && inputConfig.gamepadEnabled;
   const midiEnabled = midiSupported && inputConfig.midiEnabled;
+  const orientationEnabled =
+    orientationSupported && inputConfig.orientationEnabled;
+  const motionEnabled = motionSupported && inputConfig.motionEnabled;
 
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
@@ -176,6 +185,28 @@ export function DisplayInspectorInputCard({
             midiInputCount={inputState.midiInputCount}
             event={inputState.lastMIDIEvent}
           />
+        </AnimatedPresence>
+        <Switch
+          size="sm"
+          thumbIcon={<IconGeometry />}
+          isSelected={orientationEnabled}
+          isDisabled={!orientationSupported}
+        >
+          Orientation
+        </Switch>
+        <AnimatedPresence isShown={orientationEnabled}>
+          <OrientationEventView />
+        </AnimatedPresence>
+        <Switch
+          size="sm"
+          thumbIcon={<IconChevronsRight />}
+          isSelected={motionEnabled}
+          isDisabled={!motionSupported}
+        >
+          Motion
+        </Switch>
+        <AnimatedPresence isShown={motionEnabled}>
+          <MotionEventView />
         </AnimatedPresence>
       </div>
     </TitledCard>
@@ -376,6 +407,14 @@ function MIDIEventView({
       )}
     </div>
   );
+}
+
+function OrientationEventView() {
+  return <EventInfoText>no events yet</EventInfoText>;
+}
+
+function MotionEventView() {
+  return <EventInfoText>no events yet</EventInfoText>;
 }
 
 function EventInfoText({ children }: { children: ReactNode }) {
