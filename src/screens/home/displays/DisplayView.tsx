@@ -30,6 +30,7 @@ import {
   LegacyKeyEvent,
   MIDIEvent,
   MouseEvent,
+  OrientationEvent,
 } from 'nighthouse/browser';
 import {
   useCallback,
@@ -338,6 +339,54 @@ export function DisplayView() {
       }
     };
   }, [api, clientId, midiAccess, username]);
+
+  // MARK: Orientation input
+
+  useEffect(() => {
+    (async () => {
+      if (
+        !inputCapabilities.orientationSupported ||
+        !inputConfig.orientationEnabled
+      ) {
+        return;
+      }
+
+      if (
+        'requestPermission' in DeviceOrientationEvent &&
+        typeof DeviceOrientationEvent.requestPermission === 'function'
+      ) {
+        if ((await DeviceOrientationEvent.requestPermission()) !== 'granted') {
+          return;
+        }
+      }
+
+      const listener = async (e: DeviceOrientationEvent) => {
+        const event: OrientationEvent = {
+          type: 'orientation',
+          source: clientId,
+          absolute: e.absolute,
+          // TODO: Fix this
+          alpha: e.alpha ?? 0,
+          beta: e.beta ?? 0,
+          gamma: e.gamma ?? 0,
+        };
+
+        await api.putInput(username, event);
+        setInputState(state => ({ ...state, lastOrientationEvent: event }));
+      };
+
+      window.addEventListener('deviceorientation', listener);
+      return () => {
+        window.removeEventListener('deviceorientation', listener);
+      };
+    })();
+  }, [
+    api,
+    clientId,
+    inputCapabilities.orientationSupported,
+    inputConfig.orientationEnabled,
+    username,
+  ]);
 
   // MARK: Mouse input
 
