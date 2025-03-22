@@ -4,6 +4,7 @@ import {
   ObjectInspectorTable,
 } from '@luna/components/ObjectInspectorTable';
 import { TitledCard } from '@luna/components/TitledCard';
+import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapabilities';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import { AnimatePresence } from '@luna/utils/motion';
@@ -35,6 +36,7 @@ export interface DisplayInspectorInputCardProps {
   inputState: InputState;
   inputConfig: InputConfig;
   setInputConfig: (inputConfig: InputConfig) => void;
+  inputCapabilities: InputCapabilities;
 }
 
 export function DisplayInspectorInputCard({
@@ -42,6 +44,7 @@ export function DisplayInspectorInputCard({
   inputState,
   inputConfig,
   setInputConfig,
+  inputCapabilities,
 }: DisplayInspectorInputCardProps) {
   const setLegacyMode = useCallback(
     (legacyMode: boolean) => setInputConfig({ ...inputConfig, legacyMode }),
@@ -77,11 +80,9 @@ export function DisplayInspectorInputCard({
   );
 
   const mouseSupported = !inputConfig.legacyMode;
-  const gamepadSupported =
-    typeof (navigator as any).getGamepads !== 'undefined';
+  const gamepadSupported = inputCapabilities.gamepadSupported;
   const midiSupported =
-    !inputConfig.legacyMode &&
-    typeof (navigator as any).requestMIDIAccess !== 'undefined';
+    !inputConfig.legacyMode && inputCapabilities.midiSupported;
 
   const mouseEnabled = mouseSupported && inputConfig.mouseEnabled;
   const keyboardEnabled = inputConfig.keyboardEnabled;

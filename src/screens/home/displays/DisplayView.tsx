@@ -12,6 +12,7 @@ import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { DisplayStream } from '@luna/screens/home/displays/DisplayStream';
+import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapabilities';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
 import {
@@ -58,6 +59,15 @@ export function DisplayView() {
       gamepadEnabled: false,
       midiEnabled: false,
     })
+  );
+
+  const inputCapabilities = useMemo<InputCapabilities>(
+    () => ({
+      gamepadSupported: typeof (navigator as any).getGamepads !== 'undefined',
+      midiSupported:
+        typeof (navigator as any).requestMIDIAccess !== 'undefined',
+    }),
+    []
   );
 
   const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
@@ -326,6 +336,7 @@ export function DisplayView() {
           inputState={inputState}
           inputConfig={inputConfig}
           setInputConfig={setInputConfig}
+          inputCapabilities={inputCapabilities}
         />
       </div>
     </HomeContent>
