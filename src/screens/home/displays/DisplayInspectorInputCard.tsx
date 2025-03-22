@@ -25,6 +25,7 @@ import {
   KeyModifiers,
   LegacyControllerEvent,
   LegacyKeyEvent,
+  MIDIEvent,
   MouseEvent,
 } from 'nighthouse/browser';
 import { ReactNode, useCallback } from 'react';
@@ -340,8 +341,16 @@ function GamepadEventView({
   );
 }
 
-function MIDIEventView() {
-  return <EventInfoText>no MIDI events yet</EventInfoText>;
+const midiEventNames: Names<MIDIEvent> = {
+  data: 'Data',
+};
+
+function MIDIEventView({ event }: { event?: MIDIEvent }) {
+  return event ? (
+    <ObjectInspectorTable objects={[event]} names={midiEventNames} />
+  ) : (
+    <EventInfoText>no MIDI events yet</EventInfoText>
+  );
 }
 
 function EventInfoText({ children }: { children: ReactNode }) {
