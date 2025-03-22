@@ -162,6 +162,9 @@ export function DisplayInspectorInputCard({
         >
           MIDI
         </Switch>
+        <AnimatedPresence isShown={midiEnabled}>
+          <MIDIEventView />
+        </AnimatedPresence>
       </div>
     </TitledCard>
   );
@@ -335,6 +338,10 @@ function ControllerEventView({
       )}
     </div>
   );
+}
+
+function MIDIEventView() {
+  return <EventInfoText>no MIDI events yet</EventInfoText>;
 }
 
 function EventInfoText({ children }: { children: ReactNode }) {
