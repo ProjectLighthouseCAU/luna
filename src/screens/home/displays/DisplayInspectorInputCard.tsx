@@ -82,6 +82,18 @@ export function DisplayInspectorInputCard({
     [inputConfig, setInputConfig]
   );
 
+  const setOrientationEnabled = useCallback(
+    (orientationEnabled: boolean) =>
+      setInputConfig({ ...inputConfig, orientationEnabled }),
+    [inputConfig, setInputConfig]
+  );
+
+  const setMotionEnabled = useCallback(
+    (motionEnabled: boolean) =>
+      setInputConfig({ ...inputConfig, motionEnabled }),
+    [inputConfig, setInputConfig]
+  );
+
   const mouseSupported = !inputConfig.legacyMode;
   const gamepadSupported = inputCapabilities.gamepadSupported;
   const midiSupported =
@@ -191,6 +203,7 @@ export function DisplayInspectorInputCard({
           thumbIcon={<IconGeometry />}
           isSelected={orientationEnabled}
           isDisabled={!orientationSupported}
+          onValueChange={setOrientationEnabled}
         >
           Orientation
         </Switch>
@@ -202,6 +215,7 @@ export function DisplayInspectorInputCard({
           thumbIcon={<IconChevronsRight />}
           isSelected={motionEnabled}
           isDisabled={!motionSupported}
+          onValueChange={setMotionEnabled}
         >
           Motion
         </Switch>
