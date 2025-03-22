@@ -29,6 +29,7 @@ import {
   LegacyControllerEvent,
   LegacyKeyEvent,
   MIDIEvent,
+  MotionEvent,
   MouseEvent,
   OrientationEvent,
 } from 'nighthouse/browser';
@@ -384,6 +385,70 @@ export function DisplayView() {
     api,
     clientId,
     inputCapabilities.orientationSupported,
+    inputConfig.orientationEnabled,
+    username,
+  ]);
+
+  // MARK: Motion input
+
+  useEffect(() => {
+    (async () => {
+      if (!inputCapabilities.motionSupported || !inputConfig.motionEnabled) {
+        return;
+      }
+
+      if (
+        'requestPermission' in DeviceMotionEvent &&
+        typeof DeviceMotionEvent.requestPermission === 'function'
+      ) {
+        if ((await DeviceMotionEvent.requestPermission()) !== 'granted') {
+          return;
+        }
+      }
+
+      const listener = async (e: DeviceMotionEvent) => {
+        const event: MotionEvent = {
+          type: 'motion',
+          source: clientId,
+          acceleration: e.acceleration
+            ? {
+                x: e.acceleration.x,
+                y: e.acceleration.y,
+                z: e.acceleration.z,
+              }
+            : null,
+          accelerationIncludingGravity: e.accelerationIncludingGravity
+            ? {
+                x: e.accelerationIncludingGravity.x,
+                y: e.accelerationIncludingGravity.y,
+                z: e.accelerationIncludingGravity.z,
+              }
+            : null,
+          rotationRate: e.rotationRate
+            ? {
+                alpha: e.rotationRate.alpha,
+                beta: e.rotationRate.beta,
+                gamma: e.rotationRate.gamma,
+              }
+            : null,
+          interval: e.interval,
+        };
+
+        await api.putInput(username, event);
+        setInputState(state => ({ ...state, lastMotionEvent: event }));
+      };
+
+      window.addEventListener('devicemotion', listener);
+      return () => {
+        window.removeEventListener('devicemotion', listener);
+      };
+    })();
+  }, [
+    api,
+    clientId,
+    inputCapabilities.motionSupported,
+    inputCapabilities.orientationSupported,
+    inputConfig.motionEnabled,
     inputConfig.orientationEnabled,
     username,
   ]);
