@@ -30,7 +30,9 @@ import {
   LegacyControllerEvent,
   LegacyKeyEvent,
   MIDIEvent,
+  MotionEvent,
   MouseEvent,
+  OrientationEvent,
 } from 'nighthouse/browser';
 import { ReactNode, useCallback } from 'react';
 
@@ -427,12 +429,34 @@ function MIDIEventView({
   );
 }
 
-function OrientationEventView() {
-  return <EventInfoText>no orientation events yet</EventInfoText>;
+const orientationEventNames: Names<OrientationEvent> = {
+  absolute: 'Absolute',
+  alpha: 'Alpha',
+  beta: 'Beta',
+  gamma: 'Gamma',
+};
+
+function OrientationEventView({ event }: { event?: OrientationEvent }) {
+  return event ? (
+    <ObjectInspectorTable objects={[event]} names={orientationEventNames} />
+  ) : (
+    <EventInfoText>no orientation events yet</EventInfoText>
+  );
 }
 
-function MotionEventView() {
-  return <EventInfoText>no motion events yet</EventInfoText>;
+const motionEventNames: Names<MotionEvent> = {
+  acceleration: 'Acceleration',
+  accelerationIncludingGravity: 'Acceleration (incl. Gravity)',
+  interval: 'Interval',
+  rotationRate: 'Rotation rate',
+};
+
+function MotionEventView({ event }: { event?: MotionEvent }) {
+  return event ? (
+    <ObjectInspectorTable objects={[event]} names={motionEventNames} />
+  ) : (
+    <EventInfoText>no motion events yet</EventInfoText>
+  );
 }
 
 function EventInfoText({ children }: { children: ReactNode }) {
