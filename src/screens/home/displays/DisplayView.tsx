@@ -159,10 +159,13 @@ export function DisplayView() {
 
   // MARK: Gamepad input
 
-  // Unfortunately gamepadconnected and gamepaddisconnected events seem to be
-  // unreliable, so we'll just poll manually
-
   useEffect(() => {
+    if (!inputCapabilities.gamepadSupported) {
+      return;
+    }
+
+    // Unfortunately gamepadconnected and gamepaddisconnected events seem to be
+    // unreliable, so we'll just poll manually
     const interval = window.setInterval(() => {
       const count =
         navigator.getGamepads()?.filter(g => g !== null).length ?? 0;
@@ -172,11 +175,18 @@ export function DisplayView() {
     return () => {
       window.clearInterval(interval);
     };
-  }, []);
+  }, [inputCapabilities.gamepadSupported]);
 
   const gamepadsActive = useMemo(
-    () => inputState.gamepadCount > 0 && inputConfig.gamepadEnabled,
-    [inputConfig.gamepadEnabled, inputState.gamepadCount]
+    () =>
+      inputCapabilities.gamepadSupported &&
+      inputConfig.gamepadEnabled &&
+      inputState.gamepadCount > 0,
+    [
+      inputCapabilities.gamepadSupported,
+      inputConfig.gamepadEnabled,
+      inputState.gamepadCount,
+    ]
   );
 
   useEffect(() => {
