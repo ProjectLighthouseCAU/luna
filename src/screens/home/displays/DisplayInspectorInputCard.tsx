@@ -136,7 +136,7 @@ export function DisplayInspectorInputCard({
           isSelected={controllerEnabled}
           onValueChange={setControllerEnabled}
         >
-          Controller
+          Game Controller
         </Switch>
         <AnimatedPresence isShown={controllerEnabled}>
           <ControllerEventView
