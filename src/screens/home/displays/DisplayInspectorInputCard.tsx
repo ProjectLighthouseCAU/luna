@@ -198,27 +198,31 @@ export function DisplayInspectorInputCard({
             event={inputState.lastMIDIEvent}
           />
         </AnimatedPresence>
-        <Switch
-          size="sm"
-          thumbIcon={<IconGeometry />}
-          isSelected={orientationEnabled}
-          isDisabled={!orientationSupported}
-          onValueChange={setOrientationEnabled}
-        >
-          Orientation
-        </Switch>
+        <Tooltip placement="left" content="Only supported on mobile">
+          <Switch
+            size="sm"
+            thumbIcon={<IconGeometry />}
+            isSelected={orientationEnabled}
+            isDisabled={!orientationSupported}
+            onValueChange={setOrientationEnabled}
+          >
+            Orientation
+          </Switch>
+        </Tooltip>
         <AnimatedPresence isShown={orientationEnabled}>
           <OrientationEventView />
         </AnimatedPresence>
-        <Switch
-          size="sm"
-          thumbIcon={<IconChevronsRight />}
-          isSelected={motionEnabled}
-          isDisabled={!motionSupported}
-          onValueChange={setMotionEnabled}
-        >
-          Motion
-        </Switch>
+        <Tooltip placement="left" content="Only supported on mobile">
+          <Switch
+            size="sm"
+            thumbIcon={<IconChevronsRight />}
+            isSelected={motionEnabled}
+            isDisabled={!motionSupported}
+            onValueChange={setMotionEnabled}
+          >
+            Motion
+          </Switch>
+        </Tooltip>
         <AnimatedPresence isShown={motionEnabled}>
           <MotionEventView />
         </AnimatedPresence>
