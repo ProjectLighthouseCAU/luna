@@ -11,3 +11,7 @@ export function truncate(
     ? s
     : `${s.substring(0, innerLength)}${options.suffix}`;
 }
+
+export function pluralize(s: string, n?: number): string {
+  return n === 1 ? s : `${s}s`;
+}

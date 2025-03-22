@@ -171,7 +171,10 @@ export function DisplayInspectorInputCard({
           MIDI
         </Switch>
         <AnimatedPresence isShown={midiEnabled}>
-          <MIDIEventView />
+          <MIDIEventView
+            midiInputCount={inputState.midiInputCount}
+            event={inputState.lastMIDIEvent}
+          />
         </AnimatedPresence>
       </div>
     </TitledCard>
@@ -352,11 +355,25 @@ const midiEventNames: Names<MIDIEvent> = {
   data: 'Data',
 };
 
-function MIDIEventView({ event }: { event?: MIDIEvent }) {
-  return event ? (
-    <ObjectInspectorTable objects={[event]} names={midiEventNames} />
-  ) : (
-    <EventInfoText>no MIDI events yet</EventInfoText>
+function MIDIEventView({
+  midiInputCount,
+  event,
+}: {
+  midiInputCount: number;
+  event?: MIDIEvent;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <EventInfoText>
+        {midiInputCount ?? '?'} MIDI input{midiInputCount === 1 ? '' : 's'}{' '}
+        connected
+      </EventInfoText>
+      {event ? (
+        <ObjectInspectorTable objects={[event]} names={midiEventNames} />
+      ) : (
+        <EventInfoText>no MIDI events yet</EventInfoText>
+      )}
+    </div>
   );
 }
 

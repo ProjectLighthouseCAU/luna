@@ -28,6 +28,7 @@ import {
   KeyEvent,
   LegacyControllerEvent,
   LegacyKeyEvent,
+  MIDIEvent,
   MouseEvent,
 } from 'nighthouse/browser';
 import {
@@ -48,7 +49,10 @@ export function DisplayView() {
 
   const { api } = useContext(ModelContext);
 
-  const [inputState, setInputState] = useState<InputState>({ gamepadCount: 0 });
+  const [inputState, setInputState] = useState<InputState>({
+    gamepadCount: 0,
+    midiInputCount: 0,
+  });
   const [inputConfig, setInputConfig] = useLocalStorage<InputConfig>(
     LocalStorageKey.DisplayInputConfig,
     () => ({
@@ -260,6 +264,76 @@ export function DisplayView() {
       console.log('Unregistered gamepad polling loop', interval);
     };
   }, [clientId, inputConfig.legacyMode, api, username, gamepadsActive]);
+
+  // MARK: MIDI input
+
+  // We need to ignore this for now since TypeScript's DOM lib doesn't seem to
+  // have the Web MIDI types yet.
+  // @ts-ignore
+  const [midiAccess, setMIDIAccess] = useState<MIDIAccess>();
+
+  useEffect(() => {
+    (async () => {
+      if (!inputCapabilities.midiSupported || !inputConfig.midiEnabled) {
+        setMIDIAccess(undefined);
+        return;
+      }
+
+      try {
+        // @ts-ignore
+        setMIDIAccess(await navigator.requestMIDIAccess());
+      } catch (error) {
+        console.warn(`Web MIDI failed to activate: ${error}`);
+      }
+    })();
+  }, [inputCapabilities.midiSupported, inputConfig.midiEnabled]);
+
+  useEffect(() => {
+    if (!midiAccess?.inputs.size) {
+      return;
+    }
+
+    setInputState(state => ({
+      ...state,
+      midiInputCount: midiAccess.inputs.size,
+    }));
+  }, [midiAccess?.inputs.size]);
+
+  useEffect(() => {
+    if (!midiAccess) {
+      return;
+    }
+
+    // @ts-ignore
+    const listeners: [MIDIInput, (e: MIDIMessageEvent) => Promise<void>][] = [];
+
+    for (const [key, input] of midiAccess.inputs.entries()) {
+      // @ts-ignore
+      const listener = async (e: MIDIMessageEvent) => {
+        if (!e.data) {
+          return;
+        }
+
+        const event: MIDIEvent = {
+          type: 'midi',
+          source: `${clientId}:${key}`,
+          data: e.data,
+        };
+
+        await api.putInput(username, event);
+        setInputState(state => ({ ...state, lastMIDIEvent: event }));
+      };
+
+      input.addEventListener('midimessage', listener);
+      listeners.push([input, listener]);
+    }
+
+    return () => {
+      for (const [input, listener] of listeners) {
+        input.removeEventListener('midimessage', listener);
+      }
+    };
+  }, [api, clientId, midiAccess, username]);
 
   // MARK: Mouse input
 
