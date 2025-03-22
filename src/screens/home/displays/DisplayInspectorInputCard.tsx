@@ -95,6 +95,7 @@ export function DisplayInspectorInputCard({
           classNames={{ content: 'w-60' }}
         >
           <Switch
+            size="sm"
             isSelected={inputConfig.legacyMode}
             onValueChange={setLegacyMode}
           >
@@ -103,6 +104,7 @@ export function DisplayInspectorInputCard({
         </Tooltip>
         <Divider />
         <Switch
+          size="sm"
           thumbIcon={<IconMouse />}
           isSelected={mouseEnabled}
           isDisabled={inputConfig.legacyMode}
@@ -118,6 +120,7 @@ export function DisplayInspectorInputCard({
           />
         </AnimatedPresence>
         <Switch
+          size="sm"
           thumbIcon={<IconKeyboard />}
           isSelected={keyboardEnabled}
           onValueChange={setKeyboardEnabled}
@@ -128,6 +131,7 @@ export function DisplayInspectorInputCard({
           <KeyEventView event={inputState.lastKeyEvent} />
         </AnimatedPresence>
         <Switch
+          size="sm"
           thumbIcon={<IconDeviceGamepad />}
           isSelected={controllerEnabled}
           onValueChange={setControllerEnabled}
