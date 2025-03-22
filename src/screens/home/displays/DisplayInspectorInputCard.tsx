@@ -149,7 +149,7 @@ export function DisplayInspectorInputCard({
           Gamepad
         </Switch>
         <AnimatedPresence isShown={gamepadEnabled}>
-          <ControllerEventView
+          <GamepadEventView
             gamepadCount={inputState.gamepadCount}
             event={inputState.lastControllerEvents?.at(-1)}
           />
@@ -312,7 +312,7 @@ const gamepadEventNames: Names<GamepadEvent> = {
   value: 'Value',
 };
 
-function ControllerEventView({
+function GamepadEventView({
   gamepadCount,
   event,
 }: {
