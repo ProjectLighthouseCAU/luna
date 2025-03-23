@@ -65,11 +65,12 @@ export function DisplayView() {
       gamepadEnabled: false,
       midiEnabled: false,
       orientationEnabled: false,
-      orientationIntervalMs: 100,
       motionEnabled: false,
-      motionIntervalMs: 100,
     })
   );
+
+  const orientationIntervalMs = 100;
+  const motionIntervalMs = 100;
 
   const inputCapabilities = useMemo<InputCapabilities>(
     () => ({
@@ -378,10 +379,7 @@ export function DisplayView() {
         };
 
         const now = Date.now();
-        if (
-          now - lastEventSentAt >= inputConfig.orientationIntervalMs &&
-          event
-        ) {
+        if (now - lastEventSentAt >= orientationIntervalMs && event) {
           await api.putInput(username, event);
           setInputState(state => ({ ...state, lastOrientationEvent: event }));
           lastEventSentAt = now;
@@ -400,7 +398,6 @@ export function DisplayView() {
     clientId,
     inputCapabilities.orientationSupported,
     inputConfig.orientationEnabled,
-    inputConfig.orientationIntervalMs,
     username,
   ]);
 
@@ -452,7 +449,7 @@ export function DisplayView() {
         };
 
         const now = Date.now();
-        if (now - lastEventSentAt >= inputConfig.motionIntervalMs && event) {
+        if (now - lastEventSentAt >= motionIntervalMs && event) {
           await api.putInput(username, event);
           setInputState(state => ({ ...state, lastMotionEvent: event }));
           lastEventSentAt = now;
@@ -470,7 +467,6 @@ export function DisplayView() {
     inputCapabilities.motionSupported,
     inputCapabilities.orientationSupported,
     inputConfig.motionEnabled,
-    inputConfig.motionIntervalMs,
     inputConfig.orientationEnabled,
     username,
   ]);

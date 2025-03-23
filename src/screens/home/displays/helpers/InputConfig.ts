@@ -6,7 +6,5 @@ export interface InputConfig {
   gamepadEnabled: boolean;
   midiEnabled: boolean;
   orientationEnabled: boolean;
-  orientationIntervalMs: number;
   motionEnabled: boolean;
-  motionIntervalMs: number;
 }
