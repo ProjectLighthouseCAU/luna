@@ -69,8 +69,8 @@ export function DisplayView() {
     })
   );
 
-  const orientationIntervalMs = 100;
-  const motionIntervalMs = 100;
+  const orientationIntervalMs = 200;
+  const motionIntervalMs = 200;
 
   const inputCapabilities = useMemo<InputCapabilities>(
     () => ({
