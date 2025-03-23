@@ -65,9 +65,9 @@ export function DisplayView() {
       gamepadEnabled: false,
       midiEnabled: false,
       orientationEnabled: false,
-      orientationIntervalMs: 50,
+      orientationIntervalMs: 100,
       motionEnabled: false,
-      motionIntervalMs: 50,
+      motionIntervalMs: 100,
     })
   );
 
