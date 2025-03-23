@@ -21,6 +21,7 @@ import {
   GamepadButtonChange,
   GamepadState,
 } from '@luna/utils/gamepad';
+import { addAny } from '@luna/utils/object';
 import { throttle } from '@luna/utils/schedule';
 import { motion } from 'framer-motion';
 import {
@@ -65,7 +66,9 @@ export function DisplayView() {
       gamepadEnabled: false,
       midiEnabled: false,
       orientationEnabled: false,
+      orientationIntervalMs: 50,
       motionEnabled: false,
+      motionIntervalMs: 50,
     })
   );
 
@@ -341,6 +344,8 @@ export function DisplayView() {
     };
   }, [api, clientId, midiAccess, username]);
 
+  // TODO: Abstract out throttling and other commonalities from orientation/motion handling
+
   // MARK: Orientation input
 
   useEffect(() => {
@@ -361,8 +366,11 @@ export function DisplayView() {
         }
       }
 
+      let lastEvent: OrientationEvent | null = null;
+      let lastEventSentAt = 0;
+
       const listener = async (e: DeviceOrientationEvent) => {
-        const event: OrientationEvent = {
+        const delta: OrientationEvent = {
           type: 'orientation',
           source: clientId,
           absolute: e.absolute,
@@ -372,8 +380,18 @@ export function DisplayView() {
           gamma: e.gamma ?? 0,
         };
 
-        await api.putInput(username, event);
-        setInputState(state => ({ ...state, lastOrientationEvent: event }));
+        const event = addAny<OrientationEvent | null>(lastEvent, delta);
+        const now = Date.now();
+        if (
+          now - lastEventSentAt >= inputConfig.orientationIntervalMs &&
+          event
+        ) {
+          await api.putInput(username, event);
+          setInputState(state => ({ ...state, lastOrientationEvent: event }));
+          lastEventSentAt = now;
+        }
+
+        lastEvent = event;
       };
 
       window.addEventListener('deviceorientation', listener);
@@ -386,6 +404,7 @@ export function DisplayView() {
     clientId,
     inputCapabilities.orientationSupported,
     inputConfig.orientationEnabled,
+    inputConfig.orientationIntervalMs,
     username,
   ]);
 
@@ -406,8 +425,11 @@ export function DisplayView() {
         }
       }
 
+      let lastEvent: MotionEvent | null = null;
+      let lastEventSentAt = 0;
+
       const listener = async (e: DeviceMotionEvent) => {
-        const event: MotionEvent = {
+        const delta: MotionEvent = {
           type: 'motion',
           source: clientId,
           acceleration: e.acceleration
@@ -431,11 +453,18 @@ export function DisplayView() {
                 gamma: e.rotationRate.gamma,
               }
             : null,
-          interval: e.interval,
+          interval: Math.max(e.interval, inputConfig.motionIntervalMs),
         };
 
-        await api.putInput(username, event);
-        setInputState(state => ({ ...state, lastMotionEvent: event }));
+        const event = addAny<MotionEvent | null>(lastEvent, delta);
+        const now = Date.now();
+        if (now - lastEventSentAt >= inputConfig.motionIntervalMs && event) {
+          await api.putInput(username, event);
+          setInputState(state => ({ ...state, lastMotionEvent: event }));
+          lastEventSentAt = now;
+        }
+
+        lastEvent = event;
       };
 
       window.addEventListener('devicemotion', listener);
@@ -449,6 +478,7 @@ export function DisplayView() {
     inputCapabilities.motionSupported,
     inputCapabilities.orientationSupported,
     inputConfig.motionEnabled,
+    inputConfig.motionIntervalMs,
     inputConfig.orientationEnabled,
     username,
   ]);
