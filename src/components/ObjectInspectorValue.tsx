@@ -1,6 +1,8 @@
 import { BooleanCheck } from '@luna/components/BooleanCheck';
 import { isBounded } from '@luna/utils/bounded';
+import * as rot3 from '@luna/utils/rot3';
 import * as vec2 from '@luna/utils/vec2';
+import * as vec3 from '@luna/utils/vec3';
 
 export interface ObjectInspectorValueProps {
   value: any;
@@ -51,8 +53,26 @@ function ObjectInspectorRawValue({
             <span>
               y: <ObjectInspectorRawValue value={value.y} precision={2} />
             </span>
+            {vec3.isInstance(value) ? (
+              <span>
+                z: <ObjectInspectorValue value={value.z} precision={2} />
+              </span>
+            ) : null}
           </div>
         );
+      } else if (rot3.isInstance(value)) {
+        <div className="flex flex-col items-start">
+          <span>
+            &alpha;:{' '}
+            <ObjectInspectorRawValue value={value.alpha} precision={2} />
+          </span>
+          <span>
+            &beta;: <ObjectInspectorRawValue value={value.beta} precision={2} />
+          </span>
+          <span>
+            &gamma;: <ObjectInspectorValue value={value.gamma} precision={2} />
+          </span>
+        </div>;
       } else if (isBounded(value)) {
         return (
           <>
