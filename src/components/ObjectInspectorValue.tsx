@@ -61,18 +61,22 @@ function ObjectInspectorRawValue({
           </div>
         );
       } else if (rot3.isInstance(value)) {
-        <div className="flex flex-col items-start">
-          <span>
-            &alpha;:{' '}
-            <ObjectInspectorRawValue value={value.alpha} precision={2} />
-          </span>
-          <span>
-            &beta;: <ObjectInspectorRawValue value={value.beta} precision={2} />
-          </span>
-          <span>
-            &gamma;: <ObjectInspectorValue value={value.gamma} precision={2} />
-          </span>
-        </div>;
+        return (
+          <div className="flex flex-col items-start">
+            <span>
+              &alpha;:{' '}
+              <ObjectInspectorRawValue value={value.alpha} precision={2} />
+            </span>
+            <span>
+              &beta;:{' '}
+              <ObjectInspectorRawValue value={value.beta} precision={2} />
+            </span>
+            <span>
+              &gamma;:{' '}
+              <ObjectInspectorValue value={value.gamma} precision={2} />
+            </span>
+          </div>
+        );
       } else if (isBounded(value)) {
         return (
           <>
