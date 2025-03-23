@@ -212,7 +212,7 @@ export function DisplayInspectorInputCard({
           </Switch>
         </Tooltip>
         <AnimatedPresence isShown={orientationEnabled}>
-          <OrientationEventView />
+          <OrientationEventView event={inputState.lastOrientationEvent} />
         </AnimatedPresence>
         <Tooltip placement="left" content="Only supported on mobile">
           <Switch
@@ -226,7 +226,7 @@ export function DisplayInspectorInputCard({
           </Switch>
         </Tooltip>
         <AnimatedPresence isShown={motionEnabled}>
-          <MotionEventView />
+          <MotionEventView event={inputState.lastMotionEvent} />
         </AnimatedPresence>
       </div>
     </TitledCard>
