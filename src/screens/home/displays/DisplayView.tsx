@@ -452,7 +452,7 @@ export function DisplayView() {
                 gamma: e.rotationRate.gamma,
               }
             : null,
-          interval: Math.max(e.interval, inputConfig.motionIntervalMs),
+          interval: e.interval,
         };
 
         const event = addAny<MotionEvent | null>(lastEvent, delta);
