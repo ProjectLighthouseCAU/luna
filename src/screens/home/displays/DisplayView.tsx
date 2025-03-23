@@ -393,9 +393,11 @@ export function DisplayView() {
         lastEvent = event;
       };
 
-      window.addEventListener('deviceorientation', listener);
+      // @ts-ignore
+      window.addEventListener('deviceorientationabsolute', listener);
       return () => {
-        window.removeEventListener('deviceorientation', listener);
+        // @ts-ignore
+        window.removeEventListener('deviceorientationabsolute', listener);
       };
     })();
   }, [
