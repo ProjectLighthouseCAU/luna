@@ -374,10 +374,9 @@ export function DisplayView() {
           type: 'orientation',
           source: clientId,
           absolute: e.absolute,
-          // TODO: Fix this
-          alpha: e.alpha ?? 0,
-          beta: e.beta ?? 0,
-          gamma: e.gamma ?? 0,
+          alpha: e.alpha,
+          beta: e.beta,
+          gamma: e.gamma,
         };
 
         const event = addAny<OrientationEvent | null>(lastEvent, delta);
