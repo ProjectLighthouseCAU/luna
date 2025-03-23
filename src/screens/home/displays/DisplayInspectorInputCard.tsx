@@ -446,7 +446,7 @@ function OrientationEventView({ event }: { event?: OrientationEvent }) {
 
 const motionEventNames: Names<MotionEvent> = {
   acceleration: 'Acceleration',
-  accelerationIncludingGravity: 'Acceleration (incl. Gravity)',
+  accelerationIncludingGravity: 'Acc. with Gravity',
   interval: 'Interval',
   rotationRate: 'Rotation rate',
 };
