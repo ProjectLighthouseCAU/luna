@@ -21,7 +21,6 @@ import {
   GamepadButtonChange,
   GamepadState,
 } from '@luna/utils/gamepad';
-import { addAny } from '@luna/utils/object';
 import { throttle } from '@luna/utils/schedule';
 import { motion } from 'framer-motion';
 import {
@@ -366,11 +365,10 @@ export function DisplayView() {
         }
       }
 
-      let lastEvent: OrientationEvent | null = null;
       let lastEventSentAt = 0;
 
       const listener = async (e: DeviceOrientationEvent) => {
-        const delta: OrientationEvent = {
+        const event: OrientationEvent = {
           type: 'orientation',
           source: clientId,
           absolute: e.absolute,
@@ -379,7 +377,6 @@ export function DisplayView() {
           gamma: e.gamma,
         };
 
-        const event = addAny<OrientationEvent | null>(lastEvent, delta);
         const now = Date.now();
         if (
           now - lastEventSentAt >= inputConfig.orientationIntervalMs &&
@@ -389,8 +386,6 @@ export function DisplayView() {
           setInputState(state => ({ ...state, lastOrientationEvent: event }));
           lastEventSentAt = now;
         }
-
-        lastEvent = event;
       };
 
       // @ts-ignore
@@ -426,11 +421,10 @@ export function DisplayView() {
         }
       }
 
-      let lastEvent: MotionEvent | null = null;
       let lastEventSentAt = 0;
 
       const listener = async (e: DeviceMotionEvent) => {
-        const delta: MotionEvent = {
+        const event: MotionEvent = {
           type: 'motion',
           source: clientId,
           acceleration: e.acceleration
@@ -457,15 +451,12 @@ export function DisplayView() {
           interval: e.interval,
         };
 
-        const event = addAny<MotionEvent | null>(lastEvent, delta);
         const now = Date.now();
         if (now - lastEventSentAt >= inputConfig.motionIntervalMs && event) {
           await api.putInput(username, event);
           setInputState(state => ({ ...state, lastMotionEvent: event }));
           lastEventSentAt = now;
         }
-
-        lastEvent = event;
       };
 
       window.addEventListener('devicemotion', listener);
