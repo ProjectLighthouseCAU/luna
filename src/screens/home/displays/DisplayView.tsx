@@ -386,11 +386,9 @@ export function DisplayView() {
         }
       };
 
-      // @ts-ignore
-      window.addEventListener('deviceorientationabsolute', listener);
+      window.addEventListener('deviceorientation', listener);
       return () => {
-        // @ts-ignore
-        window.removeEventListener('deviceorientationabsolute', listener);
+        window.removeEventListener('deviceorientation', listener);
       };
     })();
   }, [
