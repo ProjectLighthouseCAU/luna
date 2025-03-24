@@ -70,7 +70,7 @@ export function HomeScreen() {
         </div>
       ) : null}
       <div className="flex flex-col grow">
-        <div className="flex flex-row items-center space-x-4 sticky top-0 z-50 p-5 bg-white/70 dark:bg-black/30 backdrop-blur-2xl">
+        <div className="flex flex-row space-x-4 sticky top-0 z-50 h-[75px] p-5 bg-white/70 dark:bg-black/30 backdrop-blur-2xl">
           {isCompact ? (
             <Button isIconOnly onPress={toggleExpanded}>
               <IconMenu2 />
@@ -78,7 +78,7 @@ export function HomeScreen() {
           ) : null}
           <div className="grow flex flex-row justify-between">
             <h2 className="text-3xl">{title}</h2>
-            {toolbar}
+            <div className="flex flex-row items-center">{toolbar}</div>
           </div>
         </div>
         {isCompact && isExpanded ? (
@@ -86,7 +86,9 @@ export function HomeScreen() {
             <Sidebar isCompact={isCompact} />
           </div>
         ) : null}
-        <div className={`grow p-5 ${layout === 'fullScreen' ? 'h-full' : ''}`}>
+        <div
+          className={`grow p-5 ${layout === 'fullScreen' ? 'h-[calc(100%-75px)]' : ''}`}
+        >
           <Outlet context={outletContext} />
         </div>
       </div>
