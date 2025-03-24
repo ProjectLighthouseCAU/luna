@@ -73,7 +73,7 @@ export function RouteLink({
             </>
           )}
         </NavLink>
-        <AnimatePresence initial={isExpanded}>
+        <AnimatePresence initial={false}>
           {isExpanded ? (
             <motion.div
               initial="collapsed"

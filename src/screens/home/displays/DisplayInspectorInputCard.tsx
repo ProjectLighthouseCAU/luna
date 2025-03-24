@@ -1,4 +1,5 @@
 import { Checkbox, Code, Divider, Switch, Tooltip } from '@heroui/react';
+import { AnimatedPresence } from '@luna/components/AnimatedPresence';
 import {
   Names,
   ObjectInspectorTable,
@@ -7,7 +8,6 @@ import { TitledCard } from '@luna/components/TitledCard';
 import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapabilities';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
-import { AnimatePresence } from '@luna/utils/motion';
 import { pluralize } from '@luna/utils/string';
 import {
   IconAlt,
@@ -22,7 +22,6 @@ import {
   IconMouse,
   IconPiano,
 } from '@tabler/icons-react';
-import { motion } from 'framer-motion';
 import {
   GamepadEvent,
   KeyEvent,
@@ -114,8 +113,8 @@ export function DisplayInspectorInputCard({
   const motionEnabled = motionSupported && inputConfig.motionEnabled;
 
   return (
-    <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
-      <div className="flex flex-col space-y-2 md:w-[200px]">
+    <TitledCard icon={<IconDeviceGamepad2 />} title="Input" isCollapsible>
+      <div className="flex flex-col space-y-2">
         <Tooltip
           placement="left"
           content={
@@ -230,33 +229,6 @@ export function DisplayInspectorInputCard({
         </AnimatedPresence>
       </div>
     </TitledCard>
-  );
-}
-
-function AnimatedPresence({
-  isShown,
-  children,
-}: {
-  isShown: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <AnimatePresence initial={isShown}>
-      {isShown ? (
-        <motion.div
-          initial="collapsed"
-          animate="open"
-          exit="collapsed"
-          variants={{
-            open: { opacity: 1, height: 'auto' },
-            collapsed: { opacity: 0, height: 0 },
-          }}
-          transition={{ duration: 0.2 }}
-        >
-          {children}
-        </motion.div>
-      ) : undefined}
-    </AnimatePresence>
   );
 }
 

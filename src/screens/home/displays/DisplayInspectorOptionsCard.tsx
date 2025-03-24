@@ -11,7 +11,7 @@ export function DisplayInspectorOptionsCard({
 }: DisplayInspectorOptionsCardProps) {
   // TODO: Respect isEditable (after implementing it)
   return (
-    <TitledCard icon={<IconAdjustments />} title="Options">
+    <TitledCard icon={<IconAdjustments />} title="Options" isCollapsible>
       <Tabs isDisabled={true}>
         <Tab key="public" title="Public" />
         <Tab key="private" title="Private" />

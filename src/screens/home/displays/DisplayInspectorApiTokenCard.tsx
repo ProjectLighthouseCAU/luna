@@ -47,7 +47,7 @@ export function DisplayInspectorApiTokenCard({
   }, [auth, userId]);
 
   return (
-    <TitledCard icon={<IconKey />} title="API Token">
+    <TitledCard icon={<IconKey />} title="API Token" isCollapsible>
       <div className="flex flex-row justify-center items-center space-x-1">
         <Button className="grow" size="sm" onPress={onOpen}>
           Reveal Token
