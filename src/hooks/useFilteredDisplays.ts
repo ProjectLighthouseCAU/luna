@@ -12,7 +12,9 @@ export function useFilteredDisplays({
 
   const pinnedDisplays = usePinnedDisplays();
 
-  const allUsernames = useJsonMemo([...users.all.keySeq().sort()]);
+  const allUsernames = useJsonMemo([
+    ...users.all.keySeq().sortBy(u => u.toLowerCase()),
+  ]);
 
   // Filter the models case-insensitively by the search query
   const filteredUsernames = useMemo(
