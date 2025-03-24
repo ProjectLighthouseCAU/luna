@@ -8,16 +8,16 @@ export function TimeInterval({
   layout = 'horizontal',
 }: TimeIntervalProps) {
   const seconds = Math.floor(rawSeconds);
-  const components: string[] = [`${seconds % 60} s`];
+  const components: string[] = [`${seconds % 60}s`];
   if (seconds > 60) {
     const minutes = Math.floor(seconds / 60);
-    components.push(`${minutes % 60} m`);
+    components.push(`${minutes % 60}m`);
     if (minutes > 60) {
       const hours = Math.floor(minutes / 60);
-      components.push(`${hours % 24} h`);
+      components.push(`${hours % 24}h`);
       if (hours > 24) {
         const days = Math.floor(hours / 24);
-        components.push(`${days} d`);
+        components.push(`${days}d`);
       }
     }
   }
