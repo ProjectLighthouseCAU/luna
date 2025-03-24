@@ -10,7 +10,7 @@ export interface AnimatedPresenceProps {
 
 export function AnimatedPresence({
   isShown,
-  hideScrollbars = false,
+  hideScrollbars = true,
   children,
 }: AnimatedPresenceProps) {
   const [isAnimating, setAnimating] = useState(false);
