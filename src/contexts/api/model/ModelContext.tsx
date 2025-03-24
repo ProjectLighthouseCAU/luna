@@ -53,6 +53,9 @@ export interface ModelAPI {
   /** Updates a resource at an arbitrary path. */
   put(path: string[], payload: any): Promise<Result<unknown>>;
 
+  /** Updates the model of a given user. */
+  putModel(user: string, frame: Uint8Array): Promise<Result<unknown>>;
+
   /** Sends a legacy input event for the given user to the given endpoint. */
   putLegacyInput(
     user: string,
@@ -92,6 +95,7 @@ export const ModelContext = createContext<ModelContextValue>({
     async *streamModel() {},
     delete: async () => errorResult('No model context for deleting path'),
     put: async () => errorResult('No model context for updating resource'),
+    putModel: async () => errorResult('No model context for updating resource'),
     putLegacyInput: async () =>
       errorResult('No model context for putting input'),
     putInput: async () => errorResult('No model context for putting input'),
@@ -230,6 +234,9 @@ export function ModelContextProvider({ children }: ModelContextProviderProps) {
       },
       async put(path, payload) {
         return catchToResult(() => client?.put(path, payload));
+      },
+      async putModel(user, frame) {
+        return this.put(['user', user, 'model'], frame);
       },
       async putLegacyInput(user, payload) {
         return catchToResult(() => client?.putModel(payload, user));
