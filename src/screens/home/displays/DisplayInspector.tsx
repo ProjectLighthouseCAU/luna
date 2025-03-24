@@ -29,7 +29,7 @@ export function DisplayInspector({
   const isMeOrAdmin = username === me?.username || isAdmin;
 
   return (
-    <div className="flex flex-col space-y-3">
+    <div className="flex flex-col space-y-3 md:w-[200px]">
       <DisplayInspectorActionsCard username={username} />
       {/* <DisplayInspectorOptionsCard isEditable={isMeOrAdmin} /> */}
       {isMeOrAdmin ? (

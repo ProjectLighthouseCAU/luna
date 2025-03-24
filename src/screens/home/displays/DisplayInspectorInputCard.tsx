@@ -114,7 +114,7 @@ export function DisplayInspectorInputCard({
 
   return (
     <TitledCard icon={<IconDeviceGamepad2 />} title="Input" isCollapsible>
-      <div className="flex flex-col space-y-2 md:w-[200px]">
+      <div className="flex flex-col space-y-2">
         <Tooltip
           placement="left"
           content={
