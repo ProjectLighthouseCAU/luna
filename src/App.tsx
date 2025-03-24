@@ -1,7 +1,7 @@
 import { AuthContextProvider } from '@luna/contexts/api/auth/AuthContext';
 import { ColorSchemeContextProvider } from '@luna/contexts/env/ColorSchemeContext';
 import { ModelContextProvider } from '@luna/contexts/api/model/ModelContext';
-import { SearchContextProvider } from '@luna/contexts/displays/SearchContext';
+import { DisplaySearchContextProvider } from '@luna/contexts/displays/DisplaySearchContext';
 import { WindowDimensionsContextProvider } from '@luna/contexts/env/WindowDimensionsContext';
 import { router } from '@luna/routes';
 import { HeroUIProvider } from '@heroui/react';
@@ -21,9 +21,9 @@ export function App() {
             <AuthContextProvider>
               <ModelContextProvider>
                 <UserPinsContextProvider>
-                  <SearchContextProvider>
+                  <DisplaySearchContextProvider>
                     <RouterProvider router={router} />
-                  </SearchContextProvider>
+                  </DisplaySearchContextProvider>
                 </UserPinsContextProvider>
               </ModelContextProvider>
             </AuthContextProvider>

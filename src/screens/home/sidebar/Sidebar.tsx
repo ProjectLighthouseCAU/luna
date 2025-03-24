@@ -2,7 +2,7 @@ import { ColorSchemeButton } from '@luna/components/ColorSchemeButton';
 import { SearchBar } from '@luna/components/SearchBar';
 import { UserSnippet } from '@luna/components/UserSnippet';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
-import { SearchContext } from '@luna/contexts/displays/SearchContext';
+import { DisplaySearchContext } from '@luna/contexts/displays/DisplaySearchContext';
 import { SidebarRoutes } from '@luna/screens/home/sidebar/SidebarRoutes';
 import {
   Divider,
@@ -25,7 +25,7 @@ export interface SidebarProps {
 
 export function Sidebar({ isCompact }: SidebarProps) {
   const auth = useContext(AuthContext);
-  const { query, setQuery } = useContext(SearchContext);
+  const { query, setQuery } = useContext(DisplaySearchContext);
   const navigate = useNavigate();
 
   const [showQuickSwitcherTip, setShowQuickSwitcherTip] = useState(true);
