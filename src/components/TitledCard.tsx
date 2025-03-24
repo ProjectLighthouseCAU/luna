@@ -26,7 +26,10 @@ export function TitledCard({
 
   return (
     <Card>
-      <CardHeader onClick={onClickHeader}>
+      <CardHeader
+        onClick={onClickHeader}
+        className={isCollapsible ? 'cursor-pointer active:opacity-60' : ''}
+      >
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row gap-2">
             {icon}
