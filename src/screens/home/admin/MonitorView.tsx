@@ -228,7 +228,10 @@ export function MonitorView() {
   const isColumnLayout = breakpoint < Breakpoint.Xl;
 
   return (
-    <HomeContent title="Monitoring" layout="fullScreen">
+    <HomeContent
+      title="Monitoring"
+      layout={isColumnLayout ? 'scrollable' : 'fullScreen'}
+    >
       <div className="flex flex-col gap-4 xl:flex-row h-full">
         <div
           ref={wrapperRef}
