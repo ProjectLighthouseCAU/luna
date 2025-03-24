@@ -47,7 +47,7 @@ export function TitledCard({
       {children ? (
         <CardBody>
           {isCollapsible ? (
-            <AnimatedPresence isShown={!isCollapsed}>
+            <AnimatedPresence isShown={!isCollapsed} hideScrollbars>
               {children}
             </AnimatedPresence>
           ) : (
