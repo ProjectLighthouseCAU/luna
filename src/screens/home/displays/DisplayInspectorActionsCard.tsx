@@ -11,7 +11,7 @@ export function DisplayInspectorActionsCard({
   username,
 }: DisplayInspectorActionsCardProps) {
   return (
-    <TitledCard icon={<IconTarget />} title="Actions">
+    <TitledCard icon={<IconTarget />} title="Actions" isCollapsible>
       <DisplayActionsMenu username={username}>
         {({ items }) => (
           <div className="flex flex-col gap-1.5">

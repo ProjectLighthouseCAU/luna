@@ -1,5 +1,7 @@
 import { Card, CardBody, CardHeader } from '@heroui/react';
-import { ReactNode } from 'react';
+import { AnimatedPresence } from '@luna/components/AnimatedPresence';
+import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
+import { ReactNode, useCallback, useState } from 'react';
 
 export interface TitledCardProps {
   icon: ReactNode;
@@ -14,15 +16,40 @@ export function TitledCard({
   children,
   isCollapsible = false,
 }: TitledCardProps) {
+  const [isCollapsed, setCollapsed] = useState(false);
+
+  const onClickHeader = useCallback(() => {
+    if (isCollapsible) {
+      setCollapsed(isCollapsed => !isCollapsed);
+    }
+  }, [isCollapsible]);
+
   return (
     <Card>
-      <CardHeader>
+      <CardHeader onClick={onClickHeader}>
         <div className="flex flex-row space-x-2">
           {icon}
           <span className="font-bold select-none">{title}</span>
+          {isCollapsible ? (
+            isCollapsed ? (
+              <IconChevronRight />
+            ) : (
+              <IconChevronDown />
+            )
+          ) : null}
         </div>
       </CardHeader>
-      {children ? <CardBody>{children}</CardBody> : null}
+      {children ? (
+        <CardBody>
+          {isCollapsible ? (
+            <AnimatedPresence isShown={!isCollapsed}>
+              {children}
+            </AnimatedPresence>
+          ) : (
+            children
+          )}
+        </CardBody>
+      ) : null}
     </Card>
   );
 }

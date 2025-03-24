@@ -1,4 +1,5 @@
 import { Checkbox, Code, Divider, Switch, Tooltip } from '@heroui/react';
+import { AnimatedPresence } from '@luna/components/AnimatedPresence';
 import {
   Names,
   ObjectInspectorTable,
@@ -114,7 +115,7 @@ export function DisplayInspectorInputCard({
   const motionEnabled = motionSupported && inputConfig.motionEnabled;
 
   return (
-    <TitledCard icon={<IconDeviceGamepad2 />} title="Input">
+    <TitledCard icon={<IconDeviceGamepad2 />} title="Input" isCollapsible>
       <div className="flex flex-col space-y-2 md:w-[200px]">
         <Tooltip
           placement="left"
@@ -230,33 +231,6 @@ export function DisplayInspectorInputCard({
         </AnimatedPresence>
       </div>
     </TitledCard>
-  );
-}
-
-function AnimatedPresence({
-  isShown,
-  children,
-}: {
-  isShown: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <AnimatePresence initial={isShown}>
-      {isShown ? (
-        <motion.div
-          initial="collapsed"
-          animate="open"
-          exit="collapsed"
-          variants={{
-            open: { opacity: 1, height: 'auto' },
-            collapsed: { opacity: 0, height: 0 },
-          }}
-          transition={{ duration: 0.2 }}
-        >
-          {children}
-        </motion.div>
-      ) : undefined}
-    </AnimatePresence>
   );
 }
 
