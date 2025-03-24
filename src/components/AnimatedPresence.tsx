@@ -9,7 +9,7 @@ export interface AnimatedPresenceProps {
 
 export function AnimatedPresence({ isShown, children }: AnimatedPresenceProps) {
   return (
-    <AnimatePresence initial={isShown}>
+    <AnimatePresence initial={false}>
       {isShown ? (
         <motion.div
           initial="collapsed"
