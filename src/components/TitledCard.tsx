@@ -19,7 +19,7 @@ export function TitledCard({
       <CardHeader>
         <div className="flex flex-row space-x-2">
           {icon}
-          <span className="font-bold">{title}</span>
+          <span className="font-bold select-none">{title}</span>
         </div>
       </CardHeader>
       {children ? <CardBody>{children}</CardBody> : null}
