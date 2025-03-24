@@ -56,7 +56,11 @@ export function MonitorInspectorRoomCard({
   );
 
   return (
-    <TitledCard icon={<IconDoor />} title={`Room ${metrics?.room ?? ''}`}>
+    <TitledCard
+      icon={<IconDoor />}
+      title={`Room ${metrics?.room ?? ''}`}
+      isCollapsible
+    >
       {metrics ? (
         <ObjectInspectorTable
           objects={renderedMetrics}
