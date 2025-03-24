@@ -8,7 +8,6 @@ import { TitledCard } from '@luna/components/TitledCard';
 import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapabilities';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
-import { AnimatePresence } from '@luna/utils/motion';
 import { pluralize } from '@luna/utils/string';
 import {
   IconAlt,
@@ -23,7 +22,6 @@ import {
   IconMouse,
   IconPiano,
 } from '@tabler/icons-react';
-import { motion } from 'framer-motion';
 import {
   GamepadEvent,
   KeyEvent,
