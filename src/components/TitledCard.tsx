@@ -27,9 +27,11 @@ export function TitledCard({
   return (
     <Card>
       <CardHeader onClick={onClickHeader}>
-        <div className="flex flex-row space-x-2">
-          {icon}
-          <span className="font-bold select-none">{title}</span>
+        <div className="flex flex-row justify-between w-full">
+          <div className="flex flex-row gap-2">
+            {icon}
+            <span className="font-bold select-none">{title}</span>
+          </div>
           {isCollapsible ? (
             isCollapsed ? (
               <IconChevronRight />
