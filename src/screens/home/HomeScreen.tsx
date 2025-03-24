@@ -12,6 +12,10 @@ import React, {
 } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { QuickSwitcherModal } from '@luna/modals/QuickSwitcherModal';
+import {
+  defaultHomeContentLayout,
+  HomeContentLayout,
+} from '@luna/screens/home/helpers/HomeContentLayout';
 
 export function HomeScreen() {
   const location = useLocation();
@@ -24,8 +28,11 @@ export function HomeScreen() {
 
   const [title, setTitle] = useState('');
   const [toolbar, setToolbar] = useState<ReactNode>();
+  const [layout, setLayout] = useState<HomeContentLayout>(
+    defaultHomeContentLayout
+  );
 
-  const outletContext: HomeContentContext = { setTitle, setToolbar };
+  const outletContext: HomeContentContext = { setTitle, setToolbar, setLayout };
 
   useLayoutEffect(() => {
     setExpanded(false);
@@ -54,7 +61,9 @@ export function HomeScreen() {
   }, [isCompact, isExpanded]);
 
   return (
-    <div className={`flex ${isCompact ? 'flex-col h-full' : 'flex-row'}`}>
+    <div
+      className={`flex ${isCompact ? 'flex-col' : 'flex-row'} ${isCompact || layout === 'fullScreen' ? 'h-full' : ''}`}
+    >
       {!isCompact ? (
         <div className="grow-0 shrink-0 basis-64 sticky top-0 h-screen p-5">
           <Sidebar isCompact={isCompact} />
@@ -77,7 +86,7 @@ export function HomeScreen() {
             <Sidebar isCompact={isCompact} />
           </div>
         ) : null}
-        <div className="grow p-5">
+        <div className={`grow p-5 ${layout === 'fullScreen' ? 'h-full' : ''}`}>
           <Outlet context={outletContext} />
         </div>
       </div>
