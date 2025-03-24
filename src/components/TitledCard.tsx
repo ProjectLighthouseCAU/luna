@@ -45,15 +45,13 @@ export function TitledCard({
         </div>
       </CardHeader>
       {children ? (
-        <CardBody>
-          {isCollapsible ? (
-            <AnimatedPresence isShown={!isCollapsed}>
-              {children}
-            </AnimatedPresence>
-          ) : (
-            children
-          )}
-        </CardBody>
+        isCollapsible ? (
+          <AnimatedPresence isShown={!isCollapsed}>
+            <CardBody>{children}</CardBody>
+          </AnimatedPresence>
+        ) : (
+          <CardBody>{children}</CardBody>
+        )
       ) : null}
     </Card>
   );
