@@ -4,10 +4,16 @@ import { ReactNode } from 'react';
 export interface TitledCardProps {
   icon: ReactNode;
   title: string;
+  isCollapsible?: boolean;
   children?: ReactNode;
 }
 
-export function TitledCard({ title, icon, children }: TitledCardProps) {
+export function TitledCard({
+  title,
+  icon,
+  children,
+  isCollapsible = false,
+}: TitledCardProps) {
   return (
     <Card>
       <CardHeader>
