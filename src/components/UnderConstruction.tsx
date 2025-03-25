@@ -5,7 +5,7 @@ export function UnderConstruction() {
   return (
     <Center>
       <IconBarrierBlock size="64" />
-      <h2 className="text-xl">Under construction...</h2>
+      <h2 className="text-xl select-none">Under construction...</h2>
     </Center>
   );
 }
