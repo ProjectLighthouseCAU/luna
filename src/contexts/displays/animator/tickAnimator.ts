@@ -36,7 +36,9 @@ export async function tickAnimator({
       ...baseProps,
     });
 
-    return [{ type: 'tick' }];
+    if (animator.isPlaying) {
+      return [{ type: 'tick' }];
+    }
   }
 
   return [];
