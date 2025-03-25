@@ -14,7 +14,7 @@ export function AnimatorActionSnippet({
   return (
     <div className={`flex flex-col ${className}`}>
       <div>{formatType(action.type)}</div>
-      <ColorSnippet color={action.color} />
+      <AnimatorActionDetail action={action} />
       <Progress
         aria-label="Animator action progress"
         size="sm"
@@ -26,9 +26,19 @@ export function AnimatorActionSnippet({
   );
 }
 
-function formatType(type: AnimatorAction['type']) {
+function formatType(type: AnimatorAction['type']): string {
   switch (type) {
     case 'setColor':
       return 'Set Color';
+    case 'sleep':
+      return 'Sleep';
   }
+}
+
+function AnimatorActionDetail({ action }: { action: AnimatorAction }) {
+  switch (action.type) {
+    case 'setColor':
+      return <ColorSnippet color={action.color} />;
+  }
+  return <></>;
 }

@@ -11,4 +11,6 @@ export interface SetColorAnimatorAction extends BaseAnimatorAction<'setColor'> {
   color: Color;
 }
 
-export type AnimatorAction = SetColorAnimatorAction;
+export interface SleepAnimatorAction extends BaseAnimatorAction<'sleep'> {}
+
+export type AnimatorAction = SetColorAnimatorAction | SleepAnimatorAction;

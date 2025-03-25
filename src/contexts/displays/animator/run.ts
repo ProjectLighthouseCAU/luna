@@ -53,6 +53,10 @@ async function tickAnimatorAction({
       const frame = new Uint8Array(LIGHTHOUSE_FRAME_BYTES);
       rgb.fillAt(0, LIGHTHOUSE_WINDOWS, action.color, frame);
       await api.putModel(username, frame);
+      break;
+    case 'sleep':
+      // Do nothing
+      break;
   }
 
   // Increase ticks

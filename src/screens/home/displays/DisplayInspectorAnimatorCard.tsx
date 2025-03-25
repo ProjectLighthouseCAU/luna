@@ -40,7 +40,7 @@ export function DisplayInspectorAnimatorCard({
 
   const [animator, setAnimator] = useAnimator({ username });
 
-  const pushAction = useCallback(
+  const addAction = useCallback(
     (action: AnimatorAction) => {
       setAnimator({ ...animator, queue: [...animator.queue, action] });
     },
@@ -52,7 +52,7 @@ export function DisplayInspectorAnimatorCard({
   }, [animator, setAnimator]);
 
   const addRandomColor = useCallback(() => {
-    pushAction({
+    addAction({
       type: 'setColor',
       id: randomUUID(),
       ticks: {
@@ -61,7 +61,18 @@ export function DisplayInspectorAnimatorCard({
       },
       color: rgb.random(),
     });
-  }, [pushAction]);
+  }, [addAction]);
+
+  const addSleep = useCallback(() => {
+    addAction({
+      type: 'sleep',
+      id: randomUUID(),
+      ticks: {
+        value: 0,
+        total: 5,
+      },
+    });
+  }, [addAction]);
 
   return (
     <TitledCard
@@ -76,6 +87,9 @@ export function DisplayInspectorAnimatorCard({
           <div className="flex flex-col gap-1.5">
             <Button onPress={addRandomColor} size="sm" variant="ghost">
               Random Color
+            </Button>
+            <Button onPress={addSleep} size="sm" variant="ghost">
+              Sleep
             </Button>
           </div>
           <div className="flex flex-row justify-between">
