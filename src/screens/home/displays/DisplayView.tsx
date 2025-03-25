@@ -562,6 +562,7 @@ export function DisplayView() {
         </div>
         <div className="md:overflow-y-scroll">
           <DisplayInspector
+            tab={inspectorTab}
             username={username}
             inputState={inputState}
             inputConfig={inputConfig}
