@@ -13,6 +13,7 @@ import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { DisplayStream } from '@luna/screens/home/displays/DisplayStream';
 import { DisplayToolbar } from '@luna/screens/home/displays/DisplayToolbar';
+import { DisplayInspectorTab } from '@luna/screens/home/displays/helpers/DisplayInspectorTab';
 import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapabilities';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
@@ -524,10 +525,15 @@ export function DisplayView() {
       ? maxSize.width
       : maxSize.height * DISPLAY_ASPECT_RATIO;
 
+  const [inspectorTab, setInspectorTab] = useLocalStorage<DisplayInspectorTab>(
+    LocalStorageKey.DisplayInspectorTab,
+    () => 'general'
+  );
+
   return (
     <HomeContent
       title={`${username}'s Display`}
-      toolbar={<DisplayToolbar />}
+      toolbar={<DisplayToolbar tab={inspectorTab} setTab={setInspectorTab} />}
       layout="fullScreen"
     >
       <div className="flex flex-col space-y-4 md:flex-row h-full">
