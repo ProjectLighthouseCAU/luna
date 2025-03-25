@@ -51,13 +51,13 @@ export function DisplayInspectorAnimatorCard({
     setAnimator({ ...animator, queue: [] });
   }, [animator, setAnimator]);
 
-  const addSetColor = useCallback(() => {
+  const addRandomColor = useCallback(() => {
     pushAction({
       type: 'setColor',
       id: randomUUID(),
       ticks: {
         value: 0,
-        total: 1,
+        total: 5,
       },
       color: rgb.random(),
     });
@@ -74,8 +74,8 @@ export function DisplayInspectorAnimatorCard({
       {isMeOrAdmin ? (
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-1.5">
-            <Button onPress={addSetColor} size="sm" variant="ghost">
-              Set Color
+            <Button onPress={addRandomColor} size="sm" variant="ghost">
+              Random Color
             </Button>
           </div>
           <div className="flex flex-row justify-between">
