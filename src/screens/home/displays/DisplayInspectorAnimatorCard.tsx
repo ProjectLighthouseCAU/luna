@@ -1,9 +1,11 @@
 import { Button } from '@heroui/react';
+import { AnimatorActionSnippet } from '@luna/components/AnimatorActionSnippet';
 import { Hint } from '@luna/components/Hint';
 import { TitledCard } from '@luna/components/TitledCard';
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { AnimatorAction } from '@luna/contexts/displays/AnimatorContext';
+import { ColorSchemeContext } from '@luna/contexts/env/ColorSchemeContext';
 import { useAdminStatus } from '@luna/hooks/useAdminStatus';
 import { useAnimator } from '@luna/hooks/useAnimator';
 import { useLocalStorage } from '@luna/hooks/useLocalStorage';
@@ -28,6 +30,8 @@ export function DisplayInspectorAnimatorCard({
   const { user: me } = useContext(AuthContext);
   const { isAdmin } = useAdminStatus();
   const isMeOrAdmin = username === me?.username || isAdmin;
+
+  const { colorScheme } = useContext(ColorSchemeContext);
 
   const [isCollapsed, storeCollapsed] = useLocalStorage(
     LocalStorageKey.DisplayInspectorAnimatorCollapsed,
@@ -84,9 +88,15 @@ export function DisplayInspectorAnimatorCard({
               <IconTrash />
             </Button>
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col">
             {animator.queue.length > 0 ? (
-              animator.queue.map(item => <div>{item.type}</div>)
+              animator.queue.map(action => (
+                <AnimatorActionSnippet
+                  key={action.id}
+                  action={action}
+                  className={`select-none p-1 rounded ${colorScheme.isDark ? 'even:bg-neutral-800' : 'even:bg-neutral-200'}`}
+                />
+              ))
             ) : (
               <Hint>no items queued</Hint>
             )}
