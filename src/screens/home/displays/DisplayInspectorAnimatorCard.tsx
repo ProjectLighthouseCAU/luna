@@ -4,7 +4,7 @@ import { Hint } from '@luna/components/Hint';
 import { TitledCard } from '@luna/components/TitledCard';
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
-import { AnimatorAction } from '@luna/contexts/displays/AnimatorContext';
+import { AnimatorAction } from '@luna/contexts/displays/animator/types';
 import { ColorSchemeContext } from '@luna/contexts/env/ColorSchemeContext';
 import { useAdminStatus } from '@luna/hooks/useAdminStatus';
 import { useAnimator } from '@luna/hooks/useAnimator';
@@ -55,6 +55,10 @@ export function DisplayInspectorAnimatorCard({
     pushAction({
       type: 'setColor',
       id: randomUUID(),
+      ticks: {
+        value: 0,
+        total: 1,
+      },
       color: rgb.random(),
     });
   }, [pushAction]);

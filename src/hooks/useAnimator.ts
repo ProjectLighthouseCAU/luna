@@ -1,7 +1,7 @@
 import {
   Animator,
   AnimatorContext,
-} from '@luna/contexts/displays/AnimatorContext';
+} from '@luna/contexts/displays/animator/AnimatorContext';
 import { useCallback, useContext, useMemo } from 'react';
 
 export function useAnimator({ username }: { username: string }) {

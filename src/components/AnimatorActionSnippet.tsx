@@ -1,5 +1,5 @@
 import { ColorSnippet } from '@luna/components/ColorSnippet';
-import { AnimatorAction } from '@luna/contexts/displays/AnimatorContext';
+import { AnimatorAction } from '@luna/contexts/displays/animator/types';
 
 export interface AnimatorActionSnippetProps {
   action: AnimatorAction;

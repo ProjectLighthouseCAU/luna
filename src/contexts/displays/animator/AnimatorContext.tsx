@@ -1,18 +1,15 @@
-import { Color } from '@luna/utils/rgb';
+import { ModelContext } from '@luna/contexts/api/model/ModelContext';
+import { tickAnimator } from '@luna/contexts/displays/animator/run';
+import { AnimatorQueue } from '@luna/contexts/displays/animator/types';
 import { Map } from 'immutable';
-import { ReactNode, createContext, useMemo, useState } from 'react';
-
-interface BaseAnimatorAction<Type extends string> {
-  type: Type;
-  id: string;
-}
-
-export interface SetColorAnimatorAction extends BaseAnimatorAction<'setColor'> {
-  color: Color;
-}
-
-export type AnimatorAction = SetColorAnimatorAction;
-export type AnimatorQueue = AnimatorAction[];
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 export interface Animator {
   queue: AnimatorQueue;
@@ -54,6 +51,23 @@ export function AnimatorContextProvider({
     }),
     [animators]
   );
+
+  const { api } = useContext(ModelContext);
+
+  useEffect(() => {
+    const tickDelayMs = 100;
+
+    const interval = window.setInterval(async () => {
+      let newAnimators = animators;
+      for (const [username, animator] of animators.entries()) {
+        const newAnimator = await tickAnimator({ animator, username, api });
+        newAnimators = newAnimators.set(username, newAnimator);
+      }
+      setAnimators(newAnimators);
+    }, tickDelayMs);
+
+    return () => window.clearInterval(interval);
+  }, [animators, api]);
 
   return (
     <AnimatorContext.Provider value={value}>
