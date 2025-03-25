@@ -1,26 +1,36 @@
 /* eslint-disable prettier/prettier */
 
-type Letter = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'
-            | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
-            | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'
-            | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
+import { Vec2 } from '@luna/utils/vec2';
+import * as rgb from '@luna/utils/rgb';
+import { LIGHTHOUSE_COLS, LIGHTHOUSE_ROWS } from 'nighthouse/browser';
+
+export type Letter = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'
+                   | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
+                   | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'
+                   | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'
+                   | ' ' | '.' | ':' | ',' | '!' | '/' | '&' | '#' | '-' | '_';
 
 type Pixel = ' ' | '#';
 
+type PixelRow = `${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}`;
+
 type PixelMap = [
-  `${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}`,
-  `${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}`,
-  `${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}`,
-  `${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}`,
-  `${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}`,
-  `${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}`,
-  `${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}`,
-  `${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}`,
+  PixelRow,
+  PixelRow,
+  PixelRow,
+  PixelRow,
+  PixelRow,
+  PixelRow,
+  PixelRow,
+  PixelRow,
 ];
+
+export const PIXEL_MAP_WIDTH = 8;
+export const PIXEL_MAP_HEIGHT = 8;
 
 // TODO: Umlauts
 
-export const pixelAlphabet: { [K in Letter]: PixelMap } = {
+export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
   // Upercase letters
   A: [
     '   ##   ',
@@ -542,5 +552,123 @@ export const pixelAlphabet: { [K in Letter]: PixelMap } = {
     ' #####  ',
     '        ',
     '        '
-  ]
+  ],
+  ' ': [
+    '        ',
+    '        ',
+    '        ',
+    '        ',
+    '        ',
+    '        ',
+    '        ',
+    '        '
+  ],
+  '.': [
+    '        ',
+    '        ',
+    '        ',
+    '        ',
+    '        ',
+    '  ##    ',
+    '  ##    ',
+    '        '
+  ],
+  ':': [
+    '        ',
+    '  ##    ',
+    '  ##    ',
+    '        ',
+    '  ##    ',
+    '  ##    ',
+    '        ',
+    '        '
+  ],
+  ',': [
+    '        ',
+    '        ',
+    '        ',
+    '        ',
+    '  ##    ',
+    '  ##    ',
+    '   #    ',
+    '  #     '
+  ],
+  '!': [
+    '  ##    ',
+    '  ##    ',
+    '  ##    ',
+    '  ##    ',
+    '  ##    ',
+    '        ',
+    '  ##    ',
+    '        '
+  ],
+  '/': [
+    '      # ',
+    '     #  ',
+    '    #   ',
+    '   #    ',
+    '  #     ',
+    ' #      ',
+    '        ',
+    '        '
+  ],
+  '&': [
+    '  ###   ',
+    ' #   #  ',
+    ' #  ##  ',
+    '  ## #  ',
+    ' #  ##  ',
+    '  ## #  ',
+    '        ',
+    '        '
+  ],
+  '#': [
+    '  # #   ',
+    '  # #   ',
+    ' #####  ',
+    '  # #   ',
+    ' #####  ',
+    '  # #   ',
+    '  # #   ',
+    '        '
+  ],
+  '-': [
+    '        ',
+    '        ',
+    ' #####  ',
+    '        ',
+    '        ',
+    '        ',
+    '        ',
+    '        '
+  ],
+  '_': [
+    '        ',
+    '        ',
+    '        ',
+    '        ',
+    '        ',
+    ' #####  ',
+    '        ',
+    '        '
+  ],
 };
+
+export function fillPixelMapAt(
+  pos: Vec2<number>,
+  color: rgb.Color,
+  pixelMap: PixelMap,
+  frame: Uint8Array
+) {
+  for (let dy = 0; dy < pixelMap.length; dy++) {
+    const row = pixelMap[dy];
+    for (let dx = 0; dx < row.length; dx++) {
+      const x = pos.x + dx;
+      const y = pos.y + dy;
+      if (x >= 0 && x < LIGHTHOUSE_COLS && y >= 0 && y < LIGHTHOUSE_ROWS && pixelMap[dy][dx] === '#') {
+        rgb.setAt(y * LIGHTHOUSE_COLS + x, color, frame);
+      }
+    }
+  }
+}
