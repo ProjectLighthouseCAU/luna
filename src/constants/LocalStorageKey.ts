@@ -7,6 +7,7 @@ export enum LocalStorageKey {
   DisplayInputConfig = 'luna.screens.home.display.inputConfig',
   DisplayInspectorTab = 'luna.screens.display.inspectorTab',
   DisplayInspectorActionsCollapsed = 'luna.screens.home.display.inspector.actions.isCollapsed',
+  DisplayInspectorAnimatorCollapsed = 'luna.screens.home.display.inspector.animator.isCollapsed',
   DisplayInspectorApiTokenCollapsed = 'luna.screens.home.display.inspector.apiToken.isCollapsed',
   DisplayInspectorInputCollapsed = 'luna.screens.home.display.inspector.input.isCollapsed',
   DisplayInspectorOptionsCollapsed = 'luna.screens.home.display.inspector.options.isCollapsed',

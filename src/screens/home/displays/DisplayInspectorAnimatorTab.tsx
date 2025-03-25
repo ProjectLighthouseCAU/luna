@@ -1,3 +1,5 @@
+import { DisplayInspectorAnimatorCard } from '@luna/screens/home/displays/DisplayInspectorAnimatorCard';
+
 export interface DisplayInspectorAnimatorTabProps {
   username: string;
 }
@@ -5,5 +7,9 @@ export interface DisplayInspectorAnimatorTabProps {
 export function DisplayInspectorAnimatorTab({
   username,
 }: DisplayInspectorAnimatorTabProps) {
-  return <></>;
+  return (
+    <>
+      <DisplayInspectorAnimatorCard username={username} />
+    </>
+  );
 }
