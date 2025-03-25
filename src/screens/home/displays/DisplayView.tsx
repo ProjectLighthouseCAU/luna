@@ -12,6 +12,7 @@ import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { DisplayStream } from '@luna/screens/home/displays/DisplayStream';
+import { DisplayToolbar } from '@luna/screens/home/displays/DisplayToolbar';
 import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapabilities';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
@@ -524,7 +525,11 @@ export function DisplayView() {
       : maxSize.height * DISPLAY_ASPECT_RATIO;
 
   return (
-    <HomeContent title={`${username}'s Display`} layout="fullScreen">
+    <HomeContent
+      title={`${username}'s Display`}
+      toolbar={<DisplayToolbar />}
+      layout="fullScreen"
+    >
       <div className="flex flex-col space-y-4 md:flex-row h-full">
         <div
           ref={wrapperRef}
