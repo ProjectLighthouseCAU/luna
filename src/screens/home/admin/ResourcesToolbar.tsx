@@ -1,7 +1,7 @@
 import {
   ResourcesLayout,
   resourcesLayouts,
-} from '@luna/screens/home/admin/ResourcesLayout';
+} from '@luna/screens/home/admin/helpers/ResourcesLayout';
 import { ResourcesLayoutIcon } from '@luna/screens/home/admin/ResourcesLayoutIcon';
 import { Button, Tab, Tabs } from '@heroui/react';
 import { Key } from 'react';

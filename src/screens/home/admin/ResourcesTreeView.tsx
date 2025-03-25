@@ -17,7 +17,7 @@ import { SearchBar } from '@luna/components/SearchBar';
 import { SimpleEditForm } from '@luna/components/SimpleEditForm';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { ResourcesContentsView } from '@luna/screens/home/admin/ResourcesContentsView';
-import { ResourcesLayout } from '@luna/screens/home/admin/ResourcesLayout';
+import { ResourcesLayout } from '@luna/screens/home/admin/helpers/ResourcesLayout';
 import {
   IconChevronDown,
   IconChevronRight,
