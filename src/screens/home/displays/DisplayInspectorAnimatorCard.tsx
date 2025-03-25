@@ -1,6 +1,7 @@
-import { Button } from '@heroui/react';
+import { Button, Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { AnimatorActionSnippet } from '@luna/components/AnimatorActionSnippet';
 import { Hint } from '@luna/components/Hint';
+import { SimpleEditForm } from '@luna/components/SimpleEditForm';
 import { TitledCard } from '@luna/components/TitledCard';
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
@@ -19,7 +20,7 @@ import {
   IconPlayerSkipForwardFilled,
   IconTrash,
 } from '@tabler/icons-react';
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 
 export interface DisplayInspectorAnimatorCardProps {
   username: string;
@@ -40,6 +41,8 @@ export function DisplayInspectorAnimatorCard({
   );
 
   const [animator, updateAnimator] = useAnimator({ username });
+
+  const [isScrollingTextModalOpen, setScrollingTextModalOpen] = useState(false);
 
   const addAction = useCallback(
     (action: AnimatorAction) => {
@@ -80,6 +83,22 @@ export function DisplayInspectorAnimatorCard({
     });
   }, [addAction]);
 
+  const addScrollingText = useCallback(
+    (text: string) => {
+      addAction({
+        type: 'scrollText',
+        id: randomUUID(),
+        ticks: {
+          value: 0,
+          total: 5 * text.length,
+        },
+        text,
+      });
+      setScrollingTextModalOpen(false);
+    },
+    [addAction]
+  );
+
   const addSleep = useCallback(() => {
     addAction({
       type: 'sleep',
@@ -105,6 +124,21 @@ export function DisplayInspectorAnimatorCard({
             <Button onPress={addRandomColor} size="sm" variant="ghost">
               Random Color
             </Button>
+            <Popover
+              placement="left"
+              showArrow
+              isOpen={isScrollingTextModalOpen}
+              onOpenChange={setScrollingTextModalOpen}
+            >
+              <PopoverTrigger>
+                <Button size="sm" variant="ghost">
+                  Scrolling Text
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <SimpleEditForm onSubmit={addScrollingText} />
+              </PopoverContent>
+            </Popover>
             <Button onPress={addSleep} size="sm" variant="ghost">
               Sleep
             </Button>
