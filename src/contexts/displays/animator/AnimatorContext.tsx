@@ -57,6 +57,8 @@ export function AnimatorContextProvider({
   useEffect(() => {
     const tickDelayMs = 100;
 
+    // TODO: Return deltas from the ticker to avoid having it override potential changes from the UI
+
     const interval = window.setInterval(async () => {
       let newAnimators = animators;
       for (const [username, animator] of animators.entries()) {
