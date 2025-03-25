@@ -560,7 +560,7 @@ export function DisplayView() {
             />
           </motion.div>
         </div>
-        <div className="md:overflow-y-scroll">
+        <div className="md:overflow-y-scroll md:-m-5 md:p-5">
           <DisplayInspector
             tab={inspectorTab}
             username={username}
