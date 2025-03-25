@@ -42,6 +42,7 @@ export function AnimatorActionSnippet({
       setPlaying?.(wasPlaying);
       setWasPlaying(undefined);
     }
+    setScrubbing(false);
   }, [isScrubbing, setPlaying, wasPlaying]);
 
   return (
