@@ -1,6 +1,9 @@
 import { ModelAPI } from '@luna/contexts/api/model/ModelContext';
-import { Animator } from '@luna/contexts/displays/animator/AnimatorContext';
-import { AnimatorAction } from '@luna/contexts/displays/animator/types';
+import {
+  Animator,
+  AnimatorAction,
+  AnimatorUpdate,
+} from '@luna/contexts/displays/animator/types';
 import { LIGHTHOUSE_FRAME_BYTES, LIGHTHOUSE_WINDOWS } from 'nighthouse/browser';
 import * as rgb from '@luna/utils/rgb';
 
@@ -14,31 +17,19 @@ export async function tickAnimator({
   ...baseProps
 }: BaseTickProps & {
   animator: Animator;
-}): Promise<Animator> {
+}): Promise<AnimatorUpdate[]> {
   let animator = initialAnimator;
 
   if (animator.queue.length > 0) {
-    const action = await tickAnimatorAction({
+    await tickAnimatorAction({
       action: animator.queue[0],
       ...baseProps,
     });
 
-    if (action.ticks.value === action.ticks.total) {
-      // Dequeue the action
-      animator = {
-        ...animator,
-        queue: animator.queue.slice(1),
-      };
-    } else {
-      // Update the action
-      animator = {
-        ...animator,
-        queue: [action, ...animator.queue.slice(1)],
-      };
-    }
+    return [{ type: 'tick' }];
   }
 
-  return animator;
+  return [];
 }
 
 async function tickAnimatorAction({
@@ -47,7 +38,7 @@ async function tickAnimatorAction({
   api,
 }: BaseTickProps & {
   action: AnimatorAction;
-}): Promise<AnimatorAction> {
+}) {
   switch (action.type) {
     case 'setColor':
       const frame = new Uint8Array(LIGHTHOUSE_FRAME_BYTES);
@@ -58,10 +49,4 @@ async function tickAnimatorAction({
       // Do nothing
       break;
   }
-
-  // Increase ticks
-  return {
-    ...action,
-    ticks: { ...action.ticks, value: action.ticks.value + 1 },
-  };
 }

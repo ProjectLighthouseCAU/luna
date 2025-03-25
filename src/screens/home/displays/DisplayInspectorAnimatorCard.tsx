@@ -38,18 +38,18 @@ export function DisplayInspectorAnimatorCard({
     () => false
   );
 
-  const [animator, setAnimator] = useAnimator({ username });
+  const [animator, updateAnimator] = useAnimator({ username });
 
   const addAction = useCallback(
     (action: AnimatorAction) => {
-      setAnimator({ ...animator, queue: [...animator.queue, action] });
+      updateAnimator({ type: 'addAction', action });
     },
-    [animator, setAnimator]
+    [updateAnimator]
   );
 
   const clearQueue = useCallback(() => {
-    setAnimator({ ...animator, queue: [] });
-  }, [animator, setAnimator]);
+    updateAnimator({ type: 'clearQueue' });
+  }, [updateAnimator]);
 
   const addRandomColor = useCallback(() => {
     addAction({
