@@ -7,12 +7,34 @@ import {
   VisibleRouteItem,
 } from '@luna/hooks/useVisibleRoutes';
 import { truncate } from '@luna/utils/string';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { InView } from 'react-intersection-observer';
 
 export interface SidebarRoutesProps {
   isCompact: boolean;
   searchQuery: string;
+}
+
+function filterRoutes(
+  routeItems: VisibleRouteItem[],
+  lowerQuery: string
+): VisibleRouteItem[] {
+  return routeItems.flatMap<VisibleRouteItem>(item =>
+    item.type === 'route'
+      ? (item.children?.length ?? 0) > 0
+        ? [
+            {
+              ...item,
+              children: item.children
+                ? filterRoutes(item.children, lowerQuery)
+                : undefined,
+            },
+          ]
+        : item.name.toLowerCase().includes(lowerQuery)
+          ? [item]
+          : []
+      : [item]
+  );
 }
 
 export function SidebarRoutes({ isCompact, searchQuery }: SidebarRoutesProps) {
@@ -23,7 +45,15 @@ export function SidebarRoutes({ isCompact, searchQuery }: SidebarRoutesProps) {
     displaySearchQuery,
   });
 
-  return <SidebarVisibleRouteItems routeItems={visibleRouteItems} />;
+  const filteredVisibleRouteItems = useMemo(
+    () =>
+      searchQuery.length > 0
+        ? filterRoutes(visibleRouteItems, searchQuery.toLowerCase())
+        : visibleRouteItems,
+    [searchQuery, visibleRouteItems]
+  );
+
+  return <SidebarVisibleRouteItems routeItems={filteredVisibleRouteItems} />;
 }
 
 function SidebarVisibleRouteItems({
