@@ -1,3 +1,4 @@
+import { Hint } from '@luna/components/Hint';
 import { TitledCard } from '@luna/components/TitledCard';
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
@@ -30,7 +31,7 @@ export function DisplayInspectorAnimatorCard({
       initiallyCollapsed={isCollapsed}
       onSetCollapsed={storeCollapsed}
     >
-      {isMeOrAdmin ? <>TODO</> : <span>only available for your own view</span>}
+      {isMeOrAdmin ? <>TODO</> : <Hint>only available for your own view</Hint>}
     </TitledCard>
   );
 }
