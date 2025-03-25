@@ -97,7 +97,7 @@ export function asCSS(c: Color): string {
 
 /// Converts the color to hexadecimal.
 export function asHex(c: Color) {
-  return c.toString(16);
+  return c.toString(16).padStart(6, '0');
 }
 
 /// Generates a random color.
