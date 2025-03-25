@@ -46,6 +46,8 @@ function AnimatorActionDetail({ action }: { action: AnimatorAction }) {
   switch (action.type) {
     case 'setColor':
       return <ColorSnippet color={action.color} />;
+    case 'scrollText':
+      return <div className="opacity-50">{action.text}</div>;
   }
   return <></>;
 }
