@@ -1,5 +1,6 @@
 import { Checkbox, Code, Divider, Switch, Tooltip } from '@heroui/react';
 import { AnimatedPresence } from '@luna/components/AnimatedPresence';
+import { Hint } from '@luna/components/Hint';
 import {
   Names,
   ObjectInspectorTable,
@@ -127,7 +128,7 @@ export function DisplayInspectorInputCard({
       initiallyCollapsed={isCollapsed}
       onSetCollapsed={storeCollapsed}
     >
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col gap-2">
         <Tooltip
           placement="left"
           content={
@@ -266,7 +267,7 @@ function MouseEventView({
       {event ? (
         <ObjectInspectorTable objects={[event]} names={mouseEventNames} />
       ) : (
-        <EventInfoText>no mouse events yet</EventInfoText>
+        <Hint>no mouse events yet</Hint>
       )}
       <Divider />
       <Tooltip
@@ -315,7 +316,7 @@ function KeyEventView({ event }: { event?: KeyEvent | LegacyKeyEvent }) {
       </div>
     )
   ) : (
-    <EventInfoText>no key events yet</EventInfoText>
+    <Hint>no key events yet</Hint>
   );
 }
 
@@ -369,9 +370,9 @@ function GamepadEventView({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <EventInfoText>
+      <Hint>
         {gamepadCount ?? '?'} {pluralize('gamepad', gamepadCount)} connected
-      </EventInfoText>
+      </Hint>
       {event ? (
         'dwn' in event ? (
           <ObjectInspectorTable
@@ -382,7 +383,7 @@ function GamepadEventView({
           <ObjectInspectorTable objects={[event]} names={gamepadEventNames} />
         )
       ) : (
-        <EventInfoText>no gamepad events yet</EventInfoText>
+        <Hint>no gamepad events yet</Hint>
       )}
     </div>
   );
@@ -401,14 +402,14 @@ function MIDIEventView({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <EventInfoText>
+      <Hint>
         {midiInputCount ?? '?'} MIDI {pluralize('input', midiInputCount)}{' '}
         connected
-      </EventInfoText>
+      </Hint>
       {event ? (
         <ObjectInspectorTable objects={[event]} names={midiEventNames} />
       ) : (
-        <EventInfoText>no MIDI events yet</EventInfoText>
+        <Hint>no MIDI events yet</Hint>
       )}
     </div>
   );
@@ -425,7 +426,7 @@ function OrientationEventView({ event }: { event?: OrientationEvent }) {
   return event ? (
     <ObjectInspectorTable objects={[event]} names={orientationEventNames} />
   ) : (
-    <EventInfoText>no orientation events yet</EventInfoText>
+    <Hint>no orientation events yet</Hint>
   );
 }
 
@@ -440,10 +441,6 @@ function MotionEventView({ event }: { event?: MotionEvent }) {
   return event ? (
     <ObjectInspectorTable objects={[event]} names={motionEventNames} />
   ) : (
-    <EventInfoText>no motion events yet</EventInfoText>
+    <Hint>no motion events yet</Hint>
   );
-}
-
-function EventInfoText({ children }: { children: ReactNode }) {
-  return <div className="italic text-xs opacity-50">{children}</div>;
 }

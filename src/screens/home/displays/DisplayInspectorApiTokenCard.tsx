@@ -61,7 +61,7 @@ export function DisplayInspectorApiTokenCard({
       initiallyCollapsed={isCollapsed}
       onSetCollapsed={storeCollapsed}
     >
-      <div className="flex flex-row justify-center items-center space-x-1">
+      <div className="flex flex-row justify-center items-center gap-1">
         <Button className="grow" size="sm" onPress={onOpen}>
           Reveal Token
         </Button>

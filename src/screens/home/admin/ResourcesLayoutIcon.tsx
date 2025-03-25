@@ -1,4 +1,4 @@
-import { ResourcesLayout } from '@luna/screens/home/admin/ResourcesLayout';
+import { ResourcesLayout } from '@luna/screens/home/admin/helpers/ResourcesLayout';
 import {
   IconLayoutColumns,
   IconList,

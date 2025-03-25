@@ -255,7 +255,7 @@ export function MonitorView() {
           }
         >
           <div
-            className={`${isColumnLayout ? '' : 'overflow-y-scroll'} w-full`}
+            className={`${isColumnLayout ? '' : 'overflow-y-scroll -m-4 p-4'} w-full`}
           >
             <MonitorInspector
               criterion={criterion}

@@ -1,7 +1,7 @@
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { useLocalStorage } from '@luna/hooks/useLocalStorage';
-import { ResourcesLayout } from '@luna/screens/home/admin/ResourcesLayout';
+import { ResourcesLayout } from '@luna/screens/home/admin/helpers/ResourcesLayout';
 import { ResourcesToolbar } from '@luna/screens/home/admin/ResourcesToolbar';
 import { ResourcesTreeView } from '@luna/screens/home/admin/ResourcesTreeView';
 import { HomeContent } from '@luna/screens/home/HomeContent';

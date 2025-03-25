@@ -9,6 +9,7 @@ import { RouterProvider } from 'react-router-dom';
 import { ClientIdContextProvider } from '@luna/contexts/env/ClientIdContext';
 import { UserPinsContextProvider } from '@luna/contexts/displays/UserPinsContext';
 import { randomUUID } from '@luna/utils/uuid';
+import { AnimatorContextProvider } from '@luna/contexts/displays/animator/AnimatorContext';
 
 const clientId = randomUUID();
 
@@ -22,7 +23,9 @@ export function App() {
               <ModelContextProvider>
                 <UserPinsContextProvider>
                   <DisplaySearchContextProvider>
-                    <RouterProvider router={router} />
+                    <AnimatorContextProvider>
+                      <RouterProvider router={router} />
+                    </AnimatorContextProvider>
                   </DisplaySearchContextProvider>
                 </UserPinsContextProvider>
               </ModelContextProvider>

@@ -89,3 +89,18 @@ export function lerpMultiple(colors: Color[], value: number): Color {
 export function scale(c: Color, value: number): Color {
   return color(value * getRed(c), value * getGreen(c), value * getBlue(c));
 }
+
+/// Converts the color to a CSS color.
+export function asCSS(c: Color): string {
+  return `rgb(${getRed(c)},${getGreen(c)},${getBlue(c)})`;
+}
+
+/// Converts the color to hexadecimal.
+export function asHex(c: Color) {
+  return c.toString(16);
+}
+
+/// Generates a random color.
+export function random() {
+  return Math.floor(Math.random() * 0xffffff);
+}

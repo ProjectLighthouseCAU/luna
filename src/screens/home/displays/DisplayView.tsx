@@ -12,6 +12,8 @@ import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
 import { DisplayInspector } from '@luna/screens/home/displays/DisplayInspector';
 import { DisplayStream } from '@luna/screens/home/displays/DisplayStream';
+import { DisplayToolbar } from '@luna/screens/home/displays/DisplayToolbar';
+import { DisplayInspectorTab } from '@luna/screens/home/displays/helpers/DisplayInspectorTab';
 import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapabilities';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
@@ -523,9 +525,18 @@ export function DisplayView() {
       ? maxSize.width
       : maxSize.height * DISPLAY_ASPECT_RATIO;
 
+  const [inspectorTab, setInspectorTab] = useLocalStorage<DisplayInspectorTab>(
+    LocalStorageKey.DisplayInspectorTab,
+    () => 'general'
+  );
+
   return (
-    <HomeContent title={`${username}'s Display`} layout="fullScreen">
-      <div className="flex flex-col space-y-4 md:flex-row h-full">
+    <HomeContent
+      title={`${username}'s Display`}
+      toolbar={<DisplayToolbar tab={inspectorTab} setTab={setInspectorTab} />}
+      layout="fullScreen"
+    >
+      <div className="flex flex-col gap-4 md:flex-row h-full">
         <div
           ref={wrapperRef}
           className="grow flex flex-row justify-center h-full"
@@ -549,8 +560,9 @@ export function DisplayView() {
             />
           </motion.div>
         </div>
-        <div className="md:overflow-y-scroll">
+        <div className="md:overflow-y-scroll md:-m-5 md:p-5">
           <DisplayInspector
+            tab={inspectorTab}
             username={username}
             inputState={inputState}
             inputConfig={inputConfig}
