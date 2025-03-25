@@ -9,7 +9,13 @@ import { useAnimator } from '@luna/hooks/useAnimator';
 import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { GREEN } from '@luna/utils/rgb';
 import { randomUUID } from '@luna/utils/uuid';
-import { IconMovie } from '@tabler/icons-react';
+import {
+  IconMovie,
+  IconPlayerPauseFilled,
+  IconPlayerSkipBackFilled,
+  IconPlayerSkipForwardFilled,
+  IconTrash,
+} from '@tabler/icons-react';
 import { useCallback, useContext } from 'react';
 
 export interface DisplayInspectorAnimatorCardProps {
@@ -37,6 +43,10 @@ export function DisplayInspectorAnimatorCard({
     [animator, setAnimator]
   );
 
+  const clearQueue = useCallback(() => {
+    setAnimator({ ...animator, queue: [] });
+  }, [animator, setAnimator]);
+
   const addSetColor = useCallback(() => {
     pushAction({
       type: 'setColor',
@@ -55,17 +65,31 @@ export function DisplayInspectorAnimatorCard({
     >
       {isMeOrAdmin ? (
         <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5">
+            <Button onPress={addSetColor} size="sm" variant="ghost">
+              Set Color
+            </Button>
+          </div>
+          <div className="flex flex-row justify-between">
+            <Button isIconOnly size="sm" variant="light">
+              <IconPlayerSkipBackFilled />
+            </Button>
+            <Button isIconOnly size="sm" variant="light">
+              <IconPlayerPauseFilled />
+            </Button>
+            <Button isIconOnly size="sm" variant="light">
+              <IconPlayerSkipForwardFilled />
+            </Button>
+            <Button isIconOnly size="sm" variant="light" onPress={clearQueue}>
+              <IconTrash />
+            </Button>
+          </div>
           <div className="flex flex-col gap-1">
             {animator.queue.length > 0 ? (
               animator.queue.map(item => <div>{item.type}</div>)
             ) : (
               <Hint>no items queued</Hint>
             )}
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Button onPress={addSetColor} size="sm" variant="ghost">
-              Set Color
-            </Button>
           </div>
         </div>
       ) : (
