@@ -8,6 +8,8 @@ export interface TitledCardProps {
   title: string;
   isCollapsible?: boolean;
   children?: ReactNode;
+  initiallyCollapsed?: boolean;
+  onSetCollapsed?: (isCollapsed: boolean) => void;
 }
 
 export function TitledCard({
@@ -15,14 +17,24 @@ export function TitledCard({
   icon,
   children,
   isCollapsible = false,
+  initiallyCollapsed = false,
+  onSetCollapsed,
 }: TitledCardProps) {
-  const [isCollapsed, setCollapsed] = useState(false);
+  const [isCollapsed, setCollapsed] = useState(initiallyCollapsed);
+
+  const updateCollapsed = useCallback(
+    (isCollapsed: boolean) => {
+      setCollapsed(isCollapsed);
+      onSetCollapsed?.(isCollapsed);
+    },
+    [onSetCollapsed]
+  );
 
   const onClickHeader = useCallback(() => {
     if (isCollapsible) {
-      setCollapsed(isCollapsed => !isCollapsed);
+      updateCollapsed(!isCollapsed);
     }
-  }, [isCollapsible]);
+  }, [isCollapsed, isCollapsible, updateCollapsed]);
 
   return (
     <Card>
