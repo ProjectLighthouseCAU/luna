@@ -75,13 +75,14 @@ export function DisplayInspectorAnimatorCard({
             </Button>
           </div>
           <div className="flex flex-row justify-between">
-            <Button isIconOnly size="sm" variant="light">
+            {/* TODO: Implement the disabled actions */}
+            <Button isIconOnly size="sm" variant="light" isDisabled>
               <IconPlayerSkipBackFilled />
             </Button>
-            <Button isIconOnly size="sm" variant="light">
+            <Button isIconOnly size="sm" variant="light" isDisabled>
               <IconPlayerPauseFilled />
             </Button>
-            <Button isIconOnly size="sm" variant="light">
+            <Button isIconOnly size="sm" variant="light" isDisabled>
               <IconPlayerSkipForwardFilled />
             </Button>
             <Button isIconOnly size="sm" variant="light" onPress={clearQueue}>
