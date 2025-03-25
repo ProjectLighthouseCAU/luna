@@ -35,17 +35,18 @@ interface AnimatorContextProviderProps {
 export function AnimatorContextProvider({
   children,
 }: AnimatorContextProviderProps) {
-  const [animators, setAnimators] = useState<Map<string, Animator>>(Map());
-  const [nextTickUpdates, setNextTickUpdates] =
-    useState<Map<string, AnimatorUpdate[]>>(Map());
+  const [[animators, nextTickUpdates], setState] = useState<
+    [Map<string, Animator>, Map<string, AnimatorUpdate[]>]
+  >([Map(), Map()]);
 
   const commitUpdate = useCallback(
     (username: string, update: AnimatorUpdate) => {
-      setAnimators(animators =>
+      setState(([animators, nextTickUpdates]) => [
         animators.update(username, emptyAnimator(), a =>
           applyAnimatorUpdate(a, update)
-        )
-      );
+        ),
+        nextTickUpdates,
+      ]);
     },
     []
   );
@@ -53,10 +54,9 @@ export function AnimatorContextProvider({
   const value = useMemo<AnimatorContextValue>(
     () => ({
       getAnimator(username) {
-        const updates = nextTickUpdates.get(username, []);
         return applyAnimatorUpdates(
           animators.get(username) ?? emptyAnimator(),
-          updates
+          nextTickUpdates.get(username, [])
         );
       },
       updateAnimator(username, update) {
@@ -84,12 +84,12 @@ export function AnimatorContextProvider({
     const tickDelayMs = 100;
 
     const timeout = window.setTimeout(() => {
-      setAnimators(animators =>
+      setState(([animators, nextTickUpdates]) => [
         animators.map((a, u) =>
           applyAnimatorUpdates(a, nextTickUpdates.get(u, []))
-        )
-      );
-      setNextTickUpdates(Map());
+        ),
+        Map(),
+      ]);
     }, tickDelayMs);
     return () => window.clearTimeout(timeout);
   }, [nextTickUpdates]);
@@ -99,9 +99,10 @@ export function AnimatorContextProvider({
       for (const [username, animator] of animators.entries()) {
         if (animator.isPlaying) {
           const updates = await tickAnimator({ animator, username, api });
-          setNextTickUpdates(nextTickUpdates =>
-            nextTickUpdates.update(username, [], us => [...us, ...updates])
-          );
+          setState(([animators, nextTickUpdates]) => [
+            animators,
+            nextTickUpdates.update(username, [], us => [...us, ...updates]),
+          ]);
         }
       }
     })();
