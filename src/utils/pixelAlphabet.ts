@@ -1,18 +1,75 @@
-/* eslint-disable prettier/prettier */
-
 import { Vec2 } from '@luna/utils/vec2';
 import * as rgb from '@luna/utils/rgb';
 import { LIGHTHOUSE_COLS, LIGHTHOUSE_ROWS } from 'nighthouse/browser';
 
-export type Letter = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'
-                   | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
-                   | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'
-                   | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'
-                   | ' ' | '.' | ':' | ',' | '!' | '/' | '&' | '#' | '-' | '_';
+export type Letter =
+  | 'a'
+  | 'b'
+  | 'c'
+  | 'd'
+  | 'e'
+  | 'f'
+  | 'g'
+  | 'h'
+  | 'i'
+  | 'j'
+  | 'k'
+  | 'l'
+  | 'm'
+  | 'n'
+  | 'o'
+  | 'p'
+  | 'q'
+  | 'r'
+  | 's'
+  | 't'
+  | 'u'
+  | 'v'
+  | 'w'
+  | 'x'
+  | 'y'
+  | 'z'
+  | 'A'
+  | 'B'
+  | 'C'
+  | 'D'
+  | 'E'
+  | 'F'
+  | 'G'
+  | 'H'
+  | 'I'
+  | 'J'
+  | 'K'
+  | 'L'
+  | 'M'
+  | 'N'
+  | 'O'
+  | 'P'
+  | 'Q'
+  | 'R'
+  | 'S'
+  | 'T'
+  | 'U'
+  | 'V'
+  | 'W'
+  | 'X'
+  | 'Y'
+  | 'Z'
+  | ' '
+  | '.'
+  | ':'
+  | ','
+  | '!'
+  | '/'
+  | '&'
+  | '#'
+  | '-'
+  | '_';
 
 type Pixel = ' ' | '#';
 
-type PixelRow = `${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}`;
+type PixelRow =
+  `${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}${Pixel}`;
 
 type PixelMap = [
   PixelRow,
@@ -40,7 +97,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #    # ',
     ' #    # ',
     '        ',
-    '        '
+    '        ',
   ],
   B: [
     ' #####  ',
@@ -50,7 +107,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #    # ',
     ' #####  ',
     '        ',
-    '        '
+    '        ',
   ],
   C: [
     '  ##### ',
@@ -60,7 +117,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #      ',
     '  ##### ',
     '        ',
-    '        '
+    '        ',
   ],
   D: [
     ' ####   ',
@@ -70,7 +127,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     ' ####   ',
     '        ',
-    '        '
+    '        ',
   ],
   E: [
     ' #####  ',
@@ -80,7 +137,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #      ',
     ' #####  ',
     '        ',
-    '        '
+    '        ',
   ],
   F: [
     ' ###### ',
@@ -90,7 +147,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #      ',
     ' #      ',
     '        ',
-    '        '
+    '        ',
   ],
   G: [
     '  ##### ',
@@ -100,7 +157,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #    # ',
     '  ####  ',
     '        ',
-    '        '
+    '        ',
   ],
   H: [
     ' #    # ',
@@ -110,7 +167,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #    # ',
     ' #    # ',
     '        ',
-    '        '
+    '        ',
   ],
   I: [
     '  ####  ',
@@ -120,7 +177,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '   ##   ',
     '  ####  ',
     '        ',
-    '        '
+    '        ',
   ],
   J: [
     '    ### ',
@@ -130,7 +187,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     '  ###   ',
     '        ',
-    '        '
+    '        ',
   ],
   K: [
     ' #   #  ',
@@ -140,7 +197,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     ' #    # ',
     '        ',
-    '        '
+    '        ',
   ],
   L: [
     ' #      ',
@@ -150,7 +207,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #      ',
     ' #####  ',
     '        ',
-    '        '
+    '        ',
   ],
   M: [
     ' #    # ',
@@ -160,7 +217,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #    # ',
     ' #    # ',
     '        ',
-    '        '
+    '        ',
   ],
   N: [
     ' #    # ',
@@ -170,7 +227,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   ## ',
     ' #    # ',
     '        ',
-    '        '
+    '        ',
   ],
   O: [
     '  ###   ',
@@ -180,7 +237,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     '  ###   ',
     '        ',
-    '        '
+    '        ',
   ],
   P: [
     ' #####  ',
@@ -190,7 +247,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #      ',
     ' #      ',
     '        ',
-    '        '
+    '        ',
   ],
   Q: [
     '  ###   ',
@@ -200,7 +257,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #  ##  ',
     '  ####  ',
     '        ',
-    '        '
+    '        ',
   ],
   R: [
     ' #####  ',
@@ -210,7 +267,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     ' #    # ',
     '        ',
-    '        '
+    '        ',
   ],
   S: [
     '  ##### ',
@@ -220,7 +277,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '      # ',
     ' #####  ',
     '        ',
-    '        '
+    '        ',
   ],
   T: [
     ' ###### ',
@@ -230,7 +287,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '   ##   ',
     '   ##   ',
     '        ',
-    '        '
+    '        ',
   ],
   U: [
     ' #    # ',
@@ -240,7 +297,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #    # ',
     '  ####  ',
     '        ',
-    '        '
+    '        ',
   ],
   V: [
     ' #    # ',
@@ -250,7 +307,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  #  #  ',
     '   ##   ',
     '        ',
-    '        '
+    '        ',
   ],
   W: [
     ' #     #',
@@ -260,7 +317,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #  #  #',
     '  ## ## ',
     '        ',
-    '        '
+    '        ',
   ],
   X: [
     ' #    # ',
@@ -270,7 +327,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  #  #  ',
     ' #    # ',
     '        ',
-    '        '
+    '        ',
   ],
   Y: [
     ' #    # ',
@@ -280,7 +337,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '   ##   ',
     '   ##   ',
     '        ',
-    '        '
+    '        ',
   ],
   Z: [
     ' #####  ',
@@ -290,7 +347,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  #     ',
     ' #####  ',
     '        ',
-    '        '
+    '        ',
   ],
   // Lowercase letters
   a: [
@@ -301,7 +358,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     '  ####  ',
     '        ',
-    '        '
+    '        ',
   ],
   b: [
     ' #      ',
@@ -311,7 +368,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     ' ####   ',
     '        ',
-    '        '
+    '        ',
   ],
   c: [
     '        ',
@@ -321,7 +378,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #      ',
     '  ####  ',
     '        ',
-    '        '
+    '        ',
   ],
   d: [
     '     #  ',
@@ -331,7 +388,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     '  ####  ',
     '        ',
-    '        '
+    '        ',
   ],
   e: [
     '        ',
@@ -341,7 +398,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #      ',
     '  ####  ',
     '        ',
-    '        '
+    '        ',
   ],
   f: [
     '   ##   ',
@@ -351,7 +408,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  #     ',
     '  #     ',
     '        ',
-    '        '
+    '        ',
   ],
   g: [
     '        ',
@@ -361,7 +418,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  ####  ',
     '     #  ',
     '  ###   ',
-    '        '
+    '        ',
   ],
   h: [
     ' #      ',
@@ -371,7 +428,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     ' #   #  ',
     '        ',
-    '        '
+    '        ',
   ],
   i: [
     '   #    ',
@@ -381,7 +438,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '   #    ',
     '  ###   ',
     '        ',
-    '        '
+    '        ',
   ],
   j: [
     '    #   ',
@@ -391,7 +448,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '    #   ',
     '    #   ',
     ' #  #   ',
-    '  ##    '
+    '  ##    ',
   ],
   k: [
     ' #      ',
@@ -401,7 +458,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #  #   ',
     ' #   #  ',
     '        ',
-    '        '
+    '        ',
   ],
   l: [
     ' ##     ',
@@ -411,7 +468,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  #     ',
     '  ###   ',
     '        ',
-    '        '
+    '        ',
   ],
   m: [
     '        ',
@@ -421,7 +478,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     ' #   #  ',
     '        ',
-    '        '
+    '        ',
   ],
   n: [
     '        ',
@@ -431,7 +488,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     ' #   #  ',
     '        ',
-    '        '
+    '        ',
   ],
   o: [
     '        ',
@@ -441,7 +498,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     '  ###   ',
     '        ',
-    '        '
+    '        ',
   ],
   p: [
     '        ',
@@ -451,7 +508,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' ####   ',
     ' #      ',
     ' #      ',
-    '        '
+    '        ',
   ],
   q: [
     '        ',
@@ -461,7 +518,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  ####  ',
     '     #  ',
     '     #  ',
-    '        '
+    '        ',
   ],
   r: [
     '        ',
@@ -471,7 +528,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #      ',
     ' #      ',
     '        ',
-    '        '
+    '        ',
   ],
   s: [
     '        ',
@@ -481,7 +538,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '     #  ',
     ' ####   ',
     '        ',
-    '        '
+    '        ',
   ],
   t: [
     '  #     ',
@@ -491,7 +548,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  #     ',
     '   ##   ',
     '        ',
-    '        '
+    '        ',
   ],
   u: [
     '        ',
@@ -501,7 +558,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #   #  ',
     '  ####  ',
     '        ',
-    '        '
+    '        ',
   ],
   v: [
     '        ',
@@ -511,7 +568,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  # #   ',
     '   #    ',
     '        ',
-    '        '
+    '        ',
   ],
   w: [
     '        ',
@@ -521,7 +578,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' # # #  ',
     '  # #   ',
     '        ',
-    '        '
+    '        ',
   ],
   x: [
     '        ',
@@ -531,7 +588,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  # #   ',
     ' #   #  ',
     '        ',
-    '        '
+    '        ',
   ],
   y: [
     '        ',
@@ -541,7 +598,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  ####  ',
     '     #  ',
     '  ###   ',
-    '        '
+    '        ',
   ],
   z: [
     '        ',
@@ -551,7 +608,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  #     ',
     ' #####  ',
     '        ',
-    '        '
+    '        ',
   ],
   ' ': [
     '        ',
@@ -561,7 +618,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '        ',
     '        ',
     '        ',
-    '        '
+    '        ',
   ],
   '.': [
     '        ',
@@ -571,7 +628,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '        ',
     '  ##    ',
     '  ##    ',
-    '        '
+    '        ',
   ],
   ':': [
     '        ',
@@ -581,7 +638,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  ##    ',
     '  ##    ',
     '        ',
-    '        '
+    '        ',
   ],
   ',': [
     '        ',
@@ -591,7 +648,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  ##    ',
     '  ##    ',
     '   #    ',
-    '  #     '
+    '  #     ',
   ],
   '!': [
     '  ##    ',
@@ -601,7 +658,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  ##    ',
     '        ',
     '  ##    ',
-    '        '
+    '        ',
   ],
   '/': [
     '      # ',
@@ -611,7 +668,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '  #     ',
     ' #      ',
     '        ',
-    '        '
+    '        ',
   ],
   '&': [
     '  ###   ',
@@ -621,7 +678,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #  ##  ',
     '  ## #  ',
     '        ',
-    '        '
+    '        ',
   ],
   '#': [
     '  # #   ',
@@ -631,7 +688,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     ' #####  ',
     '  # #   ',
     '  # #   ',
-    '        '
+    '        ',
   ],
   '-': [
     '        ',
@@ -641,9 +698,9 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '        ',
     '        ',
     '        ',
-    '        '
+    '        ',
   ],
-  '_': [
+  _: [
     '        ',
     '        ',
     '        ',
@@ -651,7 +708,7 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
     '        ',
     ' #####  ',
     '        ',
-    '        '
+    '        ',
   ],
 };
 
@@ -666,7 +723,13 @@ export function fillPixelMapAt(
     for (let dx = 0; dx < row.length; dx++) {
       const x = pos.x + dx;
       const y = pos.y + dy;
-      if (x >= 0 && x < LIGHTHOUSE_COLS && y >= 0 && y < LIGHTHOUSE_ROWS && pixelMap[dy][dx] === '#') {
+      if (
+        x >= 0 &&
+        x < LIGHTHOUSE_COLS &&
+        y >= 0 &&
+        y < LIGHTHOUSE_ROWS &&
+        pixelMap[dy][dx] === '#'
+      ) {
         rgb.setAt(y * LIGHTHOUSE_COLS + x, color, frame);
       }
     }
