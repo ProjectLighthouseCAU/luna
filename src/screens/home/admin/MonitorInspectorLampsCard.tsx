@@ -8,6 +8,8 @@ import {
 import { ObjectInspectorValue } from '@luna/components/ObjectInspectorValue';
 import { IconCheck, IconLamp } from '@tabler/icons-react';
 import { TimeInterval } from '@luna/components/TimeInterval';
+import { useLocalStorage } from '@luna/hooks/useLocalStorage';
+import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 
 export interface MonitorInspectorLampsCardProps {
   criterion?: MonitorLampCriterion;
@@ -32,12 +34,24 @@ export function MonitorInspectorLampsCard({
   metrics,
   padLampCount,
 }: MonitorInspectorLampsCardProps) {
+  const [isCollapsed, storeCollapsed] = useLocalStorage(
+    LocalStorageKey.MonitorInspectorLampsCollapsed,
+    () => false
+  );
+
   const paddedMetrics: (LampV2Metrics | null)[] = [...metrics];
   while (paddedMetrics.length < padLampCount) {
     paddedMetrics.push(null);
   }
+
   return (
-    <TitledCard icon={<IconLamp />} title="Lamps" isCollapsible>
+    <TitledCard
+      icon={<IconLamp />}
+      title="Lamps"
+      isCollapsible
+      initiallyCollapsed={isCollapsed}
+      onSetCollapsed={storeCollapsed}
+    >
       {metrics.length > 0 ? (
         <div>
           <ObjectInspectorTable

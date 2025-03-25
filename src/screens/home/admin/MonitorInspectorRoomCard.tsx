@@ -9,6 +9,8 @@ import { ObjectInspectorValue } from '@luna/components/ObjectInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { TimeInterval } from '@luna/components/TimeInterval';
+import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
+import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 
 export interface MonitorInspectorRoomCardProps {
   criterion?: MonitorRoomCriterion;
@@ -50,6 +52,11 @@ export function MonitorInspectorRoomCard({
   setCriterion,
   metrics,
 }: MonitorInspectorRoomCardProps) {
+  const [isCollapsed, storeCollapsed] = useLocalStorage(
+    LocalStorageKey.MonitorInspectorRoomCollapsed,
+    () => false
+  );
+
   const renderedMetrics = useMemo<FlatRoomV2Metrics[]>(
     () => (metrics ? [metrics] : []),
     [metrics]
@@ -60,6 +67,8 @@ export function MonitorInspectorRoomCard({
       icon={<IconDoor />}
       title={`Room ${metrics?.room ?? ''}`}
       isCollapsible
+      initiallyCollapsed={isCollapsed}
+      onSetCollapsed={storeCollapsed}
     >
       {metrics ? (
         <ObjectInspectorTable
