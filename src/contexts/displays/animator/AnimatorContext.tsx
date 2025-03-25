@@ -1,34 +1,31 @@
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { tickAnimator } from '@luna/contexts/displays/animator/run';
-import { AnimatorQueue } from '@luna/contexts/displays/animator/types';
+import {
+  Animator,
+  AnimatorUpdate,
+  applyAnimatorUpdate,
+  applyAnimatorUpdates,
+  emptyAnimator,
+} from '@luna/contexts/displays/animator/types';
 import { Map } from 'immutable';
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react';
 
-export interface Animator {
-  queue: AnimatorQueue;
-}
-
-export function emptyAnimator(): Animator {
-  return {
-    queue: [],
-  };
-}
-
 export interface AnimatorContextValue {
   getAnimator: (username: string) => Animator;
-  setAnimator: (username: string, animator: Animator) => void;
+  updateAnimator: (username: string, update: AnimatorUpdate) => void;
 }
 
 export const AnimatorContext = createContext<AnimatorContextValue>({
   getAnimator: () => emptyAnimator(),
-  setAnimator: () => {},
+  updateAnimator: () => {},
 });
 
 interface AnimatorContextProviderProps {
@@ -39,40 +36,73 @@ export function AnimatorContextProvider({
   children,
 }: AnimatorContextProviderProps) {
   const [animators, setAnimators] = useState<Map<string, Animator>>(Map());
+  const [nextTickUpdates, setNextTickUpdates] =
+    useState<Map<string, AnimatorUpdate[]>>(Map());
+
+  const commitUpdate = useCallback(
+    (username: string, update: AnimatorUpdate) => {
+      setAnimators(animators =>
+        animators.update(username, emptyAnimator(), a =>
+          applyAnimatorUpdate(a, update)
+        )
+      );
+    },
+    []
+  );
 
   const value = useMemo<AnimatorContextValue>(
     () => ({
       getAnimator(username) {
-        return animators.get(username) ?? emptyAnimator();
+        const updates = nextTickUpdates.get(username, []);
+        return applyAnimatorUpdates(
+          animators.get(username) ?? emptyAnimator(),
+          updates
+        );
       },
-      setAnimator(username, animator) {
-        setAnimators(animators.set(username, animator));
+      updateAnimator(username, update) {
+        commitUpdate(username, update);
       },
     }),
-    [animators]
+    [animators, commitUpdate, nextTickUpdates]
   );
 
   const { api } = useContext(ModelContext);
 
+  // The following two effects implicitly implement the tick loop, by
+  // alternating between a timeout that commits the nextTickUpdates and an
+  // effect that actually ticks the action and computes the new nextTickUpdates.
+  // Any consumers of the context will already see the nextTickUpdates-updated
+  // animators while the internal state still uses the previous updates to
+  // avoid eagerly triggering the next iteration of the tick loop.
+
   useEffect(() => {
-    // Bail out if there are no running animations
-    if (!animators.valueSeq().find(a => a.queue.length > 0)) {
+    // Bail out if there are no running updates
+    if (!nextTickUpdates.valueSeq().find(us => us.length > 0)) {
       return;
     }
 
     const tickDelayMs = 100;
 
-    // TODO: Return deltas from the ticker to avoid having it override potential changes from the UI
-    const timeout = window.setTimeout(async () => {
-      let newAnimators = animators;
-      for (const [username, animator] of animators.entries()) {
-        const newAnimator = await tickAnimator({ animator, username, api });
-        newAnimators = newAnimators.set(username, newAnimator);
-      }
-      setAnimators(newAnimators);
+    const timeout = window.setTimeout(() => {
+      setAnimators(animators =>
+        animators.map((a, u) =>
+          applyAnimatorUpdates(a, nextTickUpdates.get(u, []))
+        )
+      );
+      setNextTickUpdates(Map());
     }, tickDelayMs);
-
     return () => window.clearTimeout(timeout);
+  }, [nextTickUpdates]);
+
+  useEffect(() => {
+    (async () => {
+      for (const [username, animator] of animators.entries()) {
+        const updates = await tickAnimator({ animator, username, api });
+        setNextTickUpdates(nextTickUpdates =>
+          nextTickUpdates.update(username, [], us => [...us, ...updates])
+        );
+      }
+    })();
   }, [animators, api]);
 
   return (
