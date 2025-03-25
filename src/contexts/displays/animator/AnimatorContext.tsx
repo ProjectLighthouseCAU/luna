@@ -55,10 +55,15 @@ export function AnimatorContextProvider({
   const { api } = useContext(ModelContext);
 
   useEffect(() => {
+    // Bail out if there are no running animations
+    if (!animators.valueSeq().find(a => a.queue.length > 0)) {
+      return;
+    }
+
     const tickDelayMs = 100;
 
+    // TODO: We re-register the interval on every tick. Is that fine?
     // TODO: Return deltas from the ticker to avoid having it override potential changes from the UI
-
     const interval = window.setInterval(async () => {
       let newAnimators = animators;
       for (const [username, animator] of animators.entries()) {
