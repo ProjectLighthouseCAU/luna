@@ -88,15 +88,15 @@ export function UsersView() {
       title="Users"
       toolbar={
         <div className="flex flex-row gap-4">
+          <Tooltip content="Add user" color="success">
+            <Button onPress={() => setShowUserAddModal(true)} isIconOnly>
+              <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50" />
+            </Button>
+          </Tooltip>
           <SearchBar
             placeholder="Search users..."
             setQuery={users.setFilterText}
           />
-          <Tooltip content="Add user" color="success">
-            <Button onPress={() => setShowUserAddModal(true)}>
-              <IconUserPlus className="text-lg text-success cursor-pointer active:opacity-50" />
-            </Button>
-          </Tooltip>
         </div>
       }
     >

@@ -59,15 +59,15 @@ export function RegistrationKeysView() {
       title="Registration Keys"
       toolbar={
         <div className="flex flex-row gap-4">
+          <Tooltip content="Add key" color="success">
+            <Button onPress={() => setShowKeyAddModal(true)} isIconOnly>
+              <IconPlus className="text-lg text-success cursor-pointer active:opacity-50" />
+            </Button>
+          </Tooltip>
           <SearchBar
             placeholder="Search registration keys..."
             setQuery={keys.setFilterText}
           />
-          <Tooltip content="Add key" color="success">
-            <Button onPress={() => setShowKeyAddModal(true)}>
-              <IconPlus className="text-lg text-success cursor-pointer active:opacity-50" />
-            </Button>
-          </Tooltip>
         </div>
       }
     >

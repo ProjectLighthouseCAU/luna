@@ -63,15 +63,15 @@ export function RolesView() {
       title="Roles"
       toolbar={
         <div className="flex flex-row gap-4">
+          <Tooltip content="Add role" color="success">
+            <Button onPress={() => setShowRoleAddModal(true)} isIconOnly>
+              <IconCategoryPlus className="text-lg text-success cursor-pointer active:opacity-50" />
+            </Button>
+          </Tooltip>
           <SearchBar
             placeholder="Search roles..."
             setQuery={roles.setFilterText}
           />
-          <Tooltip content="Add role" color="success">
-            <Button onPress={() => setShowRoleAddModal(true)}>
-              <IconCategoryPlus className="text-lg text-success cursor-pointer active:opacity-50" />
-            </Button>
-          </Tooltip>
         </div>
       }
     >
