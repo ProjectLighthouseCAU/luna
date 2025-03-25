@@ -228,8 +228,11 @@ export function MonitorView() {
   const isColumnLayout = breakpoint < Breakpoint.Xl;
 
   return (
-    <HomeContent title="Monitoring">
-      <div className="flex flex-col space-y-4 xl:flex-row h-full">
+    <HomeContent
+      title="Monitoring"
+      layout={isColumnLayout ? 'scrollable' : 'fullScreen'}
+    >
+      <div className="flex flex-col gap-4 xl:flex-row h-full">
         <div
           ref={wrapperRef}
           className="grow flex flex-row justify-center h-full"
@@ -251,13 +254,17 @@ export function MonitorView() {
             isColumnLayout ? '' : 'flex flex-row justify-end grow-0 xl:w-[45%]'
           }
         >
-          <MonitorInspector
-            criterion={criterion}
-            setCriterion={setCriterion}
-            flatRoomMetrics={focusedFlatRoomMetrics}
-            lampMetrics={focusedLampMetrics}
-            padLampCount={isColumnLayout ? 0 : 6}
-          />
+          <div
+            className={`${isColumnLayout ? '' : 'overflow-y-scroll'} w-full`}
+          >
+            <MonitorInspector
+              criterion={criterion}
+              setCriterion={setCriterion}
+              flatRoomMetrics={focusedFlatRoomMetrics}
+              lampMetrics={focusedLampMetrics}
+              padLampCount={isColumnLayout ? 0 : 6}
+            />
+          </div>
         </div>
       </div>
     </HomeContent>

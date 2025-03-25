@@ -37,20 +37,22 @@ export function MonitorInspectorLampsCard({
     paddedMetrics.push(null);
   }
   return (
-    <TitledCard icon={<IconLamp />} title="Lamps">
+    <TitledCard icon={<IconLamp />} title="Lamps" isCollapsible>
       {metrics.length > 0 ? (
-        <ObjectInspectorTable
-          objects={paddedMetrics}
-          names={names}
-          labelWidth={150}
-          selection={criterion?.key}
-          onSelect={key =>
-            setCriterion(key ? { type: 'lamp', key } : undefined)
-          }
-          render={(value, prop) => (
-            <MonitorInspectorLampValue value={value} prop={prop} />
-          )}
-        />
+        <div>
+          <ObjectInspectorTable
+            objects={paddedMetrics}
+            names={names}
+            labelWidth={150}
+            selection={criterion?.key}
+            onSelect={key =>
+              setCriterion(key ? { type: 'lamp', key } : undefined)
+            }
+            render={(value, prop) => (
+              <MonitorInspectorLampValue value={value} prop={prop} />
+            )}
+          />
+        </div>
       ) : (
         <div className="opacity-50">No lamps selected</div>
       )}

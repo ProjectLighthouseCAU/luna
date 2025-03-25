@@ -524,7 +524,7 @@ export function DisplayView() {
       : maxSize.height * DISPLAY_ASPECT_RATIO;
 
   return (
-    <HomeContent title={`${username}'s Display`}>
+    <HomeContent title={`${username}'s Display`} layout="fullScreen">
       <div className="flex flex-col space-y-4 md:flex-row h-full">
         <div
           ref={wrapperRef}
@@ -549,13 +549,15 @@ export function DisplayView() {
             />
           </motion.div>
         </div>
-        <DisplayInspector
-          username={username}
-          inputState={inputState}
-          inputConfig={inputConfig}
-          setInputConfig={setInputConfig}
-          inputCapabilities={inputCapabilities}
-        />
+        <div className="md:overflow-y-scroll">
+          <DisplayInspector
+            username={username}
+            inputState={inputState}
+            inputConfig={inputConfig}
+            setInputConfig={setInputConfig}
+            inputCapabilities={inputCapabilities}
+          />
+        </div>
       </div>
     </HomeContent>
   );

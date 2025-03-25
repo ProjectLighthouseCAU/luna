@@ -67,6 +67,7 @@ export function ObjectInspectorTable<T extends object>({
       hideHeader
       layout="fixed"
       classNames={{
+        base: 'overflow-y-visible',
         table: 'bg-red',
       }}
       removeWrapper
