@@ -2,7 +2,6 @@ import { ColorSchemeButton } from '@luna/components/ColorSchemeButton';
 import { SearchBar } from '@luna/components/SearchBar';
 import { UserSnippet } from '@luna/components/UserSnippet';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
-import { DisplaySearchContext } from '@luna/contexts/displays/DisplaySearchContext';
 import { SidebarRoutes } from '@luna/screens/home/sidebar/SidebarRoutes';
 import {
   Divider,
@@ -25,7 +24,7 @@ export interface SidebarProps {
 
 export function Sidebar({ isCompact }: SidebarProps) {
   const auth = useContext(AuthContext);
-  const { query, setQuery } = useContext(DisplaySearchContext);
+  const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
   const [showQuickSwitcherTip, setShowQuickSwitcherTip] = useState(true);
@@ -55,7 +54,7 @@ export function Sidebar({ isCompact }: SidebarProps) {
   return (
     <div className="flex flex-col space-y-2 h-full">
       <SearchBar
-        placeholder="Search displays..."
+        placeholder="Search..."
         fullWidth
         setQuery={setQuery}
         tooltip={

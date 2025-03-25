@@ -48,10 +48,10 @@ function displayRoute(username: string): VisibleRoute {
 
 export function useVisibleRoutes({
   showUserDisplays = true,
-  searchQuery = '',
+  displaySearchQuery = '',
 }: {
   showUserDisplays?: boolean;
-  searchQuery?: string;
+  displaySearchQuery?: string;
 }) {
   const { isAdmin } = useAdminStatus();
 
@@ -106,7 +106,7 @@ export function useVisibleRoutes({
   );
 
   const { pinnedDisplays, filteredUsernames } = useFilteredDisplays({
-    searchQuery,
+    searchQuery: displaySearchQuery,
   });
 
   const userRouteItems = useMemo<VisibleRouteItem[]>(
@@ -123,7 +123,7 @@ export function useVisibleRoutes({
               <DisplayPinLabel isActive={isActive} pin={pin} />
             ),
           })),
-          ...(showUserDisplays || searchQuery
+          ...(showUserDisplays || displaySearchQuery
             ? [
                 ...(pinnedDisplays.size > 0 && filteredUsernames.length > 0
                   ? [
@@ -142,7 +142,7 @@ export function useVisibleRoutes({
         ],
       },
     ],
-    [pinnedDisplays, filteredUsernames, searchQuery, showUserDisplays]
+    [pinnedDisplays, filteredUsernames, displaySearchQuery, showUserDisplays]
   );
 
   const routeItems = useMemo<VisibleRouteItem[]>(

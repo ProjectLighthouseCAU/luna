@@ -1,11 +1,13 @@
 import { Divider } from '@heroui/react';
 import { RouteLink } from '@luna/components/RouteLink';
+import { DisplaySearchContext } from '@luna/contexts/displays/DisplaySearchContext';
 import {
   useVisibleRoutes,
   VisibleRoute,
   VisibleRouteItem,
 } from '@luna/hooks/useVisibleRoutes';
 import { truncate } from '@luna/utils/string';
+import { useContext } from 'react';
 import { InView } from 'react-intersection-observer';
 
 export interface SidebarRoutesProps {
@@ -14,9 +16,11 @@ export interface SidebarRoutesProps {
 }
 
 export function SidebarRoutes({ isCompact, searchQuery }: SidebarRoutesProps) {
+  const { query: displaySearchQuery } = useContext(DisplaySearchContext);
+
   const visibleRouteItems = useVisibleRoutes({
     showUserDisplays: !isCompact,
-    searchQuery,
+    displaySearchQuery,
   });
 
   return <SidebarVisibleRouteItems routeItems={visibleRouteItems} />;
