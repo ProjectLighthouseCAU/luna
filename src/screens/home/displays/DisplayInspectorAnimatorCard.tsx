@@ -51,6 +51,14 @@ export function DisplayInspectorAnimatorCard({
     updateAnimator({ type: 'clearQueue' });
   }, [updateAnimator]);
 
+  const skipBack = useCallback(() => {
+    updateAnimator({ type: 'skipAction', direction: 'back' });
+  }, [updateAnimator]);
+
+  const skipForward = useCallback(() => {
+    updateAnimator({ type: 'skipAction', direction: 'forward' });
+  }, [updateAnimator]);
+
   const addRandomColor = useCallback(() => {
     addAction({
       type: 'setColor',
@@ -94,13 +102,13 @@ export function DisplayInspectorAnimatorCard({
           </div>
           <div className="flex flex-row justify-between">
             {/* TODO: Implement the disabled actions */}
-            <Button isIconOnly size="sm" variant="light" isDisabled>
+            <Button isIconOnly size="sm" variant="light" onPress={skipBack}>
               <IconPlayerSkipBackFilled />
             </Button>
             <Button isIconOnly size="sm" variant="light" isDisabled>
               <IconPlayerPauseFilled />
             </Button>
-            <Button isIconOnly size="sm" variant="light" isDisabled>
+            <Button isIconOnly size="sm" variant="light" onPress={skipForward}>
               <IconPlayerSkipForwardFilled />
             </Button>
             <Button isIconOnly size="sm" variant="light" onPress={clearQueue}>
