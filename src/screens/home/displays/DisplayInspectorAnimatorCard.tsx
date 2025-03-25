@@ -71,6 +71,13 @@ export function DisplayInspectorAnimatorCard({
     updateAnimator({ type: 'setPlaying', isPlaying: false });
   }, [updateAnimator]);
 
+  const setPlaying = useCallback(
+    (isPlaying: boolean) => {
+      updateAnimator({ type: 'setPlaying', isPlaying });
+    },
+    [updateAnimator]
+  );
+
   const addRandomColor = useCallback(() => {
     addAction({
       type: 'setColor',
@@ -109,6 +116,13 @@ export function DisplayInspectorAnimatorCard({
       },
     });
   }, [addAction]);
+
+  const scrubAnimator = useCallback(
+    (ticks: number) => {
+      updateAnimator({ type: 'scrub', ticks });
+    },
+    [updateAnimator]
+  );
 
   return (
     <TitledCard
@@ -175,6 +189,9 @@ export function DisplayInspectorAnimatorCard({
                   key={action.id}
                   action={action}
                   displayProgress={i === 0}
+                  scrubProgress={scrubAnimator}
+                  isPlaying={animator.isPlaying}
+                  setPlaying={setPlaying}
                   className={`select-none p-1 rounded ${colorScheme.isDark ? 'even:bg-neutral-800' : 'even:bg-neutral-200'}`}
                 />
               ))

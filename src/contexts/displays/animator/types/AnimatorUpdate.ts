@@ -23,6 +23,10 @@ export interface SetPlayingAnimatorUpdate
   isPlaying: boolean;
 }
 
+export interface ScrubAnimatorUpdate extends BaseAnimatorUpdate<'scrub'> {
+  ticks: number;
+}
+
 export interface TickAnimatorUpdate extends BaseAnimatorUpdate<'tick'> {}
 
 export type AnimatorUpdate =
@@ -30,6 +34,7 @@ export type AnimatorUpdate =
   | SkipActionAnimatorUpdate
   | ClearQueueAnimatorUpdate
   | SetPlayingAnimatorUpdate
+  | ScrubAnimatorUpdate
   | TickAnimatorUpdate;
 
 export function applyAnimatorUpdate(
@@ -67,6 +72,19 @@ export function applyAnimatorUpdate(
       return { ...animator, queue: [], history: [] };
     case 'setPlaying':
       return { ...animator, isPlaying: update.isPlaying };
+    case 'scrub':
+      if (animator.queue.length > 0) {
+        const first = animator.queue[0];
+        return {
+          ...animator,
+          queue: [
+            { ...first, ticks: { ...first.ticks, value: update.ticks } },
+            ...animator.queue.slice(1),
+          ],
+        };
+      } else {
+        return animator;
+      }
     case 'tick':
       if (animator.queue.length > 0) {
         const first = animator.queue[0];
