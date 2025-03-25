@@ -532,7 +532,7 @@ export function DisplayView() {
 
   return (
     <HomeContent
-      title={`${username}'s Display`}
+      title={isCompact ? username : `${username}'s Display`}
       toolbar={<DisplayToolbar tab={inspectorTab} setTab={setInspectorTab} />}
       layout="fullScreen"
     >
