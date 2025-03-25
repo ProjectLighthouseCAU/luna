@@ -1,7 +1,8 @@
 import { Slider } from '@heroui/react';
 import { ColorSnippet } from '@luna/components/ColorSnippet';
 import { AnimatorAction } from '@luna/contexts/displays/animator/types';
-import { useCallback, useState } from 'react';
+import { throttle } from '@luna/utils/schedule';
+import { useCallback, useMemo, useState } from 'react';
 
 export interface AnimatorActionSnippetProps {
   action: AnimatorAction;
@@ -23,18 +24,23 @@ export function AnimatorActionSnippet({
   const [isScrubbing, setScrubbing] = useState(false);
   const [wasPlaying, setWasPlaying] = useState<boolean>();
 
+  const scrubProgressThrottled = useMemo(
+    () => (scrubProgress ? throttle(scrubProgress, 50) : undefined),
+    [scrubProgress]
+  );
+
   const onChangeProgress = useCallback(
     (value: number | number[]) => {
-      if (typeof value === 'number' && scrubProgress) {
+      if (typeof value === 'number' && scrubProgressThrottled) {
         if (!isScrubbing) {
           setScrubbing(true);
           setWasPlaying(isPlaying);
           setPlaying?.(false);
         }
-        scrubProgress(value);
+        scrubProgressThrottled(value);
       }
     },
-    [isPlaying, isScrubbing, scrubProgress, setPlaying]
+    [isPlaying, isScrubbing, scrubProgressThrottled, setPlaying]
   );
 
   const onChangeEndProgress = useCallback(() => {
