@@ -18,12 +18,18 @@ export interface SkipActionAnimatorUpdate
 export interface ClearQueueAnimatorUpdate
   extends BaseAnimatorUpdate<'clearQueue'> {}
 
+export interface SetPlayingAnimatorUpdate
+  extends BaseAnimatorUpdate<'setPlaying'> {
+  isPlaying: boolean;
+}
+
 export interface TickAnimatorUpdate extends BaseAnimatorUpdate<'tick'> {}
 
 export type AnimatorUpdate =
   | AddActionAnimatorUpdate
   | SkipActionAnimatorUpdate
   | ClearQueueAnimatorUpdate
+  | SetPlayingAnimatorUpdate
   | TickAnimatorUpdate;
 
 export function applyAnimatorUpdate(
@@ -59,6 +65,8 @@ export function applyAnimatorUpdate(
       break; // Unreachable
     case 'clearQueue':
       return { ...animator, queue: [], history: [] };
+    case 'setPlaying':
+      return { ...animator, isPlaying: update.isPlaying };
     case 'tick':
       if (animator.queue.length > 0) {
         const first = animator.queue[0];

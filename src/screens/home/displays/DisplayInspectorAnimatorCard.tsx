@@ -14,6 +14,7 @@ import { randomUUID } from '@luna/utils/uuid';
 import {
   IconMovie,
   IconPlayerPauseFilled,
+  IconPlayerPlayFilled,
   IconPlayerSkipBackFilled,
   IconPlayerSkipForwardFilled,
   IconTrash,
@@ -57,6 +58,14 @@ export function DisplayInspectorAnimatorCard({
 
   const skipForward = useCallback(() => {
     updateAnimator({ type: 'skipAction', direction: 'forward' });
+  }, [updateAnimator]);
+
+  const play = useCallback(() => {
+    updateAnimator({ type: 'setPlaying', isPlaying: true });
+  }, [updateAnimator]);
+
+  const pause = useCallback(() => {
+    updateAnimator({ type: 'setPlaying', isPlaying: false });
   }, [updateAnimator]);
 
   const addRandomColor = useCallback(() => {
@@ -105,8 +114,17 @@ export function DisplayInspectorAnimatorCard({
             <Button isIconOnly size="sm" variant="light" onPress={skipBack}>
               <IconPlayerSkipBackFilled />
             </Button>
-            <Button isIconOnly size="sm" variant="light" isDisabled>
-              <IconPlayerPauseFilled />
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              onPress={animator.isPlaying ? pause : play}
+            >
+              {animator.isPlaying ? (
+                <IconPlayerPauseFilled />
+              ) : (
+                <IconPlayerPlayFilled />
+              )}
             </Button>
             <Button isIconOnly size="sm" variant="light" onPress={skipForward}>
               <IconPlayerSkipForwardFilled />

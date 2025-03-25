@@ -4,11 +4,13 @@ import { AnimatorQueue } from '@luna/contexts/displays/animator/types/AnimatorQu
 export interface Animator {
   queue: AnimatorQueue;
   history: AnimatorHistory;
+  isPlaying: boolean;
 }
 
 export function emptyAnimator(): Animator {
   return {
     queue: [],
     history: [],
+    isPlaying: true,
   };
 }

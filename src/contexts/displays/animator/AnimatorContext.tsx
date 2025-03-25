@@ -97,10 +97,12 @@ export function AnimatorContextProvider({
   useEffect(() => {
     (async () => {
       for (const [username, animator] of animators.entries()) {
-        const updates = await tickAnimator({ animator, username, api });
-        setNextTickUpdates(nextTickUpdates =>
-          nextTickUpdates.update(username, [], us => [...us, ...updates])
-        );
+        if (animator.isPlaying) {
+          const updates = await tickAnimator({ animator, username, api });
+          setNextTickUpdates(nextTickUpdates =>
+            nextTickUpdates.update(username, [], us => [...us, ...updates])
+          );
+        }
       }
     })();
   }, [animators, api]);
