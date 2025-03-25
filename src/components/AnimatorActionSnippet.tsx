@@ -4,24 +4,29 @@ import { AnimatorAction } from '@luna/contexts/displays/animator/types';
 
 export interface AnimatorActionSnippetProps {
   action: AnimatorAction;
+  displayProgress?: boolean;
   className?: string;
 }
 
 export function AnimatorActionSnippet({
   action,
+  displayProgress = false,
   className = '',
 }: AnimatorActionSnippetProps) {
   return (
     <div className={`flex flex-col ${className}`}>
       <div>{formatType(action.type)}</div>
       <AnimatorActionDetail action={action} />
-      <Progress
-        aria-label="Animator action progress"
-        size="sm"
-        value={action.ticks.value}
-        maxValue={action.ticks.total - 1}
-        color="default"
-      />
+      {displayProgress ? (
+        <Progress
+          aria-label="Animator action progress"
+          size="sm"
+          value={action.ticks.value}
+          maxValue={action.ticks.total - 1}
+          color="default"
+          className="mt-1"
+        />
+      ) : null}
     </div>
   );
 }

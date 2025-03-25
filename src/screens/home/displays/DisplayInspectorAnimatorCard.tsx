@@ -110,10 +110,11 @@ export function DisplayInspectorAnimatorCard({
           <div className="flex flex-col">
             {/* TODO: Make this list reorderable via drag-n-drop */}
             {animator.queue.length > 0 ? (
-              animator.queue.map(action => (
+              animator.queue.map((action, i) => (
                 <AnimatorActionSnippet
                   key={action.id}
                   action={action}
+                  displayProgress={i === 0}
                   className={`select-none p-1 rounded ${colorScheme.isDark ? 'even:bg-neutral-800' : 'even:bg-neutral-200'}`}
                 />
               ))
