@@ -35,6 +35,8 @@ function formatType(type: AnimatorAction['type']): string {
   switch (type) {
     case 'setColor':
       return 'Set Color';
+    case 'scrollText':
+      return 'Scroll Text';
     case 'sleep':
       return 'Sleep';
   }

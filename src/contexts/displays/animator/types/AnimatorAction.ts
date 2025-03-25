@@ -11,6 +11,13 @@ export interface SetColorAnimatorAction extends BaseAnimatorAction<'setColor'> {
   color: Color;
 }
 
+export interface ScrollTextAction extends BaseAnimatorAction<'scrollText'> {
+  text: string;
+}
+
 export interface SleepAnimatorAction extends BaseAnimatorAction<'sleep'> {}
 
-export type AnimatorAction = SetColorAnimatorAction | SleepAnimatorAction;
+export type AnimatorAction =
+  | SetColorAnimatorAction
+  | ScrollTextAction
+  | SleepAnimatorAction;

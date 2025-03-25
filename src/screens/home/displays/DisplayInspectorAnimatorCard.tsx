@@ -1,6 +1,7 @@
-import { Button } from '@heroui/react';
+import { Button, Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { AnimatorActionSnippet } from '@luna/components/AnimatorActionSnippet';
 import { Hint } from '@luna/components/Hint';
+import { SimpleEditForm } from '@luna/components/SimpleEditForm';
 import { TitledCard } from '@luna/components/TitledCard';
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
@@ -14,11 +15,12 @@ import { randomUUID } from '@luna/utils/uuid';
 import {
   IconMovie,
   IconPlayerPauseFilled,
+  IconPlayerPlayFilled,
   IconPlayerSkipBackFilled,
   IconPlayerSkipForwardFilled,
   IconTrash,
 } from '@tabler/icons-react';
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 
 export interface DisplayInspectorAnimatorCardProps {
   username: string;
@@ -40,6 +42,8 @@ export function DisplayInspectorAnimatorCard({
 
   const [animator, updateAnimator] = useAnimator({ username });
 
+  const [isScrollingTextModalOpen, setScrollingTextModalOpen] = useState(false);
+
   const addAction = useCallback(
     (action: AnimatorAction) => {
       updateAnimator({ type: 'addAction', action });
@@ -49,6 +53,22 @@ export function DisplayInspectorAnimatorCard({
 
   const clearQueue = useCallback(() => {
     updateAnimator({ type: 'clearQueue' });
+  }, [updateAnimator]);
+
+  const skipBack = useCallback(() => {
+    updateAnimator({ type: 'skipAction', direction: 'back' });
+  }, [updateAnimator]);
+
+  const skipForward = useCallback(() => {
+    updateAnimator({ type: 'skipAction', direction: 'forward' });
+  }, [updateAnimator]);
+
+  const play = useCallback(() => {
+    updateAnimator({ type: 'setPlaying', isPlaying: true });
+  }, [updateAnimator]);
+
+  const pause = useCallback(() => {
+    updateAnimator({ type: 'setPlaying', isPlaying: false });
   }, [updateAnimator]);
 
   const addRandomColor = useCallback(() => {
@@ -62,6 +82,22 @@ export function DisplayInspectorAnimatorCard({
       color: rgb.random(),
     });
   }, [addAction]);
+
+  const addScrollingText = useCallback(
+    (text: string) => {
+      addAction({
+        type: 'scrollText',
+        id: randomUUID(),
+        ticks: {
+          value: 0,
+          total: 5 * text.length,
+        },
+        text,
+      });
+      setScrollingTextModalOpen(false);
+    },
+    [addAction]
+  );
 
   const addSleep = useCallback(() => {
     addAction({
@@ -88,19 +124,43 @@ export function DisplayInspectorAnimatorCard({
             <Button onPress={addRandomColor} size="sm" variant="ghost">
               Random Color
             </Button>
+            <Popover
+              placement="left"
+              showArrow
+              isOpen={isScrollingTextModalOpen}
+              onOpenChange={setScrollingTextModalOpen}
+            >
+              <PopoverTrigger>
+                <Button size="sm" variant="ghost">
+                  Scrolling Text
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <SimpleEditForm onSubmit={addScrollingText} />
+              </PopoverContent>
+            </Popover>
             <Button onPress={addSleep} size="sm" variant="ghost">
               Sleep
             </Button>
           </div>
           <div className="flex flex-row justify-between">
             {/* TODO: Implement the disabled actions */}
-            <Button isIconOnly size="sm" variant="light" isDisabled>
+            <Button isIconOnly size="sm" variant="light" onPress={skipBack}>
               <IconPlayerSkipBackFilled />
             </Button>
-            <Button isIconOnly size="sm" variant="light" isDisabled>
-              <IconPlayerPauseFilled />
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              onPress={animator.isPlaying ? pause : play}
+            >
+              {animator.isPlaying ? (
+                <IconPlayerPauseFilled />
+              ) : (
+                <IconPlayerPlayFilled />
+              )}
             </Button>
-            <Button isIconOnly size="sm" variant="light" isDisabled>
+            <Button isIconOnly size="sm" variant="light" onPress={skipForward}>
               <IconPlayerSkipForwardFilled />
             </Button>
             <Button isIconOnly size="sm" variant="light" onPress={clearQueue}>

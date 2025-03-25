@@ -1,5 +1,5 @@
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
-import { tickAnimator } from '@luna/contexts/displays/animator/run';
+import { tickAnimator } from '@luna/contexts/displays/animator/tickAnimator';
 import {
   Animator,
   AnimatorUpdate,
@@ -35,17 +35,18 @@ interface AnimatorContextProviderProps {
 export function AnimatorContextProvider({
   children,
 }: AnimatorContextProviderProps) {
-  const [animators, setAnimators] = useState<Map<string, Animator>>(Map());
-  const [nextTickUpdates, setNextTickUpdates] =
-    useState<Map<string, AnimatorUpdate[]>>(Map());
+  const [[animators, nextTickUpdates], setState] = useState<
+    [Map<string, Animator>, Map<string, AnimatorUpdate[]>]
+  >([Map(), Map()]);
 
   const commitUpdate = useCallback(
     (username: string, update: AnimatorUpdate) => {
-      setAnimators(animators =>
+      setState(([animators, nextTickUpdates]) => [
         animators.update(username, emptyAnimator(), a =>
           applyAnimatorUpdate(a, update)
-        )
-      );
+        ),
+        nextTickUpdates,
+      ]);
     },
     []
   );
@@ -53,10 +54,9 @@ export function AnimatorContextProvider({
   const value = useMemo<AnimatorContextValue>(
     () => ({
       getAnimator(username) {
-        const updates = nextTickUpdates.get(username, []);
         return applyAnimatorUpdates(
           animators.get(username) ?? emptyAnimator(),
-          updates
+          nextTickUpdates.get(username, [])
         );
       },
       updateAnimator(username, update) {
@@ -84,12 +84,12 @@ export function AnimatorContextProvider({
     const tickDelayMs = 100;
 
     const timeout = window.setTimeout(() => {
-      setAnimators(animators =>
+      setState(([animators, nextTickUpdates]) => [
         animators.map((a, u) =>
-          applyAnimatorUpdates(a, nextTickUpdates.get(u, []))
-        )
-      );
-      setNextTickUpdates(Map());
+          a.isPlaying ? applyAnimatorUpdates(a, nextTickUpdates.get(u, [])) : a
+        ),
+        Map(),
+      ]);
     }, tickDelayMs);
     return () => window.clearTimeout(timeout);
   }, [nextTickUpdates]);
@@ -97,10 +97,13 @@ export function AnimatorContextProvider({
   useEffect(() => {
     (async () => {
       for (const [username, animator] of animators.entries()) {
-        const updates = await tickAnimator({ animator, username, api });
-        setNextTickUpdates(nextTickUpdates =>
-          nextTickUpdates.update(username, [], us => [...us, ...updates])
-        );
+        if (animator.isPlaying) {
+          const updates = await tickAnimator({ animator, username, api });
+          setState(([animators, nextTickUpdates]) => [
+            animators,
+            nextTickUpdates.update(username, [], us => [...us, ...updates]),
+          ]);
+        }
       }
     })();
   }, [animators, api]);
