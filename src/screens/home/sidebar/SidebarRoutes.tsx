@@ -19,22 +19,24 @@ function filterRoutes(
   routeItems: VisibleRouteItem[],
   lowerQuery: string
 ): VisibleRouteItem[] {
-  return routeItems.flatMap<VisibleRouteItem>(item =>
-    item.type === 'route'
-      ? (item.children?.length ?? 0) > 0
-        ? [
+  return routeItems.flatMap<VisibleRouteItem>(item => {
+    if (item.type === 'route') {
+      if (item.children && item.children.length > 0) {
+        const filteredChildren = filterRoutes(item.children, lowerQuery);
+        if (filteredChildren.length > 0) {
+          return [
             {
               ...item,
-              children: item.children
-                ? filterRoutes(item.children, lowerQuery)
-                : undefined,
+              children: filteredChildren,
             },
-          ]
-        : item.name.toLowerCase().includes(lowerQuery)
-          ? [item]
-          : []
-      : [item]
-  );
+          ];
+        }
+      } else if (item.name.toLowerCase().includes(lowerQuery)) {
+        return [item];
+      }
+    }
+    return [];
+  });
 }
 
 export function SidebarRoutes({ isCompact, searchQuery }: SidebarRoutesProps) {
