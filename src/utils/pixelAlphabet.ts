@@ -722,12 +722,12 @@ export const PIXEL_ALPHABET: { [K in Letter]: PixelMap } = {
   ],
   '0': [
     '  ###   ',
-    ' #   #  ',
     ' #  ##  ',
     ' # # #  ',
     ' ##  #  ',
     ' #   #  ',
     '  ###   ',
+    '        ',
     '        ',
   ],
   '1': [
