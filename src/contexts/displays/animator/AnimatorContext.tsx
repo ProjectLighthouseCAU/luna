@@ -62,9 +62,8 @@ export function AnimatorContextProvider({
 
     const tickDelayMs = 100;
 
-    // TODO: We re-register the interval on every tick. Is that fine?
     // TODO: Return deltas from the ticker to avoid having it override potential changes from the UI
-    const interval = window.setInterval(async () => {
+    const timeout = window.setTimeout(async () => {
       let newAnimators = animators;
       for (const [username, animator] of animators.entries()) {
         const newAnimator = await tickAnimator({ animator, username, api });
@@ -73,7 +72,7 @@ export function AnimatorContextProvider({
       setAnimators(newAnimators);
     }, tickDelayMs);
 
-    return () => window.clearInterval(interval);
+    return () => window.clearTimeout(timeout);
   }, [animators, api]);
 
   return (
