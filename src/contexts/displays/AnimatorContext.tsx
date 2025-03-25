@@ -4,6 +4,7 @@ import { ReactNode, createContext, useMemo, useState } from 'react';
 
 interface BaseAnimatorAction<Type extends string> {
   type: Type;
+  id: string;
 }
 
 export interface SetColorAnimatorAction extends BaseAnimatorAction<'setColor'> {
@@ -13,14 +14,24 @@ export interface SetColorAnimatorAction extends BaseAnimatorAction<'setColor'> {
 export type AnimatorAction = SetColorAnimatorAction;
 export type AnimatorQueue = AnimatorAction[];
 
+export interface Animator {
+  queue: AnimatorQueue;
+}
+
+export function emptyAnimator(): Animator {
+  return {
+    queue: [],
+  };
+}
+
 export interface AnimatorContextValue {
-  getQueue: (username: string) => AnimatorQueue;
-  setQueue: (username: string, queue: AnimatorQueue) => void;
+  getAnimator: (username: string) => Animator;
+  setAnimator: (username: string, animator: Animator) => void;
 }
 
 export const AnimatorContext = createContext<AnimatorContextValue>({
-  getQueue: () => [],
-  setQueue: () => {},
+  getAnimator: () => emptyAnimator(),
+  setAnimator: () => {},
 });
 
 interface AnimatorContextProviderProps {
@@ -30,18 +41,18 @@ interface AnimatorContextProviderProps {
 export function AnimatorContextProvider({
   children,
 }: AnimatorContextProviderProps) {
-  const [queues, setQueues] = useState<Map<string, AnimatorQueue>>(Map());
+  const [animators, setAnimators] = useState<Map<string, Animator>>(Map());
 
   const value = useMemo<AnimatorContextValue>(
     () => ({
-      getQueue(username) {
-        return queues.get(username, []);
+      getAnimator(username) {
+        return animators.get(username) ?? emptyAnimator();
       },
-      setQueue(username, queue) {
-        setQueues(queues.set(username, queue));
+      setAnimator(username, animator) {
+        setAnimators(animators.set(username, animator));
       },
     }),
-    [queues]
+    [animators]
   );
 
   return (
