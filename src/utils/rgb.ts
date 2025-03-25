@@ -99,3 +99,8 @@ export function asCSS(c: Color): string {
 export function asHex(c: Color) {
   return c.toString(16);
 }
+
+/// Generates a random color.
+export function random() {
+  return Math.floor(Math.random() * 0xffffff);
+}

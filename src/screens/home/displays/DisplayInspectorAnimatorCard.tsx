@@ -9,7 +9,7 @@ import { ColorSchemeContext } from '@luna/contexts/env/ColorSchemeContext';
 import { useAdminStatus } from '@luna/hooks/useAdminStatus';
 import { useAnimator } from '@luna/hooks/useAnimator';
 import { useLocalStorage } from '@luna/hooks/useLocalStorage';
-import { GREEN } from '@luna/utils/rgb';
+import * as rgb from '@luna/utils/rgb';
 import { randomUUID } from '@luna/utils/uuid';
 import {
   IconMovie,
@@ -55,7 +55,7 @@ export function DisplayInspectorAnimatorCard({
     pushAction({
       type: 'setColor',
       id: randomUUID(),
-      color: GREEN,
+      color: rgb.random(),
     });
   }, [pushAction]);
 
