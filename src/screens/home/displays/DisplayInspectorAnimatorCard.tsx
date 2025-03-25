@@ -90,6 +90,7 @@ export function DisplayInspectorAnimatorCard({
             </Button>
           </div>
           <div className="flex flex-col">
+            {/* TODO: Make this list reorderable via drag-n-drop */}
             {animator.queue.length > 0 ? (
               animator.queue.map(action => (
                 <AnimatorActionSnippet
