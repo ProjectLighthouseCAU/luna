@@ -5,6 +5,8 @@ import {
   ObjectInspectorTable,
 } from '@luna/components/ObjectInspectorTable';
 import { TitledCard } from '@luna/components/TitledCard';
+import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
+import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { InputCapabilities } from '@luna/screens/home/displays/helpers/InputCapabilities';
 import { InputConfig } from '@luna/screens/home/displays/helpers/InputConfig';
 import { InputState } from '@luna/screens/home/displays/helpers/InputState';
@@ -50,6 +52,11 @@ export function DisplayInspectorInputCard({
   setInputConfig,
   inputCapabilities,
 }: DisplayInspectorInputCardProps) {
+  const [isCollapsed, storeCollapsed] = useLocalStorage(
+    LocalStorageKey.DisplayInspectorInputCollapsed,
+    () => false
+  );
+
   const setLegacyMode = useCallback(
     (legacyMode: boolean) => setInputConfig({ ...inputConfig, legacyMode }),
     [inputConfig, setInputConfig]
@@ -113,7 +120,13 @@ export function DisplayInspectorInputCard({
   const motionEnabled = motionSupported && inputConfig.motionEnabled;
 
   return (
-    <TitledCard icon={<IconDeviceGamepad2 />} title="Input" isCollapsible>
+    <TitledCard
+      icon={<IconDeviceGamepad2 />}
+      title="Input"
+      isCollapsible
+      initiallyCollapsed={isCollapsed}
+      onSetCollapsed={storeCollapsed}
+    >
       <div className="flex flex-col space-y-2">
         <Tooltip
           placement="left"

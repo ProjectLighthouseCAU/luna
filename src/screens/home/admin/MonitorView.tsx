@@ -49,7 +49,7 @@ export function MonitorView() {
 
   const metrics = useLaserMetrics();
 
-  const [focusedRoom, setSelectedRoom] = useState<number>();
+  const [focusedRoom, setFocusedRoom] = useState<number>();
   const [hoveredRoom, setHoveredRoom] = useState<number>();
   const [criterion, setCriterion] = useState<MonitorCriterion>();
 
@@ -197,7 +197,7 @@ export function MonitorView() {
 
   // set the selected window index on click
   const onMouseDown = useCallback(
-    (mouse: DisplayMouse) => setSelectedRoom(roomForPosition(mouse.pos)),
+    (mouse: DisplayMouse) => setFocusedRoom(roomForPosition(mouse.pos)),
     [roomForPosition]
   );
 

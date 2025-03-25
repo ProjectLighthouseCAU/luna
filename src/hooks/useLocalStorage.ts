@@ -30,6 +30,10 @@ export function useLocalStorage<T>(
     let value = defaultValue();
     if (raw) {
       const parsed = JSON.parse(raw);
+      // TODO: This currently does not work properly when the default value is
+      // `null`, since we have no idea what the schema would look like in that case.
+      // We could just trust the parsed value, but that may result in inconsistencies
+      // should we ever wish to change that.
       value = merge(value, parsed);
     }
     return value;
