@@ -86,7 +86,7 @@ export function AnimatorContextProvider({
     const timeout = window.setTimeout(() => {
       setState(([animators, nextTickUpdates]) => [
         animators.map((a, u) =>
-          applyAnimatorUpdates(a, nextTickUpdates.get(u, []))
+          a.isPlaying ? applyAnimatorUpdates(a, nextTickUpdates.get(u, [])) : a
         ),
         Map(),
       ]);
