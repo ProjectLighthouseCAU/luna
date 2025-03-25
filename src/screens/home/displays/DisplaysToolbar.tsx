@@ -21,7 +21,7 @@ export function DisplaysToolbar({
   const [shownZoom, setShownZoom] = useState(zoom);
   const setZoomDebounced = useDebounce(setZoom, 50);
 
-  const { setQuery } = useContext(DisplaySearchContext);
+  const { query, setQuery } = useContext(DisplaySearchContext);
 
   return (
     <div className="flex flex-row items-center gap-6">
@@ -40,6 +40,7 @@ export function DisplaysToolbar({
       />
       <SearchBar
         placeholder="Search displays..."
+        initialQuery={query}
         setQuery={setQuery}
         className="max-w-48"
       />
