@@ -1,7 +1,9 @@
-import { useDebounce } from '@luna/hooks/useDebounce';
 import { Slider } from '@heroui/react';
+import { SearchBar } from '@luna/components/SearchBar';
+import { DisplaySearchContext } from '@luna/contexts/displays/DisplaySearchContext';
+import { useDebounce } from '@luna/hooks/useDebounce';
 import { IconArrowsDiagonal } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 export interface DisplaysToolbarProps {
   minZoom: number;
@@ -19,8 +21,10 @@ export function DisplaysToolbar({
   const [shownZoom, setShownZoom] = useState(zoom);
   const setZoomDebounced = useDebounce(setZoom, 50);
 
+  const { query, setQuery } = useContext(DisplaySearchContext);
+
   return (
-    <div className="flex flex-row items-center gap-2">
+    <div className="flex flex-row items-center gap-6">
       <Slider
         size="sm"
         className="w-32"
@@ -33,6 +37,12 @@ export function DisplaysToolbar({
           setShownZoom(newZoom as number);
           setZoomDebounced(newZoom as number);
         }}
+      />
+      <SearchBar
+        placeholder="Search displays..."
+        initialQuery={query}
+        setQuery={setQuery}
+        className="max-w-48"
       />
     </div>
   );

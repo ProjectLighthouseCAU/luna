@@ -9,6 +9,7 @@ export interface SearchBarProps {
   className?: string;
   tooltip?: ReactNode;
   tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
+  initialQuery?: string;
   setQuery: (query: string) => void;
 }
 
@@ -18,9 +19,10 @@ export function SearchBar({
   className = '',
   tooltip,
   tooltipPlacement,
+  initialQuery = '',
   setQuery,
 }: SearchBarProps) {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(initialQuery);
 
   const setQueryDebounced = useDebounce(setQuery, 200);
 

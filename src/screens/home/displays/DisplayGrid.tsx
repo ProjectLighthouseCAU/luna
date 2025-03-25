@@ -34,7 +34,7 @@ export function DisplayGrid({ searchQuery, displayWidth }: DisplayGridProps) {
           pin={pin}
         />
       ))}
-      <Divider />
+      {filteredUsernames.length > 0 ? <Divider /> : null}
       {filteredUsernames.map(username => (
         <DisplayLink
           key={username}

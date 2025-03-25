@@ -1,11 +1,13 @@
 import { Divider } from '@heroui/react';
 import { RouteLink } from '@luna/components/RouteLink';
+import { DisplaySearchContext } from '@luna/contexts/displays/DisplaySearchContext';
 import {
   useVisibleRoutes,
   VisibleRoute,
   VisibleRouteItem,
 } from '@luna/hooks/useVisibleRoutes';
 import { truncate } from '@luna/utils/string';
+import { useContext, useMemo } from 'react';
 import { InView } from 'react-intersection-observer';
 
 export interface SidebarRoutesProps {
@@ -13,13 +15,47 @@ export interface SidebarRoutesProps {
   searchQuery: string;
 }
 
+function filterRoutes(
+  routeItems: VisibleRouteItem[],
+  lowerQuery: string
+): VisibleRouteItem[] {
+  return routeItems.flatMap<VisibleRouteItem>(item => {
+    if (item.type === 'route') {
+      if (item.children && item.children.length > 0) {
+        const filteredChildren = filterRoutes(item.children, lowerQuery);
+        if (filteredChildren.length > 0) {
+          return [
+            {
+              ...item,
+              children: filteredChildren,
+            },
+          ];
+        }
+      } else if (item.name.toLowerCase().includes(lowerQuery)) {
+        return [item];
+      }
+    }
+    return [];
+  });
+}
+
 export function SidebarRoutes({ isCompact, searchQuery }: SidebarRoutesProps) {
+  const { query: displaySearchQuery } = useContext(DisplaySearchContext);
+
   const visibleRouteItems = useVisibleRoutes({
     showUserDisplays: !isCompact,
-    searchQuery,
+    displaySearchQuery,
   });
 
-  return <SidebarVisibleRouteItems routeItems={visibleRouteItems} />;
+  const filteredVisibleRouteItems = useMemo(
+    () =>
+      searchQuery.length > 0
+        ? filterRoutes(visibleRouteItems, searchQuery.toLowerCase())
+        : visibleRouteItems,
+    [searchQuery, visibleRouteItems]
+  );
+
+  return <SidebarVisibleRouteItems routeItems={filteredVisibleRouteItems} />;
 }
 
 function SidebarVisibleRouteItems({

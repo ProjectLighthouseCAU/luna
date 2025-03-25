@@ -76,7 +76,7 @@ export function HomeScreen() {
               <IconMenu2 />
             </Button>
           ) : null}
-          <div className="grow flex flex-row justify-between">
+          <div className="grow flex flex-row justify-between gap-4">
             <h2 className="text-3xl">{title}</h2>
             <div className="flex flex-row items-center">{toolbar}</div>
           </div>
