@@ -10,7 +10,7 @@ WORKDIR /opt/luna
 
 # Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm install --include=dev
 
 # Build LUNA for production
 COPY --exclude=nginx.conf . .
