@@ -6,6 +6,8 @@ import { IconClipboard, IconKey, IconRefresh } from '@tabler/icons-react';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { Token } from '@luna/contexts/api/auth/types';
+import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
+import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 
 export interface DisplayInspectorApiTokenCardProps {
   username: string;
@@ -18,6 +20,11 @@ export function DisplayInspectorApiTokenCard({
   const { users } = useContext(ModelContext);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [token, setToken] = useState<Token | null>(); // undefined means loading, null means unavailable
+
+  const [isCollapsed, storeCollapsed] = useLocalStorage(
+    LocalStorageKey.DisplayInspectorApiTokenCollapsed,
+    () => false
+  );
 
   const userId = users.all.get(username)?.id;
 
@@ -47,7 +54,13 @@ export function DisplayInspectorApiTokenCard({
   }, [auth, userId]);
 
   return (
-    <TitledCard icon={<IconKey />} title="API Token" isCollapsible>
+    <TitledCard
+      icon={<IconKey />}
+      title="API Token"
+      isCollapsible
+      initiallyCollapsed={isCollapsed}
+      onSetCollapsed={storeCollapsed}
+    >
       <div className="flex flex-row justify-center items-center space-x-1">
         <Button className="grow" size="sm" onPress={onOpen}>
           Reveal Token
