@@ -117,6 +117,18 @@ export function DisplayInspectorAnimatorCard({
     });
   }, [addAction]);
 
+  const blackout = useCallback(() => {
+    addAction({
+      type: 'setColor',
+      id: randomUUID(),
+      ticks: {
+        value: 0,
+        total: 1,
+      },
+      color: rgb.BLACK,
+    });
+  }, [addAction]);
+
   const scrubAnimator = useCallback(
     (ticks: number) => {
       updateAnimator({ type: 'scrub', ticks });
@@ -155,6 +167,9 @@ export function DisplayInspectorAnimatorCard({
             </Popover>
             <Button onPress={addSleep} size="sm" variant="ghost">
               Sleep
+            </Button>
+            <Button onPress={blackout} size="sm" variant="ghost">
+              Blackout
             </Button>
           </div>
           <div className="flex flex-row justify-between">
