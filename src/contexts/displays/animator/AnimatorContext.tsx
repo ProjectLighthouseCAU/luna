@@ -1,5 +1,5 @@
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
-import { tickAnimator } from '@luna/contexts/displays/animator/run';
+import { tickAnimator } from '@luna/contexts/displays/animator/tickAnimator';
 import {
   Animator,
   AnimatorUpdate,
