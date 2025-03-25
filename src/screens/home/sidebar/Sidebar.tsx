@@ -52,7 +52,7 @@ export function Sidebar({ isCompact }: SidebarProps) {
   const cycleToken = useCallback(async () => await auth.cycleToken(), [auth]);
 
   return (
-    <div className="flex flex-col space-y-2 h-full">
+    <div className="flex flex-col gap-2 h-full">
       <SearchBar
         placeholder="Search..."
         fullWidth

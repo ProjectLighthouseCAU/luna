@@ -5,7 +5,7 @@ import { Spinner } from '@heroui/react';
 export function LoadingScreen() {
   return (
     <Center>
-      <div className="flex flex-col space-y-16">
+      <div className="flex flex-col gap-16">
         <Logo />
         <Spinner />
       </div>

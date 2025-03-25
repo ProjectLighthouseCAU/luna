@@ -70,7 +70,7 @@ export function HomeScreen() {
         </div>
       ) : null}
       <div className="flex flex-col grow">
-        <div className="flex flex-row space-x-4 sticky top-0 z-50 h-[75px] p-5 bg-white/70 dark:bg-black/30 backdrop-blur-2xl">
+        <div className="flex flex-row gap-4 sticky top-0 z-50 h-[75px] p-5 bg-white/70 dark:bg-black/30 backdrop-blur-2xl">
           {isCompact ? (
             <Button isIconOnly onPress={toggleExpanded}>
               <IconMenu2 />

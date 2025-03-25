@@ -29,10 +29,10 @@ export function LoginScreen() {
     <div
       className={`h-full flex ${
         isHorizontal ? 'flex-row justify-center' : 'flex-col mt-4'
-      } items-center ${isHorizontal ? 'space-x-6' : 'space-y-6'}`}
+      } items-center gap-6`}
     >
       <div
-        className={`flex flex-col space-y-8 items-center ${
+        className={`flex flex-col gap-8 items-center ${
           // NOTE: The overflow comes from the card flip container. We could hide
           // it there, but that would also clip the card during the animation.
           // This is also the reason why we use the full height here.

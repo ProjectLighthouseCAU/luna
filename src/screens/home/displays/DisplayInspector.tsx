@@ -16,7 +16,7 @@ export interface DisplayInspectorProps
 
 export function DisplayInspector(props: DisplayInspectorProps) {
   return (
-    <div className="flex flex-col space-y-3 md:w-[200px]">
+    <div className="flex flex-col gap-3 md:w-[200px]">
       <DisplayInspectorContent {...props} />
     </div>
   );

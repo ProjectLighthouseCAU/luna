@@ -43,7 +43,7 @@ export function RouteLink({
     <div className="h-10" />
   ) : (
     <ContextMenu menu={contextMenu}>
-      <div className={`flex flex-col space-y-1h-10`}>
+      <div className={`flex flex-col gap-1h-10`}>
         <NavLink
           to={path}
           end

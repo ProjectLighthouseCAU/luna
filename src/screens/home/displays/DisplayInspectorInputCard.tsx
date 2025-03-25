@@ -127,7 +127,7 @@ export function DisplayInspectorInputCard({
       initiallyCollapsed={isCollapsed}
       onSetCollapsed={storeCollapsed}
     >
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col gap-2">
         <Tooltip
           placement="left"
           content={

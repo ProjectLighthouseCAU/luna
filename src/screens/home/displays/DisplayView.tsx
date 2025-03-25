@@ -536,7 +536,7 @@ export function DisplayView() {
       toolbar={<DisplayToolbar tab={inspectorTab} setTab={setInspectorTab} />}
       layout="fullScreen"
     >
-      <div className="flex flex-col space-y-4 md:flex-row h-full">
+      <div className="flex flex-col gap-4 md:flex-row h-full">
         <div
           ref={wrapperRef}
           className="grow flex flex-row justify-center h-full"
