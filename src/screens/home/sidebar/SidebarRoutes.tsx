@@ -43,7 +43,7 @@ export function SidebarRoutes({ isCompact, searchQuery }: SidebarRoutesProps) {
   const { query: displaySearchQuery } = useContext(DisplaySearchContext);
 
   const visibleRouteItems = useVisibleRoutes({
-    showUserDisplays: !isCompact,
+    showUserDisplays: !isCompact || searchQuery.length > 0,
     displaySearchQuery,
   });
 
