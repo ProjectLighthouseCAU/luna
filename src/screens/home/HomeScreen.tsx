@@ -1,4 +1,3 @@
-import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { HomeContentContext } from '@luna/screens/home/HomeContent';
 import { Sidebar } from '@luna/screens/home/sidebar/Sidebar';
 import { Button } from '@heroui/react';
@@ -16,12 +15,11 @@ import {
   defaultHomeContentLayout,
   HomeContentLayout,
 } from '@luna/screens/home/helpers/HomeContentLayout';
+import { useCompactStatus } from '@luna/hooks/useCompactStatus';
 
 export function HomeScreen() {
   const location = useLocation();
-  const breakpoint = useBreakpoint();
-
-  const isCompact = breakpoint <= Breakpoint.Sm;
+  const { isCompact } = useCompactStatus();
 
   const [isExpanded, setExpanded] = useState(false);
   const [isQuickSwitcherOpen, setQuickSwitcherOpen] = useState(false);

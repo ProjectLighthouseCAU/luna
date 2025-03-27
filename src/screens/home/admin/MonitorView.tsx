@@ -5,6 +5,7 @@ import {
 } from '@luna/components/Display';
 import { RoomV2Metrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
+import { useCompactStatus } from '@luna/hooks/useCompactStatus';
 import { useEventListener } from '@luna/hooks/useEventListener';
 import { useLaserMetrics } from '@luna/hooks/useLaserMetrics';
 import { flattenRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
@@ -40,7 +41,7 @@ export function MonitorView() {
   useEventListener(window, 'resize', onResize, { fireImmediately: true });
 
   const breakpoint = useBreakpoint();
-  const isCompact = breakpoint <= Breakpoint.Sm;
+  const { isCompact } = useCompactStatus();
 
   const width =
     maxSize.width <= maxSize.height * DISPLAY_ASPECT_RATIO || isCompact

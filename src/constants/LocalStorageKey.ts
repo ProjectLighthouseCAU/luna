@@ -1,4 +1,5 @@
 export enum LocalStorageKey {
+  SchemaVersion = 'luna.schemaVersion',
   ColorScheme = 'luna.contexts.colorScheme.colorScheme',
   ColorSchemeFollowsSystem = 'luna.contexts.colorScheme.followsSystem',
   UserPins = 'luna.contexts.userPins.userPins',

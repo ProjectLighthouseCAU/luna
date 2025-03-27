@@ -6,7 +6,7 @@ import { displayLayoutId } from '@luna/constants/LayoutId';
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { ClientIdContext } from '@luna/contexts/env/ClientIdContext';
-import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
+import { useCompactStatus } from '@luna/hooks/useCompactStatus';
 import { useEventListener } from '@luna/hooks/useEventListener';
 import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 import { HomeContent } from '@luna/screens/home/HomeContent';
@@ -517,8 +517,7 @@ export function DisplayView() {
 
   useEffect(() => {}, []);
 
-  const breakpoint = useBreakpoint();
-  const isCompact = breakpoint <= Breakpoint.Sm;
+  const { isCompact } = useCompactStatus();
 
   const width =
     maxSize.width <= maxSize.height * DISPLAY_ASPECT_RATIO || isCompact

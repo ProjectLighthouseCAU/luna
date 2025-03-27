@@ -13,7 +13,7 @@ export function DisplaysView() {
   const maxDisplayWidth = 512;
   const [displayWidth, setDisplayWidth] = useLocalStorage(
     LocalStorageKey.DisplaysZoom,
-    () => 300
+    () => 146 // Not using a "round" number here, because this seems to produce better antialiasing...
   );
 
   return (

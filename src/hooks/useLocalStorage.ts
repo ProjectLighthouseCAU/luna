@@ -1,6 +1,21 @@
 import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 import { useEffect, useMemo, useState } from 'react';
 
+// We use schema versions to track backwards-incompatible changes that wipe all
+// user-specific settings. Bump only when making changes to persisted data where
+// stale data could otherwise be interpreted wrongly.
+
+const currentSchemaVersion = 2;
+const localSchemaVersion = parseInt(
+  localStorage.getItem(LocalStorageKey.SchemaVersion) ?? '1'
+);
+
+localStorage.setItem(LocalStorageKey.SchemaVersion, `${currentSchemaVersion}`);
+
+function isLocalSchemaOutdated() {
+  return currentSchemaVersion !== localSchemaVersion;
+}
+
 /** Recursively merges two values, discarding anything not matching `base`'s schema. */
 function merge(base: any, delta: any): any {
   if (typeof base === typeof delta) {
@@ -26,15 +41,17 @@ export function useLocalStorage<T>(
   defaultValue: () => T
 ) {
   const [value, setValue] = useState<T>(() => {
-    const raw = localStorage.getItem(key);
     let value = defaultValue();
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      // TODO: This currently does not work properly when the default value is
-      // `null`, since we have no idea what the schema would look like in that case.
-      // We could just trust the parsed value, but that may result in inconsistencies
-      // should we ever wish to change that.
-      value = merge(value, parsed);
+    if (!isLocalSchemaOutdated()) {
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // TODO: This currently does not work properly when the default value is
+        // `null`, since we have no idea what the schema would look like in that case.
+        // We could just trust the parsed value, but that may result in inconsistencies
+        // should we ever wish to change that.
+        value = merge(value, parsed);
+      }
     }
     return value;
   });
