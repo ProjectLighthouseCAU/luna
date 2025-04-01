@@ -4,9 +4,13 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 export interface ResourcesContentsViewProps {
   path: string[];
+  className?: string;
 }
 
-export function ResourcesContentsView({ path }: ResourcesContentsViewProps) {
+export function ResourcesContentsView({
+  path,
+  className,
+}: ResourcesContentsViewProps) {
   const { api } = useContext(ModelContext);
 
   const [valueWrapper, setValue] = useState<{
@@ -53,7 +57,7 @@ export function ResourcesContentsView({ path }: ResourcesContentsViewProps) {
   }, [valueWrapper]);
 
   return (
-    <div>
+    <div className={className}>
       {valueWrapper !== undefined ? (
         <pre ref={preRef} contentEditable onInput={onChange} />
       ) : error ? (

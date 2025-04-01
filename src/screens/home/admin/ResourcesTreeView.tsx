@@ -145,7 +145,10 @@ export function ResourcesTreeView({
                   />
                 </>
               ) : (
-                <ResourcesContentsView path={[...path, expanded]} />
+                <ResourcesContentsView
+                  path={[...path, expanded]}
+                  className="overflow-y-scroll"
+                />
               )}
             </>
           ) : undefined}
