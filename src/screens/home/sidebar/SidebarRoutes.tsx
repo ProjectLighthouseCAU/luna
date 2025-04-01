@@ -25,7 +25,10 @@ function filterRoutes(
     if (item.type === 'route') {
       if (item.children && item.children.length > 0) {
         const filteredChildren = filterRoutes(item.children, lowerQuery);
-        if (filteredChildren.length > 0) {
+        if (
+          item.name.toLowerCase().includes(lowerQuery) ||
+          filteredChildren.length > 0
+        ) {
           return [
             {
               ...item,
