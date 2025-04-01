@@ -9,6 +9,7 @@ import {
 import { truncate } from '@luna/utils/string';
 import { useContext, useMemo } from 'react';
 import { InView } from 'react-intersection-observer';
+import { useLocation } from 'react-router-dom';
 
 export interface SidebarRoutesProps {
   isCompact: boolean;
@@ -41,9 +42,11 @@ function filterRoutes(
 
 export function SidebarRoutes({ isCompact, searchQuery }: SidebarRoutesProps) {
   const { query: displaySearchQuery } = useContext(DisplaySearchContext);
+  const location = useLocation();
 
   const visibleRouteItems = useVisibleRoutes({
     showUserDisplays: !isCompact || searchQuery.length > 0,
+    activePath: location.pathname,
     displaySearchQuery,
   });
 
