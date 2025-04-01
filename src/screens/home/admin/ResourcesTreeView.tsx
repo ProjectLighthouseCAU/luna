@@ -18,6 +18,7 @@ import { SimpleEditForm } from '@luna/components/SimpleEditForm';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { ResourcesContentsView } from '@luna/screens/home/admin/ResourcesContentsView';
 import { ResourcesLayout } from '@luna/screens/home/admin/helpers/ResourcesLayout';
+import { truncate } from '@luna/utils/string';
 import {
   IconChevronDown,
   IconChevronRight,
@@ -112,7 +113,7 @@ export function ResourcesTreeView({
     case 'column':
       return (
         <div className="flex flex-row gap-2 h-full">
-          <div className="flex flex-col gap-2 h-full w-40">
+          <div className="flex flex-col gap-2 h-full w-[200px]">
             {toolbar}
             <div className="flex flex-col gap-2 h-full overflow-y-scroll">
               {sortedEntries
@@ -319,7 +320,7 @@ function ResourcesTreeButton({
             )
           ) : undefined}
           {subTree === null ? <IconFile /> : <IconFolder />}
-          {name}
+          {truncate(name, 18)}
         </div>
       </Button>
       <Modal isOpen={isRenaming} onOpenChange={setRenaming}>
