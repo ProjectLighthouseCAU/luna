@@ -71,7 +71,7 @@ export function ResourcesTreeView({
         <SearchBar
           fullWidth
           placeholder={`Search ${name}`}
-          className={layout === 'column' ? 'max-w-40' : 'max-w-full'}
+          className={layout === 'column' ? '' : 'max-w-full'}
           setQuery={setFilter}
         />
       </>
@@ -112,7 +112,7 @@ export function ResourcesTreeView({
     case 'column':
       return (
         <div className="flex flex-row gap-2 h-full">
-          <div className="flex flex-col gap-2 h-full">
+          <div className="flex flex-col gap-2 h-full w-40">
             {toolbar}
             <div className="flex flex-col gap-2 h-full overflow-y-scroll">
               {sortedEntries
