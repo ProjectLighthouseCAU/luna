@@ -34,7 +34,13 @@ export interface VisibleRoute extends BaseVisibleItem<'route'> {
 
 export interface VisibleDivider extends BaseVisibleItem<'divider'> {}
 
-export type VisibleRouteItem = VisibleRoute | VisibleDivider;
+export interface VisibleClearDisplaySearchButton
+  extends BaseVisibleItem<'clearDisplaySearch'> {}
+
+export type VisibleRouteItem =
+  | VisibleRoute
+  | VisibleDivider
+  | VisibleClearDisplaySearchButton;
 
 const displaysPath = '/displays';
 
@@ -152,6 +158,14 @@ export function useVisibleRoutes({
                   ...displayRoute(username),
                   isLazyLoaded: true,
                 })),
+                ...(displaySearchQuery
+                  ? [
+                      {
+                        type: 'clearDisplaySearch' as const,
+                        name: 'Clear Display Search',
+                      },
+                    ]
+                  : []),
               ]
             : activeDisplayName && !pinnedDisplays.has(activeDisplayName)
               ? [displayRoute(activeDisplayName)]

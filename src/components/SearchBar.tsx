@@ -1,7 +1,7 @@
 import { useDebounce } from '@luna/hooks/useDebounce';
 import { Input, Tooltip } from '@heroui/react';
 import { IconSearch } from '@tabler/icons-react';
-import { ReactNode, useCallback, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 
 export interface SearchBarProps {
   placeholder?: string;
@@ -9,7 +9,7 @@ export interface SearchBarProps {
   className?: string;
   tooltip?: ReactNode;
   tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
-  initialQuery?: string;
+  query?: string;
   setQuery: (query: string) => void;
 }
 
@@ -19,19 +19,40 @@ export function SearchBar({
   className = '',
   tooltip,
   tooltipPlacement,
-  initialQuery = '',
+  query,
   setQuery,
 }: SearchBarProps) {
-  const [value, setValue] = useState(initialQuery);
+  const [value, setValue] = useState(query ?? '');
+  const [isUpdating, setUpdating] = useState(false);
 
-  const setQueryDebounced = useDebounce(setQuery, 200);
+  // We need this relatively complicated synchronization logic to ensure the
+  // user's input is not overwritten as they type (and our debouncer is
+  // running), while simultaneously flushing external updates to the search
+  // query to the search bar when they aren't typing.
+
+  useEffect(() => {
+    if (!isUpdating && query !== undefined) {
+      setValue(query);
+    }
+  }, [isUpdating, query]);
+
+  const updateQuery = useCallback(
+    (newQuery: string) => {
+      setQuery(newQuery);
+      setUpdating(false);
+    },
+    [setQuery]
+  );
+
+  const updateQueryDebounced = useDebounce(updateQuery, 200);
 
   const onValueChange = useCallback(
     (value: string) => {
+      setUpdating(true);
       setValue(value);
-      setQueryDebounced(value);
+      updateQueryDebounced(value);
     },
-    [setQueryDebounced]
+    [updateQueryDebounced]
   );
 
   const clearQuery = useCallback(() => onValueChange(''), [onValueChange]);

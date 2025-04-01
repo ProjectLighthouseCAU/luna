@@ -44,7 +44,7 @@ export function DisplaysToolbar({
       ) : null}
       <SearchBar
         placeholder="Search displays..."
-        initialQuery={query}
+        query={query}
         setQuery={setQuery}
         className="max-w-48"
       />
