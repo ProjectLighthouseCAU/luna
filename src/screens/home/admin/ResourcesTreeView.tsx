@@ -18,6 +18,7 @@ import { SimpleEditForm } from '@luna/components/SimpleEditForm';
 import { ModelContext } from '@luna/contexts/api/model/ModelContext';
 import { ResourcesContentsView } from '@luna/screens/home/admin/ResourcesContentsView';
 import { ResourcesLayout } from '@luna/screens/home/admin/helpers/ResourcesLayout';
+import { truncate } from '@luna/utils/string';
 import {
   IconChevronDown,
   IconChevronRight,
@@ -71,7 +72,7 @@ export function ResourcesTreeView({
         <SearchBar
           fullWidth
           placeholder={`Search ${name}`}
-          className={layout === 'column' ? 'max-w-40' : 'max-w-full'}
+          className={layout === 'column' ? '' : 'max-w-full'}
           setQuery={setFilter}
         />
       </>
@@ -112,21 +113,23 @@ export function ResourcesTreeView({
     case 'column':
       return (
         <div className="flex flex-row gap-2 h-full">
-          <div className="flex flex-col gap-2 h-full">
+          <div className="flex flex-col gap-2 h-full w-[200px]">
             {toolbar}
-            {sortedEntries
-              ? sortedEntries.map(([name, subTree]) => (
-                  <ResourcesTreeButton
-                    key={JSON.stringify([...path, name])}
-                    path={[...path, name]}
-                    layout={layout}
-                    subTree={subTree}
-                    expanded={expanded}
-                    setExpanded={setExpanded}
-                    refreshListing={refreshListing}
-                  />
-                ))
-              : undefined}
+            <div className="flex flex-col gap-2 h-full overflow-y-scroll">
+              {sortedEntries
+                ? sortedEntries.map(([name, subTree]) => (
+                    <ResourcesTreeButton
+                      key={JSON.stringify([...path, name])}
+                      path={[...path, name]}
+                      layout={layout}
+                      subTree={subTree}
+                      expanded={expanded}
+                      setExpanded={setExpanded}
+                      refreshListing={refreshListing}
+                    />
+                  ))
+                : undefined}
+            </div>
             {additionalElements}
           </div>
           {expanded !== undefined ? (
@@ -145,7 +148,10 @@ export function ResourcesTreeView({
                   />
                 </>
               ) : (
-                <ResourcesContentsView path={[...path, expanded]} />
+                <ResourcesContentsView
+                  path={[...path, expanded]}
+                  className="overflow-y-scroll"
+                />
               )}
             </>
           ) : undefined}
@@ -314,7 +320,7 @@ function ResourcesTreeButton({
             )
           ) : undefined}
           {subTree === null ? <IconFile /> : <IconFolder />}
-          {name}
+          {layout === 'column' ? truncate(name, 18) : name}
         </div>
       </Button>
       <Modal isOpen={isRenaming} onOpenChange={setRenaming}>
