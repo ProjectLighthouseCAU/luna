@@ -112,21 +112,23 @@ export function ResourcesTreeView({
     case 'column':
       return (
         <div className="flex flex-row gap-2 h-full">
-          <div className="flex flex-col gap-2 h-full overflow-y-scroll">
+          <div className="flex flex-col gap-2 h-full">
             {toolbar}
-            {sortedEntries
-              ? sortedEntries.map(([name, subTree]) => (
-                  <ResourcesTreeButton
-                    key={JSON.stringify([...path, name])}
-                    path={[...path, name]}
-                    layout={layout}
-                    subTree={subTree}
-                    expanded={expanded}
-                    setExpanded={setExpanded}
-                    refreshListing={refreshListing}
-                  />
-                ))
-              : undefined}
+            <div className="flex flex-col gap-2 h-full overflow-y-scroll">
+              {sortedEntries
+                ? sortedEntries.map(([name, subTree]) => (
+                    <ResourcesTreeButton
+                      key={JSON.stringify([...path, name])}
+                      path={[...path, name]}
+                      layout={layout}
+                      subTree={subTree}
+                      expanded={expanded}
+                      setExpanded={setExpanded}
+                      refreshListing={refreshListing}
+                    />
+                  ))
+                : undefined}
+            </div>
             {additionalElements}
           </div>
           {expanded !== undefined ? (
