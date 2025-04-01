@@ -33,6 +33,7 @@ export function ResourcesView() {
   return (
     <HomeContent
       title="Resources"
+      layout={layout === 'column' ? 'fullScreen' : 'scrollable'}
       toolbar={
         <ResourcesToolbar
           layout={layout}
