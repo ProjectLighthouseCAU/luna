@@ -1,4 +1,4 @@
-import { Divider } from '@heroui/react';
+import { Button, Divider } from '@heroui/react';
 import { RouteLink } from '@luna/components/RouteLink';
 import { DisplaySearchContext } from '@luna/contexts/displays/DisplaySearchContext';
 import {
@@ -7,7 +7,8 @@ import {
   VisibleRouteItem,
 } from '@luna/hooks/useVisibleRoutes';
 import { truncate } from '@luna/utils/string';
-import { useContext, useMemo } from 'react';
+import { IconX } from '@tabler/icons-react';
+import { useCallback, useContext, useMemo } from 'react';
 import { InView } from 'react-intersection-observer';
 import { useLocation } from 'react-router-dom';
 
@@ -41,13 +42,13 @@ function filterRoutes(
 }
 
 export function SidebarRoutes({ isCompact, searchQuery }: SidebarRoutesProps) {
-  const { query: displaySearchQuery } = useContext(DisplaySearchContext);
+  const displaySearch = useContext(DisplaySearchContext);
   const location = useLocation();
 
   const visibleRouteItems = useVisibleRoutes({
     showUserDisplays: !isCompact || searchQuery.length > 0,
     activePath: location.pathname,
-    displaySearchQuery,
+    displaySearchQuery: displaySearch.query,
   });
 
   const filteredVisibleRouteItems = useMemo(
@@ -58,13 +59,25 @@ export function SidebarRoutes({ isCompact, searchQuery }: SidebarRoutesProps) {
     [searchQuery, visibleRouteItems]
   );
 
-  return <SidebarVisibleRouteItems routeItems={filteredVisibleRouteItems} />;
+  const clearDisplaySearch = useCallback(
+    () => displaySearch.setQuery(''),
+    [displaySearch]
+  );
+
+  return (
+    <SidebarVisibleRouteItems
+      routeItems={filteredVisibleRouteItems}
+      clearDisplaySearch={clearDisplaySearch}
+    />
+  );
 }
 
 function SidebarVisibleRouteItems({
   routeItems,
+  clearDisplaySearch,
 }: {
   routeItems: VisibleRouteItem[];
+  clearDisplaySearch: () => void;
 }) {
   return (
     <>
@@ -72,6 +85,7 @@ function SidebarVisibleRouteItems({
         <SidebarVisibleRouteItem
           key={`${item.type}$${item.name}`}
           routeItem={item}
+          clearDisplaySearch={clearDisplaySearch}
         />
       ))}
     </>
@@ -80,18 +94,43 @@ function SidebarVisibleRouteItems({
 
 function SidebarVisibleRouteItem({
   routeItem,
+  clearDisplaySearch,
 }: {
   routeItem: VisibleRouteItem;
+  clearDisplaySearch: () => void;
 }) {
   switch (routeItem.type) {
     case 'route':
-      return <SidebarVisibleRoute route={routeItem} />;
+      return (
+        <SidebarVisibleRoute
+          route={routeItem}
+          clearDisplaySearch={clearDisplaySearch}
+        />
+      );
     case 'divider':
       return <Divider />;
+    case 'clearDisplaySearch':
+      return (
+        <Button
+          className="w-full mt-2 mb-2"
+          size="sm"
+          variant="ghost"
+          startContent={<IconX size={15} />}
+          onPress={clearDisplaySearch}
+        >
+          Clear Display Filter
+        </Button>
+      );
   }
 }
 
-function SidebarVisibleRoute({ route }: { route: VisibleRoute }) {
+function SidebarVisibleRoute({
+  route,
+  clearDisplaySearch,
+}: {
+  route: VisibleRoute;
+  clearDisplaySearch: () => void;
+}) {
   const routeLink = (inView: boolean) => (
     <RouteLink
       icon={route.icon}
@@ -102,7 +141,10 @@ function SidebarVisibleRoute({ route }: { route: VisibleRoute }) {
       isSkeleton={!inView}
     >
       {route.children && route.children.length > 0 ? (
-        <SidebarVisibleRouteItems routeItems={route.children} />
+        <SidebarVisibleRouteItems
+          routeItems={route.children}
+          clearDisplaySearch={clearDisplaySearch}
+        />
       ) : null}
     </RouteLink>
   );
