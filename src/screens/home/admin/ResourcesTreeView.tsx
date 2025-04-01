@@ -320,7 +320,7 @@ function ResourcesTreeButton({
             )
           ) : undefined}
           {subTree === null ? <IconFile /> : <IconFolder />}
-          {truncate(name, 18)}
+          {layout === 'column' ? truncate(name, 18) : name}
         </div>
       </Button>
       <Modal isOpen={isRenaming} onOpenChange={setRenaming}>
