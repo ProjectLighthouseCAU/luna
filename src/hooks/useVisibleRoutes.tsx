@@ -36,21 +36,31 @@ export interface VisibleDivider extends BaseVisibleItem<'divider'> {}
 
 export type VisibleRouteItem = VisibleRoute | VisibleDivider;
 
+const displaysPath = '/displays';
+
 function displayRoute(username: string): VisibleRoute {
   return {
     type: 'route',
     name: username,
-    path: `/displays/${username}`,
+    path: `${displaysPath}/${username}`,
     icon: <IconBuildingLighthouse />,
     contextMenu: <DisplayContextMenu username={username} />,
   };
 }
 
+function displayForPath(path: string): string | undefined {
+  return path.startsWith(`${displaysPath}/`)
+    ? path.substring(displaysPath.length + 1)
+    : undefined;
+}
+
 export function useVisibleRoutes({
   showUserDisplays = true,
+  activePath,
   displaySearchQuery = '',
 }: {
   showUserDisplays?: boolean;
+  activePath?: string;
   displaySearchQuery?: string;
 }) {
   const { isAdmin } = useAdminStatus();
@@ -109,12 +119,17 @@ export function useVisibleRoutes({
     searchQuery: displaySearchQuery,
   });
 
+  const activeDisplayName = useMemo(
+    () => (activePath ? displayForPath(activePath) : undefined),
+    [activePath]
+  );
+
   const userRouteItems = useMemo<VisibleRouteItem[]>(
     () => [
       {
         type: 'route',
         name: 'Displays',
-        path: '/displays',
+        path: displaysPath,
         icon: <IconBuildingLighthouse />,
         children: [
           ...pinnedDisplays.entrySeq().map(([username, pin]) => ({
@@ -138,11 +153,19 @@ export function useVisibleRoutes({
                   isLazyLoaded: true,
                 })),
               ]
-            : []),
+            : activeDisplayName && !pinnedDisplays.has(activeDisplayName)
+              ? [displayRoute(activeDisplayName)]
+              : []),
         ],
       },
     ],
-    [pinnedDisplays, filteredUsernames, displaySearchQuery, showUserDisplays]
+    [
+      pinnedDisplays,
+      showUserDisplays,
+      displaySearchQuery,
+      filteredUsernames,
+      activeDisplayName,
+    ]
   );
 
   const routeItems = useMemo<VisibleRouteItem[]>(
