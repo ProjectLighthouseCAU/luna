@@ -73,6 +73,7 @@ function DisplayLink({
               displayWidth={displayWidth}
               pin={pin}
               isSkeleton={!inView}
+              className="select-none"
             />
           </motion.div>
         )}
