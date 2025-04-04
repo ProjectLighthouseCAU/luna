@@ -116,14 +116,14 @@ export function MonitorView() {
             case 'core_temperature':
               return [rgb.BLUE, rgb.RED];
             case 'responding':
-              return [rgb.GREEN, rgb.RED];
+              return [rgb.RED, rgb.GREEN];
           }
           break;
         case 'lamp':
           switch (criterion.key) {
             case 'responding':
             case 'fuse_tripped':
-              return [rgb.GREEN, rgb.RED];
+              return [rgb.RED, rgb.GREEN];
           }
           break;
       }
