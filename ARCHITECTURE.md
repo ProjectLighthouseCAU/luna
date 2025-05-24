@@ -12,7 +12,7 @@ Finally, LUNA is deployed using a [containerized](https://www.docker.com) [Nginx
 
 ## Code Structure
 
-The top-level [`App.tsx`](https://github.com/ProjectLighthouseCAU/luna/blob/main/src/App.tsx) hosts the root component for the app. This mainly wraps a number of [context](https://react.dev/learn/passing-data-deeply-with-context) providers for all state that is managed globally (e.g. the color scheme, auth/model server connections, persisted UI state like user pins etc.). Peeling away these wrappers, we get the "actual" root component, namely `<RouterProvider>`. This presents a view based on the path in the URL. We use client-side routing
+The top-level [`App.tsx`](https://github.com/ProjectLighthouseCAU/luna/blob/main/src/App.tsx) hosts the root component for the app. This mainly wraps a number of [context](https://react.dev/learn/passing-data-deeply-with-context) providers for all state that is managed globally (e.g. the color scheme, auth/model server connections, persisted UI state like user pins etc.). Peeling away these wrappers, we get the "actual" root component, namely `<RouterProvider>`. This presents a view based on the path in the URL. These views are called "screens" in our terminology and are discussed in detail below.
 
 ## Folder Structure
 
