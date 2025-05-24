@@ -1,6 +1,8 @@
 # Architecture
 
-## High-Level Overview/Tech Stack
+This document contains a high-level overview of the Lighthouse frontend's, i.e. LUNA's, architecture and code structure. Thus the document may be especially of interest to new contributors or anyone else who's curious about the implementation.
+
+## Tech Stack
 
 Conceptually LUNA is a [single-page application](https://en.m.wikipedia.org/wiki/Single-page_application) that uses the component-based [React](https://react.dev) and [HeroUI (formely NextUI)](https://www.heroui.com) frameworks to for its UI. Routing is managed client-side using [react-router](https://reactrouter.com).
 
