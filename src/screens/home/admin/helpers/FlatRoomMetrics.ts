@@ -1,18 +1,13 @@
-import {
-  ControllerV2Metrics,
-  RoomV2Metrics,
-} from '@luna/contexts/api/model/types';
+import { ControllerMetrics, RoomMetrics } from '@luna/contexts/api/model/types';
 import { Bounded } from '@luna/utils/bounded';
 
-export interface FlatRoomV2Metrics extends ControllerV2Metrics {
+export interface FlatRoomMetrics extends ControllerMetrics {
   api_version: 2;
-  room: number;
+  room: string;
   responsive_lamps: Bounded<number>;
 }
 
-export function flattenRoomV2Metrics(
-  metrics: RoomV2Metrics
-): FlatRoomV2Metrics {
+export function flattenRoomMetrics(metrics: RoomMetrics): FlatRoomMetrics {
   return {
     api_version: metrics.api_version,
     room: metrics.room,

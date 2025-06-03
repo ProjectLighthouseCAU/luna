@@ -1,5 +1,5 @@
 import { TitledCard } from '@luna/components/TitledCard';
-import { LampV2Metrics } from '@luna/contexts/api/model/types';
+import { LampMetrics } from '@luna/contexts/api/model/types';
 import { MonitorLampCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
 import {
   Names,
@@ -14,11 +14,11 @@ import { LocalStorageKey } from '@luna/constants/LocalStorageKey';
 export interface MonitorInspectorLampsCardProps {
   criterion?: MonitorLampCriterion;
   setCriterion: (criterion?: MonitorLampCriterion) => void;
-  metrics: LampV2Metrics[];
+  metrics: LampMetrics[];
   padLampCount: number;
 }
 
-const names: Names<LampV2Metrics> = {
+const names: Names<LampMetrics> = {
   responding: 'Responding',
   firmware_version: 'Firmware version',
   uptime: 'Uptime',
@@ -39,7 +39,7 @@ export function MonitorInspectorLampsCard({
     () => false
   );
 
-  const paddedMetrics: (LampV2Metrics | null)[] = [...metrics];
+  const paddedMetrics: (LampMetrics | null)[] = [...metrics];
   while (paddedMetrics.length < padLampCount) {
     paddedMetrics.push(null);
   }
@@ -74,11 +74,11 @@ export function MonitorInspectorLampsCard({
   );
 }
 
-function MonitorInspectorLampValue<K extends keyof LampV2Metrics>({
+function MonitorInspectorLampValue<K extends keyof LampMetrics>({
   value,
   prop,
 }: {
-  value: LampV2Metrics[K];
+  value: LampMetrics[K];
   prop: K;
 }) {
   switch (prop) {

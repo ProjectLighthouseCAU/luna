@@ -3,7 +3,7 @@ import {
   ObjectInspectorTable,
 } from '@luna/components/ObjectInspectorTable';
 import { TitledCard } from '@luna/components/TitledCard';
-import { FlatRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
+import { FlatRoomMetrics } from '@luna/screens/home/admin/helpers/FlatRoomMetrics';
 import { MonitorRoomCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
 import { ObjectInspectorValue } from '@luna/components/ObjectInspectorValue';
 import { IconDoor } from '@tabler/icons-react';
@@ -15,10 +15,10 @@ import { useLocalStorage } from '@luna/hooks/useLocalStorage';
 export interface MonitorInspectorRoomCardProps {
   criterion?: MonitorRoomCriterion;
   setCriterion: (criterion?: MonitorRoomCriterion) => void;
-  metrics?: FlatRoomV2Metrics;
+  metrics?: FlatRoomMetrics;
 }
 
-const names: Names<FlatRoomV2Metrics> = {
+const names: Names<FlatRoomMetrics> = {
   responding: 'Responding',
   pings_without_response: 'Pings without response',
   ping_latency_ms: 'Ping/latency',
@@ -36,7 +36,7 @@ const names: Names<FlatRoomV2Metrics> = {
   power: 'Power',
 };
 
-const units: Names<FlatRoomV2Metrics> = {
+const units: Names<FlatRoomMetrics> = {
   board_temperature: '°C',
   core_temperature: '°C',
   current: 'A',
@@ -57,7 +57,7 @@ export function MonitorInspectorRoomCard({
     () => false
   );
 
-  const renderedMetrics = useMemo<FlatRoomV2Metrics[]>(
+  const renderedMetrics = useMemo<FlatRoomMetrics[]>(
     () => (metrics ? [metrics] : []),
     [metrics]
   );
@@ -89,11 +89,11 @@ export function MonitorInspectorRoomCard({
   );
 }
 
-function MonitorInspectorRoomValue<K extends keyof FlatRoomV2Metrics>({
+function MonitorInspectorRoomValue<K extends keyof FlatRoomMetrics>({
   value,
   prop,
 }: {
-  value: FlatRoomV2Metrics[K];
+  value: FlatRoomMetrics[K];
   prop: K;
 }) {
   switch (prop) {

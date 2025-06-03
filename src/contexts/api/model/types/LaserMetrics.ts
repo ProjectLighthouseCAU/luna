@@ -1,35 +1,19 @@
 import { Bounded } from '@luna/utils/bounded';
 
 export interface LaserMetrics {
+  timestamp: string;
+  unlocked: boolean;
   rooms: RoomMetrics[];
 }
 
-export interface RoomV1Metrics {
-  api_version: 1;
-  controller_metrics: BoardV1Metrics;
-  lamp_metrics: Map<number, BoardV1Metrics>;
-}
-
-export interface BoardV1Metrics {
-  id: number;
-  version: number;
-  uptime: number;
-  temperature: number;
-  init_temperature: number;
-  settings: string;
-  timeout: number;
-  frames?: number;
-  is_responding?: boolean;
-}
-
-export interface RoomV2Metrics {
+export interface RoomMetrics {
   api_version: 2;
-  room: number;
-  controller_metrics: ControllerV2Metrics;
-  lamp_metrics: LampV2Metrics[];
+  room: string;
+  controller_metrics: ControllerMetrics;
+  lamp_metrics: LampMetrics[];
 }
 
-export interface ControllerV2Metrics {
+export interface ControllerMetrics {
   responding: boolean;
   pings_without_response: number;
   ping_latency_ms: number;
@@ -45,7 +29,7 @@ export interface ControllerV2Metrics {
   current: number;
 }
 
-export interface LampV2Metrics {
+export interface LampMetrics {
   responding: boolean;
   firmware_version: number;
   uptime: number;
@@ -55,17 +39,13 @@ export interface LampV2Metrics {
   flashing_status: string;
 }
 
-export type RoomMetrics = RoomV1Metrics | RoomV2Metrics;
-
-export interface FlatRoomV2Metrics extends ControllerV2Metrics {
+export interface FlatRoomMetrics extends ControllerMetrics {
   api_version: 2;
-  room: number;
+  room: string;
   responsive_lamps: Bounded<number>;
 }
 
-export function flattenRoomV2Metrics(
-  metrics: RoomV2Metrics
-): FlatRoomV2Metrics {
+export function flattenRoomMetrics(metrics: RoomMetrics): FlatRoomMetrics {
   return {
     api_version: metrics.api_version,
     room: metrics.room,

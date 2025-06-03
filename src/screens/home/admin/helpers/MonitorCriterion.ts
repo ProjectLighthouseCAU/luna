@@ -1,14 +1,14 @@
-import { LampV2Metrics } from '@luna/contexts/api/model/types';
-import { FlatRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
+import { LampMetrics } from '@luna/contexts/api/model/types';
+import { FlatRoomMetrics } from '@luna/screens/home/admin/helpers/FlatRoomMetrics';
 
 export interface MonitorRoomCriterion {
   type: 'room';
-  key: keyof FlatRoomV2Metrics;
+  key: keyof FlatRoomMetrics;
 }
 
 export interface MonitorLampCriterion {
   type: 'lamp';
-  key: keyof LampV2Metrics;
+  key: keyof LampMetrics;
 }
 
 export type MonitorCriterion = MonitorRoomCriterion | MonitorLampCriterion;

@@ -3,12 +3,12 @@ import {
   Display,
   DisplayMouse,
 } from '@luna/components/Display';
-import { RoomV2Metrics } from '@luna/contexts/api/model/types';
+import { RoomMetrics } from '@luna/contexts/api/model/types';
 import { Breakpoint, useBreakpoint } from '@luna/hooks/useBreakpoint';
 import { useCompactStatus } from '@luna/hooks/useCompactStatus';
 import { useEventListener } from '@luna/hooks/useEventListener';
 import { useLaserMetrics } from '@luna/hooks/useLaserMetrics';
-import { flattenRoomV2Metrics } from '@luna/screens/home/admin/helpers/FlatRoomV2Metrics';
+import { flattenRoomMetrics } from '@luna/screens/home/admin/helpers/FlatRoomMetrics';
 import { MonitorCriterion } from '@luna/screens/home/admin/helpers/MonitorCriterion';
 import { MonitorInspector } from '@luna/screens/home/admin/MonitorInspector';
 import { HomeContent } from '@luna/screens/home/HomeContent';
@@ -58,12 +58,12 @@ export function MonitorView() {
     () =>
       (metrics?.rooms ?? []).filter(
         room => room.api_version === 2
-      ) as RoomV2Metrics[],
+      ) as RoomMetrics[],
     [metrics?.rooms]
   );
 
   const flatRoomMetrics = useMemo(
-    () => roomMetrics.map(room => flattenRoomV2Metrics(room)),
+    () => roomMetrics.map(room => flattenRoomMetrics(room)),
     [roomMetrics]
   );
 
@@ -261,6 +261,7 @@ export function MonitorView() {
             <MonitorInspector
               criterion={criterion}
               setCriterion={setCriterion}
+              allMetrics={metrics}
               flatRoomMetrics={focusedFlatRoomMetrics}
               lampMetrics={focusedLampMetrics}
               padLampCount={isColumnLayout ? 0 : 6}
