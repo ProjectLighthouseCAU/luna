@@ -76,7 +76,7 @@ export function MonitorInspectorSummaryCard({
     if (metrics == null) return null;
     const summary: MonitorSummary = {
       laser_unlocked: metrics.unlocked,
-      metrics_timestamp: metrics.timestamp,
+      metrics_timestamp: new Date(metrics.timestamp).toLocaleString(),
       min_ping: Infinity,
       mean_ping: 0,
       max_ping: -Infinity,
