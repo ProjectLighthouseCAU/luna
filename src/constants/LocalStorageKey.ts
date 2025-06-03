@@ -14,4 +14,6 @@ export enum LocalStorageKey {
   DisplayInspectorOptionsCollapsed = 'luna.screens.home.display.inspector.options.isCollapsed',
   MonitorInspectorRoomCollapsed = 'luna.screens.home.admin.monitor.inspector.room.isCollapsed',
   MonitorInspectorLampsCollapsed = 'luna.screens.home.admin.monitor.inspector.lamps.isCollapsed',
+  MonitorInspectorSummaryCollapsed = 'luna.screens.home.admin.monitor.inspector.summary.isCollapsed',
+  MonitorInspectorWarningsCollapsed = 'luna.screens.home.admin.monitor.inspector.warnings.isCollapsed',
 }
