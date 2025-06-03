@@ -92,9 +92,7 @@ export function MonitorInspectorSummaryCard({
     };
     let count = 0;
     metrics.rooms.forEach(roomMetrics => {
-      if (!roomMetrics.controller_metrics.responding) {
-        return null;
-      }
+      if (!roomMetrics.controller_metrics.responding) return;
       count++;
       if (roomMetrics.controller_metrics.ping_latency_ms < summary.min_ping)
         summary.min_ping = roomMetrics.controller_metrics.ping_latency_ms;
