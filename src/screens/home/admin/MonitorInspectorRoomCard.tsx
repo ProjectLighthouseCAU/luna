@@ -20,6 +20,7 @@ export interface MonitorInspectorRoomCardProps {
 
 const names: Names<FlatRoomMetrics> = {
   responding: 'Responding',
+  ip: 'IP',
   pings_without_response: 'Pings without response',
   ping_latency_ms: 'Ping/latency',
   responsive_lamps: 'Lamps (responsive)',

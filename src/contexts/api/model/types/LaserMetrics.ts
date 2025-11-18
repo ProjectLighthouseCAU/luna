@@ -9,6 +9,7 @@ export interface LaserMetrics {
 export interface RoomMetrics {
   api_version: 2;
   room: string;
+  ip: string;
   controller_metrics: ControllerMetrics;
   lamp_metrics: LampMetrics[];
 }
