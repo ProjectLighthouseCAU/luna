@@ -1,4 +1,4 @@
-import { User } from '@luna/contexts/api/auth/types';
+import { Role, User } from '@luna/contexts/api/auth/types';
 import { UserAddModal } from '@luna/modals/UserAddModal';
 import { UserDeleteModal } from '@luna/modals/UserDeleteModal';
 import { UserDetailsModal } from '@luna/modals/UserDetailsModal';
@@ -9,6 +9,11 @@ import { HomeContent } from '@luna/screens/home/HomeContent';
 import { getOrThrow } from '@luna/utils/result';
 import {
   Button,
+  Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Spinner,
   Table,
   TableBody,
@@ -22,6 +27,7 @@ import { useAsyncList } from '@react-stately/data';
 import {
   IconEye,
   IconPencil,
+  IconPlus,
   IconTrash,
   IconUserPlus,
 } from '@tabler/icons-react';
@@ -80,6 +86,20 @@ export function UsersView() {
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
   const [showUserDeleteModal, setShowUserDeleteModal] = useState(false);
   const [userId, setUserId] = useState(0);
+
+  const [allRoles, setAllRoles] = useState<Role[]>([]);
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      const rolesResult = await auth.getAllRoles();
+      if (rolesResult.ok) {
+        setAllRoles(rolesResult.value);
+      } else {
+        console.log('Could not get roles:', rolesResult.error);
+      }
+    };
+    fetchRoles();
+  }, [auth]);
 
   return (
     // TODO: Lazy rendering
@@ -148,6 +168,9 @@ export function UsersView() {
           <TableColumn key="lastSeen" allowsSorting>
             Last Seen
           </TableColumn>
+          <TableColumn key="roles" allowsSorting>
+            Roles
+          </TableColumn>
           <TableColumn key="actions">Actions</TableColumn>
         </TableHeader>
         <TableBody items={users.items} isLoading={isLoading}>
@@ -159,6 +182,69 @@ export function UsersView() {
               <TableCell>{user.createdAt.toLocaleString()}</TableCell>
               <TableCell>{user.updatedAt.toLocaleString()}</TableCell>
               <TableCell>{user.lastSeen.toLocaleString()}</TableCell>
+              <TableCell>
+                {user.roles.map(role => (
+                  <Chip
+                    key={role.id}
+                    onClose={async () => {
+                      console.log(
+                        'removing user',
+                        user.username,
+                        'from role',
+                        role.name
+                      );
+                      const result = await auth.removeUserFromRole(
+                        user.id,
+                        role.id
+                      );
+                      if (!result.ok) {
+                        console.log(result.error);
+                        return;
+                      }
+                      users.reload();
+                    }}
+                    className="m-1 hover:bg-danger"
+                  >
+                    {role.name}
+                  </Chip>
+                ))}
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Chip
+                      color="success"
+                      className="p-0 hover:cursor-pointer"
+                      variant="bordered"
+                    >
+                      <IconPlus size="15px" />
+                    </Chip>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    items={allRoles.filter(
+                      role =>
+                        undefined === user.roles.find(r => r.id === role.id)
+                    )}
+                    onAction={async key => {
+                      console.log('adding user', user.username, 'to role', key);
+                      const roleid: number = parseInt(key.toString());
+                      const result = await auth.addUserToRole(user.id, roleid);
+                      if (!result.ok) {
+                        console.log(result.error);
+                        return;
+                      }
+                      users.reload();
+                    }}
+                  >
+                    {(role: Role) => (
+                      <DropdownItem
+                        key={role.id}
+                        className="data-[hover=true]:bg-success"
+                      >
+                        {role.name}
+                      </DropdownItem>
+                    )}
+                  </DropdownMenu>
+                </Dropdown>
+              </TableCell>
               <TableCell>
                 <div className="relative flex items-center gap-2">
                   <Tooltip content="Details">

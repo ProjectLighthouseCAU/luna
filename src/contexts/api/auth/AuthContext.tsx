@@ -89,6 +89,12 @@ export interface AuthContextValue {
   /** Deletes a role */
   deleteRole(id: number): Promise<Result<void>>;
 
+  /** Adds a user to a role */
+  addUserToRole(userid: number, roleid: number): Promise<Result<void>>;
+
+  /** Remove a user from a role */
+  removeUserFromRole(userid: number, roleid: number): Promise<Result<void>>;
+
   /** Fetches all registration keys */
   getAllRegistrationKeys(): Promise<Result<RegistrationKey[]>>;
 
@@ -130,6 +136,10 @@ export const AuthContext = createContext<AuthContextValue>({
   createRole: async () => errorResult('No auth context for creating role'),
   updateRole: async () => errorResult('No auth context for updating role'),
   deleteRole: async () => errorResult('No auth context for deleting role'),
+  addUserToRole: async () =>
+    errorResult('No auth context for adding user to role'),
+  removeUserFromRole: async () =>
+    errorResult('No auth context for removing user from role'),
   getAllRegistrationKeys: async () =>
     errorResult('No auth context for fetching registration keys'),
   getRegistrationKeyById: async () =>
@@ -400,6 +410,28 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         } catch (error) {
           return errorResult(
             `Deleting role with id ${id} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async addUserToRole(userid: number, roleid: number) {
+        try {
+          await apiRef.current.roles.usersUpdate(roleid, userid);
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Adding user with id ${userid} to role ${roleid} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async removeUserFromRole(userid: number, roleid: number) {
+        try {
+          await apiRef.current.roles.usersDelete(roleid, userid);
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Removing user with id ${userid} from role ${roleid} failed: ${await formatError(error)}`
           );
         }
       },
