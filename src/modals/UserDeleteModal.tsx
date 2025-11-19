@@ -2,8 +2,6 @@ import { AuthContext } from '@luna/contexts/api/auth/AuthContext';
 import { newUninitializedUser, User } from '@luna/contexts/api/auth/types';
 import {
   Button,
-  Checkbox,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -20,7 +18,6 @@ export interface UserDeleteModalProps {
 
 export function UserDeleteModal({ id, isOpen, setOpen }: UserDeleteModalProps) {
   const [user, setUser] = useState<User>(newUninitializedUser());
-  const [permanentApiToken, setPermanentApiToken] = useState<boolean>(false);
   const auth = useContext(AuthContext);
 
   // initialize modal state
@@ -35,22 +32,20 @@ export function UserDeleteModal({ id, isOpen, setOpen }: UserDeleteModalProps) {
         console.log('Fetching user failed:', userResult.error);
         setUser(newUninitializedUser());
       }
-      const tokenResult = await auth.getToken(id);
-      if (tokenResult.ok) {
-        setPermanentApiToken(tokenResult.value.permanent);
-      } else {
-        console.log('Failed to fetch token:', tokenResult.error);
-      }
     };
     fetchUser();
   }, [id, isOpen, auth]);
 
-  const deleteUser = useCallback(() => {
-    console.log('deleting user with id', id);
-    // TODO: call DELETE /users/<id>
+  const deleteUser = useCallback(async () => {
+    const result = await auth.deleteUser(user.id);
+    if (result.ok) {
+      console.log('Deleted user: ', id);
+    } else {
+      console.log('Deleting user', id, 'failed:', result.error);
+    }
     // TODO: feedback from the request (success, error)
     setOpen(false);
-  }, [id, setOpen]);
+  }, [auth, id, setOpen, user.id]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
@@ -59,50 +54,13 @@ export function UserDeleteModal({ id, isOpen, setOpen }: UserDeleteModalProps) {
           <>
             <ModalHeader>Delete User</ModalHeader>
             <ModalBody>
-              <Input label="ID" value={id.toString()} isDisabled />
-
-              <Input
-                label="Username"
-                value={user.username}
-                onValueChange={username => {
-                  if (!user) return;
-                  setUser({ ...user, username });
-                }}
-                isDisabled
-              />
-              <Input
-                label="E-Mail"
-                value={user.email}
-                onValueChange={email => {
-                  if (!user) return;
-                  setUser({ ...user, email });
-                }}
-                isDisabled
-              />
-              <Input
-                label="Created At"
-                value={user.createdAt.toLocaleString()}
-                isDisabled
-              />
-              <Input
-                label="Updated At"
-                value={user.updatedAt.toLocaleString()}
-                isDisabled
-              />
-              <Input
-                label="Last Login"
-                value={user.lastSeen.toLocaleString()}
-                isDisabled
-              />
-              <Checkbox
-                isSelected={permanentApiToken}
-                onValueChange={permanentApiToken => {
-                  setPermanentApiToken(permanentApiToken);
-                }}
-                isDisabled
-              >
-                Permanent API Token
-              </Checkbox>
+              <span>
+                Do you really want to delete the user{' '}
+                <b>
+                  {user.username} (ID: {user.id})
+                </b>
+                ?
+              </span>
             </ModalBody>
             <ModalFooter>
               <Button color="danger" onPress={deleteUser}>

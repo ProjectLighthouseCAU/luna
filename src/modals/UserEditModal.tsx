@@ -104,21 +104,6 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
                   setUser({ ...user, email });
                 }}
               />
-              <Input
-                label="Created At"
-                value={user.createdAt.toLocaleString()}
-                isDisabled
-              />
-              <Input
-                label="Updated At"
-                value={user.updatedAt.toLocaleString()}
-                isDisabled
-              />
-              <Input
-                label="Last Login"
-                value={user.lastSeen.toLocaleString()}
-                isDisabled
-              />
               <Checkbox
                 isSelected={permanentApiToken}
                 onValueChange={permanentApiToken => {

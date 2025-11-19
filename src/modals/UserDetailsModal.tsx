@@ -3,14 +3,13 @@ import { newUninitializedUser, User } from '@luna/contexts/api/auth/types';
 import {
   Button,
   Checkbox,
+  Chip,
   Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Select,
-  SelectItem,
 } from '@heroui/react';
 import { useContext, useEffect, useState } from 'react';
 
@@ -34,13 +33,14 @@ export function UserDetailsModal({ id, isOpen, setOpen }: UserShowModalProps) {
         setUser(userResult.value);
       } else {
         console.log('Failed to fetch user:', userResult.error);
-        setUser(newUninitializedUser);
+        setUser(newUninitializedUser());
       }
       const tokenResult = await auth.getToken(id);
       if (tokenResult.ok) {
         setPermanentApiToken(tokenResult.value.permanent);
       } else {
         console.log('Failed to fetch token:', tokenResult.error);
+        setPermanentApiToken(false);
       }
     };
     fetchUser();
@@ -54,58 +54,31 @@ export function UserDetailsModal({ id, isOpen, setOpen }: UserShowModalProps) {
             <ModalHeader>User</ModalHeader>
             <ModalBody>
               <Input label="ID" value={id.toString()} isDisabled />
-              <Input
-                label="Username"
-                value={user.username}
-                onValueChange={username => {
-                  if (!user) return;
-                  setUser({ ...user, username });
-                }}
-                isDisabled
-              />
-              <Input
-                label="E-Mail"
-                value={user.email}
-                onValueChange={email => {
-                  if (!user) return;
-                  setUser({ ...user, email });
-                }}
-                isDisabled
-              />
-
+              <Input label="Username" value={user.username} />
+              <Input label="E-Mail" value={user.email} />
               <Input
                 label="Created At"
                 value={user.createdAt.toLocaleString()}
-                isDisabled
               />
               <Input
                 label="Updated At"
                 value={user.updatedAt.toLocaleString()}
-                isDisabled
               />
               <Input
                 label="Last Login"
                 value={user.lastSeen.toLocaleString()}
-                isDisabled
               />
-              <Checkbox
-                isSelected={permanentApiToken}
-                onValueChange={permanentApiToken => {
-                  setPermanentApiToken(permanentApiToken);
-                }}
-                isDisabled
-              >
-                Permanent API Token
-              </Checkbox>
-              {/* TODO: find better component for displaying list of roles */}
-              <Select label="Roles" items={user.roles || []}>
-                {role => <SelectItem key={role.id}>{role.name}</SelectItem>}
-              </Select>
               <Input
                 label="Registration Key"
-                value={user.registrationKey?.key}
-                isDisabled
+                value={user.registrationKey ? user.registrationKey.key : ''}
               />
+              <Checkbox isSelected={permanentApiToken}>
+                Permanent API Token
+              </Checkbox>
+              Roles:
+              {user.roles.map(role => (
+                <Chip key={role.id}>{role.name}</Chip>
+              ))}
             </ModalBody>
             <ModalFooter>
               <Button onPress={onClose}>Cancel</Button>
