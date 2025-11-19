@@ -23,6 +23,7 @@ export interface UserEditModalProps {
 export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
   const [user, setUser] = useState<User>(newUninitializedUser());
   const [password, setPassword] = useState('');
+  const [permanentApiToken, setPermanentApiToken] = useState<boolean>(false);
 
   const auth = useContext(AuthContext);
 
@@ -38,6 +39,10 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
         setUser(newUninitializedUser());
         setPassword('');
       }
+      const tokenResult = await auth.getToken(id);
+      if (tokenResult.ok) {
+        setPermanentApiToken(tokenResult.value.permanent);
+      }
     };
     fetchUser();
   }, [id, isOpen, auth]);
@@ -47,7 +52,6 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
       username: user.username,
       password,
       email: user.email,
-      permanent_api_token: user.permanentApiToken,
     };
     const result = await auth.updateUser(id, payload);
     if (result.ok) {
@@ -55,9 +59,19 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
     } else {
       console.log('Update user failed:', result.error);
     }
+
+    const resultToken = await auth.updateToken(id, {
+      permanent: permanentApiToken,
+    });
+    if (resultToken.ok) {
+      console.log('Update token', id, ': permanent =', permanentApiToken);
+    } else {
+      console.log('Update token failed:', resultToken.error);
+    }
+
     // TODO: feedback from the request (success, error)
     setOpen(false);
-  }, [user, password, auth, id, setOpen]);
+  }, [user, password, permanentApiToken, auth, id, setOpen]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
@@ -106,13 +120,9 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
                 isDisabled
               />
               <Checkbox
-                isSelected={user.permanentApiToken}
+                isSelected={permanentApiToken}
                 onValueChange={permanentApiToken => {
-                  if (!user) return;
-                  setUser({
-                    ...user,
-                    permanentApiToken,
-                  });
+                  setPermanentApiToken(permanentApiToken);
                 }}
               >
                 Permanent API Token

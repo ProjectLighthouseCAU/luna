@@ -9,12 +9,16 @@
  * ---------------------------------------------------------------
  */
 
+import { UpdateTokenPayload } from '@luna/contexts/api/auth/types/UpdateTokenPayload';
+
 /** API token that allows access to the websocket API (beacon) and probably other APIs in the future */
 export interface APIToken {
   /** the actual API token */
   api_token?: string;
   /** expiration date of this token */
   expires_at?: string;
+  /** whether this token is permanent */
+  permanent?: boolean;
   /** roles associated with this token */
   roles?: string[];
   /** unique username associated with this token */
@@ -98,8 +102,6 @@ export interface User {
   id?: number;
   /** ISO 8601 datetime TODO: redundant with UpdatedAt but only because LastLogin is updated on login */
   last_login?: string;
-  /** if set the users API token never automatically expires */
-  permanent_api_token?: boolean;
   /** omitted if null (when user was created and not registered) */
   registration_key?: RegistrationKey;
   /** ISO 8601 datetime */
@@ -132,16 +134,22 @@ export interface FullRequestParams extends Omit<RequestInit, 'body'> {
   cancelToken?: CancelToken;
 }
 
-export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' | 'path'>;
+export type RequestParams = Omit<
+  FullRequestParams,
+  'body' | 'method' | 'query' | 'path'
+>;
 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, 'baseUrl' | 'cancelToken' | 'signal'>;
-  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
+  securityWorker?: (
+    securityData: SecurityDataType | null
+  ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown>
+  extends Response {
   data: D;
   error: E;
 }
@@ -160,7 +168,8 @@ export class HttpClient<SecurityDataType = unknown> {
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
+    fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
     credentials: 'same-origin',
@@ -193,9 +202,15 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected toQueryString(rawQuery?: QueryParamsType): string {
     const query = rawQuery || {};
-    const keys = Object.keys(query).filter(key => 'undefined' !== typeof query[key]);
+    const keys = Object.keys(query).filter(
+      key => 'undefined' !== typeof query[key]
+    );
     return keys
-      .map(key => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
+      .map(key =>
+        Array.isArray(query[key])
+          ? this.addArrayQueryParam(query, key)
+          : this.addQueryParam(query, key)
+      )
       .join('&');
   }
 
@@ -206,8 +221,13 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === 'object' || typeof input === 'string') ? JSON.stringify(input) : input,
-    [ContentType.Text]: (input: any) => (input !== null && typeof input !== 'string' ? JSON.stringify(input) : input),
+      input !== null && (typeof input === 'object' || typeof input === 'string')
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.Text]: (input: any) =>
+      input !== null && typeof input !== 'string'
+        ? JSON.stringify(input)
+        : input,
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
@@ -224,7 +244,10 @@ export class HttpClient<SecurityDataType = unknown> {
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  protected mergeRequestParams(
+    params1: RequestParams,
+    params2?: RequestParams
+  ): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -237,7 +260,9 @@ export class HttpClient<SecurityDataType = unknown> {
     };
   }
 
-  protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
+  protected createAbortSignal = (
+    cancelToken: CancelToken
+  ): AbortSignal | undefined => {
     if (this.abortControllers.has(cancelToken)) {
       const abortController = this.abortControllers.get(cancelToken);
       if (abortController) {
@@ -281,15 +306,26 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(`${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`, {
-      ...requestParams,
-      headers: {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
-      },
-      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
-      body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
-    }).then(async response => {
+    return this.customFetch(
+      `${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`,
+      {
+        ...requestParams,
+        headers: {
+          ...(requestParams.headers || {}),
+          ...(type && type !== ContentType.FormData
+            ? { 'Content-Type': type }
+            : {}),
+        },
+        signal:
+          (cancelToken
+            ? this.createAbortSignal(cancelToken)
+            : requestParams.signal) || null,
+        body:
+          typeof body === 'undefined' || body === null
+            ? null
+            : payloadFormatter(body),
+      }
+    ).then(async response => {
       const r = response.clone() as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
@@ -328,7 +364,9 @@ export class HttpClient<SecurityDataType = unknown> {
  * This is the REST API of Project Lighthouse that manages users, roles, registration keys, API tokens and everything about authentication and authorization.
  * NOTE: This API is an early alpha version that still needs a lot of testing (unit tests, end-to-end tests and security tests)
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+export class Api<
+  SecurityDataType extends unknown,
+> extends HttpClient<SecurityDataType> {
   login = {
     /**
      * @description Log in with username and password (sets a cookie with the session id). Returns the full user information if the login was successful or the user is already logged in.
@@ -417,7 +455,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Create registration key
      * @request POST:/registration-keys
      */
-    registrationKeysCreate: (payload: CreateRegistrationKeyPayload, params: RequestParams = {}) =>
+    registrationKeysCreate: (
+      payload: CreateRegistrationKeyPayload,
+      params: RequestParams = {}
+    ) =>
       this.request<void, void>({
         path: `/registration-keys`,
         method: 'POST',
@@ -451,7 +492,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Update registration key
      * @request PUT:/registration-keys/{id}
      */
-    registrationKeysUpdate: (id: number, payload: UpdateRegistrationKeyPayload, params: RequestParams = {}) =>
+    registrationKeysUpdate: (
+      id: number,
+      payload: UpdateRegistrationKeyPayload,
+      params: RequestParams = {}
+    ) =>
       this.request<void, void>({
         path: `/registration-keys/${id}`,
         method: 'PUT',
@@ -523,7 +568,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Create role
      * @request POST:/roles
      */
-    rolesCreate: (payload: CreateOrUpdateRolePayload, params: RequestParams = {}) =>
+    rolesCreate: (
+      payload: CreateOrUpdateRolePayload,
+      params: RequestParams = {}
+    ) =>
       this.request<void, void>({
         path: `/roles`,
         method: 'POST',
@@ -556,7 +604,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Update role
      * @request PUT:/roles/{id}
      */
-    rolesUpdate: (id: number, payload: CreateOrUpdateRolePayload, params: RequestParams = {}) =>
+    rolesUpdate: (
+      id: number,
+      payload: CreateOrUpdateRolePayload,
+      params: RequestParams = {}
+    ) =>
       this.request<void, void>({
         path: `/roles/${id}`,
         method: 'PUT',
@@ -658,7 +710,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Create user
      * @request POST:/users
      */
-    usersCreate: (payload: CreateOrUpdateUserPayload, params: RequestParams = {}) =>
+    usersCreate: (
+      payload: CreateOrUpdateUserPayload,
+      params: RequestParams = {}
+    ) =>
       this.request<void, void>({
         path: `/users`,
         method: 'POST',
@@ -691,7 +746,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Update user
      * @request PUT:/users/{id}
      */
-    usersUpdate: (id: number, payload: CreateOrUpdateUserPayload, params: RequestParams = {}) =>
+    usersUpdate: (
+      id: number,
+      payload: CreateOrUpdateUserPayload,
+      params: RequestParams = {}
+    ) =>
       this.request<void, void>({
         path: `/users/${id}`,
         method: 'PUT',
@@ -728,6 +787,28 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/users/${id}/api-token`,
         method: 'GET',
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Updates an API token of a user to be permanent or non-permanent.
+     *
+     * @tags Users
+     * @name apiTokenUpdate
+     * @summary Update a user's API token
+     * @request PUT:/users/{id}/api-token
+     */
+    apiTokenUpdate: (
+      id: number,
+      payload: UpdateTokenPayload,
+      params: RequestParams = {}
+    ) =>
+      this.request<APIToken, void>({
+        path: `/users/${id}/api-token`,
+        method: 'PUT',
+        format: 'json',
+        body: payload,
+        type: ContentType.Json,
         ...params,
       }),
 

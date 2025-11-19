@@ -9,7 +9,6 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
   lastSeen: Date;
-  permanentApiToken: boolean;
   registrationKey?: RegistrationKey;
 }
 
@@ -22,7 +21,6 @@ export function newUninitializedUser(): User {
     createdAt: new Date(0),
     updatedAt: new Date(0),
     lastSeen: new Date(0),
-    permanentApiToken: false,
     registrationKey: {
       id: 0,
       key: '',

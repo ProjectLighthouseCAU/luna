@@ -11,6 +11,7 @@ import {
 import { CreateOrUpdateRegistrationKeyPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateRegistrationKeyPayload';
 import { CreateOrUpdateRolePayload } from '@luna/contexts/api/auth/types/CreateOrUpdateRolePayload';
 import { CreateOrUpdateUserPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateUserPayload';
+import { UpdateTokenPayload } from '@luna/contexts/api/auth/types/UpdateTokenPayload';
 import { useInitRef } from '@luna/hooks/useInitRef';
 import { Pagination, slicePage } from '@luna/utils/pagination';
 import { errorResult, okResult, Result } from '@luna/utils/result';
@@ -48,6 +49,9 @@ export interface AuthContextValue {
 
   /** Invalidates the current token of the given (or current if none is provided) user and creates a new one. */
   cycleToken(id?: number): Promise<Result<void>>;
+
+  /** Updates a  */
+  updateToken(id: number, payload: UpdateTokenPayload): Promise<Result<void>>;
 
   /** Fetches all users. */
   getAllUsers(pagination?: Pagination): Promise<Result<User[]>>;
@@ -115,6 +119,7 @@ export const AuthContext = createContext<AuthContextValue>({
   logOut: async () => errorResult('No auth context for logging out'),
   getToken: async () => errorResult('No auth context for fetching token'),
   cycleToken: async () => errorResult('No auth context for cycling token'),
+  updateToken: async () => errorResult('No auth context for updating token'),
   getAllUsers: async () => errorResult('No auth context for fetching users'),
   getUserById: async () => errorResult('No auth context for fetching user'),
   createUser: async () => errorResult('No auth context for creating user'),
@@ -257,6 +262,17 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         } catch (error) {
           return errorResult(
             `Cycling token failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async updateToken(id: number, payload: UpdateTokenPayload) {
+        try {
+          await apiRef.current.users.apiTokenUpdate(id, payload);
+          return okResult(undefined);
+        } catch (error) {
+          return errorResult(
+            `Updating token of user with id ${id} to permanent state "${payload}" failed: ${await formatError(error)}`
           );
         }
       },

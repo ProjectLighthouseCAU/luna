@@ -30,6 +30,7 @@ export function signupToApi(signup: Signup): generated.RegisterPayload {
 export function tokenFromApi(apiToken: generated.APIToken): Token {
   return {
     value: apiToken.api_token!,
+    permanent: apiToken.permanent!,
     expiresAt: new Date(apiToken.expires_at!),
     username: apiToken.username!,
     roles: apiToken.roles!,
@@ -45,7 +46,6 @@ export function userFromApi(apiUser: generated.User): User {
     createdAt: new Date(apiUser.created_at!),
     updatedAt: new Date(apiUser.updated_at!),
     lastSeen: new Date(apiUser.last_login!),
-    permanentApiToken: apiUser.permanent_api_token!,
     registrationKey: apiUser.registration_key
       ? registrationKeyFromApi(apiUser.registration_key)
       : undefined,
@@ -82,7 +82,6 @@ export function createOrUpdateUserPayloadToApi(
     username: payload.username,
     password: payload.password,
     email: payload.email,
-    permanent_api_token: payload.permanent_api_token,
   };
 }
 

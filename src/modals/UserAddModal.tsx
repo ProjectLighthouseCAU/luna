@@ -3,7 +3,6 @@ import { newUninitializedUser, User } from '@luna/contexts/api/auth/types';
 import { CreateOrUpdateUserPayload } from '@luna/contexts/api/auth/types/CreateOrUpdateUserPayload';
 import {
   Button,
-  Checkbox,
   Input,
   Modal,
   ModalBody,
@@ -36,7 +35,6 @@ export function UserAddModal({ isOpen, setOpen }: UserAddModalProps) {
       username: user.username,
       password,
       email: user.email,
-      permanent_api_token: user.permanentApiToken,
     };
     const result = await auth.createUser(payload);
     if (result.ok) {
@@ -77,18 +75,6 @@ export function UserAddModal({ isOpen, setOpen }: UserAddModalProps) {
                   setUser({ ...user, email });
                 }}
               />
-              <Checkbox
-                isSelected={user.permanentApiToken}
-                onValueChange={permanentApiToken => {
-                  if (!user) return;
-                  setUser({
-                    ...user,
-                    permanentApiToken,
-                  });
-                }}
-              >
-                Permanent API Token
-              </Checkbox>
             </ModalBody>
             <ModalFooter>
               <Button color="success" onPress={addUser}>

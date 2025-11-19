@@ -22,7 +22,7 @@ export interface UserShowModalProps {
 
 export function UserDetailsModal({ id, isOpen, setOpen }: UserShowModalProps) {
   const [user, setUser] = useState<User>(newUninitializedUser());
-
+  const [permanentApiToken, setPermanentApiToken] = useState<boolean>(false);
   const auth = useContext(AuthContext);
 
   // initialize modal state
@@ -35,6 +35,12 @@ export function UserDetailsModal({ id, isOpen, setOpen }: UserShowModalProps) {
       } else {
         console.log('Failed to fetch user:', userResult.error);
         setUser(newUninitializedUser);
+      }
+      const tokenResult = await auth.getToken(id);
+      if (tokenResult.ok) {
+        setPermanentApiToken(tokenResult.value.permanent);
+      } else {
+        console.log('Failed to fetch token:', tokenResult.error);
       }
     };
     fetchUser();
@@ -83,13 +89,9 @@ export function UserDetailsModal({ id, isOpen, setOpen }: UserShowModalProps) {
                 isDisabled
               />
               <Checkbox
-                isSelected={user.permanentApiToken}
+                isSelected={permanentApiToken}
                 onValueChange={permanentApiToken => {
-                  if (!user) return;
-                  setUser({
-                    ...user,
-                    permanentApiToken,
-                  });
+                  setPermanentApiToken(permanentApiToken);
                 }}
                 isDisabled
               >

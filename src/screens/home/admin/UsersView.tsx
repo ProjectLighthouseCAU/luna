@@ -9,7 +9,6 @@ import { HomeContent } from '@luna/screens/home/HomeContent';
 import { getOrThrow } from '@luna/utils/result';
 import {
   Button,
-  Chip,
   Spinner,
   Table,
   TableBody,
@@ -149,9 +148,6 @@ export function UsersView() {
           <TableColumn key="lastSeen" allowsSorting>
             Last Seen
           </TableColumn>
-          <TableColumn key="permanentApiToken" allowsSorting>
-            Permanent API-Token
-          </TableColumn>
           <TableColumn key="actions">Actions</TableColumn>
         </TableHeader>
         <TableBody items={users.items} isLoading={isLoading}>
@@ -163,17 +159,6 @@ export function UsersView() {
               <TableCell>{user.createdAt.toLocaleString()}</TableCell>
               <TableCell>{user.updatedAt.toLocaleString()}</TableCell>
               <TableCell>{user.lastSeen.toLocaleString()}</TableCell>
-              <TableCell>
-                {user.permanentApiToken ? (
-                  <Chip color="success" variant="flat">
-                    true
-                  </Chip>
-                ) : (
-                  <Chip color="danger" variant="flat">
-                    false
-                  </Chip>
-                )}
-              </TableCell>
               <TableCell>
                 <div className="relative flex items-center gap-2">
                   <Tooltip content="Details">
