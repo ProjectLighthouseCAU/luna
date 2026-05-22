@@ -18,7 +18,10 @@ import {
 } from '@heroui/react';
 import { useAsyncList } from '@react-stately/data';
 import { IconEye, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
+import { RegistrationKeyAddModal } from '@luna/modals/RegistrationKeyAddModal';
+import { RegistrationKeyDeleteModal } from '@luna/modals/RegistrationKeyDeleteModal';
+import { RegistrationKeyEditModal } from '@luna/modals/RegistrationKeyEditModal';
 
 export function RegistrationKeysView() {
   const auth = useContext(AuthContext);
@@ -53,6 +56,8 @@ export function RegistrationKeysView() {
   const [showKeyDeleteModal, setShowKeyDeleteModal] = useState(false);
   const [keyId, setKeyId] = useState(0);
 
+  const onSuccess = useCallback(() => keys.reload(), [keys]);
+
   return (
     // TODO: Lazy rendering
     <HomeContent
@@ -71,6 +76,23 @@ export function RegistrationKeysView() {
         </div>
       }
     >
+      <RegistrationKeyAddModal
+        isOpen={showKeyAddModal}
+        setOpen={setShowKeyAddModal}
+        onSuccess={onSuccess}
+      />
+      <RegistrationKeyEditModal
+        id={keyId}
+        isOpen={showKeyEditModal}
+        setOpen={setShowKeyEditModal}
+        onSuccess={onSuccess}
+      />
+      <RegistrationKeyDeleteModal
+        id={keyId}
+        isOpen={showKeyDeleteModal}
+        setOpen={setShowKeyDeleteModal}
+        onSuccess={onSuccess}
+      />
       <Table
         aria-label="Table of registration keys for administrators"
         removeWrapper
