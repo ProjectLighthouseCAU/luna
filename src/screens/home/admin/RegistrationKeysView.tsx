@@ -22,6 +22,7 @@ import { useCallback, useContext, useState } from 'react';
 import { RegistrationKeyAddModal } from '@luna/modals/RegistrationKeyAddModal';
 import { RegistrationKeyDeleteModal } from '@luna/modals/RegistrationKeyDeleteModal';
 import { RegistrationKeyEditModal } from '@luna/modals/RegistrationKeyEditModal';
+import { RegistrationKeyDetailsModal } from '@luna/modals/RegistrationKeyDetailsModal';
 
 export function RegistrationKeysView() {
   const auth = useContext(AuthContext);
@@ -80,6 +81,11 @@ export function RegistrationKeysView() {
         isOpen={showKeyAddModal}
         setOpen={setShowKeyAddModal}
         onSuccess={onSuccess}
+      />
+      <RegistrationKeyDetailsModal
+        id={keyId}
+        isOpen={showKeyDetailsModal}
+        setOpen={setShowKeyDetailsModal}
       />
       <RegistrationKeyEditModal
         id={keyId}

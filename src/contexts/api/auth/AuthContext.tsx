@@ -117,6 +117,9 @@ export interface AuthContextValue {
 
   /** Deletes a registration key */
   deleteRegistrationKey(id: number): Promise<Result<void>>;
+
+  /** Get all users that registered with this registration key */
+  getUsersOfRegistrationKey(id: number): Promise<Result<User[]>>;
 }
 
 export const AuthContext = createContext<AuthContextValue>({
@@ -155,6 +158,8 @@ export const AuthContext = createContext<AuthContextValue>({
     errorResult('No auth context for updating registration key'),
   deleteRegistrationKey: async () =>
     errorResult('No auth context for deleting registration key'),
+  getUsersOfRegistrationKey: async () =>
+    errorResult('No auth context for fetching users of registration key'),
 });
 
 interface AuthContextProviderProps {
@@ -518,6 +523,18 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         } catch (error) {
           return errorResult(
             `Deleting registration key with id ${id} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async getUsersOfRegistrationKey(id) {
+        try {
+          const apiUsersResponse =
+            await apiRef.current.registrationKeys.usersDetail(id);
+          return okResult(apiUsersResponse.data.map(convert.userFromApi));
+        } catch (error) {
+          return errorResult(
+            `Fetching users of role with id ${id} failed: ${await formatError(error)}`
           );
         }
       },
