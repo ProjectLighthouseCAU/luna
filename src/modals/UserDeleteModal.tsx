@@ -14,9 +14,15 @@ export interface UserDeleteModalProps {
   id: number;
   isOpen: boolean;
   setOpen: (open: boolean) => void;
+  onSuccess: () => void;
 }
 
-export function UserDeleteModal({ id, isOpen, setOpen }: UserDeleteModalProps) {
+export function UserDeleteModal({
+  id,
+  isOpen,
+  setOpen,
+  onSuccess,
+}: UserDeleteModalProps) {
   const [user, setUser] = useState<User>(newUninitializedUser());
   const auth = useContext(AuthContext);
 
@@ -40,12 +46,13 @@ export function UserDeleteModal({ id, isOpen, setOpen }: UserDeleteModalProps) {
     const result = await auth.deleteUser(user.id);
     if (result.ok) {
       console.log('Deleted user: ', id);
+      onSuccess();
     } else {
       console.log('Deleting user', id, 'failed:', result.error);
     }
     // TODO: feedback from the request (success, error)
     setOpen(false);
-  }, [auth, id, setOpen, user.id]);
+  }, [auth, id, onSuccess, setOpen, user.id]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>

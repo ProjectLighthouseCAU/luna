@@ -18,9 +18,15 @@ export interface UserEditModalProps {
   id: number;
   isOpen: boolean;
   setOpen: (open: boolean) => void;
+  onSuccess: () => void;
 }
 
-export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
+export function UserEditModal({
+  id,
+  isOpen,
+  setOpen,
+  onSuccess,
+}: UserEditModalProps) {
   const [user, setUser] = useState<User>(newUninitializedUser());
   const [password, setPassword] = useState('');
   const [permanentApiToken, setPermanentApiToken] = useState<boolean>(false);
@@ -56,6 +62,7 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
     const result = await auth.updateUser(id, payload);
     if (result.ok) {
       console.log('Updated user', id, ':', payload);
+      onSuccess();
     } else {
       console.log('Update user failed:', result.error);
     }
@@ -71,7 +78,16 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
 
     // TODO: feedback from the request (success, error)
     setOpen(false);
-  }, [user, password, permanentApiToken, auth, id, setOpen]);
+  }, [
+    user.username,
+    user.email,
+    password,
+    auth,
+    id,
+    permanentApiToken,
+    setOpen,
+    onSuccess,
+  ]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
@@ -85,7 +101,6 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
                 label="Username"
                 value={user.username}
                 onValueChange={username => {
-                  if (!user) return;
                   setUser({ ...user, username });
                 }}
               />
@@ -100,7 +115,6 @@ export function UserEditModal({ id, isOpen, setOpen }: UserEditModalProps) {
                 label="E-Mail"
                 value={user.email}
                 onValueChange={email => {
-                  if (!user) return;
                   setUser({ ...user, email });
                 }}
               />

@@ -15,9 +15,14 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 export interface UserAddModalProps {
   isOpen: boolean;
   setOpen: (show: boolean) => void;
+  onSuccess: () => void;
 }
 
-export function UserAddModal({ isOpen, setOpen }: UserAddModalProps) {
+export function UserAddModal({
+  isOpen,
+  setOpen,
+  onSuccess,
+}: UserAddModalProps) {
   const [user, setUser] = useState<User>(newUninitializedUser());
   const [password, setPassword] = useState('');
 
@@ -39,12 +44,13 @@ export function UserAddModal({ isOpen, setOpen }: UserAddModalProps) {
     const result = await auth.createUser(payload);
     if (result.ok) {
       console.log('added user:', payload);
+      onSuccess();
     } else {
       console.log('failed to add user:', result.error);
     }
     // TODO: UI feedback from the request (success, error)
     setOpen(false);
-  }, [setOpen, user, password, auth]);
+  }, [user.username, user.email, password, auth, setOpen, onSuccess]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
@@ -57,7 +63,6 @@ export function UserAddModal({ isOpen, setOpen }: UserAddModalProps) {
                 label="Username"
                 value={user.username}
                 onValueChange={username => {
-                  if (!user) return;
                   setUser({ ...user, username });
                 }}
               />
@@ -71,7 +76,6 @@ export function UserAddModal({ isOpen, setOpen }: UserAddModalProps) {
                 label="E-Mail"
                 value={user.email}
                 onValueChange={email => {
-                  if (!user) return;
                   setUser({ ...user, email });
                 }}
               />

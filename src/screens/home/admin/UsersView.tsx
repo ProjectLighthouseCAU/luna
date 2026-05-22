@@ -31,7 +31,7 @@ import {
   IconTrash,
   IconUserPlus,
 } from '@tabler/icons-react';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 
 export function UsersView() {
@@ -101,6 +101,8 @@ export function UsersView() {
     fetchRoles();
   }, [auth]);
 
+  const onSuccess = useCallback(() => users.reload(), [users]);
+
   return (
     // TODO: Lazy rendering
     <HomeContent
@@ -119,11 +121,16 @@ export function UsersView() {
         </div>
       }
     >
-      <UserAddModal isOpen={showUserAddModal} setOpen={setShowUserAddModal} />
+      <UserAddModal
+        isOpen={showUserAddModal}
+        setOpen={setShowUserAddModal}
+        onSuccess={onSuccess}
+      />
       <UserEditModal
         id={userId}
         isOpen={showUserEditModal}
         setOpen={setShowUserEditModal}
+        onSuccess={onSuccess}
       />
       <UserDetailsModal
         id={userId}
@@ -134,6 +141,7 @@ export function UsersView() {
         id={userId}
         isOpen={showUserDeleteModal}
         setOpen={setShowUserDeleteModal}
+        onSuccess={onSuccess}
       />
       <Table
         aria-label="Table of users for administrators"
