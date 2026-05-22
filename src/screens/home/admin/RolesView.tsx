@@ -25,6 +25,7 @@ import {
 import { useContext, useState } from 'react';
 import { RoleAddModal } from '@luna/modals/RoleAddModal';
 import { RoleDeleteModal } from '@luna/modals/RoleDeleteModal';
+import { RoleEditModal } from '@luna/modals/RoleEditModal';
 
 export function RolesView() {
   const auth = useContext(AuthContext);
@@ -78,6 +79,11 @@ export function RolesView() {
       }
     >
       <RoleAddModal isOpen={showRoleAddModal} setOpen={setShowRoleAddModal} />
+      <RoleEditModal
+        id={roleId}
+        isOpen={showRoleAddModal}
+        setOpen={setShowRoleAddModal}
+      />
       <RoleDeleteModal
         id={roleId}
         isOpen={showRoleAddModal}
@@ -114,15 +120,6 @@ export function RolesView() {
               <TableCell>{role.updatedAt.toLocaleString()}</TableCell>
               <TableCell>
                 <div className="relative flex items-center gap-2">
-                  <Tooltip content="Details">
-                    <IconEye
-                      className="text-lg cursor-pointer active:opacity-50"
-                      onClick={() => {
-                        setRoleId(role.id);
-                        setShowRoleDetailsModal(true);
-                      }}
-                    />
-                  </Tooltip>
                   <Tooltip content="Edit role">
                     <IconPencil
                       className="text-lg cursor-pointer active:opacity-50"
