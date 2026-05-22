@@ -81,13 +81,13 @@ export function RolesView() {
       <RoleAddModal isOpen={showRoleAddModal} setOpen={setShowRoleAddModal} />
       <RoleEditModal
         id={roleId}
-        isOpen={showRoleAddModal}
-        setOpen={setShowRoleAddModal}
+        isOpen={showRoleEditModal}
+        setOpen={setShowRoleEditModal}
       />
       <RoleDeleteModal
         id={roleId}
-        isOpen={showRoleAddModal}
-        setOpen={setShowRoleAddModal}
+        isOpen={showRoleDeleteModal}
+        setOpen={setShowRoleDeleteModal}
       />
       <Table
         aria-label="Table of roles for administrators"
