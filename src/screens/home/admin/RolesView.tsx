@@ -24,6 +24,7 @@ import {
 } from '@tabler/icons-react';
 import { useContext, useState } from 'react';
 import { RoleAddModal } from '@luna/modals/RoleAddModal';
+import { RoleDeleteModal } from '@luna/modals/RoleDeleteModal';
 
 export function RolesView() {
   const auth = useContext(AuthContext);
@@ -77,6 +78,11 @@ export function RolesView() {
       }
     >
       <RoleAddModal isOpen={showRoleAddModal} setOpen={setShowRoleAddModal} />
+      <RoleDeleteModal
+        id={roleId}
+        isOpen={showRoleAddModal}
+        setOpen={setShowRoleAddModal}
+      />
       <Table
         aria-label="Table of roles for administrators"
         removeWrapper
