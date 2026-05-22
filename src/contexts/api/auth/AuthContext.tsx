@@ -89,6 +89,9 @@ export interface AuthContextValue {
   /** Deletes a role */
   deleteRole(id: number): Promise<Result<void>>;
 
+  /** Get all users of a role */
+  getUsersOfRole(id: number): Promise<Result<User[]>>;
+
   /** Adds a user to a role */
   addUserToRole(userid: number, roleid: number): Promise<Result<void>>;
 
@@ -136,6 +139,8 @@ export const AuthContext = createContext<AuthContextValue>({
   createRole: async () => errorResult('No auth context for creating role'),
   updateRole: async () => errorResult('No auth context for updating role'),
   deleteRole: async () => errorResult('No auth context for deleting role'),
+  getUsersOfRole: async () =>
+    errorResult('No auth context for fetching users of role'),
   addUserToRole: async () =>
     errorResult('No auth context for adding user to role'),
   removeUserFromRole: async () =>
@@ -410,6 +415,17 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         } catch (error) {
           return errorResult(
             `Deleting role with id ${id} failed: ${await formatError(error)}`
+          );
+        }
+      },
+
+      async getUsersOfRole(id: number) {
+        try {
+          const apiUsersResponse = await apiRef.current.roles.usersDetail(id);
+          return okResult(apiUsersResponse.data.map(convert.userFromApi));
+        } catch (error) {
+          return errorResult(
+            `Fetching users of role with id ${id} failed: ${await formatError(error)}`
           );
         }
       },
