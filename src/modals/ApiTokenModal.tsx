@@ -41,6 +41,7 @@ export function ApiTokenModal({
                       {`The token is valid through ${token.expiresAt.toLocaleString()}.`}
                     </p>
                   ) : null}
+                  Permanent: {token?.permanent}
                   <Snippet symbol="" disableCopy={token === null}>
                     {token?.value ?? 'No token available'}
                   </Snippet>
