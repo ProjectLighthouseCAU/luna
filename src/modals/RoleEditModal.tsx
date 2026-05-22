@@ -17,9 +17,15 @@ export interface RoleEditModalProps {
   id: number;
   isOpen: boolean;
   setOpen: (open: boolean) => void;
+  onSuccess: () => void;
 }
 
-export function RoleEditModal({ id, isOpen, setOpen }: RoleEditModalProps) {
+export function RoleEditModal({
+  id,
+  isOpen,
+  setOpen,
+  onSuccess,
+}: RoleEditModalProps) {
   const [role, setRole] = useState<Role>(newUninitializedRole());
 
   const auth = useContext(AuthContext);
@@ -45,12 +51,13 @@ export function RoleEditModal({ id, isOpen, setOpen }: RoleEditModalProps) {
     const result = await auth.updateRole(id, payload);
     if (result.ok) {
       console.log('Updated role', id, ':', payload);
+      onSuccess();
     } else {
       console.log('Update role failed:', result.error);
     }
     // TODO: feedback from the request (success, error)
     setOpen(false);
-  }, [role, auth, id, setOpen]);
+  }, [role.name, auth, id, setOpen, onSuccess]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
@@ -64,7 +71,6 @@ export function RoleEditModal({ id, isOpen, setOpen }: RoleEditModalProps) {
                 label="Name"
                 value={role.name}
                 onValueChange={name => {
-                  if (!role) return;
                   setRole({ ...role, name });
                 }}
               />

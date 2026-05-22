@@ -15,9 +15,14 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 export interface RoleAddModalProps {
   isOpen: boolean;
   setOpen: (show: boolean) => void;
+  onSuccess: () => void;
 }
 
-export function RoleAddModal({ isOpen, setOpen }: RoleAddModalProps) {
+export function RoleAddModal({
+  isOpen,
+  setOpen,
+  onSuccess,
+}: RoleAddModalProps) {
   const [role, setRole] = useState<Role>(newUninitializedRole());
 
   // initialize/reset modal state
@@ -35,12 +40,13 @@ export function RoleAddModal({ isOpen, setOpen }: RoleAddModalProps) {
     const result = await auth.createRole(payload);
     if (result.ok) {
       console.log('added role:', payload);
+      onSuccess();
     } else {
       console.log('failed to add role:', result.error);
     }
     // TODO: UI feedback from the request (success, error)
     setOpen(false);
-  }, [setOpen, role, auth]);
+  }, [role.name, auth, setOpen, onSuccess]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
@@ -53,7 +59,6 @@ export function RoleAddModal({ isOpen, setOpen }: RoleAddModalProps) {
                 label="Name"
                 value={role.name}
                 onValueChange={name => {
-                  if (!role) return;
                   setRole({ ...role, name });
                 }}
               />

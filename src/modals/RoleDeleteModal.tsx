@@ -14,9 +14,15 @@ export interface RoleDeleteModalProps {
   id: number;
   isOpen: boolean;
   setOpen: (open: boolean) => void;
+  onSuccess: () => void;
 }
 
-export function RoleDeleteModal({ id, isOpen, setOpen }: RoleDeleteModalProps) {
+export function RoleDeleteModal({
+  id,
+  isOpen,
+  setOpen,
+  onSuccess,
+}: RoleDeleteModalProps) {
   const [role, setRole] = useState<Role>(newUninitializedRole());
   const auth = useContext(AuthContext);
 
@@ -40,12 +46,13 @@ export function RoleDeleteModal({ id, isOpen, setOpen }: RoleDeleteModalProps) {
     const result = await auth.deleteRole(role.id);
     if (result.ok) {
       console.log('Deleted role: ', id);
+      onSuccess();
     } else {
       console.log('Deleting role', id, 'failed:', result.error);
     }
     // TODO: feedback from the request (success, error)
     setOpen(false);
-  }, [auth, id, setOpen, role.id]);
+  }, [auth, role.id, setOpen, id, onSuccess]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>

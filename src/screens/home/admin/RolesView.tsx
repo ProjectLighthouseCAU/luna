@@ -22,7 +22,7 @@ import {
   IconPencil,
   IconTrash,
 } from '@tabler/icons-react';
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { RoleAddModal } from '@luna/modals/RoleAddModal';
 import { RoleDeleteModal } from '@luna/modals/RoleDeleteModal';
 import { RoleEditModal } from '@luna/modals/RoleEditModal';
@@ -61,6 +61,8 @@ export function RolesView() {
   const [showRoleDeleteModal, setShowRoleDeleteModal] = useState(false);
   const [roleId, setRoleId] = useState(0);
 
+  const onSuccess = useCallback(() => roles.reload(), [roles]);
+
   return (
     // TODO: Lazy rendering
     <HomeContent
@@ -79,7 +81,11 @@ export function RolesView() {
         </div>
       }
     >
-      <RoleAddModal isOpen={showRoleAddModal} setOpen={setShowRoleAddModal} />
+      <RoleAddModal
+        isOpen={showRoleAddModal}
+        setOpen={setShowRoleAddModal}
+        onSuccess={onSuccess}
+      />
       <RoleDetailsModal
         id={roleId}
         isOpen={showRoleDetailsModal}
@@ -89,11 +95,13 @@ export function RolesView() {
         id={roleId}
         isOpen={showRoleEditModal}
         setOpen={setShowRoleEditModal}
+        onSuccess={onSuccess}
       />
       <RoleDeleteModal
         id={roleId}
         isOpen={showRoleDeleteModal}
         setOpen={setShowRoleDeleteModal}
+        onSuccess={onSuccess}
       />
       <Table
         aria-label="Table of roles for administrators"
